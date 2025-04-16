@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "name": "モフタロウ",
+    "image": "images/character1.jpg",
+    "profile": "BUSONスタジオの看板キャラクター。もふもふの毛に包まれた謎の生き物。食べ物の好き嫌いが激しく、特にいちごが大好物。好奇心旺盛で、いつも新しい冒険を探している。",
+    "socialLinks": [
+      { "name": "Twitter", "url": "https://twitter.com/" },
+      { "name": "Instagram", "url": "https://instagram.com/" }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "ピンキー",
+    "image": "images/character2.jpg",
+    "profile": "宇宙からやってきた猫型宇宙人。ピンク色の体が特徴的。いつも明るく元気いっぱいで、周りを幸せにする不思議な力を持っている。モフタロウとは親友。",
+    "socialLinks": [
+      { "name": "Twitter", "url": "https://twitter.com/" },
+      { "name": "YouTube", "url": "https://youtube.com/" }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "クマゴロー",
+    "image": "images/character3.jpg",
+    "profile": "森に住むクマのキャラクター。見た目は怖そうだが、実は甘いものが大好きな優しい性格。手先が器用で、木工細工が得意。",
+    "socialLinks": [
+      { "name": "Instagram", "url": "https://instagram.com/" }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "ミント",
+    "image": "images/character4.jpg",
+    "profile": "ミントの妖精。清涼感のある香りを放つ緑色の小さな妖精。自然を愛し、環境保護に熱心。ハーブティーを作るのが特技。",
+    "socialLinks": [
+      { "name": "Twitter", "url": "https://twitter.com/" }
+    ]
+  },
+  {
+    "id": 5,
+    "name": "ポポタン",
+    "image": "images/character5.jpg",
+    "profile": "可愛らしいひよこのようなキャラクター。いつもポポポと鳴いている。単純で素直な性格だが、時々予想外の行動をとる。",
+    "socialLinks": [
+      { "name": "YouTube", "url": "https://youtube.com/" },
+      { "name": "Instagram", "url": "https://instagram.com/" }
+    ]
+  }
+]
