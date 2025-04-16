@@ -150,13 +150,17 @@ function setupCharacterModal(characters) {
         }
     });
 
-  // キャラクターモーダルを表示する関数
+    // キャラクターモーダルを表示する関数
     function showCharacterModal(characterName, characters) {
         const character = characters.find(char => char.name === characterName);
 
         if (character) {
             // ソーシャルリンクを生成
-            const socialLinksHTML = // ... (省略) ...
+            const socialLinksHTML = character.socialLinks && character.socialLinks.length > 0
+                ? character.socialLinks.map(link =>
+                    `<a href="${link.url}" target="_blank">${link.name}</a>`
+                ).join('')
+                : '';
 
             // その他のキャラクター情報を生成
             let otherInfoHTML = '<div class="character-other-info-container">';
