@@ -224,13 +224,14 @@ h2::after {
 
 /* グッズセクション */
 .goods-container {
-    display: flex;
+    /* 横スクロール用のFlexboxをOFFにして、Gridレイアウトにする */
+    display: grid;
+    /* 2列表示にしたい場合 */
+    grid-template-columns: repeat(2, 1fr);
     gap: 25px;
-    overflow-x: auto;
     padding: 10px 0 30px;
-}
-.goods-card {
-    flex: 0 0 250px; /* 必要に応じて幅を調整 */
+    /* 不要なら overflow-x: auto; は削除 */
+    overflow-x: hidden; /* or remove this line entirely */
 }
 
 
