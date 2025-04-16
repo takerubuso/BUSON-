@@ -150,17 +150,13 @@ function setupCharacterModal(characters) {
         }
     });
 
-    // キャラクターモーダルを表示する関数
+  // キャラクターモーダルを表示する関数
     function showCharacterModal(characterName, characters) {
         const character = characters.find(char => char.name === characterName);
 
         if (character) {
             // ソーシャルリンクを生成
-            const socialLinksHTML = character.socialLinks && character.socialLinks.length > 0
-                ? character.socialLinks.map(link =>
-                    `<a href="${link.url}" target="_blank">${link.name}</a>`
-                ).join('')
-                : '';
+            const socialLinksHTML = // ... (省略) ...
 
             // その他のキャラクター情報を生成
             let otherInfoHTML = '<div class="character-other-info-container">';
@@ -177,9 +173,12 @@ function setupCharacterModal(characters) {
                 const iconUrl = character.icons[key];
 
                 otherInfoHTML += `
-                    <div class="info-circle" data-info="${key}">
-                        <img src="${iconUrl}" alt="${labelText}">
-                        <div class="info-popup">${Array.isArray(value) ? value.join(', ') : value}</div>
+                    <div class="info-item">
+                        <div class="info-circle" data-info="${key}">
+                            <img src="${iconUrl}" alt="${labelText}">
+                            <div class="info-popup">${Array.isArray(value) ? value.join(', ') : value}</div>
+                        </div>
+                        <p class="info-label-text">${labelText}</p>
                     </div>
                 `;
             }
