@@ -164,30 +164,30 @@ function setupCharacterModal(characters) {
 
             // その他のキャラクター情報を生成
             const otherInfoHTML = `
-                <div class="character-other-info">
-                    <div class="info-item">
-                        <span class="info-label" data-info="personality">性格</span>
-                        <div class="info-popup" id="personality-popup">${character.personality}</div>
+                <div class="character-other-info-container">
+                    <div class="info-circle" data-info="personality" style="background-color: #a8dadc;">
+                        性格
+                        <div class="info-popup">${character.personality}</div>
                     </div>
-                    <div class="info-item">
-                        <span class="info-label" data-info="birthday">誕生日</span>
-                        <div class="info-popup" id="birthday-popup">${character.birthday}</div>
+                    <div class="info-circle" data-info="birthday" style="background-color: #457b9d;">
+                        誕生日
+                        <div class="info-popup">${character.birthday}</div>
                     </div>
-                    <div class="info-item">
-                        <span class="info-label" data-info="debutYear">デビュー年</span>
-                        <div class="info-popup" id="debutYear-popup">${character.debutYear}</div>
+                    <div class="info-circle" data-info="debutYear" style="background-color: #1d3557;">
+                        デビュー年
+                        <div class="info-popup">${character.debutYear}</div>
                     </div>
-                    <div class="info-item">
-                        <span class="info-label" data-info="hobbies">趣味</span>
-                        <div class="info-popup" id="hobbies-popup">${character.hobbies.join(', ')}</div>
+                    <div class="info-circle" data-info="hobbies" style="background-color: #e63946;">
+                        趣味
+                        <div class="info-popup">${character.hobbies.join(', ')}</div>
                     </div>
-                    <div class="info-item">
-                        <span class="info-label" data-info="skills">特技</span>
-                        <div class="info-popup" id="skills-popup">${character.skills.join(', ')}</div>
+                    <div class="info-circle" data-info="skills" style="background-color: #f1faee;">
+                        特技
+                        <div class="info-popup">${character.skills.join(', ')}</div>
                     </div>
-                    <div class="info-item">
-                        <span class="info-label" data-info="favoriteFood">好きな食べ物</span>
-                        <div class="info-popup" id="favoriteFood-popup">${character.favoriteFood}</div>
+                    <div class="info-circle" data-info="favoriteFood" style="background-color: #a8dadc;">
+                        好きな食べ物
+                        <div class="info-popup">${character.favoriteFood}</div>
                     </div>
                 </div>
             `;
@@ -208,11 +208,10 @@ function setupCharacterModal(characters) {
             `;
 
             // ポップアップイベントリスナーを設定
-            const infoLabels = document.querySelectorAll('.info-label');
-            infoLabels.forEach(label => {
-                label.addEventListener('click', function() {
-                    const infoType = this.getAttribute('data-info');
-                    const popup = document.getElementById(`${infoType}-popup`);
+            const infoCircles = document.querySelectorAll('.info-circle');
+            infoCircles.forEach(circle => {
+                circle.addEventListener('click', function() {
+                    const popup = this.querySelector('.info-popup');
                     if (popup) {
                         // 既存のポップアップをすべて非表示にする
                         document.querySelectorAll('.info-popup').forEach(p => {
