@@ -69,7 +69,7 @@ async function displayYouTubeVideos() {
     }
 }
 
-// 漫画ブログ記事をUIに表示する関数
+// 漫画ブログ記事をUIに表示する関数（タイトルのみバージョン）
 async function displayMangaBlogPosts() {
     const mangaContainer = document.querySelector('.manga-container');
     if (!mangaContainer) return;
@@ -83,54 +83,98 @@ async function displayMangaBlogPosts() {
             {
                 title: '夫にやめて欲しいあるある',
                 date: '2025-04-15',
-                image: 'images/manga/manga1.jpg', // デモ用画像パス
-                summary: '日常の夫婦生活でよくある出来事を描いた4コマ漫画です。',
                 url: 'https://buson.blog.jp/post1'
             },
             {
                 title: '幼児の口癖あるある',
                 date: '2025-04-04',
-                image: 'images/manga/manga2.jpg', // デモ用画像パス
-                summary: '子育て中の親御さんが共感できる、幼児の言動を描いた漫画です。',
                 url: 'https://buson.blog.jp/post2'
             },
             {
                 title: 'モテない人あるある',
                 date: '2025-04-03',
-                image: 'images/manga/manga3.jpg', // デモ用画像パス
-                summary: '恋愛コメディ漫画の一場面です。全800話を超える人気作品の1ページです。',
                 url: 'https://buson.blog.jp/post3'
+            },
+            {
+                title: '実家の両親あるある',
+                date: '2025-04-01',
+                url: 'https://buson.blog.jp/post4'
+            },
+            {
+                title: '猫を飼っている人あるある',
+                date: '2025-03-28',
+                url: 'https://buson.blog.jp/post5'
+            },
+            {
+                title: '同僚とのやりとりあるある',
+                date: '2025-03-25',
+                url: 'https://buson.blog.jp/post6'
             }
         ];
         
         // コンテナをクリア
         mangaContainer.innerHTML = '';
         
-        // 記事カードを生成
+        // リスト形式で表示
+        const listElement = document.createElement('ul');
+        listElement.className = 'manga-list';
+        
+        // 記事リストアイテムを生成
         posts.forEach(post => {
-            const card = document.createElement('div');
-            card.className = 'manga-card';
-            
             // 日付をフォーマット
             const formattedDate = post.date.replace(/-/g, '.');
             
-            card.innerHTML = `
-                <div class="manga-img">
-                    <img src="${post.image}" alt="${post.title}" onerror="this.onerror=null; this.src='images/manga/manga_default.jpg';">
-                </div>
-                <div class="manga-info">
-                    <p class="date">${formattedDate}</p>
-                    <h3>${post.title}</h3>
-                    <p>${post.summary}</p>
-                    <a href="${post.url}" class="read-more" target="_blank">もっと見る</a>
-                </div>
+            const listItem = document.createElement('li');
+            listItem.className = 'manga-list-item';
+            
+            listItem.innerHTML = `
+                <span class="post-date">${formattedDate}</span>
+                <a href="${post.url}" class="post-title" target="_blank">${post.title}</a>
             `;
             
-            mangaContainer.appendChild(card);
+            listElement.appendChild(listItem);
         });
+        
+        mangaContainer.appendChild(listElement);
+        
     } catch (error) {
         console.error('漫画ブログの表示に失敗しました:', error);
         mangaContainer.innerHTML = '<div class="error">ブログの読み込みに失敗しました。後でもう一度お試しください。</div>';
+    }
+}
+
+// 将来的な実装: RSSフィードから最新記事を取得する関数
+async function fetchRealMangaBlogPosts() {
+    try {
+        // SITE_CONFIG (config.js)から設定を取得
+        const rssUrl = window.SITE_CONFIG ? window.SITE_CONFIG.mangaBlog.rssUrl : 'https://buson.blog.jp/index.rdf';
+        
+        // RSS2JSONサービスを使用してRSSをJSONに変換
+        const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+        
+        const response = await fetch(apiUrl);
+        
+        if (!response.ok) {
+            throw new Error(`APIエラー: ${response.status} ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        if (data.status !== 'ok') {
+            throw new Error(`RSSフィードエラー: ${data.message || 'Unknown error'}`);
+        }
+        
+        // 最新の6記事を取得して整形
+        const posts = data.items.slice(0, 6).map(item => ({
+            title: item.title,
+            date: new Date(item.pubDate).toISOString().split('T')[0],
+            url: item.link
+        }));
+        
+        return posts;
+    } catch (error) {
+        console.error('漫画ブログフィードの取得に失敗しました:', error);
+        throw error;
     }
 }
 
@@ -155,45 +199,29 @@ function fetchYouTubeVideos() {
     console.log('YouTube API URLが構築されました：', latestVideoUrl);
 }
 
-// 将来的な実装: RSS/ブログフィード連携
-// 実際のアプリケーションでは、RSSフィードなどを使用して最新の漫画ブログ記事を取得
-function fetchMangaBlogPosts() {
-    // SITE_CONFIG (config.js)から設定を取得
-    const rssUrl = window.SITE_CONFIG ? window.SITE_CONFIG.mangaBlog.rssUrl : 'https://buson.blog.jp/index.rdf';
+// 実際の実装に移行する場合のために、以下の関数を定期的に実行するセットアップ
+function setupAutomaticUpdates() {
+    // 更新間隔を設定（ミリ秒）
+    const updateInterval = window.SITE_CONFIG ? window.SITE_CONFIG.mangaBlog.updateInterval : 3600000; // デフォルト1時間
     
-    // RSS2JSONサービスを使用してRSSをJSONに変換するためのURL構築
-    const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+    // 定期的な更新を設定
+    setInterval(async () => {
+        try {
+            // 実際のデータ取得関数に置き換える
+            // const posts = await fetchRealMangaBlogPosts();
+            // displayMangaBlogPosts(posts);
+            
+            console.log('ブログデータの自動更新をチェックしました');
+        } catch (error) {
+            console.error('自動更新に失敗しました:', error);
+        }
+    }, updateInterval);
     
-    // 将来的にはここでAPIリクエストを行い、結果を処理
-    console.log('RSS API URLが構築されました：', apiUrl);
+    // 初回実行（ページ読み込み完了時）
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('ページ読み込み完了時のデータ更新を実行します');
+    });
 }
 
-// HTML内の画像URL抽出ロジック（将来の実装用）
-function extractImageFromHTML(html) {
-    // まず<img>タグのsrc属性を探す
-    const imgRegex = /<img[^>]+src="([^">]+)"/g;
-    const match = imgRegex.exec(html);
-    
-    if (match && match[1]) {
-        return match[1];
-    }
-    
-    // <figure>タグ内の画像も探す
-    const figureRegex = /<figure[^>]*>[\s\S]*?<img[^>]+src="([^">]+)"[\s\S]*?<\/figure>/g;
-    const figureMatch = figureRegex.exec(html);
-    
-    if (figureMatch && figureMatch[1]) {
-        return figureMatch[1];
-    }
-    
-    // 背景画像のURL抽出を試みる
-    const styleRegex = /background-image:\s*url\(['"]?([^'")]+)['"]?\)/g;
-    const styleMatch = styleRegex.exec(html);
-    
-    if (styleMatch && styleMatch[1]) {
-        return styleMatch[1];
-    }
-    
-    // 画像が見つからない場合はデフォルト画像のパスを返す
-    return 'images/manga/manga_default.jpg';
-}
+// アプリケーションが本番環境に移行する際にコメントを外す
+// setupAutomaticUpdates();
