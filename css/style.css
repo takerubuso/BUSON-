@@ -330,29 +330,17 @@ h2::after {
     text-decoration: underline;
 }
 
-/* サンリオ風フッタースタイル */
+/* フッタースタイル（ピンク色に変更） */
 footer {
-    background-color: #f2bf27; /* サンリオゴールド */
-    color: white;
+    background-color: #ffd1dc; /* サイトカラー（ピンク）に変更 */
+    color: #4a4a4a; /* テキスト色をダークグレーに変更 */
     margin-top: 50px;
     padding: 0;
 }
 
-.page-top-bar {
-    background-color: #f2bf27;
-    color: white;
-    text-align: right;
-    padding: 10px 20px;
-}
-
-.page-top-container {
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
 .footer-links-section {
-    background-color: #f2bf27;
-    color: white;
+    background-color: #ffd1dc;
+    color: #4a4a4a;
     padding: 20px 0;
 }
 
@@ -371,7 +359,7 @@ footer {
 }
 
 .social-follow-section h3 {
-    color: white;
+    color: #ff6b88; /* 濃いピンク色に変更 */
     margin-bottom: 15px;
     font-size: 16px;
 }
@@ -389,7 +377,7 @@ footer {
     height: 40px;
     background-color: white;
     border-radius: 50%;
-    color: #f2bf27;
+    color: #ff6b88; /* 濃いピンク色に変更 */
     text-decoration: none;
     transition: background-color 0.3s, color 0.3s;
 }
@@ -404,22 +392,6 @@ footer {
     flex-direction: column;
 }
 
-.dropdown-title {
-    color: white;
-    font-size: 14px;
-    margin-bottom: 10px;
-    font-weight: 500;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-}
-
-.dropdown-title::after {
-    content: '▼';
-    font-size: 10px;
-    margin-left: 5px;
-}
-
 .links-list {
     list-style: none;
     margin: 0;
@@ -431,7 +403,7 @@ footer {
 }
 
 .links-list a, .external-link, .small-link {
-    color: white;
+    color: #4a4a4a;
     text-decoration: none;
     font-size: 14px;
     display: flex;
@@ -453,7 +425,7 @@ footer {
 }
 
 .links-divider {
-    border-bottom: 1px dotted rgba(255, 255, 255, 0.5);
+    border-bottom: 1px dotted rgba(74, 74, 74, 0.3); /* ドット色をグレーの半透明に変更 */
     margin: 20px 0;
 }
 
@@ -481,56 +453,6 @@ footer {
 .copyright-section p {
     margin-bottom: 10px;
 }
-
-.language-selector {
-    position: absolute;
-    right: 20px;
-    top: 0;
-    display: flex;
-    align-items: center;
-}
-
-.language-link {
-    color: white;
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-    transition: color 0.3s;
-}
-
-.language-link::before {
-    content: '→';
-    margin-right: 5px;
-}
-
-.language-link:hover {
-    color: #ff6b88;
-}
-
-/* レスポンシブ対応 */
-@media (max-width: 768px) {
-    .links-container {
-        flex-direction: column;
-        gap: 20px;
-    }
-    
-    .social-follow-section {
-        align-items: flex-start;
-    }
-    
-    .second-links-row {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .language-selector {
-        position: static;
-        margin-top: 15px;
-        justify-content: center;
-    }
-}
-
-/* 既存のフッター関連のスタイルを削除またはコメントアウトしてください */
 
 /* モーダルスタイル */
 .modal {
@@ -652,6 +574,20 @@ footer {
     .modal-content {
         width: 90%;
         padding: 20px;
+    }
+    
+    .links-container {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .social-follow-section {
+        align-items: flex-start;
+    }
+    
+    .second-links-row {
+        flex-direction: column;
+        gap: 10px;
     }
 }
 
