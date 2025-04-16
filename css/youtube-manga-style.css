@@ -1,4 +1,4 @@
-/* 漫画ブログセクションのスタイル - タイトルリスト版 */
+/* 漫画ブログセクションのスタイル - 洗練されたデザイン */
 .manga-container {
   padding: 10px 0 30px;
   max-width: 800px;
@@ -13,12 +13,14 @@
   border-radius: 10px;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
   overflow: hidden;
+  counter-reset: manga-counter;
 }
 
 .manga-list-item {
+  position: relative;
   padding: 0;
-  border-bottom: 1px dotted #eee;
-  transition: background-color 0.3s;
+  border-bottom: 1px solid #f3f3f3;
+  transition: all 0.3s ease;
 }
 
 .manga-list-item:last-child {
@@ -27,28 +29,54 @@
 
 .manga-list-item:hover {
   background-color: #fff9fa;
+  transform: translateX(5px);
 }
 
 .manga-list-item a {
   display: block;
-  padding: 15px 20px;
+  padding: 16px 20px 16px 60px;
   text-decoration: none;
   color: #4a4a4a;
   font-weight: 500;
   font-size: 16px;
   position: relative;
-  padding-left: 120px; /* 日付用のスペース */
 }
 
 .manga-list-item a:hover {
   color: #ff6b88;
 }
 
-.post-date {
+/* 最新記事のバッジ */
+.manga-list-item:first-child::before {
+  content: "NEW";
   position: absolute;
+  top: 50%;
   left: 20px;
+  transform: translateY(-50%);
+  background-color: #ff6b88;
+  color: white;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 3px 6px;
+  border-radius: 4px;
+  z-index: 1;
+}
+
+/* 番号付きリスト風のスタイル */
+.manga-list-item a::before {
+  counter-increment: manga-counter;
+  content: counter(manga-counter);
+  position: absolute;
+  top: 50%;
+  left: 20px;
+  transform: translateY(-50%);
   color: #aaa;
-  font-size: 14px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.manga-list-item:first-child a::before {
+  left: 60px;
 }
 
 .manga-button-container {
@@ -65,7 +93,7 @@
   text-decoration: none;
   border-radius: 25px;
   font-weight: 500;
-  transition: background-color 0.3s, color 0.3s, transform 0.3s;
+  transition: all 0.3s;
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
 }
 
@@ -84,14 +112,23 @@
 /* レスポンシブ対応 */
 @media (max-width: 768px) {
   .manga-list-item a {
-    padding: 12px 15px;
-    padding-left: 110px;
+    padding: 14px 15px 14px 50px;
     font-size: 15px;
   }
   
-  .post-date {
+  .manga-list-item:first-child::before {
     left: 15px;
-    font-size: 13px;
+    font-size: 10px;
+    padding: 2px 5px;
+  }
+  
+  .manga-list-item a::before {
+    left: 15px;
+    font-size: 16px;
+  }
+  
+  .manga-list-item:first-child a::before {
+    left: 50px;
   }
   
   .manga-button {
@@ -102,15 +139,19 @@
 
 @media (max-width: 480px) {
   .manga-list-item a {
-    padding: 12px 15px;
-    padding-left: 15px;
-    padding-top: 30px;
+    padding: 12px 10px 12px 45px;
     font-size: 14px;
   }
   
-  .post-date {
-    left: 15px;
-    top: 10px;
-    font-size: 12px;
+  .manga-list-item:first-child::before {
+    left: 10px;
+  }
+  
+  .manga-list-item a::before {
+    left: 12px;
+  }
+  
+  .manga-list-item:first-child a::before {
+    left: 45px;
   }
 }
