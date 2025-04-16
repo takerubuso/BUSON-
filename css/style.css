@@ -330,78 +330,207 @@ h2::after {
     text-decoration: underline;
 }
 
-/* フッター */
+/* サンリオ風フッタースタイル */
 footer {
-    background: #ffd1dc;
-    padding: 40px 0 20px;
+    background-color: #f2bf27; /* サンリオゴールド */
+    color: white;
     margin-top: 50px;
+    padding: 0;
 }
 
-.footer-container {
+.page-top-bar {
+    background-color: #f2bf27;
+    color: white;
+    text-align: right;
+    padding: 10px 20px;
+}
+
+.page-top-container {
     max-width: 1200px;
     margin: 0 auto;
+}
+
+.footer-links-section {
+    background-color: #f2bf27;
+    color: white;
+    padding: 20px 0;
+}
+
+.links-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
     padding: 0 20px;
+}
+
+.social-follow-section {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.footer-logo h3 {
-    font-size: 24px;
-    font-weight: 700;
-    color: #4a4a4a;
-    margin-bottom: 20px;
+.social-follow-section h3 {
+    color: white;
+    margin-bottom: 15px;
+    font-size: 16px;
 }
 
-.footer-links ul {
+.social-icons {
     display: flex;
-    list-style: none;
-    margin-bottom: 25px;
+    gap: 10px;
+}
+
+.social-circle {
+    display: flex;
+    align-items: center;
     justify-content: center;
-    flex-wrap: wrap;
-}
-
-.footer-links ul li {
-    margin: 0 15px;
-}
-
-.footer-links ul li a {
+    width: 40px;
+    height: 40px;
+    background-color: white;
+    border-radius: 50%;
+    color: #f2bf27;
     text-decoration: none;
-    color: #4a4a4a;
-    font-weight: 500;
-    transition: color 0.3s ease;
+    transition: background-color 0.3s, color 0.3s;
 }
 
-.footer-links ul li a:hover {
-    color: #ff6b88;
-}
-
-.social-links {
-    display: flex;
-    gap: 15px;
-    margin-bottom: 25px;
-}
-
-.social-icon {
-    text-decoration: none;
-    color: #4a4a4a;
-    padding: 8px 15px;
-    background: white;
-    border-radius: 20px;
-    font-size: 14px;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.social-icon:hover {
+.social-circle:hover {
     background-color: #ff6b88;
     color: white;
 }
 
-.copyright {
-    text-align: center;
-    font-size: 14px;
-    color: #4a4a4a;
+.links-column {
+    display: flex;
+    flex-direction: column;
 }
+
+.dropdown-title {
+    color: white;
+    font-size: 14px;
+    margin-bottom: 10px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.dropdown-title::after {
+    content: '▼';
+    font-size: 10px;
+    margin-left: 5px;
+}
+
+.links-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.links-list li {
+    margin-bottom: 8px;
+}
+
+.links-list a, .external-link, .small-link {
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    transition: color 0.3s;
+}
+
+.external-link::before {
+    content: '→';
+    margin-right: 8px;
+}
+
+.external-link {
+    margin-bottom: 15px;
+}
+
+.links-list a:hover, .external-link:hover, .small-link:hover {
+    color: #ff6b88;
+}
+
+.links-divider {
+    border-bottom: 1px dotted rgba(255, 255, 255, 0.5);
+    margin: 20px 0;
+}
+
+.second-links-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.small-link::before {
+    content: '▶';
+    font-size: 10px;
+    margin-right: 5px;
+}
+
+.copyright-section {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 0 20px;
+    font-size: 12px;
+    position: relative;
+}
+
+.copyright-section p {
+    margin-bottom: 10px;
+}
+
+.language-selector {
+    position: absolute;
+    right: 20px;
+    top: 0;
+    display: flex;
+    align-items: center;
+}
+
+.language-link {
+    color: white;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    transition: color 0.3s;
+}
+
+.language-link::before {
+    content: '→';
+    margin-right: 5px;
+}
+
+.language-link:hover {
+    color: #ff6b88;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .links-container {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .social-follow-section {
+        align-items: flex-start;
+    }
+    
+    .second-links-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .language-selector {
+        position: static;
+        margin-top: 15px;
+        justify-content: center;
+    }
+}
+
+/* 既存のフッター関連のスタイルを削除またはコメントアウトしてください */
 
 /* モーダルスタイル */
 .modal {
