@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             initializeCharacters(data);
+            setupCharacterModal(data); // モーダル設定を追加
         })
         .catch(error => {
             console.error('キャラクターデータの読み込みに失敗しました:', error);
@@ -100,18 +101,70 @@ function initializeCharacters(data) {
     data.forEach(character => {
         const card = document.createElement('div');
         card.className = 'character-card';
+        card.setAttribute('data-character', character.name); // data属性を追加
         card.innerHTML = `
             <div class="character-img">${character.name}</div>
             <h3>${character.name}</h3>
         `;
         characterContainer.appendChild(card);
-        
-        // キャラクター詳細表示処理を追加
+    });
+}
+
+// キャラクターモーダルの設定
+function setupCharacterModal(characters) {
+    const modal = document.getElementById('characterModal');
+    const modalContent = document.getElementById('modalCharacterContent');
+    const closeButton = document.querySelector('.close-button');
+    
+    // キャラクターカードにクリックイベントを追加
+    const characterCards = document.querySelectorAll('.character-card');
+    
+    characterCards.forEach(card => {
         card.addEventListener('click', function() {
-            // 詳細表示のためのモーダルウィンドウなどの処理を追加
-            alert(`${character.name}\n${character.profile}`);
+            const characterName = this.getAttribute('data-character');
+            showCharacterModal(characterName, characters);
         });
     });
+    
+    // 閉じるボタンのクリックイベント
+    closeButton.addEventListener('click', function() {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto'; // スクロールを再有効化
+    });
+    
+    // モーダル外のクリックで閉じる
+    window.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto'; // スクロールを再有効化
+        }
+    });
+    
+    // キャラクターモーダルを表示する関数
+    function showCharacterModal(characterName, characters) {
+        const character = characters.find(char => char.name === characterName);
+        
+        if (character) {
+            // モーダル内容を生成
+            modalContent.innerHTML = `
+                <div class="character-profile">
+                    <div class="character-image">
+                        ${character.image ? `<img src="${character.image}" alt="${character.name}">` : character.name}
+                    </div>
+                    <h2 class="character-name">${character.name}</h2>
+                    <p class="character-description">${character.profile}</p>
+                    <div class="character-social">
+                        ${character.twitter ? `<a href="${character.twitter}" target="_blank">Twitter</a>` : ''}
+                        ${character.instagram ? `<a href="${character.instagram}" target="_blank">Instagram</a>` : ''}
+                    </div>
+                </div>
+            `;
+            
+            // モーダルを表示
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden'; // 背景のスクロールを防止
+        }
+    }
 }
 
 // グッズの初期化
