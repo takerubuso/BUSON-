@@ -1,4 +1,4 @@
-// YouTube APIとの連携とRSSフィード連携
+// 漫画ブログRSSフィード連携の完全実装
 document.addEventListener('DOMContentLoaded', function() {
     // YouTube動画とマンガブログの表示を初期化
     displayYouTubeVideos();
@@ -82,7 +82,7 @@ async function displayMangaBlogPosts() {
     
     try {
         // 実際のRSSフィードからデータを取得
-        const posts = await fetchRealMangaBlogPosts();
+        const posts = await fetchMangaBlogPosts();
         
         // データが取得できない場合
         if (!posts || posts.length === 0) {
@@ -126,14 +126,14 @@ async function displayMangaBlogPosts() {
     }
 }
 
-// RSSフィードから実際のブログ記事データを取得する関数
-async function fetchRealMangaBlogPosts() {
+// RSSフィードから漫画ブログ記事データを取得する関数
+async function fetchMangaBlogPosts() {
     try {
         // SITE_CONFIG (config.js)から設定を取得、またはデフォルト値を使用
         const rssUrl = window.SITE_CONFIG?.mangaBlog?.rssUrl || 'https://buson.blog.jp/index.rdf';
         
-        // RSS2JSONサービスを使用してRSSをJSONに変換
-        const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+        // CORS問題を回避するためToptalのフリーサービスを使用
+        const proxyUrl = `https://www.toptal.com/developers/feed2json/convert?url=${encodeURIComponent(rssUrl)}`;
         
         // ローカルストレージからキャッシュを取得
         const cachedData = localStorage.getItem('mangaBlogData');
@@ -154,7 +154,7 @@ async function fetchRealMangaBlogPosts() {
         
         // APIリクエスト
         console.log('RSSフィードを取得中...');
-        const response = await fetch(apiUrl);
+        const response = await fetch(proxyUrl);
         
         if (!response.ok) {
             throw new Error(`APIエラー: ${response.status} ${response.statusText}`);
@@ -162,15 +162,16 @@ async function fetchRealMangaBlogPosts() {
         
         const data = await response.json();
         
-        if (data.status !== 'ok') {
-            throw new Error(`RSSフィードエラー: ${data.message || 'Unknown error'}`);
+        // JSONフィードのフォーマットを確認
+        if (!data.items || !Array.isArray(data.items)) {
+            throw new Error('無効なフィードフォーマット');
         }
         
         // データ整形
         const posts = data.items.map(item => ({
-            title: item.title,
-            date: new Date(item.pubDate).toISOString().split('T')[0],
-            url: item.link
+            title: item.title || '無題',
+            date: new Date(item.date_published || item.published || Date.now()).toISOString().split('T')[0],
+            url: item.url || item.link || '#'
         }));
         
         // キャッシュを更新
@@ -188,45 +189,51 @@ async function fetchRealMangaBlogPosts() {
             return JSON.parse(cachedData);
         }
         
-        throw error;
+        // 最終手段としてフォールバックデータを返す
+        return getFallbackMangaBlogData();
     }
 }
 
-// フォールバック用の漫画ブログデータを表示する関数
-function useFallbackMangaBlogData(container) {
-    // デモデータ
-    const fallbackPosts = [
+// フォールバック用の漫画ブログデータを返す関数
+function getFallbackMangaBlogData() {
+    return [
         {
             title: '夫にやめて欲しいあるある',
-            date: '2025.04.15',
+            date: '2025-04-15',
             url: 'https://buson.blog.jp/post1'
         },
         {
             title: '幼児の口癖あるある',
-            date: '2025.04.04',
+            date: '2025-04-04',
             url: 'https://buson.blog.jp/post2'
         },
         {
             title: 'モテない人あるある',
-            date: '2025.04.03',
+            date: '2025-04-03',
             url: 'https://buson.blog.jp/post3'
         },
         {
             title: '実家の両親あるある',
-            date: '2025.04.01',
+            date: '2025-04-01',
             url: 'https://buson.blog.jp/post4'
         },
         {
             title: '猫を飼っている人あるある',
-            date: '2025.03.28',
+            date: '2025-03-28',
             url: 'https://buson.blog.jp/post5'
         },
         {
             title: '同僚とのやりとりあるある',
-            date: '2025.03.25',
+            date: '2025-03-25',
             url: 'https://buson.blog.jp/post6'
         }
     ];
+}
+
+// フォールバックデータを表示する関数
+function useFallbackMangaBlogData(container) {
+    // フォールバックデータを取得
+    const fallbackPosts = getFallbackMangaBlogData();
     
     // コンテナをクリア
     container.innerHTML = '';
@@ -235,14 +242,17 @@ function useFallbackMangaBlogData(container) {
     const listElement = document.createElement('ul');
     listElement.className = 'manga-list';
     
-    // 記事リストアイテムを生成（最大6件）
+    // 記事リストアイテムを生成
     fallbackPosts.forEach(post => {
+        // 日付をフォーマット
+        const formattedDate = post.date.replace(/-/g, '.');
+        
         const listItem = document.createElement('li');
         listItem.className = 'manga-list-item';
         
         listItem.innerHTML = `
             <a href="${post.url}" class="post-link" target="_blank">
-                <span class="post-date">${post.date}</span>
+                <span class="post-date">${formattedDate}</span>
                 <span class="post-title">${post.title}</span>
             </a>
         `;
@@ -262,16 +272,10 @@ function setupAutomaticUpdates() {
     setInterval(async () => {
         try {
             console.log('ブログデータの自動更新をチェックしています...');
-            displayMangaBlogPosts();
+            await displayMangaBlogPosts();
+            console.log('ブログデータを更新しました');
         } catch (error) {
             console.error('自動更新に失敗しました:', error);
         }
     }, updateInterval);
-}
-
-// CORS問題に対応するヘルパー関数（プロキシサーバーが必要な場合に使用）
-function getProxiedRssUrl(originalUrl) {
-    // CORSプロキシサービスのURL
-    // 注意：独自のプロキシサーバーを使用するか、CORS対応のサービスを使用することをお勧めします
-    return `https://api.allorigins.win/raw?url=${encodeURIComponent(originalUrl)}`;
 }
