@@ -224,11 +224,15 @@ h2::after {
 
 /* グッズセクション */
 .goods-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 25px;
-    padding: 10px 0 30px;
+    display: flex;
+    gap: 25px;
+    overflow-x: auto;
+    padding: 10px 0 30px;
 }
+.goods-card {
+    flex: 0 0 250px; /* 必要に応じて幅を調整 */
+}
+
 
 .goods-card {
     background: white;
