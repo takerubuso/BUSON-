@@ -1,0 +1,294 @@
+/* YouTube セクションの強化スタイル */
+.youtube-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  padding: 10px 0 30px;
+}
+
+.youtube-card {
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.youtube-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.youtube-embed {
+  width: 100%;
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 アスペクト比 */
+  height: 0;
+  overflow: hidden;
+}
+
+.youtube-embed iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.youtube-info {
+  padding: 15px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.youtube-info h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #4a4a4a;
+  /* 長いタイトルを2行で省略する */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.youtube-info p {
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 15px;
+  /* 長い説明文を3行で省略する */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.video-type {
+  display: inline-block;
+  padding: 5px 10px;
+  background-color: #ffd1dc;
+  color: #ff6b88;
+  border-radius: 15px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: auto;
+  align-self: flex-start;
+}
+
+.youtube-button-container {
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 40px;
+}
+
+.youtube-button {
+  display: inline-block;
+  padding: 12px 30px;
+  background-color: #ff0000; /* YouTube赤 */
+  color: white;
+  text-decoration: none;
+  border-radius: 25px;
+  font-weight: 500;
+  transition: background-color 0.3s, transform 0.3s;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+}
+
+.youtube-button:hover {
+  background-color: #cc0000;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.youtube-button:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* ローディングと表示エラー */
+.loading, .error {
+  text-align: center;
+  padding: 30px;
+  grid-column: 1 / -1;
+  font-size: 16px;
+  color: #777;
+}
+
+.error {
+  color: #ff6b88;
+}
+
+/* 漫画ブログセクションの強化スタイル */
+.manga-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  padding: 10px 0 30px;
+}
+
+.manga-card {
+  background: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.manga-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.manga-img {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  position: relative;
+}
+
+.manga-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.manga-card:hover .manga-img img {
+  transform: scale(1.05);
+}
+
+.manga-info {
+  padding: 15px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.manga-info .date {
+  font-size: 14px;
+  color: #aaa;
+  margin-bottom: 5px;
+}
+
+.manga-info h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #4a4a4a;
+  /* 長いタイトルを2行で省略する */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.manga-info p {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 15px;
+  /* 長い説明文を3行で省略する */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.manga-info .read-more {
+  display: inline-block;
+  text-decoration: none;
+  color: #ff6b88;
+  font-weight: 500;
+  font-size: 14px;
+  transition: color 0.3s ease;
+  margin-top: auto;
+  align-self: flex-start;
+}
+
+.manga-info .read-more:hover {
+  color: #ff4d73;
+  text-decoration: underline;
+}
+
+.manga-button-container {
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 40px;
+}
+
+.manga-button {
+  display: inline-block;
+  padding: 12px 30px;
+  background-color: #ffd1dc;
+  color: #4a4a4a;
+  text-decoration: none;
+  border-radius: 25px;
+  font-weight: 500;
+  transition: background-color 0.3s, color 0.3s, transform 0.3s;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+}
+
+.manga-button:hover {
+  background-color: #ff6b88;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.manga-button:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* レスポンシブ対応の強化 */
+@media (max-width: 1024px) {
+  .youtube-container,
+  .manga-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .youtube-container,
+  .manga-container {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  .youtube-info h3,
+  .manga-info h3 {
+    font-size: 16px;
+  }
+  
+  .youtube-button,
+  .manga-button {
+    padding: 10px 25px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .manga-img {
+    height: 180px;
+  }
+  
+  .youtube-info,
+  .manga-info {
+    padding: 12px;
+  }
+  
+  .youtube-info p,
+  .manga-info p {
+    font-size: 13px;
+    -webkit-line-clamp: 2; /* モバイルでは2行に制限 */
+  }
+}
