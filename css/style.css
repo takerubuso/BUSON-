@@ -224,100 +224,102 @@ h2::after {
 
 /* グッズセクション */
 .goods-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 25px;
-    padding: 10px 0 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 25px;
+    padding: 10px 0 30px;
 }
 
 .goods-card {
-    background: white;
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    position: relative;
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    display: flex; /* 追加: Flexbox を有効にする */
+    flex-direction: column; /* 追加: 要素を縦方向に配置 */
 }
 
 .goods-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .goods-img {
-    width: 100%;
-    height: 200px;
-    background-color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
+    width: 100%;
+    height: 200px;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
 }
 
 .goods-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
 }
 
 .goods-card:hover .goods-img img {
-    transform: scale(1.05);
+    transform: scale(1.05);
 }
 
 .goods-info {
-    padding: 15px;
-    background: #fff;
+    padding: 15px;
+    background: #fff;
+    flex-grow: 1; /* 追加: `.goods-info` が利用可能なスペースを埋めるようにする */
 }
 
 .goods-info h3 {
-    font-size: 18px;
-    margin-bottom: 10px;
-    color: #4a4a4a;
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #4a4a4a;
 }
 
 .goods-info .price {
-    font-weight: 700;
-    color: #ff6b88;
-    margin-bottom: 15px;
-    display: block;
+    font-weight: 700;
+    color: #ff6b88;
+    margin-bottom: 15px;
+    display: block;
 }
 
 .goods-info .button {
-    display: block;
-    text-align: center;
-    padding: 10px;
-    background: #ffd1dc;
-    color: #4a4a4a;
-    border-radius: 25px;
-    font-weight: 500;
-    text-decoration: none;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    display: block;
+    text-align: center;
+    padding: 10px;
+    background: #ffd1dc;
+    color: #4a4a4a;
+    border-radius: 25px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .goods-info .button:hover {
-    background-color: #ff6b88;
-    color: white;
+    background-color: #ff6b88;
+    color: white;
 }
 
 /* ピンク背景の購入ボタン（画像のような見た目に近づける） */
 .pink-button-style .goods-info {
-    padding: 0;
+    padding: 0;
 }
 
 .pink-button-style .goods-info h3,
 .pink-button-style .goods-info .price {
-    padding: 0 15px;
+    padding: 0 15px;
 }
 
 .pink-button-style .goods-info .button {
-    margin-top: 15px;
-    border-radius: 0;
-    background-color: #ffc0cb;
-    padding: 15px;
-    font-size: 16px;
+    margin-top: auto; /* 追加: ボタンを `.goods-info` の下部に配置 */
+    border-radius: 0;
+    background-color: #ffc0cb;
+    padding: 15px;
+    font-size: 16px;
 }
-
 /* ニュースセクション */
 .news-container {
     display: grid;
