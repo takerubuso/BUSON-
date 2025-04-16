@@ -145,6 +145,13 @@ function setupCharacterModal(characters) {
         const character = characters.find(char => char.name === characterName);
         
         if (character) {
+            // ソーシャルリンクを生成
+            const socialLinksHTML = character.socialLinks && character.socialLinks.length > 0 
+                ? character.socialLinks.map(link => 
+                    `<a href="${link.url}" target="_blank">${link.name}</a>`
+                ).join('') 
+                : '';
+            
             // モーダル内容を生成
             modalContent.innerHTML = `
                 <div class="character-profile">
@@ -154,8 +161,7 @@ function setupCharacterModal(characters) {
                     <h2 class="character-name">${character.name}</h2>
                     <p class="character-description">${character.profile}</p>
                     <div class="character-social">
-                        ${character.twitter ? `<a href="${character.twitter}" target="_blank">Twitter</a>` : ''}
-                        ${character.instagram ? `<a href="${character.instagram}" target="_blank">Instagram</a>` : ''}
+                        ${socialLinksHTML}
                     </div>
                 </div>
             `;
