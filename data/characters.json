@@ -5,9 +5,10 @@
     "image": "images/character/1.png",
     "profile": "見る人に“ニヤッ”と元気を届ける、BUSONスタジオの看板キャラクター。",
     "socialLinks": [
-      { "name": "X", "url": "https://twitter.com/" },
-      { "name": "Instagram", "url": "https://instagram.com/" },
-      { "name": "TikTok", "url": "https://www.tiktok.com/" }
+      { "name": "X", "url": "https://x.com/positiveshikibu" },
+      { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
+      { "name": "TikTok", "url": "https://www.tiktok.com/@buson2025" },
+      { "name": "YouTube", "url": "https://www.youtube.com/channel/UCtRCF2NLRULCmf-oLAF455w" },
     ],
     "personality": "ポジティブ",
     "birthday": "8月8日",
