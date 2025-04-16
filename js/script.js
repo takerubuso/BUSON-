@@ -227,7 +227,7 @@ function initializeNews(data) {
         // 日付をフォーマット
         const formattedDate = item.date.replace(/-/g, '.');
         
-        card.innerHTML = `
+         card.innerHTML = `
             <div class="news-img">ニュース${index + 1}</div>
             <div class="news-info">
                 <p class="date">${formattedDate}</p>
