@@ -552,9 +552,9 @@ footer {
 
 /* キャラクター情報サークルの新しいスタイル */
 .character-other-info-container {
-    display: flex; /* 横並び */
-    flex-wrap: wrap; /* 折り返し */
-    justify-content: center; /* 中央揃え */
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 15px;
     margin-top: 20px;
 }
@@ -562,40 +562,57 @@ footer {
 .info-circle {
     width: 80px;
     height: 80px;
-    border-radius: 50%; /* 円形 */
-    display: flex; /* 中央揃えのため */
-    flex-direction: column; /* 縦並び */
+    border-radius: 50%;
+    display: flex;
     justify-content: center;
     align-items: center;
-    color: white; /* テキストの色 */
-    font-size: 12px;
-    font-weight: bold; /* 太字 */
-    cursor: pointer; /* カーソルを指の形に */
-    position: relative; /* ポップアップの基準位置 */
+    cursor: pointer;
+    position: relative;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    transition: transform 0.3s ease; /* ホバー時のアニメーション */
+    transition: transform 0.3s ease;
+    background-color: #f8f9fa; /* 円の背景色 */
 }
 
 .info-circle:hover {
-    transform: scale(1.05); /* 少し拡大 */
+    transform: scale(1.05);
+}
+
+.info-circle img {
+    max-width: 60%;
+    max-height: 60%;
 }
 
 .info-popup {
-    display: none; /* 最初は非表示 */
-    position: absolute; /* 絶対配置 */
-    top: 100%; /* 親要素の真下 */
-    left: 50%; /* 親要素の中央 */
-    transform: translateX(-50%); /* 中央揃えの調整 */
-    background-color: white; /* ポップアップの背景色 */
-    color: #4a4a4a; /* ポップアップのテキスト色 */
-    border: 1px solid #ff9eb6; /* 枠線 */
-    border-radius: 8px; /* 角を丸く */
-    padding: 10px;
-    margin-top: 10px;
-    z-index: 1; /* 他の要素より前面に表示 */
+    display: none;
+    position: absolute;
+    top: -40px; /* 上に吹き出しを表示 */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: white;
+    color: #4a4a4a;
+    border: 1px solid #ff9eb6;
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-bottom: 10px; /* 下にスペースを作る */
+    z-index: 1;
     font-size: 12px;
-    white-space: nowrap; /* テキストを折り返さない */
+    white-space: nowrap;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* 吹き出しの矢印（CSSだけで実装する場合） */
+.info-popup::before {
+    content: '';
+    position: absolute;
+    bottom: -5px; /* ポップアップの下に配置 */
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    width: 10px;
+    height: 10px;
+    background-color: white;
+    border-left: 1px solid #ff9eb6;
+    border-bottom: 1px solid #ff9eb6;
+    z-index: -1; /* ポップアップより下に */
 }
 
 /* レスポンシブデザイン */
@@ -645,8 +662,16 @@ footer {
     }
 
     .info-circle {
-        width: 70px;
-        height: 70px;
+        width: 60px;
+        height: 60px;
+    }
+    .info-circle img {
+        max-width: 50%;
+        max-height: 50%;
+    }
+    .info-popup {
+        top: -30px;
+        padding: 6px 10px;
         font-size: 10px;
     }
 }
@@ -682,8 +707,16 @@ footer {
     }
 
     .info-circle {
-        width: 60px;
-        height: 60px;
+        width: 50px;
+        height: 50px;
+    }
+    .info-circle img {
+        max-width: 40%;
+        max-height: 40%;
+    }
+    .info-popup {
+        top: -25px;
+        padding: 5px 8px;
         font-size: 9px;
     }
 }
