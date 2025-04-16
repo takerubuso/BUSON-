@@ -1,4 +1,4 @@
-// 漫画ブログRSSフィード連携の完全実装
+// YouTube APIとの連携とRSSフィード連携
 document.addEventListener('DOMContentLoaded', function() {
     // YouTube動画とマンガブログの表示を初期化
     displayYouTubeVideos();
@@ -72,7 +72,7 @@ async function displayYouTubeVideos() {
     }
 }
 
-// 漫画ブログ記事をUIに表示する関数（タイトルのみバージョン）
+// 漫画ブログ記事をUIに表示する関数（洗練されたデザイン版）
 async function displayMangaBlogPosts() {
     const mangaContainer = document.querySelector('.manga-container');
     if (!mangaContainer) return;
@@ -99,15 +99,11 @@ async function displayMangaBlogPosts() {
         
         // 記事リストアイテムを生成（最大6件）
         posts.slice(0, 6).forEach(post => {
-            // 日付をフォーマット
-            const formattedDate = post.date.replace(/-/g, '.');
-            
             const listItem = document.createElement('li');
             listItem.className = 'manga-list-item';
             
             listItem.innerHTML = `
                 <a href="${post.url}" class="post-link" target="_blank">
-                    <span class="post-date">${formattedDate}</span>
                     <span class="post-title">${post.title}</span>
                 </a>
             `;
@@ -194,43 +190,7 @@ async function fetchMangaBlogPosts() {
     }
 }
 
-// フォールバック用の漫画ブログデータを返す関数
-function getFallbackMangaBlogData() {
-    return [
-        {
-            title: '夫にやめて欲しいあるある',
-            date: '2025-04-15',
-            url: 'https://buson.blog.jp/post1'
-        },
-        {
-            title: '幼児の口癖あるある',
-            date: '2025-04-04',
-            url: 'https://buson.blog.jp/post2'
-        },
-        {
-            title: 'モテない人あるある',
-            date: '2025-04-03',
-            url: 'https://buson.blog.jp/post3'
-        },
-        {
-            title: '実家の両親あるある',
-            date: '2025-04-01',
-            url: 'https://buson.blog.jp/post4'
-        },
-        {
-            title: '猫を飼っている人あるある',
-            date: '2025-03-28',
-            url: 'https://buson.blog.jp/post5'
-        },
-        {
-            title: '同僚とのやりとりあるある',
-            date: '2025-03-25',
-            url: 'https://buson.blog.jp/post6'
-        }
-    ];
-}
-
-// フォールバックデータを表示する関数
+// フォールバックデータを表示する関数（日付なし）
 function useFallbackMangaBlogData(container) {
     // フォールバックデータを取得
     const fallbackPosts = getFallbackMangaBlogData();
@@ -244,15 +204,11 @@ function useFallbackMangaBlogData(container) {
     
     // 記事リストアイテムを生成
     fallbackPosts.forEach(post => {
-        // 日付をフォーマット
-        const formattedDate = post.date.replace(/-/g, '.');
-        
         const listItem = document.createElement('li');
         listItem.className = 'manga-list-item';
         
         listItem.innerHTML = `
             <a href="${post.url}" class="post-link" target="_blank">
-                <span class="post-date">${formattedDate}</span>
                 <span class="post-title">${post.title}</span>
             </a>
         `;
@@ -261,6 +217,36 @@ function useFallbackMangaBlogData(container) {
     });
     
     container.appendChild(listElement);
+}
+
+// フォールバック用の漫画ブログデータを返す関数（日付なし版）
+function getFallbackMangaBlogData() {
+    return [
+        {
+            title: '夫にやめて欲しいあるある',
+            url: 'https://buson.blog.jp/post1'
+        },
+        {
+            title: '幼児の口癖あるある',
+            url: 'https://buson.blog.jp/post2'
+        },
+        {
+            title: 'モテない人あるある',
+            url: 'https://buson.blog.jp/post3'
+        },
+        {
+            title: '実家の両親あるある',
+            url: 'https://buson.blog.jp/post4'
+        },
+        {
+            title: '猫を飼っている人あるある',
+            url: 'https://buson.blog.jp/post5'
+        },
+        {
+            title: '同僚とのやりとりあるある',
+            url: 'https://buson.blog.jp/post6'
+        }
+    ];
 }
 
 // 自動更新のための設定
@@ -278,4 +264,25 @@ function setupAutomaticUpdates() {
             console.error('自動更新に失敗しました:', error);
         }
     }, updateInterval);
+}
+
+// 将来的な実装: YouTube API連携
+// 実際のアプリケーションでは、YouTube Data APIを使用して最新・人気動画を取得
+function fetchYouTubeVideos() {
+    // SITE_CONFIG (config.js)から設定を取得
+    const apiKey = window.SITE_CONFIG ? window.SITE_CONFIG.youtube.apiKey : 'YOUR_API_KEY_HERE';
+    const channelId = window.SITE_CONFIG ? window.SITE_CONFIG.youtube.channelId : 'UCtRCF2NLRULCmf-oLAF455w';
+    const featuredVideoId = window.SITE_CONFIG ? window.SITE_CONFIG.youtube.featuredVideoId : 'FEATURED_VIDEO_ID';
+    
+    // 最新動画を取得するためのURL構築
+    const latestVideoUrl = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet,id&order=date&maxResults=1&type=video`;
+    
+    // 人気動画を取得するためのURL構築
+    const popularVideoUrl = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet,id&order=viewCount&maxResults=1&type=video`;
+    
+    // 指定動画を取得するためのURL構築
+    const featuredVideoUrl = `https://www.googleapis.com/youtube/v3/videos?key=${apiKey}&id=${featuredVideoId}&part=snippet`;
+    
+    // 将来的にはここでAPIリクエストを行い、結果を処理
+    console.log('YouTube API URLが構築されました：', latestVideoUrl);
 }
