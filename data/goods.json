@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "name": "モフタロウ ぬいぐるみ",
+    "image": "images/goods1.jpg",
+    "price": 2500,
+    "url": "https://booth.pm/"
+  },
+  {
+    "id": 2,
+    "name": "ピンキー アクリルキーホルダー",
+    "image": "images/goods2.jpg",
+    "price": 800,
+    "url": "https://booth.pm/"
+  },
+  {
+    "id": 3,
+    "name": "キャラクター マスキングテープ",
+    "image": "images/goods3.jpg",
+    "price": 550,
+    "url": "https://booth.pm/"
+  },
+  {
+    "id": 4,
+    "name": "クマゴロー Tシャツ",
+    "image": "images/goods4.jpg",
+    "price": 3200,
+    "url": "https://base.shop/"
+  },
+  {
+    "id": 5,
+    "name": "ミント トートバッグ",
+    "image": "images/goods5.jpg",
+    "price": 1800,
+    "url": "https://base.shop/"
+  },
+  {
+    "id": 6,
+    "name": "ポポタン マグカップ",
+    "image": "images/goods6.jpg",
+    "price": 1500,
+    "url": "https://booth.pm/"
+  }
+]

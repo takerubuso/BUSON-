@@ -1,0 +1,125 @@
+[
+  {
+    "id": 1,
+    "name": "しきぶちゃん",
+    "image": "images/character/1.png",
+    "profile": "BUSONスタジオの看板キャラクター。もふもふの毛に包まれた謎の生き物。食べ物の好き嫌いが激しく、特にいちごが大好物。好奇心旺盛で、いつも新しい冒険を探している。",
+    "socialLinks": [
+      { "name": "X", "url": "https://twitter.com/" },
+      { "name": "Instagram", "url": "https://instagram.com/" },
+      { "name": "TikTok", "url": "https://www.tiktok.com/" }
+    ],
+    "personality": "好奇心旺盛で食いしん坊",
+    "birthday": "4月1日",
+    "debutYear": 2023,
+    "hobbies": ["新しい場所を探検", "いちごグッズ集め"],
+    "skills": ["もふもふで人を癒す", "どこでも寝られる"],
+    "favoriteFood": "いちご",
+    "icons": {
+      "personality": "images/icons/1.png",
+      "birthday": "images/icons/2.png",
+      "debutYear": "images/icons/3.png",
+      "hobbies": "images/icons/4.png",
+      "skills": "images/icons/5.png",
+      "favoriteFood": "images/icons/6.png"
+    }
+  },
+  {
+    "id": 2,
+    "name": "ピンキー",
+    "image": "images/character2.jpg",
+    "profile": "宇宙からやってきた猫型宇宙人。ピンク色の体が特徴的。いつも明るく元気いっぱいで、周りを幸せにする不思議な力を持っている。モフタロウとは親友。",
+    "socialLinks": [
+      { "name": "X", "url": "https://twitter.com/" },
+      { "name": "YouTube", "url": "https://www.youtube.com/" },
+      { "name": "Threads", "url": "https://www.threads.net/" }
+    ],
+    "personality": "明るく元気",
+    "birthday": "7月7日",
+    "debutYear": 2024,
+    "hobbies": ["宇宙遊泳", "地球の面白いものを探す"],
+    "skills": ["幸せオーラを出す", "どんな言語でも理解できる"],
+    "favoriteFood": "宇宙のキラキラしたお菓子",
+    "icons": {
+      "personality": "images/icons/1.png",
+      "birthday": "images/icons/2.png",
+      "debutYear": "images/icons/3.png",
+      "hobbies": "images/icons/4.png",
+      "skills": "images/icons/5.png",
+      "favoriteFood": "images/icons/6.png"
+    }
+  },
+  {
+    "id": 3,
+    "name": "クマゴロー",
+    "image": "images/character3.jpg",
+    "profile": "森に住むクマのキャラクター。見た目は怖そうだが、実は甘いものが大好きな優しい性格。手先が器用で、木工細工が得意。",
+    "socialLinks": [
+      { "name": "Instagram", "url": "https://instagram.com/" },
+      { "name": "TikTok", "url": "https://www.tiktok.com/" }
+    ],
+    "personality": "優しくて甘えん坊",
+    "birthday": "10月27日",
+    "debutYear": 2022,
+    "hobbies": ["木彫り", "蜂蜜集め"],
+    "skills": ["力持ち", "木の香りがわかる"],
+    "favoriteFood": "蜂蜜",
+    "icons": {
+      "personality": "images/icons/1.png",
+      "birthday": "images/icons/2.png",
+      "debutYear": "images/icons/3.png",
+      "hobbies": "images/icons/4.png",
+      "skills": "images/icons/5.png",
+      "favoriteFood": "images/icons/6.png"
+    }
+  },
+  {
+    "id": 4,
+    "name": "ミント",
+    "image": "images/character4.jpg",
+    "profile": "ミントの妖精。清涼感のある香りを放つ緑色の小さな妖精。自然を愛し、環境保護に熱心。ハーブティーを作るのが特技。",
+    "socialLinks": [
+      { "name": "X", "url": "https://twitter.com/" },
+      { "name": "Instagram", "url": "https://instagram.com/" }
+    ],
+    "personality": "穏やかで自然好き",
+    "birthday": "5月9日",
+    "debutYear": 2025,
+    "hobbies": ["ハーブ栽培", "自然観察"],
+    "skills": ["ハーブティー作り", "植物と会話ができる"],
+    "favoriteFood": "朝露",
+    "icons": {
+      "personality": "images/icons/1.png",
+      "birthday": "images/icons/2.png",
+      "debutYear": "images/icons/3.png",
+      "hobbies": "images/icons/4.png",
+      "skills": "images/icons/5.png",
+      "favoriteFood": "images/icons/6.png"
+    }
+  },
+  {
+    "id": 5,
+    "name": "ポポタン",
+    "image": "images/character5.jpg",
+    "profile": "可愛らしいひよこのようなキャラクター。いつもポポポと鳴いている。単純で素直な性格だが、時々予想外の行動をとる。",
+    "socialLinks": [
+      { "name": "YouTube", "url": "https://www.youtube.com/" },
+      { "name": "Instagram", "url": "https://instagram.com/" },
+      { "name": "Threads", "url": "https://www.threads.net/" }
+    ],
+    "personality": "単純で素直",
+    "birthday": "8月16日",
+    "debutYear": 2021,
+    "hobbies": ["お散歩", "ひなたぼっこ"],
+    "skills": ["可愛い鳴き声", "すぐに友達になれる"],
+    "favoriteFood": "お米",
+    "icons": {
+      "personality": "images/icons/1.png",
+      "birthday": "images/icons/2.png",
+      "debutYear": "images/icons/3.png",
+      "hobbies": "images/icons/4.png",
+      "skills": "images/icons/5.png",
+      "favoriteFood": "images/icons/6.png"
+    }
+  }
+]
