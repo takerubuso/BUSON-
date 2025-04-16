@@ -43,7 +43,7 @@ nav ul {
 }
 
 nav ul li {
-    margin-left: 30px;
+    margin-left: 20px; /* 間隔を狭くして全てのメニューを表示しやすくする */
 }
 
 nav ul li a {
@@ -224,16 +224,13 @@ h2::after {
 
 /* グッズセクション */
 .goods-container {
-    /* 横スクロール用のFlexboxをOFFにして、Gridレイアウトにする */
     display: grid;
-    /* 4列表示にしたい場合 */
-    grid-template-columns: repeat(4, 1fr);
+    /* 5列表示に変更 */
+    grid-template-columns: repeat(5, 1fr);
     gap: 15px;
     padding: 10px 0 30px;
-    /* 不要なら overflow-x: auto; は削除 */
-    overflow-x: hidden; /* or remove this line entirely */
+    overflow-x: hidden;
 }
-
 
 .goods-card {
     background: white;
@@ -242,88 +239,94 @@ h2::after {
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     position: relative;
-    /* display: flex と flex-direction: column を削除 */
+    height: 100%; /* カードの高さを統一 */
+    display: flex;
+    flex-direction: column;
 }
 
 .goods-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .goods-img {
-    width: 100%;
-    height: 200px;
-    background-color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
+    width: 100%;
+    height: 180px; /* 画像の高さを少し小さくして切れないようにする */
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
 }
 
 .goods-img img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.3s ease;
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* cover から contain に変更して画像が切れないようにする */
+    transition: transform 0.3s ease;
 }
 
 .goods-card:hover .goods-img img {
-    transform: scale(1.05);
+    transform: scale(1.05);
 }
 
 .goods-info {
-    padding: 15px;
-    background: #fff;
-    flex-grow: 1; /* 追加: `.goods-info` が利用可能なスペースを埋めるようにする */
+    padding: 15px;
+    background: #fff;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
 }
 
 .goods-info h3 {
-    font-size: 18px;
-    margin-bottom: 10px;
-    color: #4a4a4a;
+    font-size: 16px; /* サイズを小さくして表示を改善 */
+    margin-bottom: 10px;
+    color: #4a4a4a;
 }
 
 .goods-info .price {
-    font-weight: 700;
-    color: #ff6b88;
-    margin-bottom: 15px;
-    display: block;
+    font-weight: 700;
+    color: #ff6b88;
+    margin-bottom: 15px;
+    display: block;
 }
 
 .goods-info .button {
-    display: block;
-    text-align: center;
-    padding: 10px;
-    background: #ffd1dc;
-    color: #4a4a4a;
-    border-radius: 25px;
-    font-weight: 500;
-    text-decoration: none;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    display: block;
+    text-align: center;
+    padding: 10px;
+    background: #ffd1dc;
+    color: #4a4a4a;
+    border-radius: 25px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin-top: auto; /* 下部に配置 */
 }
 
 .goods-info .button:hover {
-    background-color: #ff6b88;
-    color: white;
+    background-color: #ff6b88;
+    color: white;
 }
 
-/* ピンク背景の購入ボタン（画像のような見た目に近づける） */
+/* ピンク背景の購入ボタン */
 .pink-button-style .goods-info {
-    padding: 0;
+    padding: 10px; /* パディングを少し小さく調整 */
 }
 
 .pink-button-style .goods-info h3,
 .pink-button-style .goods-info .price {
-    padding: 0 15px;
+    padding: 0 5px;
 }
 
 .pink-button-style .goods-info .button {
-    margin-top: 15px; /* auto ではなく固定値に戻す */
+    margin-top: auto; /* 下部に配置 */
     border-radius: 0;
     background-color: #ffc0cb;
-    padding: 15px;
-    font-size: 16px;
+    padding: 10px;
+    font-size: 14px; /* フォントサイズを小さく調整 */
 }
+
 /* ニュースセクション */
 .news-container {
     display: grid;
@@ -377,6 +380,154 @@ h2::after {
     text-decoration: underline;
 }
 
+/* YouTube セクション */
+.youtube-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 10px 0 20px;
+}
+
+.youtube-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.youtube-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.youtube-embed {
+    width: 100%;
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 アスペクト比 */
+    height: 0;
+    overflow: hidden;
+}
+
+.youtube-embed iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+.youtube-info {
+    padding: 15px;
+}
+
+.youtube-info h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #4a4a4a;
+}
+
+.youtube-info p {
+    font-size: 14px;
+    color: #777;
+}
+
+.youtube-button-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.youtube-button {
+    display: inline-block;
+    padding: 12px 25px;
+    background-color: #ff0000; /* YouTube赤 */
+    color: white;
+    text-decoration: none;
+    border-radius: 25px;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+
+.youtube-button:hover {
+    background-color: #cc0000;
+}
+
+/* 漫画ブログセクション */
+.manga-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    padding: 10px 0 20px;
+}
+
+.manga-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.manga-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.manga-img {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+}
+
+.manga-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.manga-card:hover .manga-img img {
+    transform: scale(1.05);
+}
+
+.manga-info {
+    padding: 15px;
+}
+
+.manga-info .date {
+    font-size: 14px;
+    color: #aaa;
+    margin-bottom: 5px;
+}
+
+.manga-info h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #4a4a4a;
+}
+
+.manga-button-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.manga-button {
+    display: inline-block;
+    padding: 12px 25px;
+    background-color: #ffd1dc;
+    color: #4a4a4a;
+    text-decoration: none;
+    border-radius: 25px;
+    font-weight: 500;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.manga-button:hover {
+    background-color: #ff6b88;
+    color: white;
+}
+
 /* フッタースタイル */
 footer {
     background-color: #ffd1dc;
@@ -395,7 +546,7 @@ footer {
     max-width: 1200px;
     margin: 0 auto;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column; /* 縦方向に配置を変更 */
     padding: 0 20px;
 }
 
@@ -403,6 +554,7 @@ footer {
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-bottom: 20px;
 }
 
 .social-follow-section h3 {
@@ -435,17 +587,20 @@ footer {
 }
 
 /* フッターの新しいソーシャルアイコン */
-.social-icons .fa-twitter::before {
-    content: "\f099";
+.social-icons .fa-x-twitter::before {
+    content: "\f099"; /* FontAwesome 5のXアイコン */
 }
 
-.social-icons .fa-threads::before {
-    content: "\e618";
-}
-
-.links-column {
+.footer-links-row {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.footer-links-row .external-link {
+    margin-bottom: 0; /* マージンをリセット */
 }
 
 .links-list {
@@ -470,10 +625,6 @@ footer {
 .external-link::before {
     content: '→';
     margin-right: 8px;
-}
-
-.external-link {
-    margin-bottom: 15px;
 }
 
 .links-list a:hover, .external-link:hover, .small-link:hover {
@@ -730,6 +881,20 @@ footer {
         gap: 10px;
     }
 
+    .footer-links-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .goods-container {
+        grid-template-columns: repeat(2, 1fr); /* タブレットでは2列表示 */
+    }
+
+    .youtube-container,
+    .manga-container {
+        grid-template-columns: 1fr; /* タブレットでは1列表示 */
+    }
+
     .news-container {
         grid-template-columns: 1fr;
     }
@@ -778,8 +943,17 @@ footer {
         scroll-snap-align: start;
     }
 
+    .goods-container {
+        grid-template-columns: 1fr; /* スマホでは1列表示 */
+    }
+
     .news-container {
         grid-template-columns: 1fr;
+    }
+
+    .youtube-container,
+    .manga-container {
+        grid-template-columns: 1fr; /* スマホでは1列表示 */
     }
 
     .character-other-info-container {
