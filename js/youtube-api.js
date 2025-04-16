@@ -218,9 +218,9 @@ function setupAutomaticUpdates() {
 // 実際のアプリケーションでは、YouTube Data APIを使用して最新・人気動画を取得
 function fetchYouTubeVideos() {
     // SITE_CONFIG (config.js)から設定を取得
-    const apiKey = window.SITE_CONFIG ? window.SITE_CONFIG.youtube.apiKey : 'YOUR_API_KEY_HERE';
+    const apiKey = window.SITE_CONFIG ? window.SITE_CONFIG.youtube.apiKey : 'AIzaSyBqUaWQmyd_elBCzAALNcpQzYBq9v1Vl4I';
     const channelId = window.SITE_CONFIG ? window.SITE_CONFIG.youtube.channelId : 'UCtRCF2NLRULCmf-oLAF455w';
-    const featuredVideoId = window.SITE_CONFIG ? window.SITE_CONFIG.youtube.featuredVideoId : 'FEATURED_VIDEO_ID';
+    const featuredVideoId = window.SITE_CONFIG ? window.SITE_CONFIG.youtube.featuredVideoId : 'kcrNtg0TJyU';
     
     // 最新動画を取得するためのURL構築
     const latestVideoUrl = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet,id&order=date&maxResults=1&type=video`;
