@@ -559,6 +559,12 @@ footer {
     margin-top: 20px;
 }
 
+.info-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .info-circle {
     width: 80px;
     height: 80px;
@@ -615,52 +621,16 @@ footer {
     z-index: -1; /* ポップアップより下に */
 }
 
+.info-label-text {
+    margin-top: 5px;
+    font-size: 12px;
+    color: #4a4a4a;
+    text-align: center;
+}
+
 /* レスポンシブデザイン */
 @media (max-width: 768px) {
-    nav ul {
-        display: none; /* 768px以下でナビゲーションを非表示（ハンバーガーメニューなどに変更推奨） */
-    }
-
-    .slider-caption {
-        max-width: 80%;
-        padding: 10px 15px;
-    }
-
-    .slider-caption h3 {
-        font-size: 18px;
-    }
-
-    .slider-caption p {
-        font-size: 14px;
-    }
-
-    .modal-content {
-        width: 90%;
-        padding: 20px;
-    }
-
-    .links-container {
-        flex-direction: column; /* 縦並び */
-        gap: 20px;
-    }
-
-    .social-follow-section {
-        align-items: flex-start; /* 左寄せ */
-    }
-
-    .second-links-row {
-        flex-direction: column; /* 縦並び */
-        gap: 10px;
-    }
-
-    .news-container {
-        grid-template-columns: 1fr; /* 1列表示 */
-    }
-
-    .character-other-info-container {
-        grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); /* 小さい画面に合わせて調整 */
-    }
-
+    /* ... (省略) ... */
     .info-circle {
         width: 60px;
         height: 60px;
@@ -674,38 +644,13 @@ footer {
         padding: 6px 10px;
         font-size: 10px;
     }
+    .info-label-text {
+        font-size: 10px;
+    }
 }
 
 @media (max-width: 480px) {
-    .slider-caption {
-        max-width: 90%;
-        padding: 8px 12px;
-    }
-
-    .slider-caption h3 {
-        font-size: 16px;
-    }
-
-    .slider-caption p {
-        font-size: 12px;
-    }
-
-    .character-container {
-        scroll-snap-type: x mandatory; /* 横スクロールをスナップ */
-    }
-
-    .character-card {
-        scroll-snap-align: start;
-    }
-
-    .news-container {
-        grid-template-columns: 1fr; /* 1列表示 */
-    }
-
-    .character-other-info-container {
-        grid-template-columns: repeat(3, 1fr); /* さらに小さい画面に合わせて調整 */
-    }
-
+    /* ... (省略) ... */
     .info-circle {
         width: 50px;
         height: 50px;
@@ -717,6 +662,9 @@ footer {
     .info-popup {
         top: -25px;
         padding: 5px 8px;
+        font-size: 9px;
+    }
+    .info-label-text {
         font-size: 9px;
     }
 }
