@@ -1,4 +1,4 @@
-/* YouTube セクションの強化スタイル */
+/* YouTube セクションのスタイル */
 .youtube-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -124,7 +124,7 @@
   color: #ff6b88;
 }
 
-/* 漫画ブログセクションの強化スタイル */
+/* 漫画ブログセクションのスタイル */
 .manga-container {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -153,12 +153,13 @@
   height: 200px;
   overflow: hidden;
   position: relative;
+  background-color: #ffe6ee; /* 画像が読み込めない場合の背景色 */
 }
 
 .manga-img img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: cover; /* 画像のアスペクト比を維持しながら枠内に収める */
   transition: transform 0.3s ease;
 }
 
@@ -249,7 +250,7 @@
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* レスポンシブ対応の強化 */
+/* レスポンシブ対応 */
 @media (max-width: 1024px) {
   .youtube-container,
   .manga-container {
