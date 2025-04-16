@@ -163,34 +163,28 @@ function setupCharacterModal(characters) {
                 : '';
 
             // その他のキャラクター情報を生成
-            const otherInfoHTML = `
-                <div class="character-other-info-container">
-                    <div class="info-circle" data-info="personality" style="background-color: #a8dadc;">
-                        性格
-                        <div class="info-popup">${character.personality}</div>
+            let otherInfoHTML = '<div class="character-other-info-container">';
+            for (const key in character.icons) {
+                const labelText = {
+                    personality: '性格',
+                    birthday: '誕生日',
+                    debutYear: 'デビュー年',
+                    hobbies: '趣味',
+                    skills: '特技',
+                    favoriteFood: '好きな食べ物'
+                }[key];
+                const value = character[key];
+                const iconUrl = character.icons[key];
+
+                otherInfoHTML += `
+                    <div class="info-circle" data-info="${key}">
+                        <img src="${iconUrl}" alt="${labelText}">
+                        <div class="info-popup">${Array.isArray(value) ? value.join(', ') : value}</div>
                     </div>
-                    <div class="info-circle" data-info="birthday" style="background-color: #457b9d;">
-                        誕生日
-                        <div class="info-popup">${character.birthday}</div>
-                    </div>
-                    <div class="info-circle" data-info="debutYear" style="background-color: #1d3557;">
-                        デビュー年
-                        <div class="info-popup">${character.debutYear}</div>
-                    </div>
-                    <div class="info-circle" data-info="hobbies" style="background-color: #e63946;">
-                        趣味
-                        <div class="info-popup">${character.hobbies.join(', ')}</div>
-                    </div>
-                    <div class="info-circle" data-info="skills" style="background-color: #f1faee;">
-                        特技
-                        <div class="info-popup">${character.skills.join(', ')}</div>
-                    </div>
-                    <div class="info-circle" data-info="favoriteFood" style="background-color: #a8dadc;">
-                        好きな食べ物
-                        <div class="info-popup">${character.favoriteFood}</div>
-                    </div>
-                </div>
-            `;
+                `;
+            }
+            otherInfoHTML += '</div>';
+
 
             // モーダル内容を生成
             modalContent.innerHTML = `
@@ -213,13 +207,11 @@ function setupCharacterModal(characters) {
                 circle.addEventListener('click', function() {
                     const popup = this.querySelector('.info-popup');
                     if (popup) {
-                        // 既存のポップアップをすべて非表示にする
                         document.querySelectorAll('.info-popup').forEach(p => {
                             if (p !== popup) {
                                 p.style.display = 'none';
                             }
                         });
-                        // クリックされたポップアップの表示/非表示を切り替える
                         popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
                     }
                 });
@@ -227,58 +219,58 @@ function setupCharacterModal(characters) {
 
             // モーダルを表示
             modal.style.display = 'block';
-            document.body.style.overflow = 'hidden'; // 背景のスクロールを防止
+            document.body.style.overflow = 'hidden';
         }
     }
-}
 
-// グッズの初期化
-function initializeGoods(data) {
-    const goodsContainer = document.querySelector('.goods-container');
-    if (!goodsContainer || !data || data.length === 0) return;
+    // グッズの初期化
+    function initializeGoods(data) {
+        const goodsContainer = document.querySelector('.goods-container');
+        if (!goodsContainer || !data || data.length === 0) return;
 
-    // グッズカードをクリア
-    goodsContainer.innerHTML = '';
+        // グッズカードをクリア
+        goodsContainer.innerHTML = '';
 
-    // グッズカードを生成
-    data.forEach(item => {
-        const card = document.createElement('div');
-        card.className = 'goods-card';
+        // グッズカードを生成
+        data.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'goods-card';
 
-        // 価格をフォーマット
-        const formattedPrice = item.price.toLocaleString() + '円';
+            // 価格をフォーマット
+            const formattedPrice = item.price.toLocaleString() + '円';
 
-        card.innerHTML = `
-            <div class="goods-img">${item.name}</div>
-            <div class="goods-info">
-                <h3>${item.name}</h3>
-                <p class="price">${formattedPrice}</p>
-                <a href="${item.url}" class="button">購入する</a>
-            </div>
-        `;
-        goodsContainer.appendChild(card);
-    });
-}
+            card.innerHTML = `
+                <div class="goods-img">${item.name}</div>
+                <div class="goods-info">
+                    <h3>${item.name}</h3>
+                    <p class="price">${formattedPrice}</p>
+                    <a href="${item.url}" class="button">購入する</a>
+                </div>
+            `;
+            goodsContainer.appendChild(card);
+        });
+    }
 
-// ニュースの初期化
-function initializeNews(data) {
-    const newsContainer = document.querySelector('.news-container');
-    if (!newsContainer || !data || data.length === 0) return;
+    // ニュースの初期化
+    function initializeNews(data) {
+        const newsContainer = document.querySelector('.news-container');
+        if (!newsContainer || !data || data.length === 0) return;
 
-    // ニュースコンテナをクリア
-    newsContainer.innerHTML = '';
+        // ニュースコンテナをクリア
+        newsContainer.innerHTML = '';
 
-    // ニュースアイテムを生成
-    data.forEach(item => {
-        const newsItem = document.createElement('div');
-        newsItem.className = 'news-item';
-        const formattedDate = item.date.replace(/-/g, '.');
-        newsItem.innerHTML = `
-            <p class="date">${formattedDate}</p>
-            <h3>${item.title}</h3>
-            <p>${item.summary}</p>
-            <a href="${item.url}" class="read-more">もっと見る</a>
-        `;
-        newsContainer.appendChild(newsItem);
-    });
-}
+        // ニュースアイテムを生成
+        data.forEach(item => {
+            const newsItem = document.createElement('div');
+            newsItem.className = 'news-item';
+            const formattedDate = item.date.replace(/-/g, '.');
+            newsItem.innerHTML = `
+                <p class="date">${formattedDate}</p>
+                <h3>${item.title}</h3>
+                <p>${item.summary}</p>
+                <a href="${item.url}" class="read-more">もっと見る</a>
+            `;
+            newsContainer.appendChild(newsItem);
+        });
+    }
+});
