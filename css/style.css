@@ -1,231 +1,234 @@
+/* 全体のリセットと基本設定 */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'M PLUS Rounded 1c', sans-serif;
+    font-family: 'M PLUS Rounded 1c', sans-serif; /* フォント指定 */
 }
 
 body {
-    background-color: #ffffff;
-    color: #4a4a4a;
-    line-height: 1.6;
+    background-color: #ffffff; /* 背景色 */
+    color: #4a4a4a; /* 基本テキスト色 */
+    line-height: 1.6; /* 行間 */
 }
 
+/* ヘッダー */
 header {
-    background-color: #fff;
-    padding: 15px 0;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    position: sticky;
+    background-color: #fff; /* ヘッダー背景色 */
+    padding: 15px 0; /* 上下のパディング */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 下部の影 */
+    position: sticky; /* スクロールしても固定 */
     top: 0;
-    z-index: 1000;
+    z-index: 1000; /* 他の要素より前面に表示 */
 }
 
 .header-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
+    display: flex; /* フレックスボックスレイアウト */
+    justify-content: space-between; /* 左右に要素を配置 */
+    align-items: center; /* 垂直方向中央揃え */
+    max-width: 1200px; /* 最大幅 */
+    margin: 0 auto; /* 中央寄せ */
+    padding: 0 20px; /* 左右のパディング */
 }
 
 .logo h1 {
-    font-size: 24px;
-    font-weight: 700;
-    color: #ff6b88;
+    font-size: 24px; /* ロゴのフォントサイズ */
+    font-weight: 700; /* 太字 */
+    color: #ff6b88; /* ロゴの色 */
 }
 
 nav ul {
-    display: flex;
-    list-style: none;
+    display: flex; /* ナビゲーションリストを横並び */
+    list-style: none; /* リストの点を取り除く */
 }
 
 nav ul li {
-    margin-left: 30px;
+    margin-left: 30px; /* 各リストアイテムの左マージン */
 }
 
 nav ul li a {
-    text-decoration: none;
-    color: #4a4a4a;
-    font-weight: 500;
-    font-size: 16px;
-    transition: color 0.3s;
+    text-decoration: none; /* リンクの下線を消す */
+    color: #4a4a4a; /* リンクのテキスト色 */
+    font-weight: 500; /* 少し太く */
+    font-size: 16px; /* フォントサイズ */
+    transition: color 0.3s; /* ホバー時の色変化を滑らかに */
 }
 
 nav ul li a:hover {
-    color: #ff6b88;
+    color: #ff6b88; /* ホバー時のリンクの色 */
 }
 
+/* メインコンテンツ */
 main {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
+    max-width: 1200px; /* 最大幅 */
+    margin: 0 auto; /* 中央寄せ */
+    padding: 20px; /* 全体のパディング */
 }
 
 section {
-    margin-bottom: 50px;
+    margin-bottom: 50px; /* 各セクションの下マージン */
 }
 
 h2 {
-    font-size: 28px;
-    font-weight: 700;
-    color: #ff6b88;
-    margin-bottom: 25px;
-    text-align: center;
-    position: relative;
-    padding-bottom: 10px;
+    font-size: 28px; /* 見出しのフォントサイズ */
+    font-weight: 700; /* 太字 */
+    color: #ff6b88; /* 見出しの色 */
+    margin-bottom: 25px; /* 下マージン */
+    text-align: center; /* 中央揃え */
+    position: relative; /* 相対配置（下線のため） */
+    padding-bottom: 10px; /* 下パディング（下線との間隔） */
 }
 
 h2::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60px;
-    height: 3px;
-    background: #ffd1dc;
-    border-radius: 2px;
+    content: ''; /* 疑似要素の内容は空 */
+    position: absolute; /* 絶対配置 */
+    bottom: 0; /* 親要素の最下部に配置 */
+    left: 50%; /* 親要素の中央に配置 */
+    transform: translateX(-50%); /* 中央揃えを調整 */
+    width: 60px; /* 下線の幅 */
+    height: 3px; /* 下線の高さ */
+    background: #ffd1dc; /* 下線の色 */
+    border-radius: 2px; /* 下線の角を丸く */
 }
 
 /* トップスライダー */
 .slider-container {
-    position: relative;
+    position: relative; /* 相対配置（prev/nextボタンのため） */
     width: 100%;
     height: 400px;
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 15px; /* 角を丸く */
+    overflow: hidden; /* スライダーの内容を枠内に隠す */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* 影 */
     margin-bottom: 40px;
 }
 
 .slider {
     width: 100%;
     height: 100%;
-    background-color: #ffd1dc;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
+    background-color: #ffd1dc; /* スライダーの背景色 */
+    display: flex; /* フレックスボックスレイアウト */
+    align-items: center; /* 垂直方向中央揃え */
+    justify-content: center; /* 水平方向中央揃え */
+    position: relative; /* 相対配置（キャプションのため） */
 }
 
 .slider-content {
     width: 100%;
     height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display: flex; /* フレックスボックスレイアウト */
+    align-items: center; /* 垂直方向中央揃え */
+    justify-content: center; /* 水平方向中央揃え */
 }
 
 .slider-caption {
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-    background: rgba(255, 255, 255, 0.9);
+    position: absolute; /* 絶対配置 */
+    bottom: 20px; /* 下からの距離 */
+    left: 20px; /* 左からの距離 */
+    background: rgba(255, 255, 255, 0.9); /* 半透明の背景 */
     padding: 15px 20px;
-    border-radius: 10px;
-    max-width: 60%;
+    border-radius: 10px; /* 角を丸く */
+    max-width: 60%; /* 最大幅 */
 }
 
 .slider-caption h3 {
-    color: #ff6b88;
-    font-size: 22px;
+    color: #ff6b88; /* キャプションの見出しの色 */
+    font-size: 22px; /* フォントサイズ */
     margin-bottom: 5px;
 }
 
 .slider-prev, .slider-next {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: rgba(255, 255, 255, 0.8);
+    position: absolute; /* 絶対配置 */
+    top: 50%; /* 垂直方向中央 */
+    transform: translateY(-50%); /* 位置調整 */
+    background: rgba(255, 255, 255, 0.8); /* 半透明の背景 */
     border: none;
     width: 40px;
     height: 40px;
-    border-radius: 50%;
+    border-radius: 50%; /* 円形 */
     cursor: pointer;
     font-size: 16px;
-    color: #ff6b88;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    z-index: 10;
+    color: #ff6b88; /* ボタンの色 */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* 影 */
+    z-index: 10; /* スライダーコンテンツより前面に表示 */
 }
 
 .slider-prev {
-    left: 10px;
+    left: 10px; /* 左からの距離 */
 }
 
 .slider-next {
-    right: 10px;
+    right: 10px; /* 右からの距離 */
 }
 
 /* キャラクターセクション */
 .character-container {
-    display: flex;
-    overflow-x: auto;
-    gap: 20px;
+    display: flex; /* 横並び */
+    overflow-x: auto; /* 横スクロール可能 */
+    gap: 20px; /* 要素間の間隔 */
     padding: 10px 0;
 }
 
 .character-card {
-    flex: 0 0 200px;
-    background: #fff;
-    border-radius: 15px;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    flex: 0 0 200px; /* 幅200pxで伸縮しない */
+    background: #fff; /* カードの背景色 */
+    border-radius: 15px; /* 角を丸く */
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1); /* 影 */
+    overflow: hidden; /* 内容を枠内に隠す */
+    cursor: pointer; /* カーソルを指の形に */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* ホバー時のアニメーション */
 }
 
 .character-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px); /* 少し上に移動 */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* より強い影 */
 }
 
 .character-img {
     width: 100%;
     height: 200px;
-    background-color: #ffd1dc;
-    display: flex;
+    background-color: #ffd1dc; /* 画像の背景色 */
+    display: flex; /* 中央揃えのため */
     align-items: center;
     justify-content: center;
-    color: white;
+    color: white; /* テキスト色 */
     font-weight: bold;
 }
 
 .character-card h3 {
     padding: 15px;
-    text-align: center;
+    text-align: center; /* 中央揃え */
     font-size: 18px;
     color: #4a4a4a;
 }
 
 /* グッズセクション */
 .goods-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 25px;
+    display: grid; /* グリッドレイアウト */
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* 最小幅250pxで自動配置 */
+    gap: 25px; /* 要素間の間隔 */
 }
 
 .goods-card {
-    background: white;
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: white; /* カードの背景色 */
+    border-radius: 15px; /* 角を丸く */
+    overflow: hidden; /* 内容を枠内に隠す */
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1); /* 影 */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* ホバー時のアニメーション */
 }
 
 .goods-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px); /* 少し上に移動 */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* より強い影 */
 }
 
 .goods-img {
     width: 100%;
     height: 200px;
-    background-color: #ffd1dc;
-    display: flex;
+    background-color: #ffd1dc; /* 画像の背景色 */
+    display: flex; /* 中央揃えのため */
     align-items: center;
     justify-content: center;
-    color: white;
+    color: white; /* テキスト色 */
     font-weight: bold;
 }
 
@@ -240,53 +243,53 @@ h2::after {
 }
 
 .goods-info .price {
-    font-weight: 700;
-    color: #ff6b88;
+    font-weight: 700; /* 太字 */
+    color: #ff6b88; /* 価格の色 */
 }
 
 .goods-info .button {
-    display: block;
-    text-align: center;
+    display: block; /* ブロック要素として表示 */
+    text-align: center; /* 中央揃え */
     margin-top: 15px;
     padding: 8px;
-    background: #ffd1dc;
-    color: #4a4a4a;
-    border-radius: 20px;
-    font-weight: 500;
-    text-decoration: none;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    background: #ffd1dc; /* ボタンの背景色 */
+    color: #4a4a4a; /* ボタンのテキスト色 */
+    border-radius: 20px; /* 角を丸く */
+    font-weight: 500; /* 少し太く */
+    text-decoration: none; /* 下線を消す */
+    transition: background-color 0.3s ease, color 0.3s ease; /* ホバー時のアニメーション */
 }
 
 .goods-info .button:hover {
-    background-color: #ff6b88;
-    color: white;
+    background-color: #ff6b88; /* ホバー時の背景色 */
+    color: white; /* ホバー時のテキスト色 */
 }
 
 /* ニュースセクション */
 .news-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-    padding: 20px 0;
+    display: grid; /* グリッドレイアウト */
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* 最小幅300pxで自動配置 */
+    gap: 20px; /* 要素間の間隔 */
+    padding: 20px;
 }
 
 .news-item {
-    background: white;
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    background: white; /* カードの背景色 */
+    border-radius: 15px; /* 角を丸く */
+    overflow: hidden; /* 内容を枠内に隠す */
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1); /* 影 */
     padding: 20px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* ホバー時のアニメーション */
 }
 
 .news-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px); /* 少し上に移動 */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* より強い影 */
 }
 
 .news-item .date {
     font-size: 14px;
-    color: #aaa;
+    color: #aaa; /* 日付の色 */
     margin-bottom: 5px;
 }
 
@@ -302,91 +305,91 @@ h2::after {
 }
 
 .news-item .read-more {
-    display: inline-block;
-    text-decoration: none;
-    color: #ff6b88;
-    font-weight: 500;
+    display: inline-block; /* インラインブロック要素として表示 */
+    text-decoration: none; /* 下線を消す */
+    color: #ff6b88; /* リンクの色 */
+    font-weight: 500; /* 少し太く */
     font-size: 14px;
-    transition: color 0.3s ease;
+    transition: color 0.3s ease; /* ホバー時のアニメーション */
 }
 
 .news-item .read-more:hover {
-    color: #ff4d73;
-    text-decoration: underline;
+    color: #ff4d73; /* ホバー時のリンクの色 */
+    text-decoration: underline; /* 下線を表示 */
 }
 
 /* フッタースタイル */
 footer {
-    background-color: #ffd1dc;
-    color: #4a4a4a;
+    background-color: #ffd1dc; /* フッターの背景色 */
+    color: #4a4a4a; /* フッターのテキスト色 */
     margin-top: 50px;
     padding: 0;
 }
 
 .footer-links-section {
-    background-color: #ffd1dc;
-    color: #4a4a4a;
+    background-color: #ffd1dc; /* フッターリンクセクションの背景色 */
+    color: #4a4a4a; /* フッターリンクセクションのテキスト色 */
     padding: 20px 0;
 }
 
 .links-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
+    max-width: 1200px; /* 最大幅 */
+    margin: 0 auto; /* 中央寄せ */
+    display: flex; /* フレックスボックスレイアウト */
+    justify-content: space-between; /* 左右に要素を配置 */
     padding: 0 20px;
 }
 
 .social-follow-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: flex; /* フレックスボックスレイアウト */
+    flex-direction: column; /* 縦並び */
+    align-items: center; /* 中央揃え */
 }
 
 .social-follow-section h3 {
-    color: #ff6b88;
+    color: #ff6b88; /* FOLLOWの見出しの色 */
     margin-bottom: 15px;
     font-size: 16px;
 }
 
 .social-icons {
-    display: flex;
-    gap: 10px;
+    display: flex; /* 横並び */
+    gap: 10px; /* アイコン間の間隔 */
 }
 
 .social-circle {
-    display: flex;
+    display: flex; /* 中央揃えのため */
     align-items: center;
     justify-content: center;
     width: 40px;
     height: 40px;
-    background-color: white;
-    border-radius: 50%;
-    color: #ff6b88;
-    text-decoration: none;
-    transition: background-color 0.3s, color 0.3s;
+    background-color: white; /* アイコンの背景色 */
+    border-radius: 50%; /* 円形 */
+    color: #ff6b88; /* アイコンの色 */
+    text-decoration: none; /* 下線を消す */
+    transition: background-color 0.3s, color 0.3s; /* ホバー時のアニメーション */
 }
 
 .social-circle:hover {
-    background-color: #ff6b88;
-    color: white;
+    background-color: #ff6b88; /* ホバー時の背景色 */
+    color: white; /* ホバー時のアイコンの色 */
 }
 
-/* New social icons in footer */
+/* フッターの新しいソーシャルアイコン */
 .social-icons .fa-twitter::before {
-    content: "\f099"; /* Unicode for Twitter icon */
+    content: "\f099"; /* TwitterアイコンのUnicode */
 }
 .social-icons .fa-threads::before {
-    content: "\e618"; /* This is a generic icon, you might need a specific font or image for Threads */
+    content: "\e618"; /* ThreadsアイコンのUnicode（汎用アイコン） */
 }
 
 .links-column {
-    display: flex;
-    flex-direction: column;
+    display: flex; /* フレックスボックスレイアウト */
+    flex-direction: column; /* 縦並び */
 }
 
 .links-list {
-    list-style: none;
+    list-style: none; /* リストの点を取り除く */
     margin: 0;
     padding: 0;
 }
@@ -396,16 +399,16 @@ footer {
 }
 
 .links-list a, .external-link, .small-link {
-    color: #4a4a4a;
-    text-decoration: none;
+    color: #4a4a4a; /* リンクのテキスト色 */
+    text-decoration: none; /* 下線を消す */
     font-size: 14px;
-    display: flex;
+    display: flex; /* アイコンとテキストを揃えるため */
     align-items: center;
-    transition: color 0.3s;
+    transition: color 0.3s; /* ホバー時のアニメーション */
 }
 
 .external-link::before {
-    content: '→';
+    content: '→'; /* 外部リンクのアイコン */
     margin-right: 8px;
 }
 
@@ -414,30 +417,30 @@ footer {
 }
 
 .links-list a:hover, .external-link:hover, .small-link:hover {
-    color: #ff6b88;
+    color: #ff6b88; /* ホバー時のリンクの色 */
 }
 
 .links-divider {
-    border-bottom: 1px dotted rgba(74, 74, 74, 0.3);
+    border-bottom: 1px dotted rgba(74, 74, 74, 0.3); /* 点線の下線 */
     margin: 20px 0;
 }
 
 .second-links-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
+    display: flex; /* 横並び */
+    flex-wrap: wrap; /* 折り返し */
+    gap: 20px; /* 要素間の間隔 */
 }
 
 .small-link::before {
-    content: '▶';
+    content: '▶'; /* 小さいリンクのアイコン */
     font-size: 10px;
     margin-right: 5px;
 }
 
 .copyright-section {
-    max-width: 1200px;
-    margin: 0 auto;
-    text-align: center;
+    max-width: 1200px; /* 最大幅 */
+    margin: 0 auto; /* 中央寄せ */
+    text-align: center; /* 中央揃え */
     padding: 0 20px;
     font-size: 12px;
     position: relative;
@@ -449,56 +452,57 @@ footer {
 
 /* モーダルスタイル */
 .modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
+    display: none; /* 最初は非表示 */
+    position: fixed; /* 画面に固定 */
+    z-index: 1000; /* 他の要素より前面に表示 */
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(255, 192, 203, 0.7);
-    overflow: auto;
+    background-color: rgba(255, 192, 203, 0.7); /* 半透明の背景色 */
+    overflow: auto; /* 内容がはみ出たらスクロール可能 */
 }
 
 .modal-content {
-    background-color: white;
-    margin: 5% auto; /* Adjust margin to prevent top cut-off */
+    background-color: white; /* モーダルの背景色 */
+    margin: 5% auto; /* 上下のマージン（中央寄せと少し下げる） */
     padding: 30px;
-    border: 1px solid #ff9eb6;
-    border-radius: 15px;
+    border: 1px solid #ff9eb6; /* 枠線 */
+    border-radius: 15px; /* 角を丸く */
     width: 80%;
-    max-width: 600px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    position: relative;
+    max-width: 600px; /* 最大幅 */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* 影 */
+    position: relative; /* 相対配置（閉じるボタンのため） */
+    text-align: center; /* キャラクター情報サークルを中央揃え */
 }
 
 .close-button {
-    color: #ff6b88;
-    float: right;
+    color: #ff6b88; /* 閉じるボタンの色 */
+    float: right; /* 右寄せ */
     font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
+    font-weight: bold; /* 太字 */
+    cursor: pointer; /* カーソルを指の形に */
 }
 
 .close-button:hover {
-    color: #ff4d73;
+    color: #ff4d73; /* ホバー時の色 */
 }
 
 .character-profile {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    display: flex; /* フレックスボックスレイアウト */
+    flex-direction: column; /* 縦並び */
+    align-items: center; /* 中央揃え */
     text-align: center;
 }
 
 .character-image {
-    width: 150px; /* Adjusted size */
-    height: 150px; /* Adjusted size */
-    border-radius: 50%;
-    background-color: #ffd1dc;
-    margin-bottom: 15px; /* Adjusted margin */
-    overflow: hidden;
-    display: flex;
+    width: 150px; /* 画像の幅 */
+    height: 150px; /* 画像の高さ */
+    border-radius: 50%; /* 円形 */
+    background-color: #ffd1dc; /* 画像がない場合の背景色 */
+    margin-bottom: 15px;
+    overflow: hidden; /* 画像を円形に切り抜く */
+    display: flex; /* 中央揃えのため */
     align-items: center;
     justify-content: center;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
@@ -507,37 +511,37 @@ footer {
 .character-image img {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: cover; /* 画像をアスペクト比を保ったままカバー */
 }
 
 .character-name {
-    font-size: 22px; /* Adjusted size */
+    font-size: 22px;
     font-weight: 700;
     color: #ff6b88;
     margin-bottom: 10px;
 }
 
 .character-description {
-    margin-bottom: 15px; /* Adjusted margin */
+    margin-bottom: 15px;
     line-height: 1.6;
     color: #4a4a4a;
     font-size: 14px;
 }
 
 .character-social {
-    display: flex;
-    justify-content: center;
-    gap: 10px; /* Adjusted gap */
-    margin-top: 15px; /* Adjusted margin */
+    display: flex; /* 横並び */
+    justify-content: center; /* 中央揃え */
+    gap: 10px;
+    margin-top: 15px;
 }
 
 .character-social a {
     text-decoration: none;
     color: #4a4a4a;
-    padding: 6px 10px; /* Adjusted padding */
+    padding: 6px 10px;
     background: #ffd1dc;
     border-radius: 20px;
-    font-size: 12px; /* Adjusted size */
+    font-size: 12px;
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -546,110 +550,58 @@ footer {
     color: white;
 }
 
-/* New styles for character info popups */
-.character-other-info {
+/* キャラクター情報サークルの新しいスタイル */
+.character-other-info-container {
+    display: flex; /* 横並び */
+    flex-wrap: wrap; /* 折り返し */
+    justify-content: center; /* 中央揃え */
+    gap: 15px;
     margin-top: 20px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 10px;
-    text-align: center;
 }
 
-.info-item {
-    position: relative;
+.info-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%; /* 円形 */
+    display: flex; /* 中央揃えのため */
+    flex-direction: column; /* 縦並び */
+    justify-content: center;
+    align-items: center;
+    color: white; /* テキストの色 */
+    font-size: 12px;
+    font-weight: bold; /* 太字 */
+    cursor: pointer; /* カーソルを指の形に */
+    position: relative; /* ポップアップの基準位置 */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease; /* ホバー時のアニメーション */
 }
 
-.info-label {
-    display: inline-block;
-    padding: 8px 12px;
-    background-color: #ffd1dc;
-    color: #4a4a4a;
-    border-radius: 15px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s ease;
-}
-
-.info-label:hover {
-    background-color: #ff6b88;
-    color: white;
+.info-circle:hover {
+    transform: scale(1.05); /* 少し拡大 */
 }
 
 .info-popup {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: white;
-    color: #4a4a4a;
-    border: 1px solid #ff9eb6;
-    border-radius: 8px;
+    display: none; /* 最初は非表示 */
+    position: absolute; /* 絶対配置 */
+    top: 100%; /* 親要素の真下 */
+    left: 50%; /* 親要素の中央 */
+    transform: translateX(-50%); /* 中央揃えの調整 */
+    background-color: white; /* ポップアップの背景色 */
+    color: #4a4a4a; /* ポップアップのテキスト色 */
+    border: 1px solid #ff9eb6; /* 枠線 */
+    border-radius: 8px; /* 角を丸く */
     padding: 10px;
-    margin-top: 5px;
-    z-index: 1;
+    margin-top: 10px;
+    z-index: 1; /* 他の要素より前面に表示 */
     font-size: 12px;
-    white-space: nowrap;
+    white-space: nowrap; /* テキストを折り返さない */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-/* News section adjustments */
-.news-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-    padding: 20px;
-}
-
-.news-item {
-    background: white;
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.news-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-.news-item .date {
-    font-size: 14px;
-    color: #aaa;
-    margin-bottom: 5px;
-}
-
-.news-item h3 {
-    font-size: 20px;
-    margin-bottom: 10px;
-    color: #4a4a4a;
-}
-
-.news-item p {
-    margin-bottom: 15px;
-    font-size: 14px;
-}
-
-.news-item .read-more {
-    display: inline-block;
-    text-decoration: none;
-    color: #ff6b88;
-    font-weight: 500;
-    font-size: 14px;
-    transition: color 0.3s ease;
-}
-
-.news-item .read-more:hover {
-    color: #ff4d73;
-    text-decoration: underline;
 }
 
 /* レスポンシブデザイン */
 @media (max-width: 768px) {
     nav ul {
-        display: none;
+        display: none; /* 768px以下でナビゲーションを非表示（ハンバーガーメニューなどに変更推奨） */
     }
 
     .slider-caption {
@@ -671,21 +623,31 @@ footer {
     }
 
     .links-container {
-        flex-direction: column;
+        flex-direction: column; /* 縦並び */
         gap: 20px;
     }
 
     .social-follow-section {
-        align-items: flex-start;
+        align-items: flex-start; /* 左寄せ */
     }
 
     .second-links-row {
-        flex-direction: column;
+        flex-direction: column; /* 縦並び */
         gap: 10px;
     }
 
     .news-container {
-        grid-template-columns: 1fr; /* Stack news items on smaller screens */
+        grid-template-columns: 1fr; /* 1列表示 */
+    }
+
+    .character-other-info-container {
+        grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); /* 小さい画面に合わせて調整 */
+    }
+
+    .info-circle {
+        width: 70px;
+        height: 70px;
+        font-size: 10px;
     }
 }
 
@@ -704,7 +666,7 @@ footer {
     }
 
     .character-container {
-        scroll-snap-type: x mandatory;
+        scroll-snap-type: x mandatory; /* 横スクロールをスナップ */
     }
 
     .character-card {
@@ -712,6 +674,16 @@ footer {
     }
 
     .news-container {
-        grid-template-columns: 1fr; /* Stack news items on even smaller screens */
+        grid-template-columns: 1fr; /* 1列表示 */
+    }
+
+    .character-other-info-container {
+        grid-template-columns: repeat(3, 1fr); /* さらに小さい画面に合わせて調整 */
+    }
+
+    .info-circle {
+        width: 60px;
+        height: 60px;
+        font-size: 9px;
     }
 }
