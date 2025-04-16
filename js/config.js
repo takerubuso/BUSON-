@@ -25,7 +25,7 @@ const SITE_CONFIG = {
   mangaBlog: {
     rssUrl: 'https://buson.blog.jp/index.rdf', // RSSフィードURL
     updateInterval: 3600000, // データ更新間隔（ミリ秒） - デフォルト1時間
-    defaultImage: 'images/manga_default.jpg' // デフォルト画像
+    defaultImage: 'images/manga/manga_default.jpg' // デフォルト画像
   },
   
   // SNSアカウント設定
@@ -58,9 +58,4 @@ const SITE_CONFIG = {
 };
 
 // 他のJavaScriptファイルからアクセスできるようにする
-if (typeof module !== 'undefined') {
-  module.exports = SITE_CONFIG;
-} else {
-  // ブラウザ環境での使用
-  window.SITE_CONFIG = SITE_CONFIG;
-}
+window.SITE_CONFIG = SITE_CONFIG;
