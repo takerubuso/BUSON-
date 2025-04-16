@@ -264,59 +264,44 @@ h2::after {
 
 /* ニュースセクション */
 .news-container {
-    display: flex;
-    overflow-x: auto;
-    gap: 25px;
-    padding: 10px 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px 0;
 }
 
-.news-card {
-    flex: 0 0 350px;
+.news-item {
     background: white;
     border-radius: 15px;
     overflow: hidden;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.news-card:hover {
+.news-item:hover {
     transform: translateY(-5px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-.news-img {
-    width: 100%;
-    height: 200px;
-    background-color: #ffd1dc;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: bold;
-}
-
-.news-info {
-    padding: 20px;
-}
-
-.news-info .date {
+.news-item .date {
     font-size: 14px;
     color: #aaa;
     margin-bottom: 5px;
 }
 
-.news-info h3 {
+.news-item h3 {
     font-size: 20px;
     margin-bottom: 10px;
     color: #4a4a4a;
 }
 
-.news-info p {
+.news-item p {
     margin-bottom: 15px;
     font-size: 14px;
 }
 
-.news-info .read-more {
+.news-item .read-more {
     display: inline-block;
     text-decoration: none;
     color: #ff6b88;
@@ -325,7 +310,7 @@ h2::after {
     transition: color 0.3s ease;
 }
 
-.news-info .read-more:hover {
+.news-item .read-more:hover {
     color: #ff4d73;
     text-decoration: underline;
 }
@@ -385,6 +370,14 @@ footer {
 .social-circle:hover {
     background-color: #ff6b88;
     color: white;
+}
+
+/* New social icons in footer */
+.social-icons .fa-twitter::before {
+    content: "\f099"; /* Unicode for Twitter icon */
+}
+.social-icons .fa-threads::before {
+    content: "\e618"; /* This is a generic icon, you might need a specific font or image for Threads */
 }
 
 .links-column {
@@ -469,7 +462,7 @@ footer {
 
 .modal-content {
     background-color: white;
-    margin: 10% auto;
+    margin: 5% auto; /* Adjust margin to prevent top cut-off */
     padding: 30px;
     border: 1px solid #ff9eb6;
     border-radius: 15px;
@@ -499,11 +492,11 @@ footer {
 }
 
 .character-image {
-    width: 200px;
-    height: 200px;
+    width: 150px; /* Adjusted size */
+    height: 150px; /* Adjusted size */
     border-radius: 50%;
     background-color: #ffd1dc;
-    margin-bottom: 20px;
+    margin-bottom: 15px; /* Adjusted margin */
     overflow: hidden;
     display: flex;
     align-items: center;
@@ -518,32 +511,33 @@ footer {
 }
 
 .character-name {
-    font-size: 24px;
+    font-size: 22px; /* Adjusted size */
     font-weight: 700;
     color: #ff6b88;
     margin-bottom: 10px;
 }
 
 .character-description {
-    margin-bottom: 20px;
+    margin-bottom: 15px; /* Adjusted margin */
     line-height: 1.6;
     color: #4a4a4a;
+    font-size: 14px;
 }
 
 .character-social {
     display: flex;
     justify-content: center;
-    gap: 15px;
-    margin-top: 20px;
+    gap: 10px; /* Adjusted gap */
+    margin-top: 15px; /* Adjusted margin */
 }
 
 .character-social a {
     text-decoration: none;
     color: #4a4a4a;
-    padding: 8px 15px;
+    padding: 6px 10px; /* Adjusted padding */
     background: #ffd1dc;
     border-radius: 20px;
-    font-size: 14px;
+    font-size: 12px; /* Adjusted size */
     transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -552,42 +546,146 @@ footer {
     color: white;
 }
 
+/* New styles for character info popups */
+.character-other-info {
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    text-align: center;
+}
+
+.info-item {
+    position: relative;
+}
+
+.info-label {
+    display: inline-block;
+    padding: 8px 12px;
+    background-color: #ffd1dc;
+    color: #4a4a4a;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.info-label:hover {
+    background-color: #ff6b88;
+    color: white;
+}
+
+.info-popup {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: white;
+    color: #4a4a4a;
+    border: 1px solid #ff9eb6;
+    border-radius: 8px;
+    padding: 10px;
+    margin-top: 5px;
+    z-index: 1;
+    font-size: 12px;
+    white-space: nowrap;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* News section adjustments */
+.news-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.news-item {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.news-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.news-item .date {
+    font-size: 14px;
+    color: #aaa;
+    margin-bottom: 5px;
+}
+
+.news-item h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+    color: #4a4a4a;
+}
+
+.news-item p {
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.news-item .read-more {
+    display: inline-block;
+    text-decoration: none;
+    color: #ff6b88;
+    font-weight: 500;
+    font-size: 14px;
+    transition: color 0.3s ease;
+}
+
+.news-item .read-more:hover {
+    color: #ff4d73;
+    text-decoration: underline;
+}
+
 /* レスポンシブデザイン */
 @media (max-width: 768px) {
     nav ul {
         display: none;
     }
-    
+
     .slider-caption {
         max-width: 80%;
         padding: 10px 15px;
     }
-    
+
     .slider-caption h3 {
         font-size: 18px;
     }
-    
+
     .slider-caption p {
         font-size: 14px;
     }
-    
+
     .modal-content {
         width: 90%;
         padding: 20px;
     }
-    
+
     .links-container {
         flex-direction: column;
         gap: 20px;
     }
-    
+
     .social-follow-section {
         align-items: flex-start;
     }
-    
+
     .second-links-row {
         flex-direction: column;
         gap: 10px;
+    }
+
+    .news-container {
+        grid-template-columns: 1fr; /* Stack news items on smaller screens */
     }
 }
 
@@ -596,28 +694,24 @@ footer {
         max-width: 90%;
         padding: 8px 12px;
     }
-    
+
     .slider-caption h3 {
         font-size: 16px;
     }
-    
+
     .slider-caption p {
         font-size: 12px;
     }
-    
+
     .character-container {
         scroll-snap-type: x mandatory;
     }
-    
+
     .character-card {
         scroll-snap-align: start;
     }
-    
+
     .news-container {
-        scroll-snap-type: x mandatory;
-    }
-    
-    .news-card {
-        scroll-snap-align: start;
+        grid-template-columns: 1fr; /* Stack news items on even smaller screens */
     }
 }
