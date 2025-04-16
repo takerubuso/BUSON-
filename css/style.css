@@ -566,13 +566,17 @@ footer {
     color: white;
 }
 
-/* キャラクター情報サークルの新しいスタイル */
+/* キャラクター情報アイコンの改良スタイル */
 .character-other-info-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(2, auto);
     gap: 15px;
     margin-top: 20px;
+    width: 100%;
+    max-width: 360px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .info-item {
@@ -592,7 +596,7 @@ footer {
     position: relative;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease;
-    background-color: #f8f9fa;
+    background-color: white;
 }
 
 .info-circle:hover {
@@ -622,7 +626,6 @@ footer {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-/* 吹き出しの矢印（CSSだけで実装する場合） */
 .info-popup::before {
     content: '';
     position: absolute;
@@ -644,114 +647,15 @@ footer {
     text-align: center;
 }
 
-/* レスポンシブデザイン */
-@media (max-width: 768px) {
-    nav ul {
-        display: none; /* 768px以下でナビゲーションを非表示（ハンバーガーメニューなどに変更推奨） */
-    }
-
-    .slider-caption {
-        max-width: 80%;
-        padding: 10px 15px;
-    }
-
-    .slider-caption h3 {
-        font-size: 18px;
-    }
-
-    .slider-caption p {
-        font-size: 14px;
-    }
-
-    .modal-content {
-        width: 90%;
-        padding: 20px;
-    }
-
-    .links-container {
-        flex-direction: column;
-        gap: 20px;
-    }
-
-    .social-follow-section {
-        align-items: flex-start;
-    }
-
-    .second-links-row {
-        flex-direction: column;
+/* レスポンシブ対応 */
+@media (max-width: 480px) {
+    .character-other-info-container {
+        max-width: 300px;
         gap: 10px;
     }
-
-    .news-container {
-        grid-template-columns: 1fr;
-    }
-
-    .character-other-info-container {
-        grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
-    }
-
+    
     .info-circle {
         width: 60px;
         height: 60px;
-    }
-    .info-circle img {
-        max-width: 50%;
-        max-height: 50%;
-    }
-    .info-popup {
-        top: -30px;
-        padding: 6px 10px;
-        font-size: 10px;
-    }
-    .info-label-text {
-        font-size: 10px;
-    }
-}
-
-@media (max-width: 480px) {
-    .slider-caption {
-        max-width: 90%;
-        padding: 8px 12px;
-    }
-
-    .slider-caption h3 {
-        font-size: 16px;
-    }
-
-    .slider-caption p {
-        font-size: 12px;
-    }
-
-    .character-container {
-        scroll-snap-type: x mandatory; /* 横スクロールをスナップ */
-    }
-
-    .character-card {
-        scroll-snap-align: start;
-    }
-
-    .news-container {
-        grid-template-columns: 1fr;
-    }
-
-    .character-other-info-container {
-        grid-template-columns: repeat(3, 1fr);
-    }
-
-    .info-circle {
-        width: 50px;
-        height: 50px;
-    }
-    .info-circle img {
-        max-width: 40%;
-        max-height: 40%;
-    }
-    .info-popup {
-        top: -25px;
-        padding: 5px 8px;
-        font-size: 9px;
-    }
-    .info-label-text {
-        font-size: 9px;
     }
 }
