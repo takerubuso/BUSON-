@@ -231,14 +231,13 @@ h2::after {
 }
 
 .goods-card {
-    background: white;
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    position: relative;
-    display: flex; /* 追加: Flexbox を有効にする */
-    flex-direction: column; /* 追加: 要素を縦方向に配置 */
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    /* display: flex と flex-direction: column を削除 */
 }
 
 .goods-card:hover {
@@ -314,11 +313,11 @@ h2::after {
 }
 
 .pink-button-style .goods-info .button {
-    margin-top: auto; /* 追加: ボタンを `.goods-info` の下部に配置 */
-    border-radius: 0;
-    background-color: #ffc0cb;
-    padding: 15px;
-    font-size: 16px;
+    margin-top: 15px; /* auto ではなく固定値に戻す */
+    border-radius: 0;
+    background-color: #ffc0cb;
+    padding: 15px;
+    font-size: 16px;
 }
 /* ニュースセクション */
 .news-container {
