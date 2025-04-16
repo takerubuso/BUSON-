@@ -1,0 +1,23 @@
+[
+  {
+    "title": "新キャラクター「ピンキー」の日常",
+    "date": "2025-04-15",
+    "image": "images/manga1.jpg",
+    "summary": "ピンキーがBUSONスタジオで過ごす日常を描いた漫画です。",
+    "url": "https://buson.blog.jp/post1"
+  },
+  {
+    "title": "クマゴローの森の冒険",
+    "date": "2025-04-10",
+    "image": "images/manga2.jpg",
+    "summary": "クマゴローが森で出会った新しい友達との冒険を描いた漫画です。",
+    "url": "https://buson.blog.jp/post2"
+  },
+  {
+    "title": "しきぶちゃんといちご狩り",
+    "date": "2025-04-05",
+    "image": "images/manga3.jpg",
+    "summary": "しきぶちゃんがいちご狩りに行く様子を描いた4コマ漫画です。",
+    "url": "https://buson.blog.jp/post3"
+  }
+]
