@@ -228,7 +228,7 @@ h2::after {
     display: grid;
     /* 4列表示にしたい場合 */
     grid-template-columns: repeat(4, 1fr);
-    gap: 25px;
+    gap: 15px;
     padding: 10px 0 30px;
     /* 不要なら overflow-x: auto; は削除 */
     overflow-x: hidden; /* or remove this line entirely */
