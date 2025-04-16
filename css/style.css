@@ -226,8 +226,8 @@ h2::after {
 .goods-container {
     /* 横スクロール用のFlexboxをOFFにして、Gridレイアウトにする */
     display: grid;
-    /* 2列表示にしたい場合 */
-    grid-template-columns: repeat(2, 1fr);
+    /* 4列表示にしたい場合 */
+    grid-template-columns: repeat(4, 1fr);
     gap: 25px;
     padding: 10px 0 30px;
     /* 不要なら overflow-x: auto; は削除 */
