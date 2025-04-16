@@ -330,10 +330,10 @@ h2::after {
     text-decoration: underline;
 }
 
-/* フッタースタイル（ピンク色に変更） */
+/* フッタースタイル */
 footer {
-    background-color: #ffd1dc; /* サイトカラー（ピンク）に変更 */
-    color: #4a4a4a; /* テキスト色をダークグレーに変更 */
+    background-color: #ffd1dc;
+    color: #4a4a4a;
     margin-top: 50px;
     padding: 0;
 }
@@ -359,7 +359,7 @@ footer {
 }
 
 .social-follow-section h3 {
-    color: #ff6b88; /* 濃いピンク色に変更 */
+    color: #ff6b88;
     margin-bottom: 15px;
     font-size: 16px;
 }
@@ -377,7 +377,7 @@ footer {
     height: 40px;
     background-color: white;
     border-radius: 50%;
-    color: #ff6b88; /* 濃いピンク色に変更 */
+    color: #ff6b88;
     text-decoration: none;
     transition: background-color 0.3s, color 0.3s;
 }
@@ -425,7 +425,7 @@ footer {
 }
 
 .links-divider {
-    border-bottom: 1px dotted rgba(74, 74, 74, 0.3); /* ドット色をグレーの半透明に変更 */
+    border-bottom: 1px dotted rgba(74, 74, 74, 0.3);
     margin: 20px 0;
 }
 
@@ -463,7 +463,7 @@ footer {
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(255, 192, 203, 0.7); /* ピンク色の背景（透明度あり） */
+    background-color: rgba(255, 192, 203, 0.7);
     overflow: auto;
 }
 
