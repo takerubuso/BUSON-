@@ -167,88 +167,94 @@ function setupCharacterModal(characters) {
     });
 
     // キャラクターモーダルを表示する関数
-    function showCharacterModal(characterName, characters) {
-        const character = characters.find(char => char.name === characterName);
+    // キャラクターモーダル表示の改善
+function showCharacterModal(characterName, characters) {
+    const character = characters.find(char => char.name === characterName);
 
-        if (character) {
-            // 画像パスの生成（実際のパスに合わせる）
-            const imagePath = character.image || `images/character/1.png`;
+    if (character) {
+        // 画像パスの生成
+        const imagePath = character.image || `images/character/1.png`;
 
-            // ソーシャルリンクを生成
-            const socialLinksHTML = character.socialLinks && character.socialLinks.length > 0
-                ? character.socialLinks.map(link =>
-                    `<a href="${link.url}" target="_blank">${link.name}</a>`
-                ).join('')
-                : '';
+        // ソーシャルリンクを生成
+        const socialLinksHTML = character.socialLinks && character.socialLinks.length > 0
+            ? character.socialLinks.map(link =>
+                `<a href="${link.url}" target="_blank">${link.name}</a>`
+            ).join('')
+            : '';
 
-            // その他のキャラクター情報を生成
-            let otherInfoHTML = '<div class="character-other-info-container">';
+        // キャラクター情報アイコンの配置順序を指定
+        const topRowIcons = [
+            { key: 'personality', label: '性格', icon: 'images/icons/1.png' },
+            { key: 'birthday', label: '誕生日', icon: 'images/icons/2.png' },
+            { key: 'debutYear', label: 'デビュー年', icon: 'images/icons/3.png' }
+        ];
+        
+        const bottomRowIcons = [
+            { key: 'hobbies', label: '趣味', icon: 'images/icons/4.png' },
+            { key: 'skills', label: '特技', icon: 'images/icons/5.png' },
+            { key: 'favoriteFood', label: '好きな食べ物', icon: 'images/icons/6.png' }
+        ];
+
+        // アイコン生成関数
+        function generateIconHTML(iconInfo) {
+            if (!character[iconInfo.key]) return '';
             
-            // キャラクター情報アイコンの定義
-            const infoItems = [
-                { key: 'personality', label: '性格', icon: 'images/icons/1.png' },
-                { key: 'birthday', label: '誕生日', icon: 'images/icons/2.png' },
-                { key: 'debutYear', label: 'デビュー年', icon: 'images/icons/3.png' },
-                { key: 'hobbies', label: '趣味', icon: 'images/icons/4.png' },
-                { key: 'skills', label: '特技', icon: 'images/icons/5.png' },
-                { key: 'favoriteFood', label: '好きな食べ物', icon: 'images/icons/6.png' }
-            ];
+            const value = Array.isArray(character[iconInfo.key]) 
+                ? character[iconInfo.key].join('、') 
+                : character[iconInfo.key];
             
-            infoItems.forEach(item => {
-                if (character[item.key]) {
-                    const value = Array.isArray(character[item.key]) 
-                        ? character[item.key].join('、') 
-                        : character[item.key];
-                    
-                    otherInfoHTML += `
-                        <div class="info-item">
-                            <div class="info-circle" data-info="${item.key}">
-                                <img src="${item.icon}" alt="${item.label}" onerror="this.onerror=null; this.style.display='none';">
-                                <div class="info-popup">${value}</div>
-                            </div>
-                            <p class="info-label-text">${item.label}</p>
-                        </div>
-                    `;
-                }
-            });
-            
-            otherInfoHTML += '</div>';
-
-            // モーダル内容を生成
-            modalContent.innerHTML = `
-                <div class="character-profile">
-                    <div class="character-image">
-                        <img src="${imagePath}" alt="${character.name}" onerror="this.onerror=null; this.src='images/character/1.png';">
+            return `
+                <div class="info-item">
+                    <div class="info-circle" data-info="${iconInfo.key}">
+                        <img src="${iconInfo.icon}" alt="${iconInfo.label}" onerror="this.onerror=null; this.style.display='none';">
+                        <div class="info-popup">${value}</div>
                     </div>
-                    <h2 class="character-name">${character.name}</h2>
-                    <p class="character-description">${character.profile}</p>
-                    <div class="character-social">
-                        ${socialLinksHTML}
-                    </div>
-                    ${otherInfoHTML}
+                    <p class="info-label-text">${iconInfo.label}</p>
                 </div>
             `;
-
-            // ポップアップイベントリスナーを設定
-            const infoCircles = document.querySelectorAll('.info-circle');
-            infoCircles.forEach(circle => {
-                circle.addEventListener('click', function() {
-                    const popup = this.querySelector('.info-popup');
-                    if (popup) {
-                        document.querySelectorAll('.info-popup').forEach(p => {
-                            if (p !== popup) {
-                                p.style.display = 'none';
-                            }
-                        });
-                        popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
-                    }
-                });
-            });
-
-            // モーダルを表示
-            modal.style.display = 'block';
-            document.body.style.overflow = 'hidden';
         }
+
+        // 上下段のアイコンHTMLを生成
+        const topRowHTML = topRowIcons.map(icon => generateIconHTML(icon)).join('');
+        const bottomRowHTML = bottomRowIcons.map(icon => generateIconHTML(icon)).join('');
+
+        // モーダル内容を生成
+        modalContent.innerHTML = `
+            <div class="character-profile">
+                <div class="character-image">
+                    <img src="${imagePath}" alt="${character.name}" onerror="this.onerror=null; this.src='images/character/1.png';">
+                </div>
+                <h2 class="character-name">${character.name}</h2>
+                <p class="character-description">${character.profile}</p>
+                <div class="character-social">
+                    ${socialLinksHTML}
+                </div>
+                <div class="character-other-info-container">
+                    ${topRowHTML}
+                    ${bottomRowHTML}
+                </div>
+            </div>
+        `;
+
+        // ポップアップイベントリスナーを設定
+        const infoCircles = document.querySelectorAll('.info-circle');
+        infoCircles.forEach(circle => {
+            circle.addEventListener('click', function() {
+                const popup = this.querySelector('.info-popup');
+                if (popup) {
+                    document.querySelectorAll('.info-popup').forEach(p => {
+                        if (p !== popup) {
+                            p.style.display = 'none';
+                        }
+                    });
+                    popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
+                }
+            });
+        });
+
+        // モーダルを表示
+        modal.style.display = 'block';
+        document.body.style.overflow = 'hidden';
     }
 }
 
