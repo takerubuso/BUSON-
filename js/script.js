@@ -39,6 +39,16 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => {
             console.error('ニュースデータの読み込みに失敗しました:', error);
         });
+        
+    // ドロップダウンメニューの動作（フッター用の追加コード）
+    const dropdownTitles = document.querySelectorAll('.dropdown-title');
+    
+    dropdownTitles.forEach(title => {
+        title.addEventListener('click', function() {
+            const list = this.nextElementSibling;
+            list.style.display = list.style.display === 'none' ? 'block' : 'none';
+        });
+    });
 });
 
 // スライダーの初期化
