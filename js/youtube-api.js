@@ -1,8 +1,11 @@
-// YouTube APIとの連携
+// YouTube APIとの連携とRSSフィード連携
 document.addEventListener('DOMContentLoaded', function() {
     // YouTube動画とマンガブログの表示を初期化
     displayYouTubeVideos();
     displayMangaBlogPosts();
+    
+    // 自動更新機能を有効化
+    setupAutomaticUpdates();
 });
 
 // YouTube動画をUIに表示する関数
@@ -78,39 +81,14 @@ async function displayMangaBlogPosts() {
     mangaContainer.innerHTML = '<div class="loading">漫画ブログを読み込み中...</div>';
     
     try {
-        // 現段階では、APIから実際に取得する代わりにデモデータを使用
-        const posts = [
-            {
-                title: '夫にやめて欲しいあるある',
-                date: '2025-04-15',
-                url: 'https://buson.blog.jp/post1'
-            },
-            {
-                title: '幼児の口癖あるある',
-                date: '2025-04-04',
-                url: 'https://buson.blog.jp/post2'
-            },
-            {
-                title: 'モテない人あるある',
-                date: '2025-04-03',
-                url: 'https://buson.blog.jp/post3'
-            },
-            {
-                title: '実家の両親あるある',
-                date: '2025-04-01',
-                url: 'https://buson.blog.jp/post4'
-            },
-            {
-                title: '猫を飼っている人あるある',
-                date: '2025-03-28',
-                url: 'https://buson.blog.jp/post5'
-            },
-            {
-                title: '同僚とのやりとりあるある',
-                date: '2025-03-25',
-                url: 'https://buson.blog.jp/post6'
-            }
-        ];
+        // 実際のRSSフィードからデータを取得
+        const posts = await fetchRealMangaBlogPosts();
+        
+        // データが取得できない場合
+        if (!posts || posts.length === 0) {
+            mangaContainer.innerHTML = '<div class="error">ブログ記事が見つかりませんでした。</div>';
+            return;
+        }
         
         // コンテナをクリア
         mangaContainer.innerHTML = '';
@@ -119,8 +97,8 @@ async function displayMangaBlogPosts() {
         const listElement = document.createElement('ul');
         listElement.className = 'manga-list';
         
-        // 記事リストアイテムを生成
-        posts.forEach(post => {
+        // 記事リストアイテムを生成（最大6件）
+        posts.slice(0, 6).forEach(post => {
             // 日付をフォーマット
             const formattedDate = post.date.replace(/-/g, '.');
             
@@ -128,8 +106,10 @@ async function displayMangaBlogPosts() {
             listItem.className = 'manga-list-item';
             
             listItem.innerHTML = `
-                <span class="post-date">${formattedDate}</span>
-                <a href="${post.url}" class="post-title" target="_blank">${post.title}</a>
+                <a href="${post.url}" class="post-link" target="_blank">
+                    <span class="post-date">${formattedDate}</span>
+                    <span class="post-title">${post.title}</span>
+                </a>
             `;
             
             listElement.appendChild(listItem);
@@ -140,18 +120,40 @@ async function displayMangaBlogPosts() {
     } catch (error) {
         console.error('漫画ブログの表示に失敗しました:', error);
         mangaContainer.innerHTML = '<div class="error">ブログの読み込みに失敗しました。後でもう一度お試しください。</div>';
+        
+        // エラー時はローカルデータでフォールバック
+        useFallbackMangaBlogData(mangaContainer);
     }
 }
 
-// 将来的な実装: RSSフィードから最新記事を取得する関数
+// RSSフィードから実際のブログ記事データを取得する関数
 async function fetchRealMangaBlogPosts() {
     try {
-        // SITE_CONFIG (config.js)から設定を取得
-        const rssUrl = window.SITE_CONFIG ? window.SITE_CONFIG.mangaBlog.rssUrl : 'https://buson.blog.jp/index.rdf';
+        // SITE_CONFIG (config.js)から設定を取得、またはデフォルト値を使用
+        const rssUrl = window.SITE_CONFIG?.mangaBlog?.rssUrl || 'https://buson.blog.jp/index.rdf';
         
         // RSS2JSONサービスを使用してRSSをJSONに変換
         const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
         
+        // ローカルストレージからキャッシュを取得
+        const cachedData = localStorage.getItem('mangaBlogData');
+        const cacheTimestamp = localStorage.getItem('mangaBlogTimestamp');
+        
+        // キャッシュが有効か確認（10分以内）
+        const currentTime = new Date().getTime();
+        const cacheExpiryTime = 10 * 60 * 1000; // 10分（ミリ秒）
+        
+        if (cachedData && cacheTimestamp) {
+            const cacheAge = currentTime - parseInt(cacheTimestamp);
+            
+            // キャッシュが有効期限内なら使用
+            if (cacheAge < cacheExpiryTime) {
+                return JSON.parse(cachedData);
+            }
+        }
+        
+        // APIリクエスト
+        console.log('RSSフィードを取得中...');
         const response = await fetch(apiUrl);
         
         if (!response.ok) {
@@ -164,64 +166,112 @@ async function fetchRealMangaBlogPosts() {
             throw new Error(`RSSフィードエラー: ${data.message || 'Unknown error'}`);
         }
         
-        // 最新の6記事を取得して整形
-        const posts = data.items.slice(0, 6).map(item => ({
+        // データ整形
+        const posts = data.items.map(item => ({
             title: item.title,
             date: new Date(item.pubDate).toISOString().split('T')[0],
             url: item.link
         }));
         
+        // キャッシュを更新
+        localStorage.setItem('mangaBlogData', JSON.stringify(posts));
+        localStorage.setItem('mangaBlogTimestamp', currentTime.toString());
+        
         return posts;
     } catch (error) {
         console.error('漫画ブログフィードの取得に失敗しました:', error);
+        
+        // キャッシュがあればそれを返す
+        const cachedData = localStorage.getItem('mangaBlogData');
+        if (cachedData) {
+            console.log('キャッシュデータを使用します');
+            return JSON.parse(cachedData);
+        }
+        
         throw error;
     }
 }
 
-// 将来的な実装: YouTube API連携
-// 実際のアプリケーションでは、YouTube Data APIを使用して最新・人気動画を取得
-function fetchYouTubeVideos() {
-    // SITE_CONFIG (config.js)から設定を取得
-    const apiKey = window.SITE_CONFIG ? window.SITE_CONFIG.youtube.apiKey : 'YOUR_API_KEY_HERE';
-    const channelId = window.SITE_CONFIG ? window.SITE_CONFIG.youtube.channelId : 'UCtRCF2NLRULCmf-oLAF455w';
-    const featuredVideoId = window.SITE_CONFIG ? window.SITE_CONFIG.youtube.featuredVideoId : 'FEATURED_VIDEO_ID';
+// フォールバック用の漫画ブログデータを表示する関数
+function useFallbackMangaBlogData(container) {
+    // デモデータ
+    const fallbackPosts = [
+        {
+            title: '夫にやめて欲しいあるある',
+            date: '2025.04.15',
+            url: 'https://buson.blog.jp/post1'
+        },
+        {
+            title: '幼児の口癖あるある',
+            date: '2025.04.04',
+            url: 'https://buson.blog.jp/post2'
+        },
+        {
+            title: 'モテない人あるある',
+            date: '2025.04.03',
+            url: 'https://buson.blog.jp/post3'
+        },
+        {
+            title: '実家の両親あるある',
+            date: '2025.04.01',
+            url: 'https://buson.blog.jp/post4'
+        },
+        {
+            title: '猫を飼っている人あるある',
+            date: '2025.03.28',
+            url: 'https://buson.blog.jp/post5'
+        },
+        {
+            title: '同僚とのやりとりあるある',
+            date: '2025.03.25',
+            url: 'https://buson.blog.jp/post6'
+        }
+    ];
     
-    // 最新動画を取得するためのURL構築
-    const latestVideoUrl = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet,id&order=date&maxResults=1&type=video`;
+    // コンテナをクリア
+    container.innerHTML = '';
     
-    // 人気動画を取得するためのURL構築
-    const popularVideoUrl = `https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet,id&order=viewCount&maxResults=1&type=video`;
+    // リスト形式で表示
+    const listElement = document.createElement('ul');
+    listElement.className = 'manga-list';
     
-    // 指定動画を取得するためのURL構築
-    const featuredVideoUrl = `https://www.googleapis.com/youtube/v3/videos?key=${apiKey}&id=${featuredVideoId}&part=snippet`;
+    // 記事リストアイテムを生成（最大6件）
+    fallbackPosts.forEach(post => {
+        const listItem = document.createElement('li');
+        listItem.className = 'manga-list-item';
+        
+        listItem.innerHTML = `
+            <a href="${post.url}" class="post-link" target="_blank">
+                <span class="post-date">${post.date}</span>
+                <span class="post-title">${post.title}</span>
+            </a>
+        `;
+        
+        listElement.appendChild(listItem);
+    });
     
-    // 将来的にはここでAPIリクエストを行い、結果を処理
-    console.log('YouTube API URLが構築されました：', latestVideoUrl);
+    container.appendChild(listElement);
 }
 
-// 実際の実装に移行する場合のために、以下の関数を定期的に実行するセットアップ
+// 自動更新のための設定
 function setupAutomaticUpdates() {
     // 更新間隔を設定（ミリ秒）
-    const updateInterval = window.SITE_CONFIG ? window.SITE_CONFIG.mangaBlog.updateInterval : 3600000; // デフォルト1時間
+    const updateInterval = window.SITE_CONFIG?.mangaBlog?.updateInterval || 600000; // デフォルト10分
     
     // 定期的な更新を設定
     setInterval(async () => {
         try {
-            // 実際のデータ取得関数に置き換える
-            // const posts = await fetchRealMangaBlogPosts();
-            // displayMangaBlogPosts(posts);
-            
-            console.log('ブログデータの自動更新をチェックしました');
+            console.log('ブログデータの自動更新をチェックしています...');
+            displayMangaBlogPosts();
         } catch (error) {
             console.error('自動更新に失敗しました:', error);
         }
     }, updateInterval);
-    
-    // 初回実行（ページ読み込み完了時）
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log('ページ読み込み完了時のデータ更新を実行します');
-    });
 }
 
-// アプリケーションが本番環境に移行する際にコメントを外す
-// setupAutomaticUpdates();
+// CORS問題に対応するヘルパー関数（プロキシサーバーが必要な場合に使用）
+function getProxiedRssUrl(originalUrl) {
+    // CORSプロキシサービスのURL
+    // 注意：独自のプロキシサーバーを使用するか、CORS対応のサービスを使用することをお勧めします
+    return `https://api.allorigins.win/raw?url=${encodeURIComponent(originalUrl)}`;
+}
