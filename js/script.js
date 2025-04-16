@@ -1,16 +1,25 @@
 document.addEventListener('DOMContentLoaded', function() {
     // スライダーデータを読み込み
-    fetch('data/slider.json')
+    fetch('slider.json')
         .then(response => response.json())
         .then(data => {
             initializeSlider(data);
         })
         .catch(error => {
             console.error('スライダーデータの読み込みに失敗しました:', error);
+            // エラー時にダミーデータで初期化
+            const dummySliderData = [
+                {
+                    title: "新キャラクター「ピンキー」登場！",
+                    description: "宇宙からやってきた不思議な猫型キャラクター",
+                    url: "#characters"
+                }
+            ];
+            initializeSlider(dummySliderData);
         });
 
     // キャラクターデータを読み込み
-    fetch('data/characters.json')
+    fetch('characters.json')
         .then(response => response.json())
         .then(data => {
             initializeCharacters(data);
@@ -21,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
     // グッズデータを読み込み
-    fetch('data/goods.json')
+    fetch('goods.json')
         .then(response => response.json())
         .then(data => {
             initializeGoods(data);
@@ -31,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
     // ニュースデータを読み込み
-    fetch('data/news.json')
+    fetch('news.json')
         .then(response => response.json())
         .then(data => {
             initializeNews(data);
@@ -39,16 +48,6 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => {
             console.error('ニュースデータの読み込みに失敗しました:', error);
         });
-
-    // ドロップダウンメニューの動作（フッター用の追加コード）
-    const dropdownTitles = document.querySelectorAll('.dropdown-title');
-
-    dropdownTitles.forEach(title => {
-        title.addEventListener('click', function() {
-            const list = this.nextElementSibling;
-            list.style.display = list.style.display === 'none' ? 'block' : 'none';
-        });
-    });
 });
 
 // スライダーの初期化
@@ -188,7 +187,6 @@ function setupCharacterModal(characters) {
             }
             otherInfoHTML += '</div>';
 
-
             // モーダル内容を生成
             modalContent.innerHTML = `
                 <div class="character-profile">
@@ -225,55 +223,55 @@ function setupCharacterModal(characters) {
             document.body.style.overflow = 'hidden';
         }
     }
+}
 
-    // グッズの初期化
-    function initializeGoods(data) {
-        const goodsContainer = document.querySelector('.goods-container');
-        if (!goodsContainer || !data || data.length === 0) return;
+// グッズの初期化
+function initializeGoods(data) {
+    const goodsContainer = document.querySelector('.goods-container');
+    if (!goodsContainer || !data || data.length === 0) return;
 
-        // グッズカードをクリア
-        goodsContainer.innerHTML = '';
+    // グッズカードをクリア
+    goodsContainer.innerHTML = '';
 
-        // グッズカードを生成
-        data.forEach(item => {
-            const card = document.createElement('div');
-            card.className = 'goods-card';
+    // グッズカードを生成
+    data.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'goods-card';
 
-            // 価格をフォーマット
-            const formattedPrice = item.price.toLocaleString() + '円';
+        // 価格をフォーマット
+        const formattedPrice = item.price.toLocaleString() + '円';
 
-            card.innerHTML = `
-                <div class="goods-img">${item.name}</div>
-                <div class="goods-info">
-                    <h3>${item.name}</h3>
-                    <p class="price">${formattedPrice}</p>
-                    <a href="${item.url}" class="button">購入する</a>
-                </div>
-            `;
-            goodsContainer.appendChild(card);
-        });
-    }
+        card.innerHTML = `
+            <div class="goods-img">${item.name}</div>
+            <div class="goods-info">
+                <h3>${item.name}</h3>
+                <p class="price">${formattedPrice}</p>
+                <a href="${item.url}" class="button">購入する</a>
+            </div>
+        `;
+        goodsContainer.appendChild(card);
+    });
+}
 
-    // ニュースの初期化
-    function initializeNews(data) {
-        const newsContainer = document.querySelector('.news-container');
-        if (!newsContainer || !data || data.length === 0) return;
+// ニュースの初期化
+function initializeNews(data) {
+    const newsContainer = document.querySelector('.news-container');
+    if (!newsContainer || !data || data.length === 0) return;
 
-        // ニュースコンテナをクリア
-        newsContainer.innerHTML = '';
+    // ニュースコンテナをクリア
+    newsContainer.innerHTML = '';
 
-        // ニュースアイテムを生成
-        data.forEach(item => {
-            const newsItem = document.createElement('div');
-            newsItem.className = 'news-item';
-            const formattedDate = item.date.replace(/-/g, '.');
-            newsItem.innerHTML = `
-                <p class="date">${formattedDate}</p>
-                <h3>${item.title}</h3>
-                <p>${item.summary}</p>
-                <a href="${item.url}" class="read-more">もっと見る</a>
-            `;
-            newsContainer.appendChild(newsItem);
-        });
-    }
-});
+    // ニュースアイテムを生成
+    data.forEach(item => {
+        const newsItem = document.createElement('div');
+        newsItem.className = 'news-item';
+        const formattedDate = item.date.replace(/-/g, '.');
+        newsItem.innerHTML = `
+            <p class="date">${formattedDate}</p>
+            <h3>${item.title}</h3>
+            <p>${item.summary}</p>
+            <a href="${item.url}" class="read-more">もっと見る</a>
+        `;
+        newsContainer.appendChild(newsItem);
+    });
+}
