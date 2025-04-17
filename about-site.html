@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>このサイトについて | BUSON STUDIO</title>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* このサイトについてページのスタイル */
+        .about-site-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ff6b88;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: #ffd1dc;
+            border-radius: 2px;
+        }
+        
+        .content-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .content-section h2 {
+            font-size: 20px;
+            color: #ff6b88;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px dotted #ffd1dc;
+            text-align: left;
+        }
+        
+        .content-section h2::after {
+            display: none;
+        }
+        
+        .content-section p {
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+        
+        .content-section ul {
+            padding-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .content-section li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+        
+        .tech-info {
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .tech-info h3 {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .browser-icons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .browser-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .browser-icon i {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        
+        .return-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #ffd1dc;
+            color: #4a4a4a;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: background-color 0.3s, color 0.3s;
+            text-align: center;
+        }
+        
+        .return-button:hover {
+            background-color: #ff6b88;
+            color: white;
+        }
+        
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <h1><a href="index.html" style="text-decoration: none; color: inherit;">BUSON STUDIO</a></h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html#top">ホーム</a></li>
+                    <li><a href="index.html#characters">キャラクター</a></li>
+                    <li><a href="index.html#goods">グッズ</a></li>
+                    <li><a href="index.html#books">書籍</a></li>
+                    <li><a href="index.html#news">ニュース</a></li>
+                    <li><a href="index.html#youtube">YouTube</a></li>
+                    <li><a href="index.html#manga">漫画ブログ</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <main>
+        <div class="about-site-container">
+            <h1 class="page-title">このサイトについて</h1>
+            
+            <div class="content-section">
+                <h2>サイト概要</h2>
+                <p>「BUSON STUDIO」公式サイトへようこそ。このサイトは株式会社TAKERが運営するオリジナルキャラクターブランド「BUSON STUDIO」の公式ウェブサイトです。キャラクター紹介、グッズ情報、ニュース、YouTube動画、漫画ブログなど、BUSONスタジオに関する様々な情報を提供しています。</p>
+                
+                <p>BUSONスタジオは、親しみやすくポジティブなキャラクターを通じて、日常に笑顔と癒しを届けることを目指しています。キャラクターグッズの販売やコンテンツ配信を通じて、皆様の生活に彩りを添えるブランドでありたいと考えています。</p>
+            </div>
+            
+            <div class="content-section">
+                <h2>サイト内容</h2>
+                <p>本サイトでは以下のコンテンツを提供しています：</p>
+                <ul>
+                    <li><strong>キャラクター紹介</strong> - BUSONスタジオのオリジナルキャラクターの詳細プロフィールや設定</li>
+                    <li><strong>グッズ情報</strong> - オフィシャルグッズの紹介と購入案内</li>
+                    <li><strong>書籍情報</strong> - オリジナル書籍やキャラクター関連書籍の紹介</li>
+                    <li><strong>最新ニュース</strong> - イベント情報や新商品情報など、最新のお知らせ</li>
+                    <li><strong>YouTube</strong> - 公式YouTubeチャンネルで配信中の動画コンテンツ</li>
+                    <li><strong>漫画ブログ</strong> - 定期更新のオリジナル漫画コンテンツ</li>
+                </ul>
+                <p>各コンテンツは定期的に更新していますので、ぜひブックマークして定期的にチェックしてください。</p>
+            </div>
+            
+            <div class="content-section">
+                <h2>運営会社</h2>
+                <p>本サイトは以下の会社が運営しています：</p>
+                <p>
+                    株式会社TAKER<br>
+                    運営サービス: BUSON STUDIO<br>
+                    所在地: 〒810-0001 福岡県福岡市中央区天神2丁目3-10 天神パインクレスト716<br>
+                    Webサイト: <a href="http://buson2025.com" target="_blank">http://buson2025.com</a><br>
+                    メールアドレス: <a href="mailto:buson2025@gmail.com">buson2025@gmail.com</a>
+                </p>
+                <p>会社の詳細情報については<a href="company.html">会社情報ページ</a>をご覧ください。</p>
+            </div>
+            
+            <div class="content-section">
+                <h2>推奨環境</h2>
+                <p>当サイトは以下の環境での閲覧を推奨しています：</p>
+                
+                <div class="tech-info">
+                    <h3>対応ブラウザ</h3>
+                    <div class="browser-icons">
+                        <div class="browser-icon">
+                            <i class="fab fa-chrome"></i>
+                            <span>Chrome 最新版</span>
+                        </div>
+                        <div class="browser-icon">
+                            <i class="fab fa-firefox"></i>
+                            <span>Firefox 最新版</span>
+                        </div>
+                        <div class="browser-icon">
+                            <i class="fab fa-safari"></i>
+                            <span>Safari 最新版</span>
+                        </div>
+                        <div class="browser-icon">
+                            <i class="fab fa-edge"></i>
+                            <span>Edge 最新版</span>
+                        </div>
+                    </div>
+                    
+                    <h3>対応デバイス</h3>
+                    <p>パソコン、タブレット、スマートフォンなど、各種デバイスに対応しています。スマートフォンでの閲覧の場合は、縦向きでの利用を推奨しています。</p>
+                    
+                    <h3>JavaScript</h3>
+                    <p>当サイトではJavaScriptを使用しています。快適にご利用いただくためにJavaScriptを有効にしてください。</p>
+                </div>
+            </div>
+            
+            <div class="content-section">
+                <h2>免責事項</h2>
+                <p>当サイトに掲載されている情報は、予告なく変更されることがあります。また、当サイトの利用によって生じたいかなる損害についても、当社は責任を負いかねますのでご了承ください。</p>
+                
+                <p>当サイトからリンクされている他のウェブサイトの内容については、当社は責任を負いかねます。リンク先のサイトの利用については、各サイトの利用規約に従ってください。</p>
+                
+                <p>当サイトに掲載されているキャラクター、イラスト、ロゴマーク、文章などの著作物の著作権は、特に明記がない限り株式会社TAKERもしくはBUSON STUDIOに帰属します。無断での複製や転載は禁止しています。詳細は<a href="privacy.html">プライバシーポリシー</a>をご覧ください。</p>
+            </div>
+            
+            <div class="content-section">
+                <h2>お問い合わせ</h2>
+                <p>当サイトに関するお問い合わせは、以下のメールアドレスまでお願いいたします。</p>
+                <p>メールアドレス: <a href="mailto:buson2025@gmail.com">buson2025@gmail.com</a></p>
+                <p>お問い合わせの内容によっては、回答までにお時間をいただく場合や、回答できない場合もございますので、あらかじめご了承ください。</p>
+            </div>
+            
+            <div class="button-container">
+                <a href="index.html" class="return-button">トップページに戻る</a>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="footer-links-section">
+            <div class="links-container">
+                <div class="social-follow-section">
+                    <h3>FOLLOW</h3>
+                    <div class="social-icons">
+                        <a href="https://twitter.com/busonStudio" class="social-circle"><i class="fab fa-x-twitter"></i></a>
+                        <a href="https://www.youtube.com/channel/UCtRCF2NLRULCmf-oLAF455w" class="social-circle"><i class="fab fa-youtube"></i></a>
+                        <a href="https://www.instagram.com/buson2025/" class="social-circle"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.tiktok.com/@buson2025" class="social-circle"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-links-row">
+                    <a href="company.html" class="external-link">会社情報</a>
+                    <a href="news.html" class="external-link">ニュースリリース</a>
+                    <a href="license.html" class="external-link">BUSONスタジオのライセンスビジネス事例</a>
+                    <a href="faq.html" class="external-link">よくあるご質問</a>
+                </div>
+            </div>
+
+            <div class="links-divider"></div>
+
+            <div class="links-container second-links-row">
+                <a href="important.html" class="small-link">重要なお知らせ</a>
+                <a href="about-site.html" class="small-link">このサイトについて</a>
+                <a href="social-policy.html" class="small-link">ソーシャルメディアポリシー</a>
+                <a href="privacy.html" class="small-link">プライバシーポリシー</a>
+                <a href="accessibility.html" class="small-link">ウェブアクセシビリティ方針</a>
+                <a href="sitemap.html" class="small-link">サイトマップ</a>
+            </div>
+
+            <div class="links-divider"></div>
+
+            <div class="copyright-section">
+                <p>このサイトに掲載のイラスト・写真・文章の無断転載を禁じます。すべての著作権はBUSON STUDIOに帰属します。</p>
+                <p>© 2025 BUSON STUDIO All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
