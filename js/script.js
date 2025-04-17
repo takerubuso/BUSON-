@@ -306,7 +306,7 @@ function initializeGoods(data) {
             <div class="goods-info">
                 <h3>${item.name}</h3>
                 <p class="price">${formattedPrice}</p>
-                <a href="${item.url}" class="button" target="_blank">購入する</a>
+                <a href="${item.url}" class="button" target="_blank">詳しく見る</a>
             </div>
         `;
         goodsContainer.appendChild(card);
