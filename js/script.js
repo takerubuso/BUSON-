@@ -1,7 +1,12 @@
 document.addEventListener('DOMContentLoaded', function() {
     // スライダーデータを読み込み
     fetch('data/slider.json')
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('スライダーデータの読み込みに失敗: ' + response.status);
+            }
+            return response.json();
+        })
         .then(data => {
             initializeSlider(data);
         })
@@ -21,7 +26,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // キャラクターデータを読み込み
     fetch('data/characters.json')
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('キャラクターデータの読み込みに失敗: ' + response.status);
+            }
+            return response.json();
+        })
         .then(data => {
             initializeCharacters(data);
             setupCharacterModal(data); // モーダル設定を追加
@@ -33,27 +43,89 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // グッズデータを読み込み
     fetch('data/goods.json')
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('グッズデータの読み込みに失敗: ' + response.status);
+            }
+            return response.json();
+        })
         .then(data => {
+            console.log('グッズデータ取得成功:', data);
             initializeGoods(data);
         })
         .catch(error => {
             console.error('グッズデータの読み込みに失敗しました:', error);
-            // エラー時は何も表示しない
+            // エラー時にはダミーデータを表示（オプション）
+            const dummyData = [
+                {
+                    "id": 1,
+                    "name": "モフタロウ ぬいぐるみ",
+                    "image": "images/placeholder.jpg",
+                    "price": 2649,
+                    "url": "https://suzuri.jp/buson2025/15723649/acrylic-keychain/50x50mm/clear"
+                },
+                {
+                    "id": 2,
+                    "name": "ピンキー アクリルキーホルダー",
+                    "image": "images/placeholder.jpg",
+                    "price": 800,
+                    "url": "https://booth.pm/"
+                },
+                {
+                    "id": 3,
+                    "name": "キャラクター マスキングテープ",
+                    "image": "images/placeholder.jpg",
+                    "price": 550,
+                    "url": "https://booth.pm/"
+                }
+            ];
+            initializeGoods(dummyData);
         });
 
-    // 書籍データを初期化（サンプルデータを使用）
+    // 書籍セクションの初期化
     initializeBooks();
 
     // ニュースデータを読み込み
     fetch('data/news.json')
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('ニュースデータの読み込みに失敗: ' + response.status);
+            }
+            return response.json();
+        })
         .then(data => {
-            initializeNews(data);
+            console.log('ニュースデータ取得成功:', data);
+            // 最新の3つのニュースだけを表示
+            const latestNews = data.slice(0, 3);
+            initializeNews(latestNews);
         })
         .catch(error => {
             console.error('ニュースデータの読み込みに失敗しました:', error);
-            // エラー時は何も表示しない
+            // エラー時にはダミーデータを表示
+            const dummyNews = [
+                {
+                    "id": 1,
+                    "date": "2025-04-15",
+                    "title": "新キャラクター「ピンキー」登場！",
+                    "summary": "宇宙からやってきた不思議な猫型キャラクター「ピンキー」が仲間入り！特設ページでプロフィールを公開中です。",
+                    "url": "#"
+                },
+                {
+                    "id": 2,
+                    "date": "2025-04-10",
+                    "title": "コラボカフェ開催のお知らせ",
+                    "summary": "4月20日から5月15日まで、渋谷のカフェ「スイートタイム」にてBUSONスタジオキャラクターズのコラボカフェを開催します！",
+                    "url": "#"
+                },
+                {
+                    "id": 3,
+                    "date": "2025-04-01",
+                    "title": "グッズ新発売のお知らせ",
+                    "summary": "人気キャラクター「モフタロウ」のぬいぐるみなど、新グッズが発売開始！BOOTHとBASEにて販売中です。",
+                    "url": "#"
+                }
+            ];
+            initializeNews(dummyNews);
         });
         
     // YouTubeデータの初期化
