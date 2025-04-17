@@ -62,8 +62,8 @@
 .youtube-button {
   display: inline-block;
   padding: 12px 25px;
-  background-color: #ff0000; /* YouTube赤 */
-  color: white;
+  background-color: #ffd1dc; /* YouTubeの赤からピンクに変更 */
+  color: #4a4a4a;
   text-decoration: none;
   border-radius: 25px;
   font-weight: 500;
@@ -72,7 +72,8 @@
 }
 
 .youtube-button:hover {
-  background-color: #cc0000;
+  background-color: #ff6b88;
+  color: white;
   transform: translateY(-2px);
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
 }
@@ -84,7 +85,7 @@
 
 /* 漫画ブログセクションのスタイル - ヘッダー画像のみのバージョン */
 .manga-container {
-  max-width: 800px;
+  max-width: 400px; /* 幅を50%に縮小 (元は800px) */
   margin: 0 auto;
   padding: 10px 0 30px;
 }
@@ -138,6 +139,11 @@
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
 }
 
+/* 書籍セクションの追加スタイル */
+#books-container {
+  margin-bottom: 30px;
+}
+
 /* レスポンシブ対応 */
 @media (max-width: 768px) {
   .youtube-container {
@@ -147,6 +153,7 @@
   
   .manga-container {
     padding: 0 15px 30px;
+    max-width: 300px; /* タブレットでのサイズ調整 */
   }
   
   .youtube-button,
@@ -163,5 +170,9 @@
   
   .youtube-info p {
     font-size: 13px;
+  }
+  
+  .manga-container {
+    max-width: 200px; /* モバイルでのサイズ調整 */
   }
 }
