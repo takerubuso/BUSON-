@@ -314,7 +314,7 @@ function initializeGoods(data) {
         // 存在しないパスの場合はプレースホルダー画像を使用
         const imagePath = item.image || 'images/placeholder.jpg';
         
-        // デフォルト画像のパスを調整（まだ存在しない場合）
+        // デフォルト画像のパスを調整
         const fallbackImagePath = 'images/placeholder.jpg';
         
         console.log('グッズ画像パス:', imagePath);
