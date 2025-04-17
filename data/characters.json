@@ -3,7 +3,7 @@
     "id": 1,
     "name": "しきぶちゃん",
     "image": "images/character/1.png",
-    "profile": "見る人に“ニヤッ”と元気を届ける、BUSONスタジオの看板キャラクター。",
+    "profile": "見る人に“ニヤッ”と元気を届ける、BUSONスタジオの看板キャラクター。紫式部をモデルにしたキャラ",
     "socialLinks": [
       { "name": "X", "url": "https://x.com/positiveshikibu" },
       { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
@@ -26,20 +26,20 @@
   },
   {
     "id": 2,
-    "name": "ピンキー",
-    "image": "images/character2.jpg",
-    "profile": "宇宙からやってきた猫型宇宙人。ピンク色の体が特徴的。いつも明るく元気いっぱいで、周りを幸せにする不思議な力を持っている。モフタロウとは親友。",
+    "name": "笑徳太子",
+    "image": "images/character/2.jpg",
+    "profile": "しきぶちゃんの夫。聖徳太子をモデルにしたキャラ",
     "socialLinks": [
-      { "name": "X", "url": "https://twitter.com/" },
-      { "name": "YouTube", "url": "https://www.youtube.com/" },
-      { "name": "Threads", "url": "https://www.threads.net/" }
+      { "name": "X", "url": "https://x.com/positiveshikibu" },
+      { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
+      { "name": "TikTok", "url": "https://www.tiktok.com/@buson2025" }
     ],
-    "personality": "明るく元気",
-    "birthday": "7月7日",
-    "debutYear": 2024,
-    "hobbies": ["宇宙遊泳", "地球の面白いものを探す"],
-    "skills": ["幸せオーラを出す", "どんな言語でも理解できる"],
-    "favoriteFood": "宇宙のキラキラしたお菓子",
+    "personality": "聞き下手",
+    "birthday": "2月5日",
+    "debutYear": "2017",
+    "hobbies": "サウナ",
+    "skills": "動画編集",
+    "favoriteFood": "回転寿司",
     "icons": {
       "personality": "images/icons/1.png",
       "birthday": "images/icons/2.png",
@@ -51,19 +51,20 @@
   },
   {
     "id": 3,
-    "name": "クマゴロー",
-    "image": "images/character3.jpg",
-    "profile": "森に住むクマのキャラクター。見た目は怖そうだが、実は甘いものが大好きな優しい性格。手先が器用で、木工細工が得意。",
+    "name": "清少ナーゴン",
+    "image": "images/character/3.jpg",
+    "profile": "しきぶちゃんの親友。清少納言をモデルにしたキャラ",
     "socialLinks": [
-      { "name": "Instagram", "url": "https://instagram.com/" },
-      { "name": "TikTok", "url": "https://www.tiktok.com/" }
+      { "name": "X", "url": "https://x.com/positiveshikibu" },
+      { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
+      { "name": "TikTok", "url": "https://www.tiktok.com/@buson2025" }
     ],
-    "personality": "優しくて甘えん坊",
-    "birthday": "10月27日",
-    "debutYear": 2022,
-    "hobbies": ["木彫り", "蜂蜜集め"],
-    "skills": ["力持ち", "木の香りがわかる"],
-    "favoriteFood": "蜂蜜",
+    "personality": "優しい",
+    "birthday": "7月5日",
+    "debutYear": 2018,
+    "hobbies": "漫画本を読むこと",
+    "skills": "節約術",
+    "favoriteFood": "わらび餅",
     "icons": {
       "personality": "images/icons/1.png",
       "birthday": "images/icons/2.png",
