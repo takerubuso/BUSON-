@@ -476,3 +476,71 @@ function initializeBooks() {
     
     console.log('書籍を表示しました');
 }
+
+// ニュースの初期化 - 既存の関数を修正
+function initializeNews(data) {
+    const newsContainer = document.querySelector('.news-container');
+    if (!newsContainer || !data || data.length === 0) {
+        console.error('ニュースデータまたはコンテナが見つかりません');
+        return;
+    }
+
+    // ニュースコンテナをクリア
+    newsContainer.innerHTML = '';
+    
+    console.log('ニュースデータを表示します:', data);
+
+    // ニュースアイテムを生成
+    data.forEach(item => {
+        const newsItem = document.createElement('div');
+        newsItem.className = 'news-item';
+        
+        // 日付フォーマットを変換（YYYY-MM-DD → YYYY.MM.DD）
+        const formattedDate = item.date.replace(/-/g, '.');
+        
+        newsItem.innerHTML = `
+            <p class="date">${formattedDate}</p>
+            <h3>${item.title}</h3>
+            <p>${item.summary}</p>
+            <a href="${item.url}" class="read-more">もっと見る</a>
+        `;
+        newsContainer.appendChild(newsItem);
+    });
+}
+
+// ページ読み込み完了後にニュースを確認し、必要なら強制表示
+window.addEventListener('load', function() {
+    // ニュースセクションを確認
+    const newsContainer = document.querySelector('.news-container');
+    if (newsContainer && newsContainer.children.length === 0) {
+        console.log('ニュースが読み込まれていないため、バックアップデータを表示します');
+        
+        // バックアップニュースデータ
+        const backupNews = [
+            {
+                id: 1,
+                date: "2025-04-15",
+                title: "新キャラクター「ピンキー」登場！",
+                summary: "宇宙からやってきた不思議な猫型キャラクター「ピンキー」が仲間入り！特設ページでプロフィールを公開中です。",
+                url: "#"
+            },
+            {
+                id: 2,
+                date: "2025-04-10",
+                title: "コラボカフェ開催のお知らせ",
+                summary: "4月20日から5月15日まで、渋谷のカフェ「スイートタイム」にてBUSONスタジオキャラクターズのコラボカフェを開催します！",
+                url: "#"
+            },
+            {
+                id: 3,
+                date: "2025-04-01",
+                title: "グッズ新発売のお知らせ",
+                summary: "人気キャラクター「モフタロウ」のぬいぐるみなど、新グッズが発売開始！BOOTHとBASEにて販売中です。",
+                url: "#"
+            }
+        ];
+        
+        // 強制的に表示
+        initializeNews(backupNews);
+    }
+});
