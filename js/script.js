@@ -292,7 +292,7 @@ function setupCharacterModal(characters) {
     }
 }
 
-// グッズの初期化
+// グッズの初期化を修正
 function initializeGoods(data) {
     const goodsContainer = document.querySelector('.goods-container');
     if (!goodsContainer || !data || data.length === 0) {
@@ -303,7 +303,6 @@ function initializeGoods(data) {
     // グッズカードをクリア
     goodsContainer.innerHTML = '';
     
-    // デバッグ情報
     console.log('グッズデータを読み込みました:', data);
 
     // グッズカードを生成
@@ -311,8 +310,13 @@ function initializeGoods(data) {
         const card = document.createElement('div');
         card.className = 'goods-card';
 
-        // 画像パスの生成
-        const imagePath = item.image || 'images/character/1.png';
+        // 画像パスの生成 - フォールバック画像を設定
+        // 存在しないパスの場合はプレースホルダー画像を使用
+        const imagePath = item.image || 'images/placeholder.jpg';
+        
+        // デフォルト画像のパスを調整（まだ存在しない場合）
+        const fallbackImagePath = 'images/placeholder.jpg';
+        
         console.log('グッズ画像パス:', imagePath);
 
         // 価格をフォーマット
@@ -320,7 +324,8 @@ function initializeGoods(data) {
 
         card.innerHTML = `
             <div class="goods-img">
-                <img src="${imagePath}" alt="${item.name}" onerror="this.onerror=null; this.src='images/character/1.png';">
+                <img src="${imagePath}" alt="${item.name}" 
+                     onerror="this.onerror=null; this.src='${fallbackImagePath}';">
             </div>
             <div class="goods-info">
                 <h3>${item.name}</h3>
@@ -332,13 +337,16 @@ function initializeGoods(data) {
     });
 }
 
-// 書籍セクションの初期化
+// 書籍セクションの初期化を修正
 function initializeBooks() {
     const booksContainer = document.getElementById('books-container');
     if (!booksContainer) {
         console.error('書籍コンテナが見つかりません');
         return;
     }
+    
+    // プレースホルダー画像のパス
+    const placeholderImage = 'images/placeholder.jpg';
     
     // サンプル書籍データ
     const booksData = [
@@ -377,15 +385,13 @@ function initializeBooks() {
         const card = document.createElement('div');
         card.className = 'goods-card';
         
-        // 画像パスの生成（存在しない場合はダミー画像を使用）
-        const imagePath = book.image || 'images/character/1.png';
-        
         // 価格をフォーマット
         const formattedPrice = book.price.toLocaleString() + '円（税込）';
         
         card.innerHTML = `
             <div class="goods-img">
-                <img src="${imagePath}" alt="${book.name}" onerror="this.onerror=null; this.src='images/character/1.png';">
+                <img src="${book.image}" alt="${book.name}" 
+                     onerror="this.onerror=null; this.src='${placeholderImage}';">
             </div>
             <div class="goods-info">
                 <h3>${book.name}</h3>
@@ -395,4 +401,6 @@ function initializeBooks() {
         `;
         booksContainer.appendChild(card);
     });
+    
+    console.log('書籍を表示しました');
 }
