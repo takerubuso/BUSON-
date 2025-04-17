@@ -276,10 +276,16 @@ function setupCharacterModal(characters) {
 // グッズの初期化
 function initializeGoods(data) {
     const goodsContainer = document.querySelector('.goods-container');
-    if (!goodsContainer || !data || data.length === 0) return;
+    if (!goodsContainer || !data || data.length === 0) {
+        console.error('グッズデータまたはコンテナが見つかりません');
+        return;
+    }
 
     // グッズカードをクリア
     goodsContainer.innerHTML = '';
+    
+    // デバッグ情報
+    console.log('グッズデータを読み込みました:', data);
 
     // グッズカードを生成
     data.forEach(item => {
@@ -288,6 +294,7 @@ function initializeGoods(data) {
 
         // 画像パスの生成
         const imagePath = item.image || 'images/character/1.png';
+        console.log('グッズ画像パス:', imagePath);
 
         // 価格をフォーマット
         const formattedPrice = item.price.toLocaleString() + '円（税込）';
@@ -305,6 +312,31 @@ function initializeGoods(data) {
         goodsContainer.appendChild(card);
     });
 }
+
+// グッズデータを読み込み
+fetch('data/goods.json')
+    .then(response => {
+        console.log('グッズJSONレスポンス:', response.status);
+        return response.json();
+    })
+    .then(data => {
+        console.log('グッズデータ取得成功:', data);
+        initializeGoods(data);
+    })
+    .catch(error => {
+        console.error('グッズデータの読み込みに失敗しました:', error);
+        // エラー時にはダミーデータを表示（オプション）
+        const dummyData = [
+            {
+                "id": 1,
+                "name": "モフタロウ ぬいぐるみ",
+                "image": "images/goods/1.png",
+                "price": 2649,
+                "url": "https://suzuri.jp/buson2025/15723649/acrylic-keychain/50x50mm/clear"
+            }
+        ];
+        initializeGoods(dummyData);
+    });
 
 // ニュースの初期化
 function initializeNews(data) {
