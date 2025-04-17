@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // エラー時にデフォルトデータで表示
             const defaultSliderData = [
                 {
+                    "image": "images/slider1.jpg",
                     "title": "新キャラクター「ピンキー」登場！",
                     "description": "宇宙からやってきた不思議な猫型キャラクター",
                     "url": "#characters"
@@ -52,10 +53,10 @@ document.addEventListener('DOMContentLoaded', function() {
             // エラー時は何も表示しない
         });
         
-    // YouTubeデータの初期化（仮のデータ）
+    // YouTubeデータの初期化
     initializeYouTube();
     
-    // 漫画ブログデータの初期化（仮のデータ）
+    // 漫画ブログデータの初期化
     initializeMangaBlog();
 });
 
@@ -70,10 +71,16 @@ function initializeSlider(data) {
     // スライダーの最初の要素を表示
     const sliderItem = document.createElement('div');
     sliderItem.className = 'slider-content';
+    
+    // 画像を背景として設定
+    if (data[0].image) {
+        sliderItem.style.backgroundImage = `url('${data[0].image}')`;
+        sliderItem.style.backgroundSize = 'cover';
+        sliderItem.style.backgroundPosition = 'center';
+        sliderItem.style.height = '100%';
+    }
+    
     sliderItem.innerHTML = `
-        <div style="text-align: center; color: white; font-size: 24px; font-weight: bold;">
-            BUSON STUDIO<br>スライダー
-        </div>
         <div class="slider-caption">
             <h3>${data[0].title}</h3>
             <p>${data[0].description}</p>
@@ -95,10 +102,12 @@ function initializeSlider(data) {
     });
 
     function updateSlider() {
+        // 画像を背景として設定
+        if (data[currentIndex].image) {
+            sliderItem.style.backgroundImage = `url('${data[currentIndex].image}')`;
+        }
+        
         sliderItem.innerHTML = `
-            <div style="text-align: center; color: white; font-size: 24px; font-weight: bold;">
-                BUSON STUDIO<br>スライダー
-            </div>
             <div class="slider-caption">
                 <h3>${data[currentIndex].title}</h3>
                 <p>${data[currentIndex].description}</p>
@@ -129,7 +138,7 @@ function initializeCharacters(data) {
         card.className = 'character-card';
         card.setAttribute('data-character', character.name); // data属性を追加
         
-        // 画像パスの生成（実際のパスに合わせる）
+        // 画像パスの生成
         const imagePath = character.image || 'images/character/1.png';
         
         card.innerHTML = `
@@ -177,7 +186,7 @@ function setupCharacterModal(characters) {
         const character = characters.find(char => char.name === characterName);
 
         if (character) {
-            // 画像パスの生成（実際のパスに合わせる）
+            // 画像パスの生成
             const imagePath = character.image || `images/character/1.png`;
 
             // ソーシャルリンクを生成
@@ -277,11 +286,11 @@ function initializeGoods(data) {
         const card = document.createElement('div');
         card.className = 'goods-card';
 
-        // 画像パスの生成（実際のパスに合わせる）
+        // 画像パスの生成
         const imagePath = item.image || 'images/character/1.png';
 
         // 価格をフォーマット
-        const formattedPrice = item.price.toLocaleString() + '円';
+        const formattedPrice = item.price.toLocaleString() + '円（税込）';
 
         card.innerHTML = `
             <div class="goods-img">
@@ -325,25 +334,22 @@ function initializeYouTube() {
     const youtubeContainer = document.querySelector('.youtube-container');
     if (!youtubeContainer) return;
     
-    // 実際のAPIデータの代わりに仮データを使用
-    const dummyYouTubeData = [
+    // 指定された動画URL
+    const youtubeVideos = [
         {
-            id: 'VIDEO_ID_1',
-            title: '最新動画',
-            description: 'チャンネルの最新アップロード動画',
-            type: '最新'
+            url: 'https://www.youtube.com/embed/kcrNtg0TJyU',
+            title: 'BUSON STUDIO紹介動画',
+            description: 'BUSONスタジオの紹介動画です'
         },
         {
-            id: 'VIDEO_ID_2',
-            title: '人気動画',
-            description: '最も再生数の多い動画',
-            type: '人気'
+            url: 'https://www.youtube.com/embed/OKKawaP8z-c',
+            title: 'キャラクターメイキング',
+            description: 'キャラクターのメイキング動画です'
         },
         {
-            id: 'VIDEO_ID_3',
-            title: 'おすすめ動画',
-            description: '管理者が選んだおすすめ動画',
-            type: 'ピックアップ'
+            url: 'https://www.youtube.com/embed/M9cTZ0lZqPQ',
+            title: 'イベント映像',
+            description: 'イベントの様子をお届けします'
         }
     ];
     
@@ -351,19 +357,19 @@ function initializeYouTube() {
     youtubeContainer.innerHTML = '';
     
     // 動画カードを生成
-    dummyYouTubeData.forEach(video => {
+    youtubeVideos.forEach(video => {
         const card = document.createElement('div');
         card.className = 'youtube-card';
         
         card.innerHTML = `
             <div class="youtube-embed">
-                <!-- 実際の埋め込みコードに置き換える -->
-                <iframe src="https://www.youtube.com/embed/${video.id}" title="${video.title}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <iframe src="${video.url}" title="${video.title}" 
+                frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen></iframe>
             </div>
             <div class="youtube-info">
                 <h3>${video.title}</h3>
                 <p>${video.description}</p>
-                <p class="video-type">${video.type}</p>
             </div>
         `;
         
@@ -371,94 +377,23 @@ function initializeYouTube() {
     });
 }
 
-// 漫画ブログの初期化
+// 漫画ブログの初期化（ヘッダー画像のみ表示）
 function initializeMangaBlog() {
     const mangaContainer = document.querySelector('.manga-container');
     if (!mangaContainer) return;
     
-    // 実際のAPIデータの代わりに仮データを使用
-    const dummyMangaData = [
-        {
-            title: '最新漫画ブログ記事1',
-            date: '2025.04.15',
-            image: 'images/manga1.jpg',
-            url: 'https://buson.blog.jp'
-        },
-        {
-            title: '最新漫画ブログ記事2',
-            date: '2025.04.10',
-            image: 'images/manga2.jpg',
-            url: 'https://buson.blog.jp'
-        },
-        {
-            title: '最新漫画ブログ記事3',
-            date: '2025.04.05',
-            image: 'images/manga3.jpg',
-            url: 'https://buson.blog.jp'
-        }
-    ];
-    
     // コンテナをクリア
     mangaContainer.innerHTML = '';
     
-    // 漫画ブログカードを生成
-    dummyMangaData.forEach(manga => {
-        const card = document.createElement('div');
-        card.className = 'manga-card';
-        
-        card.innerHTML = `
-            <div class="manga-img">
-                <img src="${manga.image}" alt="${manga.title}" onerror="this.onerror=null; this.src='images/character/1.png';">
-            </div>
-            <div class="manga-info">
-                <p class="date">${manga.date}</p>
-                <h3>${manga.title}</h3>
-                <a href="${manga.url}" class="read-more" target="_blank">もっと見る</a>
-            </div>
-        `;
-        
-        mangaContainer.appendChild(card);
-    });
-}
-
-// 将来的な実装: YouTube API連携
-// 実際のアプリケーションでは、YouTube Data APIを使用して最新・人気動画を取得
-function fetchYouTubeData() {
-    // 実装例（実際には適切なAPIキーとチャンネルIDが必要）
-    const apiKey = 'YOUR_API_KEY';
-    const channelId = 'UCtRCF2NLRULCmf-oLAF455w';
+    // ヘッダー画像のみを表示
+    const headerImage = document.createElement('div');
+    headerImage.className = 'manga-header';
     
-    // 最新動画を取得
-    fetch(`https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet,id&order=date&maxResults=1`)
-        .then(response => response.json())
-        .then(data => {
-            // データ処理
-            console.log('最新動画:', data);
-        })
-        .catch(error => console.error('YouTube API エラー:', error));
+    headerImage.innerHTML = `
+        <a href="https://buson.blog.jp" target="_blank" class="manga-header-link">
+            <img src="images/mangablog/header.PNG" alt="漫画ブログ" class="manga-header-image">
+        </a>
+    `;
     
-    // 人気動画を取得
-    fetch(`https://www.googleapis.com/youtube/v3/search?key=${apiKey}&channelId=${channelId}&part=snippet,id&order=viewCount&maxResults=1`)
-        .then(response => response.json())
-        .then(data => {
-            // データ処理
-            console.log('人気動画:', data);
-        })
-        .catch(error => console.error('YouTube API エラー:', error));
-}
-
-// 将来的な実装: RSS/ブログフィード連携
-// 実際のアプリケーションでは、RSSフィードなどを使用して最新の漫画ブログ記事を取得
-function fetchMangaBlogData() {
-    // 実装例（RSSフィードをJSONに変換するサービスを使用）
-    const blogUrl = 'https://buson.blog.jp';
-    const rssUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(blogUrl)}/feed/`;
-    
-    fetch(rssUrl)
-        .then(response => response.json())
-        .then(data => {
-            // データ処理
-            console.log('ブログフィード:', data);
-        })
-        .catch(error => console.error('ブログフィード取得エラー:', error));
+    mangaContainer.appendChild(headerImage);
 }
