@@ -15,19 +15,19 @@ function displaySimpleYouTubeVideos() {
     // 表示する動画（指定のURLを使用）
     const videos = [
         {
-            url: 'https://www.youtube.com/embed/kcrNtg0TJyU',
-            title: 'BUSON STUDIO紹介動画',
-            description: 'BUSONスタジオの紹介動画です'
+            url: 'https://youtu.be/gfKDzxeEcEM?si=VvAXvlNKjRaV33_K',
+            title: '部活動あるある',
+            description: '各種部活動にありがちなことが一気にわかる【'
         },
         {
-            url: 'https://www.youtube.com/embed/OKKawaP8z-c',
-            title: 'キャラクターメイキング',
-            description: 'キャラクターのメイキング動画です'
+            url: 'https://youtu.be/AXITHLfhaO8?si=GUyuOlCGDlOjSFdr',
+            title: '妊婦さんあるある',
+            description: '妊娠・出産する前に役立つ漫画動画'
         },
         {
-            url: 'https://www.youtube.com/embed/M9cTZ0lZqPQ',
-            title: 'イベント映像',
-            description: 'イベントの様子をお届けします'
+            url: 'https://youtu.be/hcthPFLLF0U?si=Mg9MTa8kV_2tPOtW',
+            title: '47都道府県あるある',
+            description: '漫画動画であるある250連まとめ'
         }
     ];
     
