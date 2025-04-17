@@ -42,6 +42,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // エラー時は何も表示しない
         });
 
+    // 書籍データを初期化（サンプルデータを使用）
+    initializeBooks();
+
     // ニュースデータを読み込み
     fetch('data/news.json')
         .then(response => response.json())
@@ -78,6 +81,7 @@ function initializeSlider(data) {
         sliderItem.style.backgroundSize = 'cover';
         sliderItem.style.backgroundPosition = 'center';
         sliderItem.style.height = '100%';
+        sliderItem.style.cursor = 'pointer'; // クリック可能な見た目にする
     }
     
     sliderItem.innerHTML = `
@@ -86,6 +90,14 @@ function initializeSlider(data) {
             <p>${data[0].description}</p>
         </div>
     `;
+    
+    // スライダーのリンク先を設定
+    sliderItem.addEventListener('click', function() {
+        if (data[currentIndex].url) {
+            window.location.href = data[currentIndex].url;
+        }
+    });
+    
     sliderContainer.appendChild(sliderItem);
 
     // スライダーの操作処理
@@ -113,6 +125,13 @@ function initializeSlider(data) {
                 <p>${data[currentIndex].description}</p>
             </div>
         `;
+        
+        // クリックイベントを更新
+        sliderItem.onclick = function() {
+            if (data[currentIndex].url) {
+                window.location.href = data[currentIndex].url;
+            }
+        };
     }
     
     // 自動スライド（5秒間隔）
@@ -313,119 +332,67 @@ function initializeGoods(data) {
     });
 }
 
-// グッズデータを読み込み
-fetch('data/goods.json')
-    .then(response => {
-        console.log('グッズJSONレスポンス:', response.status);
-        return response.json();
-    })
-    .then(data => {
-        console.log('グッズデータ取得成功:', data);
-        initializeGoods(data);
-    })
-    .catch(error => {
-        console.error('グッズデータの読み込みに失敗しました:', error);
-        // エラー時にはダミーデータを表示（オプション）
-        const dummyData = [
-            {
-                "id": 1,
-                "name": "モフタロウ ぬいぐるみ",
-                "image": "images/goods/1.png",
-                "price": 2649,
-                "url": "https://suzuri.jp/buson2025/15723649/acrylic-keychain/50x50mm/clear"
-            }
-        ];
-        initializeGoods(dummyData);
-    });
-
-// ニュースの初期化
-function initializeNews(data) {
-    const newsContainer = document.querySelector('.news-container');
-    if (!newsContainer || !data || data.length === 0) return;
-
-    // ニュースコンテナをクリア
-    newsContainer.innerHTML = '';
-
-    // ニュースアイテムを生成
-    data.forEach(item => {
-        const newsItem = document.createElement('div');
-        newsItem.className = 'news-item';
-        const formattedDate = item.date.replace(/-/g, '.');
-        newsItem.innerHTML = `
-            <p class="date">${formattedDate}</p>
-            <h3>${item.title}</h3>
-            <p>${item.summary}</p>
-            <a href="${item.url}" class="read-more">もっと見る</a>
-        `;
-        newsContainer.appendChild(newsItem);
-    });
-}
-
-// YouTube動画の初期化
-function initializeYouTube() {
-    const youtubeContainer = document.querySelector('.youtube-container');
-    if (!youtubeContainer) return;
+// 書籍セクションの初期化
+function initializeBooks() {
+    const booksContainer = document.getElementById('books-container');
+    if (!booksContainer) {
+        console.error('書籍コンテナが見つかりません');
+        return;
+    }
     
-    // 指定された動画URL
-    const youtubeVideos = [
+    // サンプル書籍データ
+    const booksData = [
         {
-            url: 'https://www.youtube.com/embed/kcrNtg0TJyU',
-            title: 'BUSON STUDIO紹介動画',
-            description: 'BUSONスタジオの紹介動画です'
+            id: 1,
+            name: "しきぶちゃんの日常",
+            image: "images/books/book1.jpg",
+            price: 1500,
+            url: "https://example.com/book1"
         },
         {
-            url: 'https://www.youtube.com/embed/OKKawaP8z-c',
-            title: 'キャラクターメイキング',
-            description: 'キャラクターのメイキング動画です'
+            id: 2,
+            name: "ピンキーの不思議な冒険",
+            image: "images/books/book2.jpg",
+            price: 1200,
+            url: "https://example.com/book2"
         },
         {
-            url: 'https://www.youtube.com/embed/M9cTZ0lZqPQ',
-            title: 'イベント映像',
-            description: 'イベントの様子をお届けします'
+            id: 3,
+            name: "クマゴローと森のともだち",
+            image: "images/books/book3.jpg",
+            price: 1300,
+            url: "https://example.com/book3"
+        },
+        {
+            id: 4,
+            name: "BUSON STUDIO キャラクターコレクション",
+            image: "images/books/book4.jpg",
+            price: 2500,
+            url: "https://example.com/book4"
         }
     ];
     
-    // コンテナをクリア
-    youtubeContainer.innerHTML = '';
-    
-    // 動画カードを生成
-    youtubeVideos.forEach(video => {
+    // 書籍カードを生成
+    booksData.forEach(book => {
         const card = document.createElement('div');
-        card.className = 'youtube-card';
+        card.className = 'goods-card';
+        
+        // 画像パスの生成（存在しない場合はダミー画像を使用）
+        const imagePath = book.image || 'images/character/1.png';
+        
+        // 価格をフォーマット
+        const formattedPrice = book.price.toLocaleString() + '円（税込）';
         
         card.innerHTML = `
-            <div class="youtube-embed">
-                <iframe src="${video.url}" title="${video.title}" 
-                frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                allowfullscreen></iframe>
+            <div class="goods-img">
+                <img src="${imagePath}" alt="${book.name}" onerror="this.onerror=null; this.src='images/character/1.png';">
             </div>
-            <div class="youtube-info">
-                <h3>${video.title}</h3>
-                <p>${video.description}</p>
+            <div class="goods-info">
+                <h3>${book.name}</h3>
+                <p class="price">${formattedPrice}</p>
+                <a href="${book.url}" class="button" target="_blank">詳しく見る</a>
             </div>
         `;
-        
-        youtubeContainer.appendChild(card);
+        booksContainer.appendChild(card);
     });
-}
-
-// 漫画ブログの初期化（ヘッダー画像のみ表示）
-function initializeMangaBlog() {
-    const mangaContainer = document.querySelector('.manga-container');
-    if (!mangaContainer) return;
-    
-    // コンテナをクリア
-    mangaContainer.innerHTML = '';
-    
-    // ヘッダー画像のみを表示
-    const headerImage = document.createElement('div');
-    headerImage.className = 'manga-header';
-    
-    headerImage.innerHTML = `
-        <a href="https://buson.blog.jp" target="_blank" class="manga-header-link">
-            <img src="images/mangablog/header.PNG" alt="漫画ブログ" class="manga-header-image">
-        </a>
-    `;
-    
-    mangaContainer.appendChild(headerImage);
 }
