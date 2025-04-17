@@ -249,22 +249,50 @@ h2::after {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
+/* ここから新しいグッズ画像スタイルに置き換え */
 .goods-img {
     width: 100%;
-    height: 180px; /* 画像の高さを少し小さくして切れないようにする */
-    background-color: #fff;
+    height: 180px;
+    background-color: #f9f9f9; /* 画像読み込み前の背景色 */
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
+    position: relative;
 }
 
 .goods-img img {
     width: 100%;
     height: 100%;
-    object-fit: contain; /* cover から contain に変更して画像が切れないようにする */
+    object-fit: contain; /* cover から contain に変更 */
     transition: transform 0.3s ease;
 }
+
+/* 画像エラー時にメッセージを表示 */
+.goods-img::after {
+    content: 'イメージ準備中';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 12px;
+    color: #999;
+    display: none;
+}
+
+.goods-img img[src="images/placeholder.jpg"] + .goods-img::after {
+    display: block;
+}
+
+/* 書籍セクションのスタイル */
+#books-container {
+    margin-bottom: 30px;
+}
+
+#books-container .goods-card {
+    border: 1px solid #f0f0f0;
+}
+/* ここまで新しいスタイル */
 
 .goods-card:hover .goods-img img {
     transform: scale(1.05);
@@ -886,9 +914,15 @@ footer {
         gap: 10px;
     }
 
+    /* ここから修正されたレスポンシブスタイル */
     .goods-container {
         grid-template-columns: repeat(2, 1fr); /* タブレットでは2列表示 */
     }
+    
+    .goods-img {
+        height: 150px; /* タブレット用に高さ調整 */
+    }
+    /* ここまで修正 */
 
     .youtube-container,
     .manga-container {
@@ -943,9 +977,15 @@ footer {
         scroll-snap-align: start;
     }
 
+    /* ここから修正されたスマホ用スタイル */
     .goods-container {
         grid-template-columns: 1fr; /* スマホでは1列表示 */
     }
+    
+    .goods-img {
+        height: 180px; /* スマホ用に高さ調整 */
+    }
+    /* ここまで修正 */
 
     .news-container {
         grid-template-columns: 1fr;
