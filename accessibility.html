@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ウェブアクセシビリティ方針 | BUSON STUDIO</title>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* アクセシビリティページのスタイル */
+        .accessibility-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ff6b88;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: #ffd1dc;
+            border-radius: 2px;
+        }
+        
+        .policy-content {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .policy-section {
+            margin-bottom: 30px;
+        }
+        
+        .policy-section h2 {
+            font-size: 20px;
+            color: #ff6b88;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px dotted #ffd1dc;
+            text-align: left;
+        }
+        
+        .policy-section h2::after {
+            display: none;
+        }
+        
+        .policy-section p, .policy-section ul {
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+        
+        .policy-section ul {
+            padding-left: 20px;
+        }
+        
+        .policy-section li {
+            margin-bottom: 10px;
+        }
+        
+        .feature-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .feature-card {
+            background: #ffeef1;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .feature-card i {
+            font-size: 32px;
+            color: #ff6b88;
+            margin-bottom: 10px;
+        }
+        
+        .feature-card h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #4a4a4a;
+        }
+        
+        .feature-card p {
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .browser-support {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        .browser {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .browser i {
+            font-size: 36px;
+            margin-bottom: 10px;
+            color: #666;
+        }
+        
+        .browser span {
+            font-size: 14px;
+        }
+        
+        .feedback-section {
+            background: #ffd1dc;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .feedback-section h3 {
+            font-size: 18px;
+            color: #4a4a4a;
+            margin-bottom: 15px;
+        }
+        
+        .feedback-section p {
+            margin-bottom: 20px;
+        }
+        
+        .feedback-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: white;
+            color: #ff6b88;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: background-color 0.3s, color 0.3s, transform 0.3s;
+        }
+        
+        .feedback-button:hover {
+            background-color: #ff6b88;
+            color: white;
+            transform: translateY(-3px);
+        }
+        
+        .policy-update {
+            text-align: right;
+            font-size: 14px;
+            color: #888;
+            margin-top: 15px;
+        }
+        
+        .return-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #ffd1dc;
+            color: #4a4a4a;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: background-color 0.3s, color 0.3s;
+            text-align: center;
+        }
+        
+        .return-button:hover {
+            background-color: #ff6b88;
+            color: white;
+        }
+        
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <h1><a href="index.html" style="text-decoration: none; color: inherit;">BUSON STUDIO</a></h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html#top">ホーム</a></li>
+                    <li><a href="index.html#characters">キャラクター</a></li>
+                    <li><a href="index.html#goods">グッズ</a></li>
+                    <li><a href="index.html#books">書籍</a></li>
+                    <li><a href="index.html#news">ニュース</a></li>
+                    <li><a href="index.html#youtube">YouTube</a></li>
+                    <li><a href="index.html#manga">漫画ブログ</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    
+    <main>
+        <div class="accessibility-container">
+            <h1 class="page-title">ウェブアクセシビリティ方針</h1>
+            
+            <div class="policy-content">
+                <div class="policy-section">
+                    <h2>1. 基本方針</h2>
+                    <p>BUSON STUDIO（以下「当ブランド」といいます）は、すべての人がウェブサイトを等しく利用できるよう、ウェブアクセシビリティの確保・向上に取り組んでいます。年齢や障害の有無に関わらず、多様なユーザーがウェブコンテンツにアクセスし、理解し、操作できることを目指しています。</p>
+                    <p>当サイトは、JIS X 8341-3:2016「高齢者・障害者等配慮設計指針－情報通信における機器，ソフトウェア及びサービス－第3部：ウェブコンテンツ」および国際規格であるWCAG 2.1（Web Content Accessibility Guidelines）のAA準拠を目標として取り組んでいます。</p>
+                </div>
+                
+                <div class="policy-section">
+                    <h2>2. アクセシビリティ対応の主な取り組み</h2>
+                    <p>当サイトでは、以下のようなアクセシビリティ対応を行っています：</p>
+                    
+                    <div class="feature-cards">
+                        <div class="feature-card">
+                            <i class="fas fa-font"></i>
+                            <h3>テキスト</h3>
+                            <p>読みやすいフォント、適切な文字サイズと行間、十分な色のコントラストを確保</p>
+                        </div>
+                        <div class="feature-card">
+                            <i class="fas fa-mobile-alt"></i>
+                            <h3>レスポンシブデザイン</h3>
+                            <p>スマートフォンやタブレットなど様々な画面サイズに対応</p>
+                        </div>
+                        <div class="feature-card">
+                            <i class="fas fa-keyboard"></i>
+                            <h3>キーボード操作</h3>
+                            <p>マウスを使わずにキーボードだけで全ての機能を利用可能</p>
+                        </div>
+                        <div class="feature-card">
+                            <i class="fas fa-image"></i>
+                            <h3>代替テキスト</h3>
+                            <p>画像には適切な代替テキストを提供</p>
+                        </div>
+                        <div class="feature-card">
+                            <i class="fas fa-headphones"></i>
+                            <h3>スクリーンリーダー</h3>
+                            <p>スクリーンリーダーでの読み上げに配慮した構造</p>
+                        </div>
+                        <div class="feature-card">
+                            <i class="fas fa-file-code"></i>
+                            <h3>適切なマークアップ</h3>
+                            <p>HTML5の意味的なマークアップを使用</p>
+                        </div>
+                    </div>
+                    
+                    <p>これらの取り組みにより、視覚・聴覚・身体・認知などの障害がある方や、高齢の方でも利用しやすいウェブサイトの実現を目指しています。</p>
+                </div>
+                
+                <div class="policy-section">
+                    <h2>3. 対応ブラウザと推奨環境</h2>
+                    <p>当サイトは以下のブラウザの最新版での利用を推奨しています：</p>
+                    
+                    <div class="browser-support">
+                        <div class="browser">
+                            <i class="fab fa-chrome"></i>
+                            <span>Google Chrome</span>
+                        </div>
+                        <div class="browser">
+                            <i class="fab fa-firefox"></i>
+                            <span>Mozilla Firefox</span>
+                        </div>
+                        <div class="browser">
+                            <i class="fab fa-safari"></i>
+                            <span>Safari</span>
+                        </div>
+                        <div class="browser">
+                            <i class="fab fa-edge"></i>
+                            <span>Microsoft Edge</span>
+                        </div>
+                    </div>
+                    
+                    <p>旧バージョンのブラウザやサポートが終了したブラウザでは、一部機能が正常に動作しない場合があります。セキュリティの観点からも、ブラウザは常に最新の状態に保つことをお勧めします。</p>
+                </div>
+                
+                <div class="policy-section">
+                    <h2>4. アクセシビリティ対応の限界</h2>
+                    <p>当サイトでは可能な限りアクセシビリティに配慮していますが、以下の点については現時点で完全な対応ができていない場合があります：</p>
+                    <ul>
+                        <li>YouTubeなどの外部サービスから埋め込まれたコンテンツ</li>
+                        <li>アニメーションや動きのあるコンテンツの一部</li>
+                        <li>過去のアーカイブコンテンツの一部</li>
+                    </ul>
+                    <p>これらの課題については、今後も改善に取り組んでまいります。</p>
+                </div>
+                
+                <div class="policy-section">
+                    <h2>5. 支援技術対応</h2>
+                    <p>当サイトは、以下の支援技術と組み合わせての利用を考慮しています：</p>
+                    <ul>
+                        <li>スクリーンリーダー（NVDA、VoiceOver、JAWS など）</li>
+                        <li>画面拡大ソフト</li>
+                        <li>音声認識ソフトウェア</li>
+                        <li>キーボードナビゲーション</li>
+                        <li>読み上げ機能</li>
+                    </ul>
+                    <p>これらの支援技術を使用する場合も、最新のブラウザとの組み合わせでの利用を推奨します。</p>
+                </div>
+                
+                <div class="policy-section">
+                    <h2>6. ユーザー補助機能</h2>
+                    <p>ブラウザやオペレーティングシステムに組み込まれている以下のユーザー補助機能も活用できます：</p>
+                    <ul>
+                        <li>ブラウザの文字サイズ変更機能：Ctrl + プラス/マイナスキー（Windows/Linux）、Command + プラス/マイナスキー（Mac）</li>
+                        <li>ブラウザのズーム機能</li>
+                        <li>ハイコントラストモード（オペレーティングシステムの設定から変更可能）</li>
+                        <li>キーボードナビゲーション（Tabキーでのフォーカス移動）</li>
+                    </ul>
+                </div>
+                
+                <div class="policy-section">
+                    <h2>7. 継続的な改善</h2>
+                    <p>ウェブアクセシビリティは継続的に改善すべき課題と認識しています。当サイトでは、以下の取り組みを行っています：</p>
+                    <ul>
+                        <li>定期的なアクセシビリティ監査とテスト</li>
+                        <li>ユーザーフィードバックの収集と分析</li>
+                        <li>アクセシビリティ関連の最新技術や基準への対応</li>
+                        <li>サイト制作・更新に関わるスタッフへのアクセシビリティ教育</li>
+                    </ul>
+                </div>
+                
+                <div class="feedback-section">
+                    <h3>フィードバックのお願い</h3>
+                    <p>当サイトのアクセシビリティに関するご意見・ご要望・問題報告などは、以下の連絡先までお知らせください。いただいたフィードバックは、サイト改善の参考にさせていただきます。</p>
+                    <a href="mailto:buson2025@gmail.com" class="feedback-button">フィードバックを送る</a>
+                </div>
+                
+                <div class="policy-update">
+                    制定日: 2025年4月1日<br>
+                    最終更新日: 2025年4月15日
+                </div>
+            </div>
+            
+            <div class="button-container">
+                <a href="index.html" class="return-button">トップページに戻る</a>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="footer-links-section">
+            <div class="links-container">
+                <div class="social-follow-section">
+                    <h3>FOLLOW</h3>
+                    <div class="social-icons">
+                        <a href="https://twitter.com/busonStudio" class="social-circle"><i class="fab fa-x-twitter"></i></a>
+                        <a href="https://www.youtube.com/channel/UCtRCF2NLRULCmf-oLAF455w" class="social-circle"><i class="fab fa-youtube"></i></a>
+                        <a href="https://www.instagram.com/buson2025/" class="social-circle"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.tiktok.com/@buson2025" class="social-circle"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-links-row">
+                    <a href="company.html" class="external-link">会社情報</a>
+                    <a href="news.html" class="external-link">ニュースリリース</a>
+                    <a href="license.html" class="external-link">BUSONスタジオのライセンスビジネス事例</a>
+                    <a href="faq.html" class="external-link">よくあるご質問</a>
+                </div>
+            </div>
+
+            <div class="links-divider"></div>
+
+            <div class="links-container second-links-row">
+                <a href="important.html" class="small-link">重要なお知らせ</a>
+                <a href="about-site.html" class="small-link">このサイトについて</a>
+                <a href="social-policy.html" class="small-link">ソーシャルメディアポリシー</a>
+                <a href="privacy.html" class="small-link">プライバシーポリシー</a>
+                <a href="accessibility.html" class="small-link">ウェブアクセシビリティ方針</a>
+                <a href="sitemap.html" class="small-link">サイトマップ</a>
+            </div>
+
+            <div class="links-divider"></div>
+
+            <div class="copyright-section">
+                <p>このサイトに掲載のイラスト・写真・文章の無断転載を禁じます。すべての著作権はBUSON STUDIOに帰属します。</p>
+                <p>© 2025 BUSON STUDIO All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
