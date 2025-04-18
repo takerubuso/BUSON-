@@ -9,11 +9,11 @@
   },
   {
     "id": 2,
-    "name": "ピンキーの不思議な冒険",
-    "image": "images/books/book2.jpg",
-    "price": 1200,
-    "category": "paper",
-    "url": "https://example.com/book2"
+    "name": "BUSONの職業あるある大図鑑",
+    "image": "images/books/1.jpg",
+    "price": 1188,
+    "category": "ebook",
+    "url": "https://amzn.asia/d/bPJC0aI"
   },
   {
     "id": 3,
