@@ -709,6 +709,19 @@ h2::after {
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 }
 
+/* 漫画ブログの画像のみ表示用スタイル */
+.manga-img.full-card {
+    height: auto;
+    min-height: 200px;
+    width: 100%;
+}
+
+.manga-img.full-card img {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
 /* フッタースタイル */
 footer {
     background-color: #ffd1dc;
