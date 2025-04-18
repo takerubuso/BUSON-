@@ -1,11 +1,11 @@
 [
   {
     "id": 1,
-    "name": "しきぶちゃんの日常",
-    "image": "images/books/book1.jpg",
-    "price": 1500,
+    "name": "BUSONの職業あるある大図鑑",
+    "image": "images/books/1.jpg",
+    "price": 1320,
     "category": "paper",
-    "url": "https://example.com/book1"
+    "url": "https://amzn.asia/d/gax1xb9"
   },
   {
     "id": 2,
