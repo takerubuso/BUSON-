@@ -491,7 +491,7 @@ function initializeGoods(data) {
         
         console.log('グッズ画像パス:', imagePath);
 
-        // 価格をフォーマット
+       // 価格をフォーマット
         const formattedPrice = item.price.toLocaleString() + '円（税込）';
 
         card.innerHTML = `
@@ -772,7 +772,7 @@ function setupStampsFilter() {
     });
 }
 
-// ニュースの初期化 - 既存の関数を修正
+// ニュースの初期化
 function initializeNews(data) {
     const newsContainer = document.querySelector('.news-container');
     if (!newsContainer || !data || data.length === 0) {
@@ -803,7 +803,7 @@ function initializeNews(data) {
     });
 }
 
-// YouTube動画を表示する関数（APIを使わない簡易版）
+// YouTube動画を表示する関数
 function initializeYouTube() {
     displaySimpleYouTubeVideos();
 }
@@ -891,39 +891,7 @@ function displayMangaBlogCards() {
     
     mangaContainer.appendChild(card);
 }
-        })
-        .catch(error => {
-            console.error('漫画ブログデータの読み込みに失敗しました:', error);
-            // エラー時には単一のデフォルトカードを表示
-            const mangaData = {
-                title: "BUSONコンテンツ",
-                date: "2025-04-15",
-                image: "images/mangablog/header.PNG",
-                summary: "ほぼ毎日漫画更新中!!",
-                url: "https://buson.blog.jp"
-            };
-            
-            // 漫画ブログカードを生成（1つだけ）
-            const formattedDate = mangaData.date.replace(/-/g, '.');
-            const card = document.createElement('div');
-            card.className = 'manga-card';
-            
-            card.innerHTML = `
-                <a href="${mangaData.url}" target="_blank" class="manga-link">
-                    <div class="manga-img">
-                        <img src="${mangaData.image}" alt="${mangaData.title}" onerror="this.onerror=null; this.src='images/placeholder.jpg';">
-                    </div>
-                    <div class="manga-info">
-                        <p class="date">${formattedDate}</p>
-                        <h3>${mangaData.title}</h3>
-                        <p>${mangaData.summary}</p>
-                    </div>
-                </a>
-            `;
-            
-            mangaContainer.appendChild(card);
-        });
-}
+
 // ページ読み込み完了後にニュースを確認し、必要なら強制表示
 window.addEventListener('load', function() {
     // ニュースセクションを確認
