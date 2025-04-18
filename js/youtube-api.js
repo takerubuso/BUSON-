@@ -3,8 +3,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // YouTube動画の表示
     displaySimpleYouTubeVideos();
     
-    // マンガブログのヘッダー画像表示
-    displayMangaBlogHeader();
+    // 漫画ブログのカードデザイン表示
+    displayMangaBlogCards();
 });
 
 // YouTube動画を表示する関数（APIを使わない簡易版）
@@ -59,22 +59,53 @@ function displaySimpleYouTubeVideos() {
     });
 }
 
-// 漫画ブログのヘッダー画像を表示する関数
-function displayMangaBlogHeader() {
+// 漫画ブログのカードデザインで表示する関数
+function displayMangaBlogCards() {
     const mangaContainer = document.querySelector('.manga-container');
     if (!mangaContainer) return;
     
     // コンテナをクリア
     mangaContainer.innerHTML = '';
     
-    // ヘッダー画像を表示
-    const headerHTML = `
-        <a href="https://buson.blog.jp" target="_blank" class="manga-header-link">
-            <img src="images/mangablog/header.PNG" alt="漫画ブログ" class="manga-header-image">
-        </a>
-    `;
+    // 漫画ブログデータ
+    const mangaData = [
+        {
+            title: "新キャラクター「ピンキー」の日常",
+            date: "2025-04-15",
+            image: "images/mangablog/manga1.jpg",
+            summary: "ピンキーがBUSONスタジオで過ごす日常を描いた漫画です。",
+            url: "https://buson.blog.jp/post1"
+        },
+        {
+            title: "クマゴローの森の冒険",
+            date: "2025-04-10",
+            image: "images/mangablog/manga2.jpg",
+            summary: "クマゴローが森で出会った新しい友達との冒険を描いた漫画です。",
+            url: "https://buson.blog.jp/post2"
+        }
+    ];
     
-    mangaContainer.innerHTML = headerHTML;
+    // 漫画ブログカードを生成
+    mangaData.forEach(manga => {
+        const formattedDate = manga.date.replace(/-/g, '.');
+        const card = document.createElement('div');
+        card.className = 'manga-card';
+        
+        card.innerHTML = `
+            <a href="${manga.url}" target="_blank" class="manga-link">
+                <div class="manga-img">
+                    <img src="${manga.image}" alt="${manga.title}" onerror="this.onerror=null; this.src='images/placeholder.jpg';">
+                </div>
+                <div class="manga-info">
+                    <p class="date">${formattedDate}</p>
+                    <h3>${manga.title}</h3>
+                    <p>${manga.summary}</p>
+                </div>
+            </a>
+        `;
+        
+        mangaContainer.appendChild(card);
+    });
 }
 
 // YouTube動画URLからサムネイル画像を取得する関数（参考用）
