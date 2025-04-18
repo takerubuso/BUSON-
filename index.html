@@ -9,7 +9,7 @@
     <!-- 既存のCSSファイル読み込み -->
     <link rel="stylesheet" href="css/style.css">
     <!-- 新しいYouTubeとマンガブログのスタイル -->
-    <link rel="stylesheet" href="css/youtube-manga-styles.css">
+    <link rel="stylesheet" href="css/youtube-manga-style.css">
     
     <!-- 最後にJavaScriptファイルを読み込み -->
     <script src="js/config.js" defer></script>
@@ -45,17 +45,17 @@
                 <button class="slider-next">▶</button>
             </div>
         </section>
-       <section id="characters">
-    <h2>キャラクター紹介</h2>
-    <div class="character-filter">
-        <button class="filter-button active" data-filter="all">すべて</button>
-        <button class="filter-button" data-filter="human">人</button>
-        <button class="filter-button" data-filter="animal">動物</button>
-    </div>
-    <div class="character-container">
-        <!-- キャラクターコンテンツはJavaScriptで生成されます -->
-    </div>
-</section>
+        <section id="characters">
+            <h2>キャラクター紹介</h2>
+            <div class="character-filter">
+                <button class="filter-button active" data-filter="all">すべて</button>
+                <button class="filter-button" data-filter="human">人</button>
+                <button class="filter-button" data-filter="animal">動物</button>
+            </div>
+            <div class="character-container">
+                <!-- キャラクターコンテンツはJavaScriptで生成されます -->
+            </div>
+        </section>
         <section id="goods">
             <h2>グッズ紹介</h2>
             <div class="goods-container pink-button-style">
@@ -69,12 +69,12 @@
             </div>
         </section>
         <!-- LINEスタンプセクション -->
-<section id="line-stamps">
-    <h2>LINEスタンプ</h2>
-    <div class="stamps-container pink-button-style" id="stamps-container">
-        <!-- LINEスタンプコンテンツはJavaScriptで生成されます -->
-    </div>
-</section>
+        <section id="line-stamps">
+            <h2>LINEスタンプ</h2>
+            <div class="stamps-container pink-button-style" id="stamps-container">
+                <!-- LINEスタンプコンテンツはJavaScriptで生成されます -->
+            </div>
+        </section>
         <section id="news">
             <h2>最新ニュース</h2>
             <div class="news-container">
@@ -105,17 +105,17 @@
         </section>
 
         <div id="characterModal" class="modal">
-    <div class="modal-content">
-        <span class="close-button">×</span>
-        <div class="character-navigation">
-            <button class="nav-prev" title="前のキャラクター">◀</button>
-            <button class="nav-next" title="次のキャラクター">▶</button>
+            <div class="modal-content">
+                <span class="close-button">×</span>
+                <div class="character-navigation">
+                    <button class="nav-prev" title="前のキャラクター">◀</button>
+                    <button class="nav-next" title="次のキャラクター">▶</button>
+                </div>
+                <div id="modalCharacterContent">
+                    <!-- モーダルコンテンツはJavaScriptで生成されます -->
+                </div>
+            </div>
         </div>
-        <div id="modalCharacterContent">
-            <!-- モーダルコンテンツはJavaScriptで生成されます -->
-        </div>
-    </div>
-</div>
     </main>
     <footer>
         <div class="footer-links-section">
