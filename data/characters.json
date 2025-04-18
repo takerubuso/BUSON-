@@ -4,6 +4,7 @@
     "name": "しきぶちゃん",
     "image": "images/character/1.jpg",
     "profile": "見る人に“ニヤッ”と元気を届ける、BUSONスタジオの看板キャラクター。紫式部をモデルにしたキャラ",
+    "category": "human",
     "socialLinks": [
       { "name": "X", "url": "https://x.com/positiveshikibu" },
       { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
@@ -29,6 +30,7 @@
     "name": "笑徳太子",
     "image": "images/character/2.jpg",
     "profile": "しきぶちゃんの夫。聖徳太子をモデルにしたキャラ",
+    "category": "human",
     "socialLinks": [
       { "name": "X", "url": "https://x.com/positiveshikibu" },
       { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
@@ -54,6 +56,7 @@
     "name": "清少ナーゴン",
     "image": "images/character/3.jpg",
     "profile": "しきぶちゃんの親友。清少納言をモデルにしたキャラ",
+    "category": "human",
     "socialLinks": [
       { "name": "X", "url": "https://x.com/positiveshikibu" },
       { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
@@ -79,6 +82,7 @@
     "name": "ミント",
     "image": "images/character/4.jpg",
     "profile": "ミントの妖精。清涼感のある香りを放つ緑色の小さな妖精。自然を愛し、環境保護に熱心。ハーブティーを作るのが特技。",
+    "category": "human",
     "socialLinks": [
       { "name": "X", "url": "https://twitter.com/" },
       { "name": "Instagram", "url": "https://instagram.com/" }
@@ -103,6 +107,7 @@
     "name": "ポポタン",
     "image": "images/character/5.jpg",
     "profile": "可愛らしいひよこのようなキャラクター。いつもポポポと鳴いている。単純で素直な性格だが、時々予想外の行動をとる。",
+    "category": "human",
     "socialLinks": [
       { "name": "YouTube", "url": "https://www.youtube.com/" },
       { "name": "Instagram", "url": "https://instagram.com/" },
@@ -128,6 +133,7 @@
     "name": "しきぶちゃん",
     "image": "images/character/6.jpg",
     "profile": "見る人に“ニヤッ”と元気を届ける、BUSONスタジオの看板キャラクター。紫式部をモデルにしたキャラ",
+    "category": "human",
     "socialLinks": [
       { "name": "X", "url": "https://x.com/positiveshikibu" },
       { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
@@ -153,6 +159,7 @@
     "name": "しきぶちゃん",
     "image": "images/character/7.jpg",
     "profile": "見る人に“ニヤッ”と元気を届ける、BUSONスタジオの看板キャラクター。紫式部をモデルにしたキャラ",
+    "category": "human",
     "socialLinks": [
       { "name": "X", "url": "https://x.com/positiveshikibu" },
       { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
@@ -178,6 +185,7 @@
     "name": "しきぶちゃん",
     "image": "images/character/8.jpg",
     "profile": "見る人に“ニヤッ”と元気を届ける、BUSONスタジオの看板キャラクター。紫式部をモデルにしたキャラ",
+    "category": "human",
     "socialLinks": [
       { "name": "X", "url": "https://x.com/positiveshikibu" },
       { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
@@ -203,6 +211,7 @@
     "name": "しきぶちゃん",
     "image": "images/character/9.jpg",
     "profile": "見る人に“ニヤッ”と元気を届ける、BUSONスタジオの看板キャラクター。紫式部をモデルにしたキャラ",
+    "category": "human",
     "socialLinks": [
       { "name": "X", "url": "https://x.com/positiveshikibu" },
       { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
@@ -228,6 +237,7 @@
     "name": "しきぶちゃん",
     "image": "images/character/10.jpg",
     "profile": "見る人に“ニヤッ”と元気を届ける、BUSONスタジオの看板キャラクター。紫式部をモデルにしたキャラ",
+    "category": "human",
     "socialLinks": [
       { "name": "X", "url": "https://x.com/positiveshikibu" },
       { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
@@ -253,6 +263,7 @@
     "name": "しきぶちゃん",
     "image": "images/character/11.jpg",
     "profile": "見る人に“ニヤッ”と元気を届ける、BUSONスタジオの看板キャラクター。紫式部をモデルにしたキャラ",
+    "category": "human",
     "socialLinks": [
       { "name": "X", "url": "https://x.com/positiveshikibu" },
       { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
