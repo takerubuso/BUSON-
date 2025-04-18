@@ -470,7 +470,7 @@ h2::after {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 15px;
-    padding: 10px 0 30px;
+    padding: 10px 0 30px
 }
 
 .stamp-card {
