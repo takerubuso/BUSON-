@@ -22,5 +22,13 @@
     "price": 1300,
     "category": "ebook",
     "url": "https://amzn.asia/d/fiXg6ZQ"
+  },
+  {
+    "id": 4,
+    "name": "あるあるマンガまとめ (全9話)(Kindle版)",
+    "image": "images/books/4.png",
+    "price": 0,
+    "category": "ebook",
+    "url": "https://amzn.asia/d/fiXg6ZQ"
   }
 ]
