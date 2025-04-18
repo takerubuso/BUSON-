@@ -623,16 +623,20 @@ h2::after {
 .youtube-button {
     display: inline-block;
     padding: 12px 25px;
-    background-color: #ff0000; /* YouTube赤 */
-    color: white;
+    background-color: #ffd1dc; /* YouTube赤からピンクに変更 */
+    color: #4a4a4a;
     text-decoration: none;
     border-radius: 25px;
     font-weight: 500;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
 }
 
 .youtube-button:hover {
-    background-color: #cc0000;
+    background-color: #ff6b88;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
 }
 
 /* 漫画ブログセクション */
