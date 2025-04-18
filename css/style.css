@@ -160,6 +160,33 @@ h2::after {
     right: 10px;
 }
 
+/* 共通フィルターボタンスタイル */
+.character-filter, .goods-filter, .books-filter, .stamps-filter {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.filter-button {
+    padding: 6px 15px;
+    background-color: #ffd1dc;
+    color: #4a4a4a;
+    border: none;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    white-space: nowrap;
+}
+
+.filter-button:hover, .filter-button.active {
+    background-color: #ff6b88;
+    color: white;
+}
+
 /* キャラクターセクション */
 .character-container {
     display: flex;
@@ -220,92 +247,6 @@ h2::after {
     font-size: 18px;
     color: #4a4a4a;
     background-color: #fff;
-}
-
-/* キャラクターフィルターのスタイル */
-.character-filter {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-.filter-button {
-    padding: 8px 20px;
-    background-color: #ffd1dc;
-    color: #4a4a4a;
-    border: none;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-}
-
-.filter-button:hover, .filter-button.active {
-    background-color: #ff6b88;
-    color: white;
-}
-
-.second-links-row {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 15px;
-}
-
-.small-link {
-    color: #4a4a4a;
-    text-decoration: none;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    transition: color 0.3s;
-    white-space: nowrap; /* 改行を防止 */
-}
-
-.small-link::before {
-    content: '▶';
-    font-size: 10px;
-    margin-right: 5px;
-}
-
-.small-link:hover {
-    color: #ff6b88; /* ここが切れていました */
-}
-
-/* キャラクターナビゲーションボタン */
-.nav-prev:hover, .nav-next:hover {
-    background-color: #ffd1dc;
-    transform: translateY(-3px);
-}
-
-/* キャラクターナビゲーションボタンの位置修正 */
-.character-navigation {
-    position: absolute;
-    width: 100%;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    justify-content: space-between;
-    padding: 0 10px;
-    pointer-events: none; /* ボタン以外はクリック通過 */
-    z-index: 10; /* 高い値でモーダルコンテンツの上に表示 */
-}
-
-.nav-prev, .nav-next {
-    position: absolute; /* 絶対位置指定に変更 */
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 15; /* 確実に最前面に表示 */
-}
-
-.nav-prev {
-    left: 20px; /* 左端からの距離 */
-}
-
-.nav-next {
-    right: 20px; /* 右端からの距離 */
 }
 
 /* グッズセクション */
@@ -579,18 +520,6 @@ h2::after {
     color: white;
 }
 
-@media (max-width: 768px) {
-    #stamps-container {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 480px) {
-    #stamps-container {
-        grid-template-columns: 1fr;
-    }
-}
-
 /* YouTube セクション */
 .youtube-container {
     display: grid;
@@ -647,6 +576,7 @@ h2::after {
 .youtube-button-container {
     text-align: center;
     margin-top: 20px;
+    margin-bottom: 40px;
 }
 
 .youtube-button {
@@ -727,6 +657,7 @@ h2::after {
 .manga-button-container {
     text-align: center;
     margin-top: 20px;
+    margin-bottom: 40px;
 }
 
 .manga-button {
@@ -737,12 +668,15 @@ h2::after {
     text-decoration: none;
     border-radius: 25px;
     font-weight: 500;
-    transition: background-color 0.3s, color 0.3s;
+    transition: background-color 0.3s, color 0.3s, transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
 }
 
 .manga-button:hover {
     background-color: #ff6b88;
     color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 }
 
 /* フッタースタイル */
@@ -858,6 +792,9 @@ footer {
     flex-wrap: wrap;
     justify-content: center;
     gap: 15px;
+    margin: 0 auto;
+    max-width: 1000px;
+    padding: 0 20px;
 }
 
 .small-link {
@@ -868,6 +805,7 @@ footer {
     align-items: center;
     transition: color 0.3s;
     white-space: nowrap; /* 改行を防止 */
+    margin: 5px;
 }
 
 .small-link::before {
@@ -878,21 +816,6 @@ footer {
 
 .small-link:hover {
     color: #ff6b88;
-}
-
-@media (max-width: 768px) {
-    .second-links-row {
-        justify-content: flex-start;
-        flex-wrap: wrap;
-    }
-}
-
-@media (max-width: 480px) {
-    .second-links-row {
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
 }
 
 .copyright-section {
@@ -1090,6 +1013,44 @@ footer {
     text-align: center;
 }
 
+/* キャラクターナビゲーションボタンの位置修正 */
+.character-navigation {
+    position: absolute;
+    width: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0;
+    right: 0;
+    pointer-events: none; /* ボタン以外はクリック通過 */
+    z-index: 10;
+}
+
+.nav-prev, .nav-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.8);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    color: #ff6b88;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    pointer-events: auto; /* ボタンはクリック可能 */
+    transition: background-color 0.3s, transform 0.3s;
+    z-index: 100; /* 非常に高い値で最前面に表示 */
+}
+
+.nav-prev {
+    left: -20px; /* 左に配置 */
+}
+
+.nav-next {
+    right: -20px; /* 右に配置 */
+}
+
 /* レスポンシブデザイン */
 @media (max-width: 768px) {
     nav ul {
@@ -1124,8 +1085,14 @@ footer {
     }
 
     .second-links-row {
-        flex-direction: column;
+        justify-content: center;
+        flex-wrap: wrap;
         gap: 10px;
+    }
+    
+    .small-link {
+        font-size: 12px;
+        margin: 3px;
     }
 
     .footer-links-row {
@@ -1171,6 +1138,32 @@ footer {
     }
     .info-label-text {
         font-size: 10px;
+    }
+    
+    /* モバイル用の矢印スタイル調整 */
+    .nav-prev, .nav-next {
+        width: 30px;
+        height: 30px;
+        font-size: 14px;
+        opacity: 0.8;
+    }
+    
+    .nav-prev {
+        left: -5px;
+    }
+    
+    .nav-next {
+        right: -5px;
+    }
+    
+    .character-filter, .goods-filter, .books-filter, .stamps-filter {
+        padding: 0 10px;
+        gap: 5px;
+    }
+    
+    .filter-button {
+        padding: 5px 10px;
+        font-size: 12px;
     }
 }
 
