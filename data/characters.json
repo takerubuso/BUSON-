@@ -3,7 +3,7 @@
     "id": 1,
     "name": "しきぶちゃん",
     "image": "images/character/1.jpg",
-    "profile": "見る人に“ニヤッ”と元気を届ける、BUSONスタジオの看板キャラクター。紫式部をモデルにしたキャラ",
+    "profile": "見る人に“ニヤッ”と元気を届ける BUSONスタジオの看板キャラクター 紫式部をモデルにしたキャラ",
     "category": "human",
     "socialLinks": [
       { "name": "X", "url": "https://x.com/positiveshikibu" },
@@ -29,7 +29,7 @@
     "id": 2,
     "name": "笑徳太子",
     "image": "images/character/2.jpg",
-    "profile": "しきぶちゃんの夫。聖徳太子をモデルにしたキャラ",
+    "profile": "しきぶちゃんの夫 聖徳太子をモデルにしたキャラ",
     "category": "human",
     "socialLinks": [
       { "name": "X", "url": "https://x.com/positiveshikibu" },
@@ -79,20 +79,21 @@
   },
   {
     "id": 4,
-    "name": "ミント",
+    "name": "花子さん",
     "image": "images/character/4.jpg",
-    "profile": "ミントの妖精。清涼感のある香りを放つ緑色の小さな妖精。自然を愛し、環境保護に熱心。ハーブティーを作るのが特技。",
+    "profile": "基本的に機嫌が悪いキャラクターです",
     "category": "human",
     "socialLinks": [
-      { "name": "X", "url": "https://twitter.com/" },
-      { "name": "Instagram", "url": "https://instagram.com/" }
+      { "name": "X", "url": "https://x.com/positiveshikibu" },
+      { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
+      { "name": "TikTok", "url": "https://www.tiktok.com/@buson2025" }
     ],
-    "personality": "穏やかで自然好き",
-    "birthday": "5月9日",
-    "debutYear": 2025,
-    "hobbies": ["ハーブ栽培", "自然観察"],
-    "skills": ["ハーブティー作り", "植物と会話ができる"],
-    "favoriteFood": "朝露",
+    "personality": "キレキャラ",
+    "birthday": "8月7日",
+    "debutYear": 2018,
+    "hobbies": ["投資", "一人旅"],
+    "skills": "無言の圧力",
+    "favoriteFood": "そうめん",
     "icons": {
       "personality": "images/icons/1.png",
       "birthday": "images/icons/2.png",
@@ -104,14 +105,14 @@
   },
   {
     "id": 5,
-    "name": "ポポタン",
+    "name": "あたりちゃん",
     "image": "images/character/5.jpg",
-    "profile": "可愛らしいひよこのようなキャラクター。いつもポポポと鳴いている。単純で素直な性格だが、時々予想外の行動をとる。",
+    "profile": "しきぶちゃんと太子の娘",
     "category": "human",
     "socialLinks": [
-      { "name": "YouTube", "url": "https://www.youtube.com/" },
-      { "name": "Instagram", "url": "https://instagram.com/" },
-      { "name": "Threads", "url": "https://www.threads.net/" }
+      { "name": "X", "url": "https://x.com/positiveshikibu" },
+      { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
+      { "name": "TikTok", "url": "https://www.tiktok.com/@buson2025" }
     ],
     "personality": "単純で素直",
     "birthday": "8月16日",
@@ -130,11 +131,11 @@
   },
   {
     "id": 6,
-    "name": "しきぶちゃん",
+    "name": "のん太",
     "image": "images/character/6.jpg",
     "profile": "見る人に“ニヤッ”と元気を届ける、BUSONスタジオの看板キャラクター。紫式部をモデルにしたキャラ",
     "category": "human",
-    "socialLinks": [
+   "socialLinks": [
       { "name": "X", "url": "https://x.com/positiveshikibu" },
       { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
       { "name": "TikTok", "url": "https://www.tiktok.com/@buson2025" }
@@ -156,11 +157,11 @@
   },
   {
     "id": 7,
-    "name": "しきぶちゃん",
+    "name": "小野コマチ",
     "image": "images/character/7.jpg",
     "profile": "見る人に“ニヤッ”と元気を届ける、BUSONスタジオの看板キャラクター。紫式部をモデルにしたキャラ",
     "category": "human",
-    "socialLinks": [
+   "socialLinks": [
       { "name": "X", "url": "https://x.com/positiveshikibu" },
       { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
       { "name": "TikTok", "url": "https://www.tiktok.com/@buson2025" }
@@ -182,7 +183,7 @@
   },
   {
     "id": 8,
-    "name": "しきぶちゃん",
+    "name": "五郎",
     "image": "images/character/8.jpg",
     "profile": "見る人に“ニヤッ”と元気を届ける、BUSONスタジオの看板キャラクター。紫式部をモデルにしたキャラ",
     "category": "human",
@@ -208,7 +209,7 @@
   },
   {
     "id": 9,
-    "name": "しきぶちゃん",
+    "name": "織田ノブ",
     "image": "images/character/9.jpg",
     "profile": "見る人に“ニヤッ”と元気を届ける、BUSONスタジオの看板キャラクター。紫式部をモデルにしたキャラ",
     "category": "human",
@@ -234,37 +235,11 @@
   },
   {
     "id": 10,
-    "name": "しきぶちゃん",
+    "name": "サトシ",
     "image": "images/character/10.jpg",
     "profile": "見る人に“ニヤッ”と元気を届ける、BUSONスタジオの看板キャラクター。紫式部をモデルにしたキャラ",
     "category": "human",
-    "socialLinks": [
-      { "name": "X", "url": "https://x.com/positiveshikibu" },
-      { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
-      { "name": "TikTok", "url": "https://www.tiktok.com/@buson2025" }
-    ],
-    "personality": "ポジティブ",
-    "birthday": "8月8日",
-    "debutYear": "2017",
-    "hobbies": "旅行",
-    "skills": "どこでも寝られる",
-    "favoriteFood": "焼肉",
-    "icons": {
-      "personality": "images/icons/1.png",
-      "birthday": "images/icons/2.png",
-      "debutYear": "images/icons/3.png",
-      "hobbies": "images/icons/4.png",
-      "skills": "images/icons/5.png",
-      "favoriteFood": "images/icons/6.png"
-    }
-  },
-  {
-    "id": 11,
-    "name": "しきぶちゃん",
-    "image": "images/character/11.jpg",
-    "profile": "見る人に“ニヤッ”と元気を届ける、BUSONスタジオの看板キャラクター。紫式部をモデルにしたキャラ",
-    "category": "human",
-    "socialLinks": [
+   "socialLinks": [
       { "name": "X", "url": "https://x.com/positiveshikibu" },
       { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
       { "name": "TikTok", "url": "https://www.tiktok.com/@buson2025" }
