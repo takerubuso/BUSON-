@@ -4,6 +4,7 @@
     "name": "モフタロウ ぬいぐるみ",
     "image": "images/goods/1.png",
     "price": 2,649,
+    "category": "plush",
     "url": "https://suzuri.jp/buson2025/15723649/acrylic-keychain/50x50mm/clear"
   },
   {
@@ -11,6 +12,7 @@
     "name": "ピンキー アクリルキーホルダー",
     "image": "images/goods2.jpg",
     "price": 800,
+    "category": "plush",
     "url": "https://booth.pm/"
   },
   {
@@ -18,6 +20,7 @@
     "name": "キャラクター マスキングテープ",
     "image": "images/goods3.jpg",
     "price": 550,
+    "category": "plush",
     "url": "https://booth.pm/"
   },
   {
@@ -25,6 +28,7 @@
     "name": "クマゴロー Tシャツ",
     "image": "images/goods4.jpg",
     "price": 3200,
+    "category": "plush",
     "url": "https://base.shop/"
   },
   {
@@ -32,6 +36,7 @@
     "name": "ミント トートバッグ",
     "image": "images/goods5.jpg",
     "price": 1800,
+    "category": "plush",
     "url": "https://base.shop/"
   },
   {
@@ -39,6 +44,7 @@
     "name": "ポポタン マグカップ",
     "image": "images/goods6.jpg",
     "price": 1500,
+    "category": "plush",
     "url": "https://booth.pm/"
   }
 ]
