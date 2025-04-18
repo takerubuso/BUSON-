@@ -83,98 +83,6 @@
   box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
 }
 
-/* 漫画ブログセクションのスタイル - カードデザインに変更 */
-.manga-container {
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 10px 0 20px;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-}
-
-.manga-card {
-  background: white;
-  border-radius: 15px;
-  overflow: hidden;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.manga-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-.manga-img {
-  width: 100%;
-  height: 200px;
-  overflow: hidden;
-}
-
-.manga-img img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-}
-
-.manga-card:hover .manga-img img {
-  transform: scale(1.05);
-}
-
-.manga-info {
-  padding: 15px;
-}
-
-.manga-info .date {
-  font-size: 14px;
-  color: #aaa;
-  margin-bottom: 5px;
-}
-
-.manga-info h3 {
-  font-size: 18px;
-  margin-bottom: 10px;
-  color: #4a4a4a;
-}
-
-.manga-info p {
-  font-size: 14px;
-  color: #777;
-  margin-bottom: 10px;
-}
-
-.manga-button-container {
-  text-align: center;
-  margin-top: 20px;
-  margin-bottom: 40px;
-}
-
-.manga-button {
-  display: inline-block;
-  padding: 12px 30px;
-  background-color: #ffd1dc;
-  color: #4a4a4a;
-  text-decoration: none;
-  border-radius: 25px;
-  font-weight: 500;
-  transition: background-color 0.3s, color 0.3s, transform 0.3s, box-shadow 0.3s;
-  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
-}
-
-.manga-button:hover {
-  background-color: #ff6b88;
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-}
-
-.manga-button:active {
-  transform: translateY(0);
-  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
-}
-
 /* 書籍セクションの追加スタイル */
 #books-container {
   margin-bottom: 30px;
@@ -187,13 +95,7 @@
     padding: 0 15px;
   }
   
-  .manga-container {
-    grid-template-columns: 1fr;
-    padding: 0 15px 30px;
-  }
-  
-  .youtube-button,
-  .manga-button {
+  .youtube-button {
     padding: 10px 25px;
     font-size: 14px;
   }
@@ -205,14 +107,6 @@
   }
   
   .youtube-info p {
-    font-size: 13px;
-  }
-  
-  .manga-info h3 {
-    font-size: 16px;
-  }
-  
-  .manga-info p {
     font-size: 13px;
   }
 }
