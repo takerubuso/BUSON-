@@ -17,18 +17,10 @@
   },
   {
     "id": 3,
-    "name": "クマゴローと森のともだち",
-    "image": "images/books/book3.jpg",
+    "name": "ニヤっと笑える 超現代風・紫式部OL日記",
+    "image": "images/books/2.jpg",
     "price": 1300,
     "category": "ebook",
-    "url": "https://example.com/book3"
-  },
-  {
-    "id": 4,
-    "name": "BUSON STUDIO キャラクターコレクション",
-    "image": "images/books/book4.jpg",
-    "price": 2500,
-    "category": "ebook",
-    "url": "https://example.com/book4"
+    "url": "https://amzn.asia/d/fiXg6ZQ"
   }
 ]
