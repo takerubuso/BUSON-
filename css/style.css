@@ -222,6 +222,63 @@ h2::after {
     background-color: #fff;
 }
 
+/* キャラクターフィルターのスタイル */
+.character-filter {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.filter-button {
+    padding: 8px 20px;
+    background-color: #ffd1dc;
+    color: #4a4a4a;
+    border: none;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.filter-button:hover, .filter-button.active {
+    background-color: #ff6b88;
+    color: white;
+}
+
+/* キャラクターナビゲーションボタン */
+.character-navigation {
+    position: absolute;
+    width: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    padding: 0 10px;
+    pointer-events: none; /* ボタン以外はクリック通過 */
+}
+
+.nav-prev, .nav-next {
+    background: rgba(255, 255, 255, 0.8);
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    color: #ff6b88;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    pointer-events: auto; /* ボタンはクリック可能 */
+    transition: background-color 0.3s, transform 0.3s;
+    z-index: 10;
+}
+
+.nav-prev:hover, .nav-next:hover {
+    background-color: #ffd1dc;
+    transform: translateY(-3px);
+}
+
 /* グッズセクション */
 .goods-container {
     display: grid;
@@ -406,6 +463,103 @@ h2::after {
 .news-item .read-more:hover {
     color: #ff4d73;
     text-decoration: underline;
+}
+
+/* LINEスタンプセクションのスタイル */
+#stamps-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    padding: 10px 0 30px;
+}
+
+.stamp-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.stamp-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.stamp-img {
+    width: 100%;
+    height: 180px;
+    background-color: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.stamp-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.stamp-card:hover .stamp-img img {
+    transform: scale(1.05);
+}
+
+.stamp-info {
+    padding: 15px;
+    background: #fff;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.stamp-info h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #4a4a4a;
+}
+
+.stamp-info .price {
+    font-weight: 700;
+    color: #ff6b88;
+    margin-bottom: 15px;
+    display: block;
+}
+
+.stamp-info .button {
+    display: block;
+    text-align: center;
+    padding: 10px;
+    background: #ffd1dc;
+    color: #4a4a4a;
+    border-radius: 25px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin-top: auto;
+}
+
+.stamp-info .button:hover {
+    background-color: #ff6b88;
+    color: white;
+}
+
+@media (max-width: 768px) {
+    #stamps-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    #stamps-container {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* YouTube セクション */
