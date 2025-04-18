@@ -84,6 +84,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 書籍セクションの初期化
     initializeBooks();
+    
+    // LINEスタンプセクションの初期化
+    initializeLineStamps();
 
     // ニュースデータを読み込み
     fetch('data/news.json')
@@ -215,7 +218,7 @@ function initializeSlider(data) {
     }
 }
 
-// キャラクターの初期化
+// キャラクターの初期化関数を修正（カテゴリ属性を追加）
 function initializeCharacters(data) {
     const characterContainer = document.querySelector('.character-container');
     if (!characterContainer || !data || data.length === 0) return;
@@ -229,6 +232,11 @@ function initializeCharacters(data) {
         card.className = 'character-card';
         card.setAttribute('data-character', character.name); // data属性を追加
         
+        // カテゴリー属性を追加（仮データを使用）
+        // 通常はcharacter.categoryなどの実際のデータを使用
+        const category = character.name.includes('ポポタン') || character.name.includes('モフタロウ') ? 'animal' : 'human';
+        card.setAttribute('data-category', category);
+        
         // 画像パスの生成
         const imagePath = character.image || 'images/character/1.png';
         
@@ -240,21 +248,31 @@ function initializeCharacters(data) {
         `;
         characterContainer.appendChild(card);
     });
+    
+    // フィルター機能を初期化
+    initializeCharacterFilter();
 }
 
-// キャラクターモーダルの設定
+// キャラクターモーダルの設定関数を修正（左右移動機能を追加）
 function setupCharacterModal(characters) {
     const modal = document.getElementById('characterModal');
     const modalContent = document.getElementById('modalCharacterContent');
     const closeButton = document.querySelector('.close-button');
+    const prevButton = document.querySelector('.nav-prev');
+    const nextButton = document.querySelector('.nav-next');
+
+    // 現在表示中のキャラクターインデックスを追跡
+    let currentCharacterIndex = 0;
 
     // キャラクターカードにクリックイベントを追加
     const characterCards = document.querySelectorAll('.character-card');
 
-    characterCards.forEach(card => {
+    characterCards.forEach((card, index) => {
         card.addEventListener('click', function() {
             const characterName = this.getAttribute('data-character');
-            showCharacterModal(characterName, characters);
+            // クリックされたカードのインデックスを保存
+            currentCharacterIndex = characters.findIndex(char => char.name === characterName);
+            showCharacterModal(currentCharacterIndex, characters);
         });
     });
 
@@ -272,9 +290,23 @@ function setupCharacterModal(characters) {
         }
     });
 
-    // キャラクターモーダルを表示する関数
-    function showCharacterModal(characterName, characters) {
-        const character = characters.find(char => char.name === characterName);
+    // 前のキャラクターボタン
+    prevButton.addEventListener('click', function(e) {
+        e.stopPropagation(); // イベントの伝播を停止
+        currentCharacterIndex = (currentCharacterIndex - 1 + characters.length) % characters.length;
+        showCharacterModal(currentCharacterIndex, characters);
+    });
+
+    // 次のキャラクターボタン
+    nextButton.addEventListener('click', function(e) {
+        e.stopPropagation(); // イベントの伝播を停止
+        currentCharacterIndex = (currentCharacterIndex + 1) % characters.length;
+        showCharacterModal(currentCharacterIndex, characters);
+    });
+
+    // キャラクターモーダルを表示する関数（インデックスベースに変更）
+    function showCharacterModal(index, characters) {
+        const character = characters[index];
 
         if (character) {
             // 画像パスの生成
@@ -362,6 +394,33 @@ function setupCharacterModal(characters) {
             document.body.style.overflow = 'hidden';
         }
     }
+}
+
+// キャラクターフィルター機能を追加
+function initializeCharacterFilter() {
+    const filterButtons = document.querySelectorAll('.filter-button');
+    const characterCards = document.querySelectorAll('.character-card');
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // アクティブボタンのスタイルを切り替え
+            document.querySelector('.filter-button.active').classList.remove('active');
+            this.classList.add('active');
+            
+            const filterValue = this.getAttribute('data-filter');
+            
+            // キャラクターをフィルタリング
+            characterCards.forEach(card => {
+                const category = card.getAttribute('data-category');
+                
+                if (filterValue === 'all' || category === filterValue) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    });
 }
 
 // グッズの初期化を修正
@@ -475,6 +534,74 @@ function initializeBooks() {
     });
     
     console.log('書籍を表示しました');
+}
+
+// LINEスタンプセクションの初期化
+function initializeLineStamps() {
+    const stampsContainer = document.getElementById('stamps-container');
+    if (!stampsContainer) {
+        console.error('LINEスタンプコンテナが見つかりません');
+        return;
+    }
+    
+    // プレースホルダー画像のパス
+    const placeholderImage = 'images/placeholder.jpg';
+    
+    // サンプルLINEスタンプデータ
+    const stampsData = [
+        {
+            id: 1,
+            name: "しきぶちゃんスタンプ 基本セット",
+            image: "images/stamps/stamp1.jpg",
+            price: 120,
+            url: "https://line.me/S/sticker/"
+        },
+        {
+            id: 2,
+            name: "しきぶちゃん 日常会話セット",
+            image: "images/stamps/stamp2.jpg",
+            price: 120,
+            url: "https://line.me/S/sticker/"
+        },
+        {
+            id: 3,
+            name: "ピンキー スタンプ",
+            image: "images/stamps/stamp3.jpg",
+            price: 120,
+            url: "https://line.me/S/sticker/"
+        },
+        {
+            id: 4,
+            name: "クマゴロー＆ポポタン スタンプ",
+            image: "images/stamps/stamp4.jpg",
+            price: 120,
+            url: "https://line.me/S/sticker/"
+        }
+    ];
+    
+    // スタンプカードを生成
+    stampsData.forEach(stamp => {
+        const card = document.createElement('div');
+        card.className = 'stamp-card';
+        
+        // 価格をフォーマット
+        const formattedPrice = stamp.price + '円';
+        
+        card.innerHTML = `
+            <div class="stamp-img">
+                <img src="${stamp.image}" alt="${stamp.name}" 
+                     onerror="this.onerror=null; this.src='${placeholderImage}';">
+            </div>
+            <div class="stamp-info">
+                <h3>${stamp.name}</h3>
+                <p class="price">${formattedPrice}</p>
+                <a href="${stamp.url}" class="button" target="_blank">詳しく見る</a>
+            </div>
+        `;
+        stampsContainer.appendChild(card);
+    });
+    
+    console.log('LINEスタンプを表示しました');
 }
 
 // ニュースの初期化 - 既存の関数を修正
