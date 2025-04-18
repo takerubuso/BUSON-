@@ -10,7 +10,7 @@
   {
     "id": 2,
     "name": "しきぶとナーゴンのダジャレ&死語スタンプ(40個)",
-    "image": "images/stamps/stamp2.jpg",
+    "image": "images/stamps/stamp2.jpeg",
     "price": 120,
     "category": "stamp",
     "url": "https://line.me/S/sticker/16188960/?lang=ja&utm_source=gnsh_stickerDetail"
@@ -74,7 +74,7 @@
   {
     "id": 10,
     "name": "しきぶのなりきりスタンプ(40個)",
-    "image": "images/stamps/stamp10.jpg",
+    "image": "images/stamps/stamp10.png",
     "price": 120,
     "category": "stamp",
     "url": "https://line.me/S/sticker/16508909/?lang=ja&utm_source=gnsh_stickerDetail"
@@ -90,7 +90,7 @@
   {
     "id": 12,
     "name": "しきぶワールド",
-    "image": "images/themes/theme1.jpg",
+    "image": "images/themes/theme1.jpeg",
     "price": 370,
     "category": "theme",
     "url": "https://line.me/S/shop/theme/detail?id=1e809a1c-7b28-478e-8154-838613e17925&lang=ja&ref=lsh_themeDetail"
