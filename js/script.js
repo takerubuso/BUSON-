@@ -879,12 +879,12 @@ function displayMangaBlogCards() {
     
     // 漫画ブログカードを生成（画像のみ）
     const card = document.createElement('div');
-    card.className = 'manga-card';
+    card.className = 'manga-card image-only';
     
     card.innerHTML = `
         <a href="${mangaData.url}" target="_blank" class="manga-link">
             <div class="manga-img full-card">
-                <img src="${mangaData.image}" alt="BUSONコンテンツ" onerror="this.onerror=null; this.src='images/placeholder.jpg';">
+                <img src="${mangaData.image}" alt="BUSON漫画ブログ" onerror="this.onerror=null; this.src='images/placeholder.jpg';">
             </div>
         </a>
     `;
