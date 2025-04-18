@@ -639,12 +639,13 @@ h2::after {
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* 漫画ブログセクション */
+/* 漫画ブログセクション（1つだけ表示するバージョン） */
 .manga-container {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
+    display: flex;
+    justify-content: center;
     padding: 10px 0 20px;
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 .manga-card {
@@ -653,6 +654,7 @@ h2::after {
     overflow: hidden;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 100%;
 }
 
 .manga-card:hover {
