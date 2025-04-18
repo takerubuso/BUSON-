@@ -859,7 +859,7 @@ function displaySimpleYouTubeVideos() {
     });
 }
 
-// 漫画ブログのカードデザインで表示する関数
+// 漫画ブログのカードデザインで表示する関数（1つだけ表示）
 function initializeMangaBlog() {
     displayMangaBlogCards();
 }
@@ -879,8 +879,9 @@ function displayMangaBlogCards() {
             // コンテナをクリア
             mangaContainer.innerHTML = '';
             
-            // 漫画ブログカードを生成
-            data.forEach(manga => {
+            // データが存在する場合は最初の1件だけを表示
+            if (data && data.length > 0) {
+                const manga = data[0]; // 最初の1件だけを使用
                 const formattedDate = manga.date.replace(/-/g, '.');
                 const card = document.createElement('div');
                 card.className = 'manga-card';
@@ -899,7 +900,7 @@ function displayMangaBlogCards() {
                 `;
                 
                 mangaContainer.appendChild(card);
-            });
+            }
         })
         .catch(error => {
             console.error('漫画ブログデータの読み込みに失敗しました:', error);
@@ -933,7 +934,6 @@ function displayMangaBlogCards() {
             mangaContainer.appendChild(card);
         });
 }
-
 // ページ読み込み完了後にニュースを確認し、必要なら強制表示
 window.addEventListener('load', function() {
     // ニュースセクションを確認
