@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1,
+    "name": "しきぶちゃんスタンプ 基本セット",
+    "image": "images/stamps/stamp1.jpg",
+    "price": 120,
+    "category": "stamp",
+    "url": "https://line.me/S/sticker/"
+  },
+  {
+    "id": 2,
+    "name": "しきぶちゃん 日常会話セット",
+    "image": "images/stamps/stamp2.jpg",
+    "price": 120,
+    "category": "stamp",
+    "url": "https://line.me/S/sticker/"
+  },
+  {
+    "id": 3,
+    "name": "ピンキー スタンプ",
+    "image": "images/stamps/stamp3.jpg",
+    "price": 120,
+    "category": "emoji",
+    "url": "https://line.me/S/sticker/"
+  },
+  {
+    "id": 4,
+    "name": "クマゴロー＆ポポタン スタンプ",
+    "image": "images/stamps/stamp4.jpg",
+    "price": 120,
+    "category": "theme",
+    "url": "https://line.me/S/sticker/"
+  }
+]
