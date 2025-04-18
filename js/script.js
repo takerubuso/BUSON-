@@ -138,6 +138,35 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeMangaBlog();
 });
 
+// キャラクターモーダルのナビゲーションにタッチイベントを追加
+function setupMobileTouchEvents() {
+    const prevButton = document.querySelector('.nav-prev');
+    const nextButton = document.querySelector('.nav-next');
+    
+    if (prevButton && nextButton) {
+        // タッチデバイス用のイベントを追加
+        prevButton.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            // クリックイベントをトリガー
+            prevButton.click();
+        }, {passive: false});
+        
+        nextButton.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            // クリックイベントをトリガー
+            nextButton.click();
+        }, {passive: false});
+    }
+}
+
+// DOMContentLoadedイベントに関数呼び出しを追加
+document.addEventListener('DOMContentLoaded', function() {
+    // 既存のコード...
+    
+    // モバイルタッチイベントを設定
+    setupMobileTouchEvents();
+});
+
 // スライダーの初期化
 function initializeSlider(data) {
     const sliderContainer = document.querySelector('.slider');
