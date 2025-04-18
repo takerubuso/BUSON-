@@ -77,7 +77,7 @@
   {
     "id": 4,
     "name": "ミント",
-    "image": "images/character4.jpg",
+    "image": "images/character/4.jpg",
     "profile": "ミントの妖精。清涼感のある香りを放つ緑色の小さな妖精。自然を愛し、環境保護に熱心。ハーブティーを作るのが特技。",
     "socialLinks": [
       { "name": "X", "url": "https://twitter.com/" },
@@ -101,7 +101,7 @@
   {
     "id": 5,
     "name": "ポポタン",
-    "image": "images/character5.jpg",
+    "image": "images/character/5.jpg",
     "profile": "可愛らしいひよこのようなキャラクター。いつもポポポと鳴いている。単純で素直な性格だが、時々予想外の行動をとる。",
     "socialLinks": [
       { "name": "YouTube", "url": "https://www.youtube.com/" },
@@ -114,6 +114,156 @@
     "hobbies": ["お散歩", "ひなたぼっこ"],
     "skills": ["可愛い鳴き声", "すぐに友達になれる"],
     "favoriteFood": "お米",
+    "icons": {
+      "personality": "images/icons/1.png",
+      "birthday": "images/icons/2.png",
+      "debutYear": "images/icons/3.png",
+      "hobbies": "images/icons/4.png",
+      "skills": "images/icons/5.png",
+      "favoriteFood": "images/icons/6.png"
+    }
+  },
+  {
+    "id": 6,
+    "name": "しきぶちゃん",
+    "image": "images/character/6.png",
+    "profile": "見る人に“ニヤッ”と元気を届ける、BUSONスタジオの看板キャラクター。紫式部をモデルにしたキャラ",
+    "socialLinks": [
+      { "name": "X", "url": "https://x.com/positiveshikibu" },
+      { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
+      { "name": "TikTok", "url": "https://www.tiktok.com/@buson2025" }
+    ],
+    "personality": "ポジティブ",
+    "birthday": "8月8日",
+    "debutYear": "2017",
+    "hobbies": "旅行",
+    "skills": "どこでも寝られる",
+    "favoriteFood": "焼肉",
+    "icons": {
+      "personality": "images/icons/1.png",
+      "birthday": "images/icons/2.png",
+      "debutYear": "images/icons/3.png",
+      "hobbies": "images/icons/4.png",
+      "skills": "images/icons/5.png",
+      "favoriteFood": "images/icons/6.png"
+    }
+  },
+  {
+    "id": 7,
+    "name": "しきぶちゃん",
+    "image": "images/character/7.png",
+    "profile": "見る人に“ニヤッ”と元気を届ける、BUSONスタジオの看板キャラクター。紫式部をモデルにしたキャラ",
+    "socialLinks": [
+      { "name": "X", "url": "https://x.com/positiveshikibu" },
+      { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
+      { "name": "TikTok", "url": "https://www.tiktok.com/@buson2025" }
+    ],
+    "personality": "ポジティブ",
+    "birthday": "8月8日",
+    "debutYear": "2017",
+    "hobbies": "旅行",
+    "skills": "どこでも寝られる",
+    "favoriteFood": "焼肉",
+    "icons": {
+      "personality": "images/icons/1.png",
+      "birthday": "images/icons/2.png",
+      "debutYear": "images/icons/3.png",
+      "hobbies": "images/icons/4.png",
+      "skills": "images/icons/5.png",
+      "favoriteFood": "images/icons/6.png"
+    }
+  },
+  {
+    "id": 8,
+    "name": "しきぶちゃん",
+    "image": "images/character/8.png",
+    "profile": "見る人に“ニヤッ”と元気を届ける、BUSONスタジオの看板キャラクター。紫式部をモデルにしたキャラ",
+    "socialLinks": [
+      { "name": "X", "url": "https://x.com/positiveshikibu" },
+      { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
+      { "name": "TikTok", "url": "https://www.tiktok.com/@buson2025" }
+    ],
+    "personality": "ポジティブ",
+    "birthday": "8月8日",
+    "debutYear": "2017",
+    "hobbies": "旅行",
+    "skills": "どこでも寝られる",
+    "favoriteFood": "焼肉",
+    "icons": {
+      "personality": "images/icons/1.png",
+      "birthday": "images/icons/2.png",
+      "debutYear": "images/icons/3.png",
+      "hobbies": "images/icons/4.png",
+      "skills": "images/icons/5.png",
+      "favoriteFood": "images/icons/6.png"
+    }
+  },
+  {
+    "id": 9,
+    "name": "しきぶちゃん",
+    "image": "images/character/9.png",
+    "profile": "見る人に“ニヤッ”と元気を届ける、BUSONスタジオの看板キャラクター。紫式部をモデルにしたキャラ",
+    "socialLinks": [
+      { "name": "X", "url": "https://x.com/positiveshikibu" },
+      { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
+      { "name": "TikTok", "url": "https://www.tiktok.com/@buson2025" }
+    ],
+    "personality": "ポジティブ",
+    "birthday": "8月8日",
+    "debutYear": "2017",
+    "hobbies": "旅行",
+    "skills": "どこでも寝られる",
+    "favoriteFood": "焼肉",
+    "icons": {
+      "personality": "images/icons/1.png",
+      "birthday": "images/icons/2.png",
+      "debutYear": "images/icons/3.png",
+      "hobbies": "images/icons/4.png",
+      "skills": "images/icons/5.png",
+      "favoriteFood": "images/icons/6.png"
+    }
+  },
+  {
+    "id": 10,
+    "name": "しきぶちゃん",
+    "image": "images/character/10.png",
+    "profile": "見る人に“ニヤッ”と元気を届ける、BUSONスタジオの看板キャラクター。紫式部をモデルにしたキャラ",
+    "socialLinks": [
+      { "name": "X", "url": "https://x.com/positiveshikibu" },
+      { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
+      { "name": "TikTok", "url": "https://www.tiktok.com/@buson2025" }
+    ],
+    "personality": "ポジティブ",
+    "birthday": "8月8日",
+    "debutYear": "2017",
+    "hobbies": "旅行",
+    "skills": "どこでも寝られる",
+    "favoriteFood": "焼肉",
+    "icons": {
+      "personality": "images/icons/1.png",
+      "birthday": "images/icons/2.png",
+      "debutYear": "images/icons/3.png",
+      "hobbies": "images/icons/4.png",
+      "skills": "images/icons/5.png",
+      "favoriteFood": "images/icons/6.png"
+    }
+  },
+  {
+    "id": 11,
+    "name": "しきぶちゃん",
+    "image": "images/character/11.png",
+    "profile": "見る人に“ニヤッ”と元気を届ける、BUSONスタジオの看板キャラクター。紫式部をモデルにしたキャラ",
+    "socialLinks": [
+      { "name": "X", "url": "https://x.com/positiveshikibu" },
+      { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
+      { "name": "TikTok", "url": "https://www.tiktok.com/@buson2025" }
+    ],
+    "personality": "ポジティブ",
+    "birthday": "8月8日",
+    "debutYear": "2017",
+    "hobbies": "旅行",
+    "skills": "どこでも寝られる",
+    "favoriteFood": "焼肉",
     "icons": {
       "personality": "images/icons/1.png",
       "birthday": "images/icons/2.png",
