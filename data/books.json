@@ -1,0 +1,34 @@
+[
+  {
+    "id": 1,
+    "name": "しきぶちゃんの日常",
+    "image": "images/books/book1.jpg",
+    "price": 1500,
+    "category": "paper",
+    "url": "https://example.com/book1"
+  },
+  {
+    "id": 2,
+    "name": "ピンキーの不思議な冒険",
+    "image": "images/books/book2.jpg",
+    "price": 1200,
+    "category": "paper",
+    "url": "https://example.com/book2"
+  },
+  {
+    "id": 3,
+    "name": "クマゴローと森のともだち",
+    "image": "images/books/book3.jpg",
+    "price": 1300,
+    "category": "ebook",
+    "url": "https://example.com/book3"
+  },
+  {
+    "id": 4,
+    "name": "BUSON STUDIO キャラクターコレクション",
+    "image": "images/books/book4.jpg",
+    "price": 2500,
+    "category": "ebook",
+    "url": "https://example.com/book4"
+  }
+]
