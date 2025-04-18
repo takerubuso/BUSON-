@@ -821,13 +821,43 @@ footer {
 .second-links-row {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
+    justify-content: center;
+    gap: 15px;
+}
+
+.small-link {
+    color: #4a4a4a;
+    text-decoration: none;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    transition: color 0.3s;
+    white-space: nowrap; /* 改行を防止 */
 }
 
 .small-link::before {
     content: '▶';
     font-size: 10px;
     margin-right: 5px;
+}
+
+.small-link:hover {
+    color: #ff6b88;
+}
+
+@media (max-width: 768px) {
+    .second-links-row {
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 480px) {
+    .second-links-row {
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
 }
 
 .copyright-section {
