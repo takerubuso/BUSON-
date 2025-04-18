@@ -1,34 +1,99 @@
 [
   {
     "id": 1,
-    "name": "しきぶちゃんスタンプ 基本セット",
-    "image": "images/stamps/stamp1.jpg",
+    "name": "ポジティブしきぶの絵文字１(40個)",
+    "image": "images/line/1.png",
     "price": 120,
-    "category": "stamp",
-    "url": "https://line.me/S/sticker/"
+    "category": "emoji",
+    "url": "https://line.me/S/emoji/?id=5c8f6075040ab176ac87c2c6&lang=ja&utm_source=gnsh_sticonDetail"
   },
   {
     "id": 2,
-    "name": "しきぶちゃん 日常会話セット",
+    "name": "しきぶとナーゴンのダジャレ&死語スタンプ(40個)",
     "image": "images/stamps/stamp2.jpg",
     "price": 120,
     "category": "stamp",
-    "url": "https://line.me/S/sticker/"
+    "url": "https://line.me/S/sticker/16188960/?lang=ja&utm_source=gnsh_stickerDetail"
   },
   {
     "id": 3,
-    "name": "ピンキー スタンプ",
+    "name": "しきぶとナーゴンの敬語スタンプ(40個)",
     "image": "images/stamps/stamp3.jpg",
     "price": 120,
-    "category": "emoji",
-    "url": "https://line.me/S/sticker/"
+    "category": "stamp",
+    "url": "https://line.me/S/sticker/16788230/?lang=ja&utm_source=gnsh_stickerDetail"
   },
   {
     "id": 4,
-    "name": "クマゴロー＆ポポタン スタンプ",
+    "name": "豆しきぶのスタンプ(40個)",
     "image": "images/stamps/stamp4.jpg",
     "price": 120,
+    "category": "stamp",
+    "url": "https://line.me/S/sticker/3168647/?lang=ja&utm_source=gnsh_stickerDetail"
+  },
+  {
+    "id": 5,
+    "name": "動く敬語のしきぶちゃん(24個)",
+    "image": "images/stamps/stamp5.jpg",
+    "price": 250,
+    "category": "stamp",
+    "url": "https://line.me/S/sticker/16648726/?lang=ja&utm_source=gnsh_stickerDetail"
+  },
+  {
+    "id": 6,
+    "name": "ポジティブウーマンのスタンプ(40個)",
+    "image": "images/stamps/stamp6.jpg",
+    "price": 120,
+    "category": "stamp",
+    "url": "https://line.me/S/sticker/1936309/?lang=ja&utm_source=gnsh_stickerDetail"
+  },
+  {
+    "id": 7,
+    "name": "ポジティブウーマンのスタンプ2(40個)",
+    "image": "images/stamps/stamp7.jpg",
+    "price": 120,
+    "category": "stamp",
+    "url": "https://line.me/S/sticker/1797595/?lang=ja&utm_source=gnsh_stickerDetail"
+  },
+  {
+    "id": 8,
+    "name": "聞き上手？しきぶちゃん！(40個)",
+    "image": "images/stamps/stamp8.jpg",
+    "price": 120,
+    "category": "stamp",
+    "url": "https://line.me/S/sticker/16170677/?lang=ja&utm_source=gnsh_stickerDetail"
+  },
+  {
+    "id": 9,
+    "name": "Nagon sticker(40個)",
+    "image": "images/stamps/stamp9.jpg",
+    "price": 120,
+    "category": "stamp",
+    "url": "https://line.me/S/sticker/3843422/?lang=ja&utm_source=gnsh_stickerDetail"
+  },
+  {
+    "id": 10,
+    "name": "しきぶのなりきりスタンプ(40個)",
+    "image": "images/stamps/stamp10.jpg",
+    "price": 120,
+    "category": "stamp",
+    "url": "https://line.me/S/sticker/16508909/?lang=ja&utm_source=gnsh_stickerDetail"
+  },
+  {
+    "id": 11,
+    "name": "ポジティブしきぶちゃん ステイホーム(8個)",
+    "image": "images/stamps/stamp11.jpg",
+    "price": 120,
+    "category": "stamp",
+    "url": "https://line.me/S/sticker/11440141/?lang=ja&utm_source=gnsh_stickerDetail"
+  },
+  {
+    "id": 12,
+    "name": "しきぶワールド",
+    "image": "images/themes/theme1.jpg",
+    "price": 370,
     "category": "theme",
-    "url": "https://line.me/S/sticker/"
+    "url": "https://line.me/S/shop/theme/detail?id=1e809a1c-7b28-478e-8154-838613e17925&lang=ja&ref=lsh_themeDetail"
   }
 ]
+
