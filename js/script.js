@@ -868,39 +868,38 @@ function displayMangaBlogCards() {
     const mangaContainer = document.querySelector('.manga-container');
     if (!mangaContainer) return;
     
-    fetch('data/mangablog.json')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('漫画ブログデータの読み込みに失敗: ' + response.status);
-            }
-            return response.json();
-        })
-        .then(data => {
-            // コンテナをクリア
-            mangaContainer.innerHTML = '';
-            
-            // データが存在する場合は最初の1件だけを表示
-            if (data && data.length > 0) {
-                const manga = data[0]; // 最初の1件だけを使用
-                const formattedDate = manga.date.replace(/-/g, '.');
-                const card = document.createElement('div');
-                card.className = 'manga-card';
-                
-                card.innerHTML = `
-                    <a href="${manga.url}" target="_blank" class="manga-link">
-                        <div class="manga-img">
-                            <img src="${manga.image}" alt="${manga.title}" onerror="this.onerror=null; this.src='images/placeholder.jpg';">
-                        </div>
-                        <div class="manga-info">
-                            <p class="date">${formattedDate}</p>
-                            <h3>${manga.title}</h3>
-                            <p>${manga.summary}</p>
-                        </div>
-                    </a>
-                `;
-                
-                mangaContainer.appendChild(card);
-            }
+    // コンテナをクリア
+    mangaContainer.innerHTML = '';
+    
+    // 固定の漫画ブログデータ（1つだけ使用）
+    const mangaData = {
+        title: "BUSONコンテンツ",
+        date: "2025-04-15",
+        image: "images/mangablog/header.PNG",
+        summary: "ほぼ毎日漫画更新中!!",
+        url: "https://buson.blog.jp"
+    };
+    
+    // 漫画ブログカードを生成（1つだけ）
+    const formattedDate = mangaData.date.replace(/-/g, '.');
+    const card = document.createElement('div');
+    card.className = 'manga-card';
+    
+    card.innerHTML = `
+        <a href="${mangaData.url}" target="_blank" class="manga-link">
+            <div class="manga-img">
+                <img src="${mangaData.image}" alt="${mangaData.title}" onerror="this.onerror=null; this.src='images/placeholder.jpg';">
+            </div>
+            <div class="manga-info">
+                <p class="date">${formattedDate}</p>
+                <h3>${mangaData.title}</h3>
+                <p>${mangaData.summary}</p>
+            </div>
+        </a>
+    `;
+    
+    mangaContainer.appendChild(card);
+}
         })
         .catch(error => {
             console.error('漫画ブログデータの読み込みに失敗しました:', error);
