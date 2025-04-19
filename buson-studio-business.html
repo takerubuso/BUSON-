@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>BUSON STUDIO - 企業向けプロジェクト</title>
+   <style>
+       /* 基本スタイル */
+       :root {
+           --primary-color: #ff6b6b;
+           --secondary-color: #4ecdc4;
+           --text-color: #333;
+           --light-gray: #f8f9fa;
+           --dark-gray: #495057;
+           --white: #ffffff;
+       }
+       
+       * {
+           margin: 0;
+           padding: 0;
+           box-sizing: border-box;
+           font-family: 'Helvetica Neue', Arial, sans-serif;
+       }
+       
+       body {
+           color: var(--text-color);
+           line-height: 1.6;
+       }
+       
+       h1, h2, h3, h4, h5, h6 {
+           font-weight: 700;
+           margin-bottom: 1rem;
+       }
+       
+       p {
+           margin-bottom: 1.5rem;
+       }
+       
+       .container {
+           max-width: 1200px;
+           margin: 0 auto;
+           padding: 0 20px;
+       }
+       
+       section {
+           padding: 5rem 0;
+       }
+       
+       .text-center {
+           text-align: center;
+       }
+       
+       .btn {
+           display: inline-block;
+           padding: 12px 30px;
+           background-color: var(--primary-color);
+           color: var(--white);
+           text-decoration: none;
+           border-radius: 50px;
+           font-weight: 600;
+           transition: all 0.3s ease;
+       }
+       
+       .btn:hover {
+           background-color: #ff5252;
+           transform: translateY(-2px);
+       }
+       
+       /* ヘッダー */
+       header {
+           background-color: var(--white);
+           padding: 20px 0;
+           box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+           position: sticky;
+           top: 0;
+           z-index: 1000;
+       }
+       
+       .header-inner {
+           display: flex;
+           justify-content: space-between;
+           align-items: center;
+       }
+       
+       .logo {
+           font-size: 24px;
+           font-weight: 700;
+           color: var(--primary-color);
+       }
+       
+       nav ul {
+           display: flex;
+           list-style: none;
+       }
+       
+       nav ul li {
+           margin-left: 30px;
+       }
+       
+       nav ul li a {
+           text-decoration: none;
+           color: var(--text-color);
+           font-weight: 500;
+           transition: color 0.3s;
+       }
+       
+       nav ul li a:hover {
+           color: var(--primary-color);
+       }
+       
+       /* ヒーローセクション */
+       .hero {
+           background: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), url('path-to-background-image.jpg');
+           background-size: cover;
+           background-position: center;
+           min-height: 500px;
+           display: flex;
+           align-items: center;
+       }
+       
+       .hero-content {
+           max-width: 600px;
+       }
+       
+       .hero h1 {
+           font-size: 3rem;
+           margin-bottom: 1.5rem;
+           line-height: 1.2;
+       }
+       
+       /* サービスセクション */
+       .services {
+           background-color: var(--light-gray);
+       }
+       
+       .section-title {
+           position: relative;
+           margin-bottom: 3rem;
+           font-size: 2.5rem;
+       }
+       
+       .section-title:after {
+           content: '';
+           position: absolute;
+           bottom: -15px;
+           left: 0;
+           width: 50px;
+           height: 3px;
+           background-color: var(--primary-color);
+       }
+       
+       .section-title.text-center:after {
+           left: 50%;
+           transform: translateX(-50%);
+       }
+       
+       .services-grid {
+           display: grid;
+           grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+           gap: 30px;
+       }
+       
+       .service-card {
+           background-color: var(--white);
+           border-radius: 8px;
+           padding: 30px;
+           box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+           transition: transform 0.3s ease;
+       }
+       
+       .service-card:hover {
+           transform: translateY(-10px);
+       }
+       
+       .service-icon {
+           font-size: 2.5rem;
+           color: var(--primary-color);
+           margin-bottom: 1rem;
+       }
+       
+       /* 成功事例セクション */
+       .case-studies .container {
+           max-width: 1000px;
+       }
+       
+       .case-card {
+           display: flex;
+           margin-bottom: 3rem;
+           background-color: var(--white);
+           border-radius: 8px;
+           overflow: hidden;
+           box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+       }
+       
+       .case-image {
+           flex: 0 0 40%;
+           background-size: cover;
+           background-position: center;
+       }
+       
+       .case-content {
+           flex: 1;
+           padding: 30px;
+       }
+       
+       .case-title {
+           font-size: 1.5rem;
+           margin-bottom: 1rem;
+       }
+       
+       /* 選ぶ理由セクション */
+       .why-us {
+           background-color: var(--light-gray);
+       }
+       
+       .reasons-grid {
+           display: grid;
+           grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+           gap: 30px;
+       }
+       
+       .reason-card {
+           text-align: center;
+           padding: 30px;
+       }
+       
+       .reason-number {
+           display: inline-block;
+           width: 40px;
+           height: 40px;
+           line-height: 40px;
+           border-radius: 50%;
+           background-color: var(--primary-color);
+           color: var(--white);
+           font-weight: 700;
+           margin-bottom: 1rem;
+       }
+       
+       /* クライアントセクション */
+       .clients {
+           text-align: center;
+       }
+       
+       .client-logos {
+           display: flex;
+           flex-wrap: wrap;
+           justify-content: center;
+           align-items: center;
+           gap: 30px;
+           margin: 3rem 0;
+       }
+       
+       .client-logo {
+           height: 50px;
+           filter: grayscale(100%);
+           opacity: 0.7;
+           transition: all 0.3s;
+       }
+       
+       .client-logo:hover {
+           filter: grayscale(0);
+           opacity: 1;
+       }
+       
+       /* プロセスセクション */
+       .process {
+           background-color: var(--light-gray);
+       }
+       
+       .process-steps {
+           max-width: 800px;
+           margin: 0 auto;
+       }
+       
+       .process-step {
+           display: flex;
+           margin-bottom: 2rem;
+       }
+       
+       .step-number {
+           flex: 0 0 60px;
+           width: 60px;
+           height: 60px;
+           background-color: var(--primary-color);
+           color: var(--white);
+           border-radius: 50%;
+           display: flex;
+           align-items: center;
+           justify-content: center;
+           font-size: 1.5rem;
+           font-weight: 700;
+           margin-right: 20px;
+       }
+       
+       .step-content {
+           flex: 1;
+       }
+       
+       .step-title {
+           font-size: 1.3rem;
+           margin-bottom: 0.5rem;
+       }
+       
+       /* 料金セクション */
+       .pricing-table {
+           width: 100%;
+           border-collapse: collapse;
+           margin: 2rem 0;
+       }
+       
+       .pricing-table th, .pricing-table td {
+           padding: 15px;
+           text-align: left;
+           border-bottom: 1px solid #ddd;
+       }
+       
+       .pricing-table th {
+           background-color: var(--primary-color);
+           color: var(--white);
+       }
+       
+       .pricing-note {
+           font-size: 0.9rem;
+           color: var(--dark-gray);
+           margin-top: 1rem;
+       }
+       
+       /* お客様の声セクション */
+       .testimonials {
+           background-color: var(--light-gray);
+       }
+       
+       .testimonial-grid {
+           display: grid;
+           grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+           gap: 30px;
+       }
+       
+       .testimonial-card {
+           background-color: var(--white);
+           padding: 30px;
+           border-radius: 8px;
+           box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+       }
+       
+       .testimonial-text {
+           font-style: italic;
+           margin-bottom: 1rem;
+       }
+       
+       .testimonial-author {
+           font-weight: 600;
+       }
+       
+       .testimonial-company {
+           color: var(--dark-gray);
+           font-size: 0.9rem;
+       }
+       
+       /* ポートフォリオセクション */
+       .portfolio-categories {
+           display: flex;
+           flex-wrap: wrap;
+           gap: 10px;
+           margin-bottom: 2rem;
+       }
+       
+       .portfolio-category {
+           padding: 8px 15px;
+           background-color: var(--light-gray);
+           border-radius: 20px;
+           cursor: pointer;
+           transition: all 0.3s;
+       }
+       
+       .portfolio-category.active {
+           background-color: var(--primary-color);
+           color: var(--white);
+       }
+       
+       .portfolio-grid {
+           display: grid;
+           grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+           gap: 20px;
+       }
+       
+       .portfolio-item {
+           border-radius: 8px;
+           overflow: hidden;
+           position: relative;
+       }
+       
+       .portfolio-image {
+           width: 100%;
+           height: 200px;
+           object-fit: cover;
+       }
+       
+       .portfolio-overlay {
+           position: absolute;
+           top: 0;
+           left: 0;
+           width: 100%;
+           height: 100%;
+           background-color: rgba(0,0,0,0.7);
+           color: var(--white);
+           display: flex;
+           flex-direction: column;
+           justify-content: center;
+           align-items: center;
+           opacity: 0;
+           transition: opacity 0.3s;
+       }
+       
+       .portfolio-item:hover .portfolio-overlay {
+           opacity: 1;
+       }
+       
+       .view-all {
+           margin-top: 2rem;
+           text-align: center;
+       }
+       
+       /* クリエイターについてセクション */
+       .about {
+           background-color: var(--light-gray);
+       }
+       
+       .about-content {
+           display: flex;
+           align-items: center;
+           gap: 50px;
+       }
+       
+       .creator-image {
+           flex: 0 0 300px;
+           border-radius: 8px;
+           overflow: hidden;
+       }
+       
+       .creator-image img {
+           width: 100%;
+       }
+       
+       .creator-bio {
+           flex: 1;
+       }
+       
+       .social-links {
+           margin-top: 1.5rem;
+       }
+       
+       .social-links a {
+           display: inline-block;
+           margin-right: 15px;
+           color: var(--dark-gray);
+           font-size: 1.2rem;
+           transition: color 0.3s;
+       }
+       
+       .social-links a:hover {
+           color: var(--primary-color);
+       }
+       
+       /* お問い合わせセクション */
+       .contact {
+           background-color: var(--white);
+       }
+       
+       .contact-form {
+           max-width: 600px;
+           margin: 0 auto;
+       }
+       
+       .form-group {
+           margin-bottom: 1.5rem;
+       }
+       
+       .form-control {
+           width: 100%;
+           padding: 12px 15px;
+           border: 1px solid #ddd;
+           border-radius: 8px;
+           font-size: 1rem;
+       }
+       
+       textarea.form-control {
+           min-height: 150px;
+           resize: vertical;
+       }
+       
+       .form-row {
+           display: flex;
+           gap: 15px;
+           margin-bottom: 1.5rem;
+       }
+       
+       .form-row .form-group {
+           flex: 1;
+           margin-bottom: 0;
+       }
+       
+       .form-submit {
+           text-align: center;
+       }
+       
+       /* フッター */
+       footer {
+           background-color: var(--dark-gray);
+           color: var(--white);
+           padding: 3rem 0;
+           text-align: center;
+       }
+       
+       .footer-links {
+           margin: 1.5rem 0;
+       }
+       
+       .footer-links a {
+           color: var(--white);
+           margin: 0 10px;
+           text-decoration: none;
+       }
+       
+       .footer-links a:hover {
+           text-decoration: underline;
+       }
+       
+       .copyright {
+           font-size: 0.9rem;
+           opacity: 0.8;
+           margin-top: 1.5rem;
+       }
+       
+       /* レスポンシブデザイン */
+       @media (max-width: 768px) {
+           .header-inner {
+               flex-direction: column;
+           }
+           
+           nav ul {
+               margin-top: 15px;
+               flex-wrap: wrap;
+               justify-content: center;
+           }
+           
+           nav ul li {
+               margin: 5px 10px;
+           }
+           
+           .hero h1 {
+               font-size: 2rem;
+           }
+           
+           .case-card {
+               flex-direction: column;
+           }
+           
+           .case-image {
+               height: 200px;
+           }
+           
+           .about-content {
+               flex-direction: column;
+           }
+           
+           .creator-image {
+               flex: 0 0 100%;
+               max-width: 300px;
+               margin: 0 auto;
+           }
+           
+           .form-row {
+               flex-direction: column;
+               gap: 1.5rem;
+           }
+       }
+   </style>
+</head>
+<body>
+   <!-- ヘッダー -->
+   <header>
+       <div class="container">
+           <div class="header-inner">
+               <div class="logo">BUSON STUDIO</div>
+               <nav>
+                   <ul>
+                       <li><a href="#services">サービス</a></li>
+                       <li><a href="#case-studies">成功事例</a></li>
+                       <li><a href="#portfolio">実績</a></li>
+                       <li><a href="#about">クリエイター</a></li>
+                       <li><a href="#contact" class="btn">お問い合わせ</a></li>
+                   </ul>
+               </nav>
+           </div>
+       </div>
+   </header>
+
+   <!-- ヒーローセクション -->
+   <section class="hero">
+       <div class="container">
+           <div class="hero-content">
+               <h1>ニヤッと笑顔で、あなたのビジネスに命を吹き込む</h1>
+               <p>BUSONのキャラクターが、あなたの企業メッセージを親しみやすく、印象的に届けます。人間味あふれる表情と動きで、商品やサービスに命を吹き込み、お客様との距離を縮めます。</p>
+               <a href="#contact" class="btn">ご相談はこちら</a>
+           </div>
+       </div>
+   </section>
+
+   <!-- サービスセクション -->
+   <section id="services" class="services">
+       <div class="container">
+           <h2 class="section-title">SERVICES<br><span>提供サービス</span></h2>
+           <div class="services-grid">
+               <div class="service-card">
+                   <div class="service-icon">📷</div>
+                   <h3>広告イラスト制作</h3>
+                   <p>商品広告、キャンペーン用イラストなど、企業のメッセージを親しみやすく伝えるイラストを制作します。</p>
+               </div>
+               <div class="service-card">
+                   <div class="service-icon">🎨</div>
+                   <h3>キャラクターデザイン</h3>
+                   <p>オリジナルキャラクター制作、既存キャラクターとのコラボレーションまで幅広く対応します。</p>
+               </div>
+               <div class="service-card">
+                   <div class="service-icon">📦</div>
+                   <h3>パッケージデザイン</h3>
+                   <p>商品パッケージ、限定デザインなど、商品の魅力を高めるデザインを提供します。</p>
+               </div>
+               <div class="service-card">
+                   <div class="service-icon">📱</div>
+                   <h3>SNSコンテンツ制作</h3>
+                   <p>Instagram、Twitter向け投稿イラストで、SNSでの注目度とエンゲージメントを高めます。</p>
+               </div>
+               <div class="service-card">
+                   <div class="service-icon">📚</div>
+                   <h3>漫画・ストーリー制作</h3>
+                   <p>PRマンガ、ストーリー仕立ての広告で、メッセージを印象的に伝えます。</p>
+               </div>
+               <div class="service-card">
+                   <div class="service-icon">🎪</div>
+                   <h3>イベント企画</h3>
+                   <p>POPUPショップ、サイン会、展示会など、ファンとの接点を創出するイベントを企画します。</p>
+               </div>
+           </div>
+       </div>
+   </section>
+
+   <!-- 成功事例セクション -->
+   <section id="case-studies" class="case-studies">
+       <div class="container">
+           <h2 class="section-title text-center">SUCCESS STORIES<br><span>成功事例</span></h2>
+           
+           <div class="case-card">
+               <div class="case-image" style="background-image: url('https://via.placeholder.com/500x300');"></div>
+               <div class="case-content">
+                   <h3 class="case-title">花王「バスマジックリン」キャンペーン</h3>
+                   <p>「お風呂掃除を楽しく」をコンセプトに、しきぶちゃんを起用したWeb動画とJR山手線電車内広告を制作。日常的なお掃除のシーンをしきぶちゃんの愛らしいイラストで表現し、ターゲット層である20〜30代女性からの高い共感を獲得しました。</p>
+                   <a href="https://www.instagram.com/p/CNj2QjIn2At/" target="_blank">実績を見る →</a>
+               </div>
+           </div>
+           
+           <div class="case-card">
+               <div class="case-image" style="background-image: url('https://via.placeholder.com/500x300');"></div>
+               <div class="case-content">
+                   <h3 class="case-title">カルビー「じゃがりこ」パッケージデザイン</h3>
+                   <p>期間限定パッケージにしきぶちゃんを起用。SNSで「集めたい」「かわいい」と話題になり、対象商品の売上が前年同期比120%を記録しました。</p>
+                   <a href="https://www.calbee.co.jp/newsrelease/220926.php" target="_blank">実績を見る →</a>
+               </div>
+           </div>
+           
+           <div class="case-card">
+               <div class="case-image" style="background-image: url('https://via.placeholder.com/500x300');"></div>
+               <div class="case-content">
+                   <h3 class="case-title">Netflix「地面師たち」PR</h3>
+                   <p>NetflixオリジナルシリーズのPR施策として、しきぶちゃんが作品の魅力を紹介する漫画を制作。複雑なストーリーを親しみやすく解説し、新規視聴者の獲得に貢献しました。</p>
+                   <a href="https://www.instagram.com/p/C9jFhW0PaZi/" target="_blank">実績を見る →</a>
+               </div>
+           </div>
+       </div>
+   </section>
+
+   <!-- 選ぶ理由セクション -->
+   <section class="why-us">
+       <div class="container">
+           <h2 class="section-title text-center">WHY CHOOSE US?<br><span>BUSONを選ぶ理由</span></h2>
+           
+           <div class="reasons-grid">
+               <div class="reason-card">
+                   <div class="reason-number">01</div>
+                   <h3>高いエンゲージメント率</h3>
+                   <p>しきぶちゃんのイラストを使ったSNS投稿は、通常の3倍以上のエンゲージメントを獲得。</p>
+               </div>
+               
+               <div class="reason-card">
+                   <div class="reason-number">02</div>
+                   <h3>幅広い実績</h3>
+                   <p>Netflix、花王、カルビー、LINEなど大手企業との多数のコラボレーション実績。</p>
+               </div>
+               
+               <div class="reason-card">
+                   <div class="reason-number">03</div>
+                   <h3>メディア露出</h3>
+                   <p>テレビ、雑誌など多数のメディアで紹介される認知度の高さ。</p>
+               </div>
+               
+               <div class="reason-card">
+                   <div class="reason-number">04</div>
+                   <h3>若年層へのリーチ</h3>
+                   <p>20代〜30代女性を中心に強い支持を得ているファン層。</p>
+               </div>
+               
+               <div class="reason-card">
+                   <div class="reason-number">05</div>
+                   <h3>ワンストップ対応</h3>
+                   <p>企画からデザイン、制作、SNS展開まで一貫したサポート。</p>
+               </div>
+           </div>
+       </div>
+   </section>
+
+   <!-- クライアントセクション -->
+   <section class="clients">
+       <div class="container">
+           <h2 class="section-title text-center">CLIENTS<br><span>主要クライアント</span></h2>
+           
+           <div class="client-logos">
+               <img src="https://via.placeholder.com/150x50" alt="Netflix" class="client-logo">
+               <img src="https://via.placeholder.com/150x50" alt="SONY" class="client-logo">
+               <img src="https://via.placeholder.com/150x50" alt="花王" class="client-logo">
+               <img src="https://via.placeholder.com/150x50" alt="JRA" class="client-logo">
+               <img src="https://via.placeholder.com/150x50" alt="森永製菓" class="client-logo">
+               <img src="https://via.placeholder.com/150x50" alt="LINE" class="client-logo">
+               <img src="https://via.placeholder.com/150x50" alt="カルビー" class="client-logo">
+               <img src="https://via.placeholder.com/150x50" alt="Visa" class="client-logo">
+           </div>
+           
+           <p>その他、公正取引委員会・長崎県警 など多数</p>
+       </div>
+   </section>
+
+   <!-- プロセスセクション -->
+   <section class="process">
+       <div class="container">
+           <h2 class="section-title text-center">PROCESS<br><span>制作の流れ</span></h2>
+           
+           <div class="process-steps">
+               <div class="process-step">
+                   <div class="step-number">1</div>
+                   <div class="step-content">
+                       <h3 class="step-title">ヒアリング</h3>
+                       <p>商品・サービスの特徴、ターゲット層、ご要望などをお伺いします。</p>
+                   </div>
+               </div>
+               
+               <div class="process-step">
+                   <div class="step-number">2</div>
+                   <div class="step-content">
+                       <h3 class="step-title">企画提案</h3>
+                       <p>目的達成のための最適なアプローチを提案します。</p>
+                   </div>
+               </div>
+               
+               <div class="process-step">
+                   <div class="step-number">3</div>
+                   <div class="step-content">
+                       <h3 class="step-title">ラフ作成</h3>
+                       <p>内容に基づいたラフ案を作成します。</p>
+                   </div>
+               </div>
+               
+               <div class="process-step">
+                   <div class="step-number">4</div>
+                   <div class="step-content">
+                       <h3 class="step-title">本制作</h3>
+                       <p>ご確認いただいたラフをもとに本制作を行います。</p>
+                   </div>
+               </div>
+               
+               <div class="process-step">
+                   <div class="step-number">5</div>
+                   <div class="step-content">
+                       <h3 class="step-title">修正・納品</h3>
+                       <p>必要に応じて修正を行い、最終データを納品します。</p>
+                   </div>
+               </div>
+           </div>
+       </div>
+   </section>
+
+   <!-- 料金セクション -->
+   <section class="pricing">
+       <div class="container">
+           <h2 class="section-title text-center">PRICE<br><span>料金体系</span></h2>
+           
+           <table class="pricing-table">
+               <thead>
+                   <tr>
+                       <th>サービス</th>
+                       <th>料金目安</th>
+                   </tr>
+               </thead>
+               <tbody>
+                   <tr>
+                       <td>イラスト制作</td>
+                       <td>10万円〜</td>
+                   </tr>
+                   <tr>
+                       <td>キャラクターデザイン</td>
+                       <td>30万円〜</td>
+                   </tr>
+                   <tr>
+                       <td>漫画制作</td>
+                       <td>15万円〜/1P</td>
+                   </tr>
+                   <tr>
+                       <td>パッケージデザイン</td>
+                       <td>20万円〜</td>
+                   </tr>
+                   <tr>
+                       <td>SNSコンテンツ制作</td>
+                       <td>5万円〜/1投稿分</td>
+                   </tr>
+               </tbody>
+           </table>
+           
+           <p class="pricing-note">※案件の規模や使用範囲、納期などにより変動します。<br>※詳細なお見積りは、具体的な内容をお伺いした上でご提示いたします。</p>
+       </div>
+   </section>
+
+   <!-- お客様の声セクション -->
+   <section class="testimonials">
+       <div class="container">
+           <h2 class="section-title text-center">TESTIMONIALS<br><span>クライアントの声</span></h2>
+           
+           <div class="testimonial-grid">
+               <div class="testimonial-card">
+                   <p class="testimonial-text">「しきぶちゃんのイラストを使ったSNS投稿は、いつもの3倍以上のエンゲージメントを獲得。ファン層の拡大につながりました」</p>
+                   <p class="testimonial-author">食品メーカー</p>
+                   <p class="testimonial-company">マーケティング担当者</p>
+               </div>
+               
+               <div class="testimonial-card">
+                    <p class="testimonial-text">「社内でも大好評。ブランドイメージの向上に大きく貢献してくれました」</p>
+                    <p class="testimonial-author">化粧品メーカー</p>
+                    <p class="testimonial-company">商品開発担当者</p>
+                </div>
+                
+                <div class="testimonial-card">
+                    <p class="testimonial-text">「BUSONさんのイラストは若い女性からの共感を得るのに非常に効果的でした」</p>
+                    <p class="testimonial-author">広告代理店</p>
+                    <p class="testimonial-company">プランナー</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ポートフォリオセクション -->
+    <section id="portfolio" class="portfolio">
+        <div class="container">
+            <h2 class="section-title text-center">PORTFOLIO<br><span>実績ギャラリー</span></h2>
+            
+            <div class="portfolio-categories">
+                <div class="portfolio-category active">すべて</div>
+                <div class="portfolio-category">広告</div>
+                <div class="portfolio-category">出版</div>
+                <div class="portfolio-category">クリエイティブ</div>
+                <div class="portfolio-category">イベント</div>
+                <div class="portfolio-category">行政</div>
+            </div>
+            
+            <div class="portfolio-grid">
+                <div class="portfolio-item">
+                    <img src="https://via.placeholder.com/300x200" alt="Netflix 地面師たち PR" class="portfolio-image">
+                    <div class="portfolio-overlay">
+                        <h3>Netflix 地面師たち PR</h3>
+                        <a href="https://www.instagram.com/p/C9jFhW0PaZi/" target="_blank">詳細を見る</a>
+                    </div>
+                </div>
+                
+                <div class="portfolio-item">
+                    <img src="https://via.placeholder.com/300x200" alt="SONY NURO 光 コラボ" class="portfolio-image">
+                    <div class="portfolio-overlay">
+                        <h3>SONY NURO 光 コラボ</h3>
+                        <a href="https://www.instagram.com/p/C3EhLErSIX-/" target="_blank">詳細を見る</a>
+                    </div>
+                </div>
+                
+                <div class="portfolio-item">
+                    <img src="https://via.placeholder.com/300x200" alt="爽健美茶 コラボ" class="portfolio-image">
+                    <div class="portfolio-overlay">
+                        <h3>爽健美茶 コラボ</h3>
+                        <a href="https://www.instagram.com/p/Cs3K6STp4il/" target="_blank">詳細を見る</a>
+                    </div>
+                </div>
+                
+                <div class="portfolio-item">
+                    <img src="https://via.placeholder.com/300x200" alt="ココナッツサブレ包装デザイン" class="portfolio-image">
+                    <div class="portfolio-overlay">
+                        <h3>ココナッツサブレ包装デザイン</h3>
+                        <a href="https://www.instagram.com/p/CTWopKyhCQ0/" target="_blank">詳細を見る</a>
+                    </div>
+                </div>
+                
+                <div class="portfolio-item">
+                    <img src="https://via.placeholder.com/300x200" alt="じゃがりこパッケージ" class="portfolio-image">
+                    <div class="portfolio-overlay">
+                        <h3>じゃがりこパッケージ</h3>
+                        <a href="https://www.calbee.co.jp/newsrelease/220926.php" target="_blank">詳細を見る</a>
+                    </div>
+                </div>
+                
+                <div class="portfolio-item">
+                    <img src="https://via.placeholder.com/300x200" alt="長崎県警 防犯あるある大使" class="portfolio-image">
+                    <div class="portfolio-overlay">
+                        <h3>長崎県警 防犯あるある大使</h3>
+                        <a href="https://www.police.pref.nagasaki.jp/police/kurashi/hanzai/shikibu/" target="_blank">詳細を見る</a>
+                    </div>
+                </div>
+                
+                <div class="portfolio-item">
+                    <img src="https://via.placeholder.com/300x200" alt="超現代風源氏物語日めくりカレンダー" class="portfolio-image">
+                    <div class="portfolio-overlay">
+                        <h3>超現代風源氏物語日めくりカレンダー</h3>
+                        <a href="https://amzn.to/3HyRZgB" target="_blank">詳細を見る</a>
+                    </div>
+                </div>
+                
+                <div class="portfolio-item">
+                    <img src="https://via.placeholder.com/300x200" alt="マルイ「しきぶちゃんのお店」" class="portfolio-image">
+                    <div class="portfolio-overlay">
+                        <h3>マルイ「しきぶちゃんのお店」</h3>
+                        <a href="https://prtimes.jp/main/html/rd/p/000000188.000059072.html" target="_blank">詳細を見る</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="view-all">
+                <a href="#" class="btn">すべての実績を見る</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- クリエイターについてセクション -->
+    <section id="about" class="about">
+        <div class="container">
+            <h2 class="section-title">ABOUT<br><span>クリエイターについて</span></h2>
+            
+            <div class="about-content">
+                <div class="creator-image">
+                    <img src="https://via.placeholder.com/300x400" alt="BUSON">
+                </div>
+                
+                <div class="creator-bio">
+                    <h3>BUSON</h3>
+                    <p>こんにちは、BUSONです！キャラクターを通じて、日々の生活にちょっとした笑顔や「ニヤッ」とした瞬間を届けたいと思っています。どんなに忙しい日々でも、ふとした瞬間に楽しくなるような作品作りを心がけています。</p>
+                    <p>しきぶちゃんをはじめ、キャラクターたちがあなたの心にちょっとした癒しと笑いをもたらすことを願っています。これからも作品を通じてみなさんと一緒に楽しい時間を共有できれば嬉しいです。</p>
+                    <p>夢は100年後も愛され続けるキャラクターつくりです。</p>
+                    
+                    <div class="social-links">
+                        <a href="https://www.instagram.com/" target="_blank"><i class="fab fa-instagram"></i> Instagram</a>
+                        <a href="https://twitter.com/" target="_blank"><i class="fab fa-twitter"></i> Twitter/X</a>
+                        <a href="https://www.youtube.com/" target="_blank"><i class="fab fa-youtube"></i> YouTube</a>
+                        <a href="https://www.tiktok.com/" target="_blank"><i class="fab fa-tiktok"></i> TikTok</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- お問い合わせセクション -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2 class="section-title text-center">CONTACT<br><span>お問い合わせ</span></h2>
+            
+            <p class="text-center">新規案件のご相談、お見積り依頼など、お気軽にお問い合わせください。<br>3営業日以内にご返信いたします。</p>
+            
+            <form class="contact-form">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="会社名" required>
+                </div>
+                
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="ご担当者名" required>
+                </div>
+                
+                <div class="form-group">
+                    <input type="email" class="form-control" placeholder="メールアドレス" required>
+                </div>
+                
+                <div class="form-group">
+                    <input type="tel" class="form-control" placeholder="お電話番号">
+                </div>
+                
+                <div class="form-group">
+                    <textarea class="form-control" placeholder="お問い合わせ内容" required></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <select class="form-control">
+                            <option value="" selected disabled>納期の目安</option>
+                            <option value="1month">1ヶ月以内</option>
+                            <option value="3months">3ヶ月以内</option>
+                            <option value="flexible">相談可能</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <select class="form-control">
+                            <option value="" selected disabled>予算の目安</option>
+                            <option value="under500k">〜50万円</option>
+                            <option value="under1m">50万円〜100万円</option>
+                            <option value="over1m">100万円〜</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-submit">
+                    <button type="submit" class="btn">送信する</button>
+                </div>
+            </form>
+            
+            <div class="contact-email text-center" style="margin-top: 2rem;">
+                <p>Email: <a href="mailto:buson2025@gmail.com">buson2025@gmail.com</a></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- フッター -->
+    <footer>
+        <div class="container">
+            <div class="footer-logo">BUSON STUDIO</div>
+            
+            <div class="footer-links">
+                <a href="#services">サービス</a>
+                <a href="#case-studies">成功事例</a>
+                <a href="#portfolio">実績</a>
+                <a href="#about">クリエイター</a>
+                <a href="#contact">お問い合わせ</a>
+            </div>
+            
+            <div class="social-links">
+                <a href="https://www.instagram.com/" target="_blank"><i class="fab fa-instagram"></i></a>
+                <a href="https://twitter.com/" target="_blank"><i class="fab fa-twitter"></i></a>
+                <a href="https://www.youtube.com/" target="_blank"><i class="fab fa-youtube"></i></a>
+                <a href="https://www.tiktok.com/" target="_blank"><i class="fab fa-tiktok"></i></a>
+            </div>
+            
+            <div class="copyright">
+                Copyright © 2025 BUSON STUDIO. All Rights Reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Font Awesome -->
+    <script src="https://kit.fontawesome.com/your-code-here.js" crossorigin="anonymous"></script>
+    
+    <!-- JavaScript -->
+    <script>
+        // ポートフォリオカテゴリーの切り替え
+        document.querySelectorAll('.portfolio-category').forEach(category => {
+            category.addEventListener('click', function() {
+                document.querySelectorAll('.portfolio-category').forEach(cat => {
+                    cat.classList.remove('active');
+                });
+                this.classList.add('active');
+                // ここにフィルタリングのロジックを追加
+            });
+        });
+        
+        // スムーススクロール
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
