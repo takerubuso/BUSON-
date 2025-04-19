@@ -219,12 +219,14 @@
        /* 選ぶ理由セクション */
        .why-us {
            background-color: var(--light-gray);
+           text-align: center;
        }
        
        .reasons-grid {
            display: grid;
            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
            gap: 30px;
+           margin-top: 3rem;
        }
        
        .reason-card {
@@ -233,15 +235,17 @@
        }
        
        .reason-number {
-           display: inline-block;
-           width: 40px;
-           height: 40px;
-           line-height: 40px;
+           display: inline-flex;
+           width: 60px;
+           height: 60px;
            border-radius: 50%;
            background-color: var(--primary-color);
            color: var(--white);
            font-weight: 700;
-           margin-bottom: 1rem;
+           margin-bottom: 1.5rem;
+           justify-content: center;
+           align-items: center;
+           font-size: 1.5rem;
        }
        
        /* クライアントセクション */
@@ -273,16 +277,19 @@
        /* プロセスセクション */
        .process {
            background-color: var(--light-gray);
+           text-align: center;
        }
        
        .process-steps {
            max-width: 800px;
-           margin: 0 auto;
+           margin: 3rem auto 0;
        }
        
        .process-step {
            display: flex;
-           margin-bottom: 2rem;
+           align-items: center;
+           margin-bottom: 2.5rem;
+           text-align: left;
        }
        
        .step-number {
@@ -336,12 +343,14 @@
        /* お客様の声セクション */
        .testimonials {
            background-color: var(--light-gray);
+           text-align: center;
        }
        
        .testimonial-grid {
            display: grid;
            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
            gap: 30px;
+           margin-top: 3rem;
        }
        
        .testimonial-card {
@@ -349,20 +358,29 @@
            padding: 30px;
            border-radius: 8px;
            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+           text-align: left;
        }
        
        .testimonial-text {
            font-style: italic;
-           margin-bottom: 1rem;
+           margin-bottom: 1.5rem;
        }
        
        .testimonial-author {
            font-weight: 600;
+           margin-bottom: 0.2rem;
        }
        
        .testimonial-company {
            color: var(--dark-gray);
            font-size: 0.9rem;
+       }
+       
+       .testimonial-image {
+           width: 100%;
+           height: auto;
+           margin-bottom: 1.5rem;
+           border-radius: 8px;
        }
        
        /* ポートフォリオセクション */
@@ -371,6 +389,7 @@
            flex-wrap: wrap;
            gap: 10px;
            margin-bottom: 2rem;
+           justify-content: center;
        }
        
        .portfolio-category {
@@ -428,6 +447,11 @@
        .view-all {
            margin-top: 2rem;
            text-align: center;
+       }
+
+       #hidden-portfolio {
+           display: none;
+           margin-top: 2rem;
        }
        
        /* クリエイターについてセクション */
@@ -675,6 +699,18 @@
            <div class="case-card">
                <div class="case-image" style="background-image: url('/api/placeholder/500/300');"></div>
                <div class="case-content">
+                   <h3 class="case-title">ココナッツサブレ パッケージデザイン</h3>
+                   <p>期間限定パッケージにしきぶちゃんを起用。SNSで「集めたい」「かわいい」と話題になり、対象商品の売上が前年同期比120%を記録しました。</p>
+                   <div class="instagram-embed">
+                       <!-- ここにInstagramの埋め込みコードを追加 -->
+                       <img src="/api/placeholder/500/500" alt="ココナッツサブレパッケージ画像">
+                   </div>
+               </div>
+           </div>
+           
+           <div class="case-card">
+               <div class="case-image" style="background-image: url('/api/placeholder/500/300');"></div>
+               <div class="case-content">
                    <h3 class="case-title">花王「バスマジックリン」キャンペーン</h3>
                    <p>「お風呂掃除を楽しく」をコンセプトに、しきぶちゃんを起用したWeb動画とJR山手線電車内広告を制作。日常的なお掃除のシーンをしきぶちゃんの愛らしいイラストで表現し、ターゲット層である20〜30代女性からの高い共感を獲得しました。</p>
                    <div class="instagram-embed">
@@ -683,18 +719,6 @@
                        <a href="https://www.instagram.com/p/CNj2QjIn2At/"></a>
                        </blockquote>
                        <script async src="//www.instagram.com/embed.js"></script>
-                   </div>
-               </div>
-           </div>
-           
-           <div class="case-card">
-               <div class="case-image" style="background-image: url('/api/placeholder/500/300');"></div>
-               <div class="case-content">
-                   <h3 class="case-title">カルビー「じゃがりこ」パッケージデザイン</h3>
-                   <p>期間限定パッケージにしきぶちゃんを起用。SNSで「集めたい」「かわいい」と話題になり、対象商品の売上が前年同期比120%を記録しました。</p>
-                   <div class="instagram-embed">
-                       <!-- ここにInstagramの埋め込みコードを追加 -->
-                       <img src="/api/placeholder/500/500" alt="じゃがりこパッケージ画像">
                    </div>
                </div>
            </div>
@@ -751,6 +775,12 @@
                    <h3>ワンストップ対応</h3>
                    <p>企画からデザイン、制作、SNS展開まで一貫したサポート。</p>
                </div>
+               
+               <div class="reason-card">
+                   <div class="reason-number">06</div>
+                   <h3>高い信頼性</h3>
+                   <p>長崎県警や公正取引委員会など公的機関からの信頼と実績。</p>
+               </div>
            </div>
        </div>
    </section>
@@ -800,24 +830,40 @@
                <div class="process-step">
                    <div class="step-number">3</div>
                    <div class="step-content">
-                       <h3 class="step-title">ラフ作成</h3>
-                       <p>内容に基づいたラフ案を作成します。</p>
+                       <h3 class="step-title">ラフ作成（テキスト）</h3>
+                       <p>内容に基づいたコンセプト案を作成します。</p>
                    </div>
                </div>
                
                <div class="process-step">
                    <div class="step-number">4</div>
                    <div class="step-content">
-                       <h3 class="step-title">本制作</h3>
-                       <p>ご確認いただいたラフをもとに本制作を行います。
-                          </div>
+                       <h3 class="step-title">ラフ作成（下書き）</h3>
+                       <p>確認いただいたコンセプトをもとに具体的なデザイン案を作成します。</p>
+                   </div>
                </div>
                
                <div class="process-step">
                    <div class="step-number">5</div>
                    <div class="step-content">
+                       <h3 class="step-title">本制作</h3>
+                       <p>ご確認いただいたラフをもとに本制作を行います。</p>
+                   </div>
+               </div>
+               
+               <div class="process-step">
+                   <div class="step-number">6</div>
+                   <div class="step-content">
                        <h3 class="step-title">修正・納品</h3>
                        <p>必要に応じて修正を行い、最終データを納品します。</p>
+                   </div>
+               </div>
+               
+               <div class="process-step">
+                   <div class="step-number">7</div>
+                   <div class="step-content">
+                       <h3 class="step-title">PR</h3>
+                       <p>納品後のプロモーション展開やSNS活用についてもサポートします。</p>
                    </div>
                </div>
            </div>
@@ -871,18 +917,21 @@
            
            <div class="testimonial-grid">
                <div class="testimonial-card">
+                   <img src="/api/placeholder/300/200" alt="食品メーカー担当者の声" class="testimonial-image">
                    <p class="testimonial-text">「しきぶちゃんのイラストを使ったSNS投稿は、いつもの3倍以上のエンゲージメントを獲得。ファン層の拡大につながりました」</p>
                    <p class="testimonial-author">食品メーカー</p>
                    <p class="testimonial-company">マーケティング担当者</p>
                </div>
                
                <div class="testimonial-card">
+                    <img src="/api/placeholder/300/200" alt="化粧品メーカー担当者の声" class="testimonial-image">
                     <p class="testimonial-text">「社内でも大好評。ブランドイメージの向上に大きく貢献してくれました」</p>
                     <p class="testimonial-author">化粧品メーカー</p>
                     <p class="testimonial-company">商品開発担当者</p>
                 </div>
                 
                 <div class="testimonial-card">
+                    <img src="/api/placeholder/300/200" alt="広告代理店担当者の声" class="testimonial-image">
                     <p class="testimonial-text">「BUSONさんのイラストは若い女性からの共感を得るのに非常に効果的でした」</p>
                     <p class="testimonial-author">広告代理店</p>
                     <p class="testimonial-company">プランナー</p>
@@ -972,7 +1021,43 @@
             </div>
             
             <div class="view-all">
-                <a href="#" class="btn">すべての実績を見る</a>
+                <a href="#" class="btn" id="view-more-btn">すべての実績を見る</a>
+            </div>
+            
+            <div id="hidden-portfolio">
+                <div class="portfolio-grid">
+                    <div class="portfolio-item" data-category="advertising">
+                        <img src="/api/placeholder/300/200" alt="李錦記 オイスターソース コラボ" class="portfolio-image">
+                        <div class="portfolio-overlay">
+                            <h3>李錦記 オイスターソース コラボ</h3>
+                            <a href="https://www.instagram.com/p/C2lnyhrS_9b/" target="_blank">詳細を見る</a>
+                        </div>
+                    </div>
+                    
+                    <div class="portfolio-item" data-category="advertising">
+                        <img src="/api/placeholder/300/200" alt="JRA ウマい漫画シリーズ" class="portfolio-image">
+                        <div class="portfolio-overlay">
+                            <h3>JRA ウマい漫画シリーズ</h3>
+                            <a href="https://www.instagram.com/p/Cj2kTUjvIZl/" target="_blank">詳細を見る</a>
+                        </div>
+                    </div>
+                    
+                    <div class="portfolio-item" data-category="creative">
+                        <img src="/api/placeholder/300/200" alt="Tポイント コラボ" class="portfolio-image">
+                        <div class="portfolio-overlay">
+                            <h3>Tポイント コラボ</h3>
+                            <a href="https://www.instagram.com/p/ClaGfwJPqiZ/" target="_blank">詳細を見る</a>
+                        </div>
+                    </div>
+                    
+                    <div class="portfolio-item" data-category="government">
+                        <img src="/api/placeholder/300/200" alt="公正取引委員会 コラボ" class="portfolio-image">
+                        <div class="portfolio-overlay">
+                            <h3>公正取引委員会 コラボ</h3>
+                            <a href="https://www.jftc.go.jp/freelancelaw_2024/index.html" target="_blank">詳細を見る</a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -1116,6 +1201,19 @@
             });
         });
         
+        // すべての実績を見るボタン
+        document.getElementById('view-more-btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            const hiddenPortfolio = document.getElementById('hidden-portfolio');
+            if (hiddenPortfolio.style.display === 'block') {
+                hiddenPortfolio.style.display = 'none';
+                this.textContent = 'すべての実績を見る';
+            } else {
+                hiddenPortfolio.style.display = 'block';
+                this.textContent = '閉じる';
+            }
+        });
+        
         // Instagram埋め込みの読み込み
         window.onload = function() {
             // Instagramの埋め込みスクリプトが読み込まれていない場合に備えて
@@ -1127,6 +1225,8 @@
         // スムーススクロール
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
+                if (this.getAttribute('href') === '#') return;
+                
                 e.preventDefault();
                 
                 document.querySelector(this.getAttribute('href')).scrollIntoView({
