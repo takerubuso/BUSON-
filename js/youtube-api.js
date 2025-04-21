@@ -1,19 +1,16 @@
 // YouTube動画表示とマンガブログ表示のための簡易スクリプト
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('YouTube APIスクリプト: DOM読み込み完了');
     // YouTube動画の表示
     displaySimpleYouTubeVideos();
+    
+    // 漫画ブログのカードデザイン表示
+    displayMangaBlogCards();
 });
 
 // YouTube動画を表示する関数（APIを使わない簡易版）
 function displaySimpleYouTubeVideos() {
-    console.log('YouTube APIスクリプト: 動画表示開始');
-    
     const youtubeContainer = document.querySelector('.youtube-container');
-    if (!youtubeContainer) {
-        console.error('YouTube APIスクリプト: コンテナが見つかりません');
-        return;
-    }
+    if (!youtubeContainer) return;
     
     // 表示する動画（指定のURLを使用）
     const videos = [
@@ -38,39 +35,67 @@ function displaySimpleYouTubeVideos() {
     youtubeContainer.innerHTML = '';
     
     // 動画カードを生成
-    videos.forEach((video, index) => {
-        console.log(`YouTube APIスクリプト: 動画カード${index+1}を生成`);
-        
+    videos.forEach(video => {
         const card = document.createElement('div');
         card.className = 'youtube-card';
-        
-        // Content Security Policy対応: evalの代わりにプロパティ直接アクセス
-        const videoTitle = video.title || '';
-        const videoDesc = video.description || '';
-        const videoUrl = video.url || '';
         
         card.innerHTML = `
             <div class="youtube-embed">
                 <iframe 
-                    src="${videoUrl}" 
-                    title="${videoTitle}" 
+                    src="${video.url}" 
+                    title="${video.title}" 
                     frameborder="0" 
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                     allowfullscreen
                 ></iframe>
             </div>
             <div class="youtube-info">
-                <h3>${videoTitle}</h3>
-                <p>${videoDesc}</p>
+                <h3>${video.title}</h3>
+                <p>${video.description}</p>
             </div>
         `;
         
         youtubeContainer.appendChild(card);
     });
-    
-    console.log('YouTube APIスクリプト: 動画表示完了');
 }
 
+// 漫画ブログのカードデザインで表示する関数（1つだけ表示）
+function displayMangaBlogCards() {
+    const mangaContainer = document.querySelector('.manga-container');
+    if (!mangaContainer) return;
+    
+    // コンテナをクリア
+    mangaContainer.innerHTML = '';
+    
+    // 漫画ブログデータ（1つだけ使用）
+    const mangaData = {
+        title: "BUSONコンテンツ",
+        date: "2025-04-15",
+        image: "images/mangablog/header.PNG",
+        summary: "ほぼ毎日漫画更新中!!",
+        url: "https://buson.blog.jp"
+    };
+    
+    // 漫画ブログカードを生成（1つだけ）
+    const formattedDate = mangaData.date.replace(/-/g, '.');
+    const card = document.createElement('div');
+    card.className = 'manga-card';
+    
+    card.innerHTML = `
+        <a href="${mangaData.url}" target="_blank" class="manga-link">
+            <div class="manga-img">
+                <img src="${mangaData.image}" alt="${mangaData.title}" onerror="this.onerror=null; this.src='images/placeholder.jpg';">
+            </div>
+            <div class="manga-info">
+                <p class="date">${formattedDate}</p>
+                <h3>${mangaData.title}</h3>
+                <p>${mangaData.summary}</p>
+            </div>
+        </a>
+    `;
+    
+    mangaContainer.appendChild(card);
+}
 // YouTube動画URLからサムネイル画像を取得する関数（参考用）
 // YouTube APIを使わずにサムネイルを取得するには、以下のパターンが使えます
 function getYouTubeThumbnail(youtubeUrl) {
