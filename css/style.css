@@ -91,132 +91,121 @@ h2::after {
     border-radius: 2px;
 }
 
-/* トップスライダー */
-.slider-container {
+/* スライダーと前後サムネイルのコンテナ */
+.slider-with-thumbnails {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: relative;
     width: 100%;
-    /* 16:9比率に変更 */
-    padding-top: 56.25%; /* 9/16 = 0.5625 = 56.25% */
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+/* メインスライダーコンテナ */
+.slider-container {
+    position: relative;
+    width: 80%;
+    padding-top: 45%; /* 16:9比率に合わせて調整 */
     border-radius: 15px;
     overflow: hidden;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    margin-bottom: 40px;
+    margin: 0 10px;
 }
 
-.slider {
+/* 前後サムネイルコンテナ */
+.thumbnail-container {
+    width: 10%;
+    padding-top: 6%; /* 比率を保持 */
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    opacity: 0.7;
+}
+
+.thumbnail-container:hover {
+    transform: translateY(-3px);
+    opacity: 0.9;
+}
+
+.thumbnail-container img {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    display: flex;
-    transition: transform 0.5s ease;
-}
-
-.slider-content {
-    flex: 0 0 100%;
-    position: relative;
-    height: 100%;
-    width: 100%;
-    cursor: pointer; /* クリック可能な見た目にする */
-}
-
-.slider-caption {
-    position: absolute;
-    bottom: 20px;
-    left: 20px;
-    background: rgba(255, 255, 255, 0.9);
-    padding: 15px 20px;
+    object-fit: cover;
     border-radius: 10px;
-    max-width: 60%;
 }
 
-.slider-caption h3 {
-    color: #ff6b88;
-    font-size: 22px;
-    margin-bottom: 5px;
-}
-
-.slider-prev, .slider-next {
+/* 矢印表示を追加 */
+.thumbnail-prev::before,
+.thumbnail-next::after {
+    content: '';
     position: absolute;
     top: 50%;
-    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
     background: rgba(255, 255, 255, 0.8);
-    border: none;
-    width: 40px;
-    height: 40px;
     border-radius: 50%;
-    cursor: pointer;
-    font-size: 16px;
-    color: #ff6b88;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    z-index: 10;
+    z-index: 2;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 12px;
 }
 
-.slider-prev {
-    left: 10px;
+.thumbnail-prev::before {
+    content: '◀';
+    left: 5px;
+    transform: translateY(-50%);
 }
 
-.slider-next {
-    right: 10px;
+.thumbnail-next::after {
+    content: '▶';
+    right: 5px;
+    transform: translateY(-50%);
 }
 
-/* スライドのチラ見せ表示用 */
-.slider-peek {
-    position: absolute;
-    top: 0;
-    width: 10%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    opacity: 0.3;
-    transition: opacity 0.3s ease;
+/* モバイル用レスポンシブ対応 */
+@media (max-width: 768px) {
+    .slider-container {
+        width: 70%;
+    }
+    
+    .thumbnail-container {
+        width: 15%;
+        padding-top: 9%;
+    }
 }
 
-.slider-peek-left {
-    left: -5%;
+@media (max-width: 480px) {
+    .slider-with-thumbnails {
+        flex-direction: column;
+    }
+    
+    .slider-container {
+        width: 100%;
+        padding-top: 56.25%;
+        margin: 10px 0;
+    }
+    
+    .thumbnail-container {
+        width: 25%;
+        padding-top: 15%;
+        margin: 5px 0;
+    }
+    
+    .thumbnail-prev {
+        align-self: flex-start;
+    }
+    
+    .thumbnail-next {
+        align-self: flex-end;
+    }
 }
-
-.slider-peek-right {
-    right: -5%;
-}
-
-.slider-peek:hover {
-    opacity: 0.5;
-}
-
-/* 共通フィルターボタンスタイル */
-.character-filter, .goods-filter, .books-filter, .stamps-filter {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 20px;
-}
-
-.filter-button {
-    padding: 6px 15px;
-    background-color: #ffd1dc;
-    color: #4a4a4a;
-    border: none;
-    border-radius: 20px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-    white-space: nowrap;
-}
-
-.filter-button:hover, .filter-button.active {
-    background-color: #ff6b88;
-    color: white;
-}
-
 /* キャラクターセクション */
 .character-container {
     display: flex;
