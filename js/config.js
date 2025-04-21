@@ -13,11 +13,11 @@ const SITE_CONFIG = {
     keywords: 'BUSON STUDIO, キャラクター, グッズ, イラスト, 漫画'
   },
   
-  // YouTube関連設定
+  // YouTube関連設定 - ダミーAPIキーを削除
   youtube: {
-    apiKey: 'YOUR_API_KEY_HERE', // YouTube Data API キー
+    apiKey: '', // YouTube Data API キー - 実際のキーに置き換えるか空のままにする
     channelId: 'UCtRCF2NLRULCmf-oLAF455w', // チャンネルID
-    featuredVideoId: 'YOUR_FEATURED_VIDEO_ID', // おすすめ動画のID
+    featuredVideoId: '', // おすすめ動画のID - 実際のIDに置き換えるか空のままにする
     updateInterval: 3600000 // データ更新間隔（ミリ秒） - デフォルト1時間
   },
   
@@ -25,7 +25,7 @@ const SITE_CONFIG = {
   mangaBlog: {
     rssUrl: 'https://buson.blog.jp/index.rdf', // RSSフィードURL
     updateInterval: 3600000, // データ更新間隔（ミリ秒） - デフォルト1時間
-    defaultImage: 'images/manga/manga_default.jpg' // デフォルト画像
+    defaultImage: 'images/mangablog/placeholder.jpg' // デフォルト画像を実際のパスに修正
   },
   
   // SNSアカウント設定
