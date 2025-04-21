@@ -732,10 +732,12 @@ h2::after {
 .manga-info {
     padding: 15px;
 }
+/* 修正後のコード */
 .manga-info .date {
     font-size: 14px;
     color: #aaa;
     margin-bottom: 5px;
+    display: none !important; /* 日付を非表示にする */
 }
 .manga-info h3 {
     font-size: 18px;
