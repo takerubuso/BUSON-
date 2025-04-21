@@ -195,7 +195,7 @@ h2::after {
     margin-top: 5px;
 }
 
-/* 矢印ボタン */
+/* スライダーの矢印ボタンのスタイルを修正 */
 .slider-prev, .slider-next {
     position: absolute;
     top: 50%;
@@ -209,20 +209,47 @@ h2::after {
     font-size: 16px;
     color: #ff6b88;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    z-index: 10;
+    z-index: 100; /* 高いz-indexで最前面に表示 */
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: background-color 0.3s, transform 0.3s;
 }
 
 .slider-prev {
-    left: 10px;
+    left: 15px; /* 左側の余白を増やす */
 }
 
 .slider-next {
-    right: 10px;
+    right: 15px; /* 右側の余白を増やす */
 }
 
+.slider-prev:hover, .slider-next:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: translateY(-50%) scale(1.1);
+}
+
+/* スマホ表示の調整 */
+@media (max-width: 480px) {
+    .slider-prev, .slider-next {
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+    }
+    
+    .slider-prev {
+        left: 8px;
+    }
+    
+    .slider-next {
+        right: 8px;
+    }
+    
+    /* スマホ表示では左右のプレビューを非表示にする */
+    .slider-preview-container {
+        display: none !important;
+    }
+}
 /* スマートフォン対応のためのハンバーガーメニュー追加 */
 .mobile-menu-button {
     display: none;
