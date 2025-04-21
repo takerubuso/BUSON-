@@ -1221,7 +1221,7 @@ function displayMangaBlogCards() {
         url: "https://buson.blog.jp"
     };
     
-    // 漫画ブログカードを生成（シンプルデザイン）
+    // 漫画ブログカードを生成（16:9の画像のみ表示）
     const card = document.createElement('div');
     card.className = 'manga-card simple-design';
     
@@ -1229,10 +1229,6 @@ function displayMangaBlogCards() {
         <a href="${mangaData.url}" target="_blank" class="manga-link">
             <div class="manga-img full-card">
                 <img src="${mangaData.image}" alt="${mangaData.title}" onerror="this.onerror=null; this.src='images/placeholder.jpg';">
-            </div>
-            <div class="manga-content">
-                <h3>${mangaData.title}</h3>
-                <p>${mangaData.description}</p>
             </div>
         </a>
     `;
