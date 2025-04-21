@@ -1,13 +1,19 @@
 // YouTube動画表示とマンガブログ表示のための簡易スクリプト
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('YouTube APIスクリプト: DOM読み込み完了');
     // YouTube動画の表示
     displaySimpleYouTubeVideos();
 });
 
 // YouTube動画を表示する関数（APIを使わない簡易版）
 function displaySimpleYouTubeVideos() {
+    console.log('YouTube APIスクリプト: 動画表示開始');
+    
     const youtubeContainer = document.querySelector('.youtube-container');
-    if (!youtubeContainer) return;
+    if (!youtubeContainer) {
+        console.error('YouTube APIスクリプト: コンテナが見つかりません');
+        return;
+    }
     
     // 表示する動画（指定のURLを使用）
     const videos = [
@@ -32,28 +38,37 @@ function displaySimpleYouTubeVideos() {
     youtubeContainer.innerHTML = '';
     
     // 動画カードを生成
-    videos.forEach(video => {
+    videos.forEach((video, index) => {
+        console.log(`YouTube APIスクリプト: 動画カード${index+1}を生成`);
+        
         const card = document.createElement('div');
         card.className = 'youtube-card';
+        
+        // Content Security Policy対応: evalの代わりにプロパティ直接アクセス
+        const videoTitle = video.title || '';
+        const videoDesc = video.description || '';
+        const videoUrl = video.url || '';
         
         card.innerHTML = `
             <div class="youtube-embed">
                 <iframe 
-                    src="${video.url}" 
-                    title="${video.title}" 
+                    src="${videoUrl}" 
+                    title="${videoTitle}" 
                     frameborder="0" 
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                     allowfullscreen
                 ></iframe>
             </div>
             <div class="youtube-info">
-                <h3>${video.title}</h3>
-                <p>${video.description}</p>
+                <h3>${videoTitle}</h3>
+                <p>${videoDesc}</p>
             </div>
         `;
         
         youtubeContainer.appendChild(card);
     });
+    
+    console.log('YouTube APIスクリプト: 動画表示完了');
 }
 
 // YouTube動画URLからサムネイル画像を取得する関数（参考用）
