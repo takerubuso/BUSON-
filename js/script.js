@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return response.json();
         })
         .then(data => {
-            initializeSlider(data);
+            initializeEnhancedSlider(data);
         })
         .catch(error => {
             console.error('スライダーデータの読み込みに失敗しました:', error);
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     "url": "#characters"
                 }
             ];
-            initializeSlider(defaultSliderData);
+            initializeEnhancedSlider(defaultSliderData);
         });
 
     // キャラクターデータを読み込み
@@ -146,38 +146,13 @@ document.addEventListener('DOMContentLoaded', function() {
     setupMobileTouchEvents();
 });
 
-// キャラクターモーダルのナビゲーションにタッチイベントを追加
-function setupMobileTouchEvents() {
-    const prevButton = document.querySelector('.nav-prev');
-    const nextButton = document.querySelector('.nav-next');
-    
-    if (prevButton && nextButton) {
-        // タッチデバイス用のイベントを追加
-        prevButton.addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            // クリックイベントをトリガー
-            prevButton.click();
-        }, {passive: false});
-        
-        nextButton.addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            // クリックイベントをトリガー
-            nextButton.click();
-        }, {passive: false});
-    }
-}
-
-// // 強化されたスライダーの初期化
+// 強化されたスライダーの初期化（前後の画像を表示する）
 function initializeEnhancedSlider(data) {
-    const sliderWithThumbnails = document.querySelector('.slider-with-thumbnails');
-    if (!sliderWithThumbnails || !data || data.length === 0) return;
-
     const sliderContainer = document.querySelector('.slider-container');
-    const slider = document.querySelector('.slider');
-    const prevThumbnail = document.querySelector('.thumbnail-prev');
-    const nextThumbnail = document.querySelector('.thumbnail-next');
-    
+    if (!sliderContainer || !data || data.length === 0) return;
+
     // スライダー内容をクリア
+    const slider = document.querySelector('.slider');
     slider.innerHTML = '';
 
     // スライドアイテムを全て作成
@@ -209,37 +184,14 @@ function initializeEnhancedSlider(data) {
         slider.appendChild(sliderItem);
     });
 
+    // 前後の画像プレビュー要素を取得
+    const peekLeft = document.querySelector('.slider-peek-left');
+    const peekRight = document.querySelector('.slider-peek-right');
+
     // スライダーの操作処理
     let currentIndex = 0;
     const slideWidth = 100; // 100%
 
-    // 前後のサムネイル画像を更新
-    function updateThumbnails() {
-        const prevIndex = (currentIndex - 1 + data.length) % data.length;
-        const nextIndex = (currentIndex + 1) % data.length;
-        
-        prevThumbnail.innerHTML = `<img src="${data[prevIndex].image}" alt="前の画像">`;
-        nextThumbnail.innerHTML = `<img src="${data[nextIndex].image}" alt="次の画像">`;
-        
-        // サムネイルクリック時の動作
-        prevThumbnail.onclick = function() {
-            currentIndex = prevIndex;
-            updateSlider();
-        };
-        
-        nextThumbnail.onclick = function() {
-            currentIndex = nextIndex;
-            updateSlider();
-        };
-    }
-
-    // スライダー更新関数
-    function updateSlider() {
-        slider.style.transform = `translateX(-${currentIndex * slideWidth}%)`;
-        updateThumbnails();
-    }
-
-    // 矢印ボタン操作
     document.querySelector('.slider-next').addEventListener('click', function() {
         currentIndex = (currentIndex + 1) % data.length;
         updateSlider();
@@ -249,9 +201,42 @@ function initializeEnhancedSlider(data) {
         currentIndex = (currentIndex - 1 + data.length) % data.length;
         updateSlider();
     });
+
+    // 左右のプレビュー画像をクリックした時の動作
+    peekLeft.addEventListener('click', function() {
+        currentIndex = (currentIndex - 1 + data.length) % data.length;
+        updateSlider();
+    });
+
+    peekRight.addEventListener('click', function() {
+        currentIndex = (currentIndex + 1) % data.length;
+        updateSlider();
+    });
+
+    function updateSlider() {
+        slider.style.transform = `translateX(-${currentIndex * slideWidth}%)`;
+        
+        // 前後の画像プレビューを更新
+        if (data.length > 1) {
+            const prevIndex = (currentIndex - 1 + data.length) % data.length;
+            const nextIndex = (currentIndex + 1) % data.length;
+            
+            peekLeft.style.display = 'block';
+            peekRight.style.display = 'block';
+            
+            peekLeft.style.backgroundImage = 'none';
+            peekRight.style.backgroundImage = 'none';
+            
+            peekLeft.querySelector('::before').style.backgroundImage = `url('${data[prevIndex].image}')`;
+            peekRight.querySelector('::before').style.backgroundImage = `url('${data[nextIndex].image}')`;
+        } else {
+            // 画像が1枚しかない場合はプレビューを非表示
+            peekLeft.style.display = 'none';
+            peekRight.style.display = 'none';
+        }
+    }
     
     // 初期表示のセットアップ
-    updateThumbnails();
     updateSlider();
     
     // 自動スライド（5秒間隔）
@@ -263,33 +248,26 @@ function initializeEnhancedSlider(data) {
     }
 }
 
-// 既存の初期化関数を置き換える
-document.addEventListener('DOMContentLoaded', function() {
-    // スライダーデータを読み込み
-    fetch('data/slider.json')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('スライダーデータの読み込みに失敗: ' + response.status);
-            }
-            return response.json();
-        })
-        .then(data => {
-            initializeEnhancedSlider(data);
-        })
-        .catch(error => {
-            console.error('スライダーデータの読み込みに失敗しました:', error);
-            // エラー時にデフォルトデータで表示
-            const defaultSliderData = [
-                {
-                    "image": "images/slider1.jpg",
-                    "title": "新キャラクター「ピンキー」登場！",
-                    "description": "宇宙からやってきた不思議な猫型キャラクター",
-                    "url": "#characters"
-                }
-            ];
-            initializeEnhancedSlider(defaultSliderData);
-        });
-});
+// キャラクターモーダルのナビゲーションにタッチイベントを追加
+function setupMobileTouchEvents() {
+    const prevButton = document.querySelector('.nav-prev');
+    const nextButton = document.querySelector('.nav-next');
+    
+    if (prevButton && nextButton) {
+        // タッチデバイス用のイベントを追加
+        prevButton.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            // クリックイベントをトリガー
+            prevButton.click();
+        }, {passive: false});
+        
+        nextButton.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            // クリックイベントをトリガー
+            nextButton.click();
+        }, {passive: false});
+    }
+}
 
 // キャラクターの初期化関数を修正（カテゴリ属性を追加）
 function initializeCharacters(data) {
@@ -775,7 +753,7 @@ function displayLineStamps(data) {
     });
 }
 
-// 修正したLINEスタンプフィルター機能
+// LINEスタンプフィルター機能
 function setupStampsFilter() {
     const filterButtons = document.querySelectorAll('.stamps-filter .filter-button');
     const stampCards = document.querySelectorAll('#stamps-container .stamp-card');
