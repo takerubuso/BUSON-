@@ -732,7 +732,6 @@ h2::after {
 .manga-info {
     padding: 15px;
 }
-/* 修正後のコード */
 .manga-info .date {
     font-size: 14px;
     color: #aaa;
@@ -798,29 +797,24 @@ h2::after {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     background: transparent;
 }
-
 .manga-card.simple-design:hover {
     transform: translateY(-5px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
-
 .manga-card.simple-design .manga-link {
     text-decoration: none;
     display: block;
     position: relative;
 }
-
 .manga-card.simple-design .manga-img.full-card {
     height: auto;
     width: 100%;
 }
-
 .manga-card.simple-design .manga-img.full-card img {
     width: 100%;
     height: auto;
     display: block;
 }
-
 .manga-card.simple-design .manga-content {
     background-color: rgba(255, 107, 136, 0.8); /* ピンク色の半透明背景 */
     padding: 15px;
@@ -830,14 +824,12 @@ h2::after {
     left: 0;
     width: 100%;
 }
-
 .manga-card.simple-design .manga-content h3 {
     font-size: 20px;
     font-weight: 700;
     margin-bottom: 5px;
     color: white;
 }
-
 .manga-card.simple-design .manga-content p {
     font-size: 16px;
     margin: 0;
