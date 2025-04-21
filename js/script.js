@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setupMobileMenu();
     
     // スライダーデータを読み込み
-    loadData('data/slider.json', [
+    loadData('./data/slider.json', [
         {
             "image": "images/placeholder.jpg",
             "title": "新キャラクター「ピンキー」登場！",
@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // キャラクターデータを読み込み
-    loadData('data/characters.json', []).then(data => {
+    loadData('./data/characters.json', []).then(data => {
         if (data && data.length > 0) {
             initializeCharacters(data);
             setupCharacterModal(data); // モーダル設定を追加
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // グッズデータを読み込み
-    loadData('data/goods.json', [
+    loadData('./data/goods.json', [
         {
             "id": 1,
             "name": "モフタロウ ぬいぐるみ",
@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeLineStamps();
 
     // ニュースデータを読み込み
-    loadData('data/news.json', [
+    loadData('./data/news.json', [
         {
             "id": 1,
             "date": "2025-04-15",
@@ -880,7 +880,7 @@ function setupGoodsFilter() {
 
 // 書籍セクションの初期化を修正
 function initializeBooks() {
-    loadData('data/books.json', [
+    loadData('./data/books.json', [
         {
             id: 1,
             name: "しきぶちゃんの日常",
@@ -983,7 +983,7 @@ function setupBooksFilter() {
 
 // LINEスタンプの初期化
 function initializeLineStamps() {
-    loadData('data/line.json', [
+    loadData('./data/line.json', [
         {
             id: 1,
             name: "しきぶちゃんスタンプ 基本セット",
