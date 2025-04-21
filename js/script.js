@@ -491,8 +491,8 @@ function initializeGoods(data) {
         
         console.log('グッズ画像パス:', imagePath);
 
-       // 価格をフォーマット
-        const formattedPrice = item.price.toLocaleString() + '円（税込）';
+        // 価格をフォーマット - カンマなしの表示に修正
+        const formattedPrice = item.price + '円（税込）';
 
         card.innerHTML = `
             <div class="goods-img">
@@ -609,8 +609,8 @@ function displayBooks(data) {
         card.className = 'goods-card';
         card.setAttribute('data-category', book.category || 'all');
         
-        // 価格をフォーマット
-        const formattedPrice = book.price.toLocaleString() + '円（税込）';
+        // 価格をフォーマット - カンマなしの表示に修正
+        const formattedPrice = book.price + '円（税込）';
         
         card.innerHTML = `
             <div class="goods-img">
@@ -724,7 +724,7 @@ function displayLineStamps(data) {
         card.className = 'stamp-card';
         card.setAttribute('data-category', stamp.category || 'all');
         
-        // 価格をフォーマット
+        // 価格をフォーマット - カンマなしの表示に修正
         const formattedPrice = stamp.price + '円';
         
         card.innerHTML = `
