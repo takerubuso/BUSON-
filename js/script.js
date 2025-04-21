@@ -149,14 +149,20 @@ document.addEventListener('DOMContentLoaded', function() {
 // スライダーの初期化
 function initializeSlider(data) {
     const sliderContainer = document.querySelector('.slider-container');
+    const sliderWithNavigation = document.querySelector('.slider-with-navigation');
     if (!sliderContainer || !data || data.length === 0) return;
 
+    // スライダー内容をクリア
     const slider = document.querySelector('.slider');
+    slider.innerHTML = '';
+    
+    // プレビュー要素の取得
     const previewLeft = document.querySelector('.slider-preview-left');
     const previewRight = document.querySelector('.slider-preview-right');
     
-    // スライダー内容をクリア
-    slider.innerHTML = '';
+    // プレビュー要素をクリア
+    previewLeft.innerHTML = '';
+    previewRight.innerHTML = '';
 
     // スライドアイテムを全て作成
     data.forEach((item, index) => {
@@ -166,8 +172,6 @@ function initializeSlider(data) {
         // 画像を背景として設定
         if (item.image) {
             sliderItem.style.backgroundImage = `url('${item.image}')`;
-            sliderItem.style.backgroundSize = 'cover';
-            sliderItem.style.backgroundPosition = 'center';
         }
         
         sliderItem.innerHTML = `
@@ -191,7 +195,7 @@ function initializeSlider(data) {
     let currentIndex = 0;
     const slideWidth = 100; // 100%
 
-    // 前後のプレビュー画像を更新する関数
+    // 前後の画像プレビューを更新する関数
     function updatePreviews() {
         // データが1つしかない場合はプレビューを非表示
         if (data.length <= 1) {
@@ -199,22 +203,25 @@ function initializeSlider(data) {
             previewRight.style.display = 'none';
             return;
         }
-
+        
         const prevIndex = (currentIndex - 1 + data.length) % data.length;
         const nextIndex = (currentIndex + 1) % data.length;
         
-        // プレビュー要素を更新
+        // プレビュー要素をクリア
         previewLeft.innerHTML = '';
         previewRight.innerHTML = '';
         
-        const prevDiv = document.createElement('div');
-        prevDiv.style.backgroundImage = `url('${data[prevIndex].image}')`;
+        // 前のスライドのプレビューを作成
+        const leftPreviewInner = document.createElement('div');
+        leftPreviewInner.className = 'slider-preview-inner';
+        leftPreviewInner.style.backgroundImage = `url('${data[prevIndex].image}')`;
+        previewLeft.appendChild(leftPreviewInner);
         
-        const nextDiv = document.createElement('div');
-        nextDiv.style.backgroundImage = `url('${data[nextIndex].image}')`;
-        
-        previewLeft.appendChild(prevDiv);
-        previewRight.appendChild(nextDiv);
+        // 次のスライドのプレビューを作成
+        const rightPreviewInner = document.createElement('div');
+        rightPreviewInner.className = 'slider-preview-inner';
+        rightPreviewInner.style.backgroundImage = `url('${data[nextIndex].image}')`;
+        previewRight.appendChild(rightPreviewInner);
         
         // プレビューのクリックイベント
         previewLeft.onclick = function() {
@@ -234,14 +241,14 @@ function initializeSlider(data) {
         updatePreviews();
     }
 
-    // 矢印ボタンのイベント
-    document.querySelector('.slider-next').addEventListener('click', function() {
-        currentIndex = (currentIndex + 1) % data.length;
+    // 矢印ボタンのクリックイベント
+    document.querySelector('.slider-prev').addEventListener('click', function() {
+        currentIndex = (currentIndex - 1 + data.length) % data.length;
         updateSlider();
     });
 
-    document.querySelector('.slider-prev').addEventListener('click', function() {
-        currentIndex = (currentIndex - 1 + data.length) % data.length;
+    document.querySelector('.slider-next').addEventListener('click', function() {
+        currentIndex = (currentIndex + 1) % data.length;
         updateSlider();
     });
     
@@ -257,8 +264,6 @@ function initializeSlider(data) {
         }, 5000);
     }
 }
-
-// 既存のinitializeSliderは上記の関数に置き換え、他の関数はそのまま残す
 
 // キャラクターモーダルのナビゲーションにタッチイベントを追加
 function setupMobileTouchEvents() {
