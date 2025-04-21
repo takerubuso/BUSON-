@@ -93,14 +93,20 @@ h2::after {
 
 /* トップスライダー */
 .slider-container {
-    position: relative;
+    display: flex;
+    align-items: center;
     width: 100%;
-    /* 16:9比率に変更 */
-    padding-top: 56.25%; /* 9/16 = 0.5625 = 56.25% */
+    margin-bottom: 40px;
+    position: relative;
+}
+
+.slider-main {
+    flex: 0 0 80%;
+    position: relative;
+    padding-top: 45%; /* 16:9比率に調整 */
     border-radius: 15px;
     overflow: hidden;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    margin-bottom: 40px;
 }
 
 .slider {
@@ -137,15 +143,6 @@ h2::after {
     margin-bottom: 5px;
 }
 
-.slider-navigation {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none; /* ナビゲーション全体はクリック透過 */
-}
-
 .slider-prev, .slider-next {
     position: absolute;
     top: 50%;
@@ -163,7 +160,6 @@ h2::after {
     display: flex;
     align-items: center;
     justify-content: center;
-    pointer-events: auto; /* ボタンはクリック可能 */
 }
 
 .slider-prev {
@@ -174,28 +170,37 @@ h2::after {
     right: 10px;
 }
 
-/* スライドのチラ見せ表示用 */
-.slider-peek {
-    position: absolute;
-    top: 0;
-    height: 100%;
-    width: 20%;
+/* 前後のスライドプレビュー */
+.slider-preview-left,
+.slider-preview-right {
+    flex: 0 0 10%;
+    height: 0;
+    padding-top: 6%;
+    position: relative;
     overflow: hidden;
-    pointer-events: auto; /* クリック可能 */
     cursor: pointer;
-    z-index: 5;
+    border-radius: 10px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+    opacity: 0.7;
+    transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-.slider-peek-left {
-    left: 0;
+.slider-preview-left:hover,
+.slider-preview-right:hover {
+    opacity: 1;
+    transform: scale(1.05);
 }
 
-.slider-peek-right {
-    right: 0;
+.slider-preview-left {
+    margin-right: 10px;
 }
 
-.slider-peek::before {
-    content: '';
+.slider-preview-right {
+    margin-left: 10px;
+}
+
+.slider-preview-left div,
+.slider-preview-right div {
     position: absolute;
     top: 0;
     left: 0;
@@ -203,22 +208,35 @@ h2::after {
     height: 100%;
     background-size: cover;
     background-position: center;
-    opacity: 0.5;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    transform: scale(0.9);
 }
 
-.slider-peek:hover::before {
-    opacity: 0.8;
-    transform: scale(0.95);
-}
-
-.slider-peek-left::before {
-    border-radius: 15px 0 0 15px;
-}
-
-.slider-peek-right::before {
-    border-radius: 0 15px 15px 0;
+/* レスポンシブ対応 */
+@media (max-width: 768px) {
+    .slider-container {
+        flex-direction: column;
+    }
+    
+    .slider-main {
+        flex: 0 0 100%;
+        width: 100%;
+        margin: 10px 0;
+    }
+    
+    .slider-preview-left,
+    .slider-preview-right {
+        flex: 0 0 auto;
+        width: 20%;
+        padding-top: 12%;
+        margin: 5px 0;
+    }
+    
+    .slider-preview-left {
+        align-self: flex-start;
+    }
+    
+    .slider-preview-right {
+        align-self: flex-end;
+    }
 }
 
 /* 共通フィルターボタンスタイル */
