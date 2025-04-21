@@ -1,91 +1,113 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // スライダーデータを読み込み
-    fetch('data/slider.json')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('スライダーデータの読み込みに失敗: ' + response.status);
-            }
-            return response.json();
-        })
-        .then(data => {
-            initializeEnhancedSlider(data);
-        })
-        .catch(error => {
-            console.error('スライダーデータの読み込みに失敗しました:', error);
-            // エラー時にデフォルトデータで表示
-            const defaultSliderData = [
-                {
-                    "image": "images/slider1.jpg",
-                    "title": "新キャラクター「ピンキー」登場！",
-                    "description": "宇宙からやってきた不思議な猫型キャラクター",
-                    "url": "#characters"
+    // フォーカス可能要素のエラーを回避するためのコード
+    const sliderElements = document.querySelectorAll('.slider-content, .slider-prev, .slider-next');
+    sliderElements.forEach(element => {
+        if (!element.hasAttribute('tabindex')) {
+            element.setAttribute('tabindex', '0');
+        }
+    });
+    
+    // プレビュー要素にもtabindex属性を追加
+    const previewElements = document.querySelectorAll('.slider-preview-left, .slider-preview-right');
+    previewElements.forEach(element => {
+        if (!element.hasAttribute('tabindex')) {
+            element.setAttribute('tabindex', '0');
+        }
+    });
+    
+    // エラーハンドリングの強化
+    window.addEventListener('error', function(event) {
+        console.warn('エラーが発生しましたが、処理を継続します:', event.error);
+        // エラーの伝播を停止
+        event.stopPropagation();
+        // デフォルトのエラーハンドリングを抑制
+        event.preventDefault();
+    }, true);
+    
+    // フォームフィールドとラベルの修正
+    const formFields = document.querySelectorAll('input, textarea, select');
+    formFields.forEach((field, index) => {
+        if (!field.id) {
+            field.id = `field-${index}`;
+        }
+        if (!field.name) {
+            field.name = `field-${index}`;
+        }
+    });
+    
+    // ラベルのfor属性を修正
+    const labels = document.querySelectorAll('label[for]');
+    labels.forEach(label => {
+        const forValue = label.getAttribute('for');
+        const targetElement = document.getElementById(forValue);
+        if (!targetElement) {
+            // for属性が指す要素が存在しない場合、修正または削除
+            const nearestField = label.nextElementSibling;
+            if (nearestField && (nearestField.tagName === 'INPUT' || nearestField.tagName === 'TEXTAREA' || nearestField.tagName === 'SELECT')) {
+                if (!nearestField.id) {
+                    nearestField.id = `field-${forValue}`;
                 }
-            ];
-            initializeEnhancedSlider(defaultSliderData);
-        });
+                label.setAttribute('for', nearestField.id);
+            } else {
+                // 関連するフィールドが見つからない場合、for属性を削除
+                label.removeAttribute('for');
+            }
+        }
+    });
+    
+    // モバイルメニューの制御
+    setupMobileMenu();
+    
+    // スライダーデータを読み込み
+    loadData('data/slider.json', [
+        {
+            "image": "images/placeholder.jpg",
+            "title": "新キャラクター「ピンキー」登場！",
+            "description": "宇宙からやってきた不思議な猫型キャラクター",
+            "url": "#characters"
+        }
+    ]).then(data => {
+        initializeEnhancedSlider(data);
+    });
 
     // キャラクターデータを読み込み
-    fetch('data/characters.json')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('キャラクターデータの読み込みに失敗: ' + response.status);
-            }
-            return response.json();
-        })
-        .then(data => {
+    loadData('data/characters.json', []).then(data => {
+        if (data && data.length > 0) {
             initializeCharacters(data);
             setupCharacterModal(data); // モーダル設定を追加
-        })
-        .catch(error => {
-            console.error('キャラクターデータの読み込みに失敗しました:', error);
-            // エラー時は何も表示しない
-        });
+        }
+    });
 
     // グッズデータを読み込み
-    fetch('data/goods.json')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('グッズデータの読み込みに失敗: ' + response.status);
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('グッズデータ取得成功:', data);
-            initializeGoods(data);
-            setupGoodsFilter(); // フィルター設定を追加
-        })
-        .catch(error => {
-            console.error('グッズデータの読み込みに失敗しました:', error);
-            // エラー時にはダミーデータを表示（オプション）
-            const dummyData = [
-                {
-                    "id": 1,
-                    "name": "モフタロウ ぬいぐるみ",
-                    "image": "images/placeholder.jpg",
-                    "price": 2649,
-                    "category": "plush",
-                    "url": "https://suzuri.jp/buson2025/15723649/acrylic-keychain/50x50mm/clear"
-                },
-                {
-                    "id": 2,
-                    "name": "ピンキー アクリルキーホルダー",
-                    "image": "images/placeholder.jpg",
-                    "price": 800,
-                    "category": "collection",
-                    "url": "https://booth.pm/"
-                },
-                {
-                    "id": 3,
-                    "name": "キャラクター マスキングテープ",
-                    "image": "images/placeholder.jpg",
-                    "price": 550,
-                    "category": "stationary",
-                    "url": "https://booth.pm/"
-                }
-            ];
-            initializeGoods(dummyData);
-            setupGoodsFilter();
-        });
+    loadData('data/goods.json', [
+        {
+            "id": 1,
+            "name": "モフタロウ ぬいぐるみ",
+            "image": "images/placeholder.jpg",
+            "price": 2649,
+            "category": "plush",
+            "url": "https://suzuri.jp/buson2025/15723649/acrylic-keychain/50x50mm/clear"
+        },
+        {
+            "id": 2,
+            "name": "ピンキー アクリルキーホルダー",
+            "image": "images/placeholder.jpg",
+            "price": 800,
+            "category": "collection",
+            "url": "https://booth.pm/"
+        },
+        {
+            "id": 3,
+            "name": "キャラクター マスキングテープ",
+            "image": "images/placeholder.jpg",
+            "price": 550,
+            "category": "stationary",
+            "url": "https://booth.pm/"
+        }
+    ]).then(data => {
+        initializeGoods(data);
+        setupGoodsFilter();
+    });
 
     // 書籍セクションの初期化
     initializeBooks();
@@ -94,47 +116,33 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeLineStamps();
 
     // ニュースデータを読み込み
-    fetch('data/news.json')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('ニュースデータの読み込みに失敗: ' + response.status);
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('ニュースデータ取得成功:', data);
-            // 最新の3つのニュースだけを表示
-            const latestNews = data.slice(0, 3);
-            initializeNews(latestNews);
-        })
-        .catch(error => {
-            console.error('ニュースデータの読み込みに失敗しました:', error);
-            // エラー時にはダミーデータを表示
-            const dummyNews = [
-                {
-                    "id": 1,
-                    "date": "2025-04-15",
-                    "title": "新キャラクター「ピンキー」登場！",
-                    "summary": "宇宙からやってきた不思議な猫型キャラクター「ピンキー」が仲間入り！特設ページでプロフィールを公開中です。",
-                    "url": "#"
-                },
-                {
-                    "id": 2,
-                    "date": "2025-04-10",
-                    "title": "コラボカフェ開催のお知らせ",
-                    "summary": "4月20日から5月15日まで、渋谷のカフェ「スイートタイム」にてBUSONスタジオキャラクターズのコラボカフェを開催します！",
-                    "url": "#"
-                },
-                {
-                    "id": 3,
-                    "date": "2025-04-01",
-                    "title": "グッズ新発売のお知らせ",
-                    "summary": "人気キャラクター「モフタロウ」のぬいぐるみなど、新グッズが発売開始！BOOTHとBASEにて販売中です。",
-                    "url": "#"
-                }
-            ];
-            initializeNews(dummyNews);
-        });
+    loadData('data/news.json', [
+        {
+            "id": 1,
+            "date": "2025-04-15",
+            "title": "新キャラクター「ピンキー」登場！",
+            "summary": "宇宙からやってきた不思議な猫型キャラクター「ピンキー」が仲間入り！特設ページでプロフィールを公開中です。",
+            "url": "#"
+        },
+        {
+            "id": 2,
+            "date": "2025-04-10",
+            "title": "コラボカフェ開催のお知らせ",
+            "summary": "4月20日から5月15日まで、渋谷のカフェ「スイートタイム」にてBUSONスタジオキャラクターズのコラボカフェを開催します！",
+            "url": "#"
+        },
+        {
+            "id": 3,
+            "date": "2025-04-01",
+            "title": "グッズ新発売のお知らせ",
+            "summary": "人気キャラクター「モフタロウ」のぬいぐるみなど、新グッズが発売開始！BOOTHとBASEにて販売中です。",
+            "url": "#"
+        }
+    ]).then(data => {
+        // 最新の3つのニュースだけを表示
+        const latestNews = data.slice(0, 3);
+        initializeNews(latestNews);
+    });
         
     // YouTubeデータの初期化
     initializeYouTube();
@@ -144,65 +152,178 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // モバイルタッチイベントを設定
     setupMobileTouchEvents();
+    
+    // 画像の遅延読み込み設定
+    setupLazyLoading();
 });
 
-// スライダーの初期化
-function initializeSlider(data) {
-    const sliderContainer = document.querySelector('.slider-container');
-    const sliderWithNavigation = document.querySelector('.slider-with-navigation');
-    if (!sliderContainer || !data || data.length === 0) return;
+// データ読み込み用の汎用関数
+async function loadData(url, defaultData = []) {
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`データの読み込みに失敗: ${response.status}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error(`${url}の読み込みに失敗しました:`, error);
+        return defaultData;
+    }
+}
 
-    // スライダー内容をクリア
-    const slider = document.querySelector('.slider');
-    slider.innerHTML = '';
+// モバイルメニューの制御
+function setupMobileMenu() {
+    const mobileMenuButton = document.querySelector('.mobile-menu-button');
+    const navMenu = document.querySelector('nav ul');
     
-    // プレビュー要素の取得
+    if (mobileMenuButton && navMenu) {
+        mobileMenuButton.addEventListener('click', function() {
+            navMenu.classList.toggle('active');
+        });
+    }
+}
+
+// 画像の遅延読み込み
+function setupLazyLoading() {
+    if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    const src = img.getAttribute('data-src');
+                    if (src) {
+                        img.src = src;
+                        img.removeAttribute('data-src');
+                    }
+                    observer.unobserve(img);
+                }
+            });
+        });
+        
+        // 対象画像に適用
+        document.querySelectorAll('img[data-src]').forEach(img => {
+            imageObserver.observe(img);
+        });
+    } else {
+        // IntersectionObserverが使えない環境では通常の遅延読み込み
+        const lazyImages = document.querySelectorAll('img[data-src]');
+        window.addEventListener('scroll', function() {
+            lazyImages.forEach(img => {
+                if (isInViewport(img)) {
+                    const src = img.getAttribute('data-src');
+                    if (src) {
+                        img.src = src;
+                        img.removeAttribute('data-src');
+                    }
+                }
+            });
+        });
+    }
+}
+
+// 要素が表示領域内かチェック
+function isInViewport(element) {
+    const rect = element.getBoundingClientRect();
+    return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
+}
+
+// 改良版スライダー初期化関数
+function initializeEnhancedSlider(data) {
+    console.log('スライダーデータを初期化しています:', data);
+    
+    const sliderContainer = document.querySelector('.slider-container');
+    const slider = document.querySelector('.slider');
     const previewLeft = document.querySelector('.slider-preview-left');
     const previewRight = document.querySelector('.slider-preview-right');
+    const prevButton = document.querySelector('.slider-prev');
+    const nextButton = document.querySelector('.slider-next');
     
-    // プレビュー要素をクリア
-    previewLeft.innerHTML = '';
-    previewRight.innerHTML = '';
-
-    // スライドアイテムを全て作成
+    // 要素チェック
+    if (!sliderContainer || !slider) {
+        console.error('スライダーコンテナまたはスライダー要素が見つかりません');
+        return;
+    }
+    
+    // データチェック
+    if (!data || !Array.isArray(data) || data.length === 0) {
+        console.error('スライダーデータが無効です', data);
+        data = [
+            {
+                "image": "images/placeholder.jpg",
+                "title": "サンプルスライド",
+                "description": "スライダーデータが読み込めませんでした",
+                "url": "#"
+            }
+        ];
+    }
+    
+    // スライダー内容をクリア
+    slider.innerHTML = '';
+    
+    // プレビュー要素をクリア（存在する場合）
+    if (previewLeft) previewLeft.innerHTML = '';
+    if (previewRight) previewRight.innerHTML = '';
+    
+    // スライドアイテムを作成
     data.forEach((item, index) => {
         const sliderItem = document.createElement('div');
         sliderItem.className = 'slider-content';
+        sliderItem.setAttribute('tabindex', '0');
         
         // 画像を背景として設定
         if (item.image) {
             sliderItem.style.backgroundImage = `url('${item.image}')`;
+        } else {
+            sliderItem.style.backgroundColor = '#ffd1dc'; // 画像がない場合はピンク色の背景
         }
         
         sliderItem.innerHTML = `
             <div class="slider-caption">
-                <h3>${item.title}</h3>
-                <p>${item.description}</p>
+                <h3>${item.title || ''}</h3>
+                <p>${item.description || ''}</p>
             </div>
         `;
         
         // クリックでリンク先に遷移
-        sliderItem.addEventListener('click', function() {
-            if (item.url) {
+        if (item.url) {
+            sliderItem.addEventListener('click', function() {
                 window.location.href = item.url;
-            }
-        });
+            });
+        }
         
         slider.appendChild(sliderItem);
     });
-
+    
     // スライダーの操作処理
     let currentIndex = 0;
     const slideWidth = 100; // 100%
-
+    
+    // スライダーを更新する関数
+    function updateSlider() {
+        slider.style.transform = `translateX(-${currentIndex * slideWidth}%)`;
+        updatePreviews();
+    }
+    
     // 前後の画像プレビューを更新する関数
     function updatePreviews() {
+        // プレビュー要素がない場合はスキップ
+        if (!previewLeft || !previewRight) return;
+        
         // データが1つしかない場合はプレビューを非表示
         if (data.length <= 1) {
             previewLeft.style.display = 'none';
             previewRight.style.display = 'none';
             return;
         }
+        
+        // プレビューを表示
+        previewLeft.style.display = 'block';
+        previewRight.style.display = 'block';
         
         const prevIndex = (currentIndex - 1 + data.length) % data.length;
         const nextIndex = (currentIndex + 1) % data.length;
@@ -214,13 +335,13 @@ function initializeSlider(data) {
         // 前のスライドのプレビューを作成
         const leftPreviewInner = document.createElement('div');
         leftPreviewInner.className = 'slider-preview-inner';
-        leftPreviewInner.style.backgroundImage = `url('${data[prevIndex].image}')`;
+        leftPreviewInner.style.backgroundImage = `url('${data[prevIndex].image || 'images/placeholder.jpg'}')`;
         previewLeft.appendChild(leftPreviewInner);
         
         // 次のスライドのプレビューを作成
         const rightPreviewInner = document.createElement('div');
         rightPreviewInner.className = 'slider-preview-inner';
-        rightPreviewInner.style.backgroundImage = `url('${data[nextIndex].image}')`;
+        rightPreviewInner.style.backgroundImage = `url('${data[nextIndex].image || 'images/placeholder.jpg'}')`;
         previewRight.appendChild(rightPreviewInner);
         
         // プレビューのクリックイベント
@@ -234,35 +355,40 @@ function initializeSlider(data) {
             updateSlider();
         };
     }
-
-    // スライダーを更新する関数
-    function updateSlider() {
-        slider.style.transform = `translateX(-${currentIndex * slideWidth}%)`;
-        updatePreviews();
-    }
-
+    
     // 矢印ボタンのクリックイベント
-    document.querySelector('.slider-prev').addEventListener('click', function() {
-        currentIndex = (currentIndex - 1 + data.length) % data.length;
-        updateSlider();
-    });
-
-    document.querySelector('.slider-next').addEventListener('click', function() {
-        currentIndex = (currentIndex + 1) % data.length;
-        updateSlider();
-    });
+    if (prevButton) {
+        prevButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            currentIndex = (currentIndex - 1 + data.length) % data.length;
+            updateSlider();
+        });
+    }
+    
+    if (nextButton) {
+        nextButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            currentIndex = (currentIndex + 1) % data.length;
+            updateSlider();
+        });
+    }
     
     // 初期表示
-    updatePreviews();
     updateSlider();
     
-    // 自動スライド（5秒間隔）
+    // 自動スライド（5秒間隔）- 複数スライドがある場合のみ
     if (data.length > 1) {
         setInterval(() => {
             currentIndex = (currentIndex + 1) % data.length;
             updateSlider();
         }, 5000);
     }
+    
+    // デバッグ情報
+    console.log('スライダー初期化完了:', {
+        スライド数: data.length,
+        現在のインデックス: currentIndex
+    });
 }
 
 // キャラクターモーダルのナビゲーションにタッチイベントを追加
@@ -299,6 +425,7 @@ function initializeCharacters(data) {
         const card = document.createElement('div');
         card.className = 'character-card';
         card.setAttribute('data-character', character.name); // data属性を追加
+        card.setAttribute('tabindex', '0'); // タブフォーカス可能に
         
         // カテゴリー属性を追加
         card.setAttribute('data-category', character.category || 'all');
@@ -368,6 +495,14 @@ function setupCharacterModal(characters) {
             currentCharacterIndex = characters.findIndex(char => char.name === characterName);
             showCharacterModal(currentCharacterIndex, characters);
         });
+        
+        // キーボードアクセシビリティ
+        card.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.click();
+            }
+        });
     });
 
     // 閉じるボタンのクリックイベント
@@ -381,6 +516,14 @@ function setupCharacterModal(characters) {
         if (event.target === modal) {
             modal.style.display = 'none';
             document.body.style.overflow = 'auto'; // スクロールを再有効化
+        }
+    });
+
+    // ESCキーでモーダルを閉じる
+    window.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.style.display === 'block') {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
         }
     });
 
@@ -436,9 +579,9 @@ function setupCharacterModal(characters) {
                 
                 return `
                     <div class="info-item">
-                        <div class="info-circle" data-info="${iconInfo.key}">
+                        <div class="info-circle" data-info="${iconInfo.key}" tabindex="0">
                             <img src="${iconInfo.icon}" alt="${iconInfo.label}" onerror="this.onerror=null; this.style.display='none';">
-                            <div class="info-popup">${value}</div>
+                            <div class="info-popup" role="tooltip">${value}</div>
                         </div>
                         <p class="info-label-text">${iconInfo.label}</p>
                     </div>
@@ -470,6 +613,7 @@ function setupCharacterModal(characters) {
             // ポップアップイベントリスナーを設定
             const infoCircles = document.querySelectorAll('.info-circle');
             infoCircles.forEach(circle => {
+                // クリックでポップアップを表示
                 circle.addEventListener('click', function() {
                     const popup = this.querySelector('.info-popup');
                     if (popup) {
@@ -481,11 +625,22 @@ function setupCharacterModal(characters) {
                         popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
                     }
                 });
+                
+                // キーボードアクセシビリティ
+                circle.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        this.click();
+                    }
+                });
             });
 
             // モーダルを表示
             modal.style.display = 'block';
             document.body.style.overflow = 'hidden';
+            
+            // フォーカスを閉じるボタンに設定（キーボードナビゲーション用）
+            closeButton.focus();
         }
     }
 }
@@ -517,14 +672,12 @@ function initializeGoods(data) {
         // デフォルト画像のパスを調整
         const fallbackImagePath = 'images/placeholder.jpg';
         
-        console.log('グッズ画像パス:', imagePath);
-
         // 価格をフォーマット - カンマなしの表示に修正
         const formattedPrice = item.price + '円（税込）';
 
         card.innerHTML = `
             <div class="goods-img">
-                <img src="${imagePath}" alt="${item.name}" 
+                <img data-src="${imagePath}" src="${fallbackImagePath}" alt="${item.name}" 
                      onerror="this.onerror=null; this.src='${fallbackImagePath}';">
             </div>
             <div class="goods-info">
@@ -535,6 +688,9 @@ function initializeGoods(data) {
         `;
         goodsContainer.appendChild(card);
     });
+    
+    // 遅延読み込みを設定
+    setupLazyLoading();
 }
 
 // グッズのフィルタリング機能を追加
@@ -567,58 +723,43 @@ function setupGoodsFilter() {
 
 // 書籍セクションの初期化を修正
 function initializeBooks() {
-    fetch('data/books.json')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('書籍データの読み込みに失敗: ' + response.status);
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('書籍データ取得成功:', data);
-            displayBooks(data);
-            setupBooksFilter();
-        })
-        .catch(error => {
-            console.error('書籍データの読み込みに失敗しました:', error);
-            // エラー時には静的データを表示
-            const staticBooksData = [
-                {
-                    id: 1,
-                    name: "しきぶちゃんの日常",
-                    image: "images/books/book1.jpg",
-                    price: 1500,
-                    category: "paper",
-                    url: "https://example.com/book1"
-                },
-                {
-                    id: 2,
-                    name: "ピンキーの不思議な冒険",
-                    image: "images/books/book2.jpg",
-                    price: 1200,
-                    category: "paper",
-                    url: "https://example.com/book2"
-                },
-                {
-                    id: 3,
-                    name: "クマゴローと森のともだち",
-                    image: "images/books/book3.jpg",
-                    price: 1300,
-                    category: "ebook",
-                    url: "https://example.com/book3"
-                },
-                {
-                    id: 4,
-                    name: "BUSON STUDIO キャラクターコレクション",
-                    image: "images/books/book4.jpg",
-                    price: 2500,
-                    category: "ebook",
-                    url: "https://example.com/book4"
-                }
-            ];
-            displayBooks(staticBooksData);
-            setupBooksFilter();
-        });
+    loadData('data/books.json', [
+        {
+            id: 1,
+            name: "しきぶちゃんの日常",
+            image: "images/books/book1.jpg",
+            price: 1500,
+            category: "paper",
+            url: "https://example.com/book1"
+        },
+        {
+            id: 2,
+            name: "ピンキーの不思議な冒険",
+            image: "images/books/book2.jpg",
+            price: 1200,
+            category: "paper",
+            url: "https://example.com/book2"
+        },
+        {
+            id: 3,
+            name: "クマゴローと森のともだち",
+            image: "images/books/book3.jpg",
+            price: 1300,
+            category: "ebook",
+            url: "https://example.com/book3"
+        },
+        {
+            id: 4,
+            name: "BUSON STUDIO キャラクターコレクション",
+            image: "images/books/book4.jpg",
+            price: 2500,
+            category: "ebook",
+            url: "https://example.com/book4"
+        }
+    ]).then(data => {
+        displayBooks(data);
+        setupBooksFilter();
+    });
 }
 
 function displayBooks(data) {
@@ -642,7 +783,7 @@ function displayBooks(data) {
         
         card.innerHTML = `
             <div class="goods-img">
-                <img src="${book.image}" alt="${book.name}" 
+                <img data-src="${book.image}" src="images/placeholder.jpg" alt="${book.name}" 
                      onerror="this.onerror=null; this.src='images/placeholder.jpg';">
             </div>
             <div class="goods-info">
@@ -653,6 +794,9 @@ function displayBooks(data) {
         `;
         booksContainer.appendChild(card);
     });
+    
+    // 遅延読み込みを設定
+    setupLazyLoading();
 }
 
 function setupBooksFilter() {
@@ -682,58 +826,43 @@ function setupBooksFilter() {
 
 // LINEスタンプの初期化
 function initializeLineStamps() {
-    fetch('data/line.json')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('LINEスタンプデータの読み込みに失敗: ' + response.status);
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('LINEスタンプデータ取得成功:', data);
-            displayLineStamps(data);
-            setupStampsFilter();
-        })
-        .catch(error => {
-            console.error('LINEスタンプデータの読み込みに失敗しました:', error);
-            // エラー時には静的データを表示
-            const staticStampsData = [
-                {
-                    id: 1,
-                    name: "しきぶちゃんスタンプ 基本セット",
-                    image: "images/stamps/stamp1.jpg",
-                    price: 120,
-                    category: "stamp",
-                    url: "https://line.me/S/sticker/"
-                },
-                {
-                    id: 2,
-                    name: "しきぶちゃん 日常会話セット",
-                    image: "images/stamps/stamp2.jpg",
-                    price: 120,
-                    category: "stamp",
-                    url: "https://line.me/S/sticker/"
-                },
-                {
-                    id: 3,
-                    name: "ピンキー スタンプ",
-                    image: "images/stamps/stamp3.jpg",
-                    price: 120,
-                    category: "emoji",
-                    url: "https://line.me/S/sticker/"
-                },
-                {
-                    id: 4,
-                    name: "クマゴロー＆ポポタン スタンプ",
-                    image: "images/stamps/stamp4.jpg",
-                    price: 120,
-                    category: "theme",
-                    url: "https://line.me/S/sticker/"
-                }
-            ];
-            displayLineStamps(staticStampsData);
-            setupStampsFilter();
-        });
+    loadData('data/line.json', [
+        {
+            id: 1,
+            name: "しきぶちゃんスタンプ 基本セット",
+            image: "images/stamps/stamp1.jpg",
+            price: 120,
+            category: "stamp",
+            url: "https://line.me/S/sticker/"
+        },
+        {
+            id: 2,
+            name: "しきぶちゃん 日常会話セット",
+            image: "images/stamps/stamp2.jpg",
+            price: 120,
+            category: "stamp",
+            url: "https://line.me/S/sticker/"
+        },
+        {
+            id: 3,
+            name: "ピンキー スタンプ",
+            image: "images/stamps/stamp3.jpg",
+            price: 120,
+            category: "emoji",
+            url: "https://line.me/S/sticker/"
+        },
+        {
+            id: 4,
+            name: "クマゴロー＆ポポタン スタンプ",
+            image: "images/stamps/stamp4.jpg",
+            price: 120,
+            category: "theme",
+            url: "https://line.me/S/sticker/"
+        }
+    ]).then(data => {
+        displayLineStamps(data);
+        setupStampsFilter();
+    });
 }
 
 function displayLineStamps(data) {
@@ -757,7 +886,7 @@ function displayLineStamps(data) {
         
         card.innerHTML = `
             <div class="stamp-img">
-                <img src="${stamp.image}" alt="${stamp.name}" 
+                <img data-src="${stamp.image}" src="images/placeholder.jpg" alt="${stamp.name}" 
                      onerror="this.onerror=null; this.src='images/placeholder.jpg';">
             </div>
             <div class="stamp-info">
@@ -768,6 +897,9 @@ function displayLineStamps(data) {
         `;
         stampsContainer.appendChild(card);
     });
+    
+    // 遅延読み込みを設定
+    setupLazyLoading();
 }
 
 // LINEスタンプフィルター機能
@@ -912,12 +1044,15 @@ function displayMangaBlogCards() {
     card.innerHTML = `
         <a href="${mangaData.url}" target="_blank" class="manga-link">
             <div class="manga-img full-card">
-                <img src="${mangaData.image}" alt="BUSON漫画ブログ" onerror="this.onerror=null; this.src='images/placeholder.jpg';">
+                <img data-src="${mangaData.image}" src="images/placeholder.jpg" alt="BUSON漫画ブログ" onerror="this.onerror=null; this.src='images/placeholder.jpg';">
             </div>
         </a>
     `;
     
     mangaContainer.appendChild(card);
+    
+    // 遅延読み込みを設定
+    setupLazyLoading();
 }
 
 // ページ読み込み完了後にニュースを確認し、必要なら強制表示
