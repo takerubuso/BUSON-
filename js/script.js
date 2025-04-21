@@ -238,9 +238,10 @@ function initializeEnhancedSlider(data) {
     
     const sliderContainer = document.querySelector('.slider-container');
     const slider = document.querySelector('.slider');
+    const previewLeft = document.querySelector('.slider-preview-left');
+    const previewRight = document.querySelector('.slider-preview-right');
     const prevButton = document.querySelector('.slider-prev');
     const nextButton = document.querySelector('.slider-next');
-    const previewsContainer = document.querySelector('.slider-previews-container');
     
     // 要素チェック
     if (!sliderContainer || !slider) {
@@ -263,11 +264,6 @@ function initializeEnhancedSlider(data) {
     
     // スライダー内容をクリア
     slider.innerHTML = '';
-    
-    // プレビュー要素をクリア（存在する場合）
-    if (previewsContainer) {
-        previewsContainer.innerHTML = '';
-    }
     
     // スライドの複製を含むデータを準備（無限ループのため）
     let extendedData = [];
@@ -314,42 +310,14 @@ function initializeEnhancedSlider(data) {
         slider.appendChild(sliderItem);
     });
     
-    // プレビュー要素を作成 (テキスト表示ではなく、実際のサムネイルを表示)
-    if (previewsContainer && data.length > 1) {
-        data.forEach((item, index) => {
-            const preview = document.createElement('div');
-            preview.className = 'slider-preview';
-            preview.setAttribute('tabindex', '0');
-            preview.setAttribute('aria-label', `スライド ${index + 1}`);
-            
-            const previewInner = document.createElement('div');
-            previewInner.className = 'slider-preview-inner';
-            previewInner.style.backgroundImage = `url('${item.image || 'images/placeholder.jpg'}')`;
-            
-            preview.appendChild(previewInner);
-            previewsContainer.appendChild(preview);
-            
-            // プレビューのクリックイベント
-            preview.addEventListener('click', function() {
-                goToSlide(index + 1);
-            });
-            
-            // キーボードアクセシビリティ
-            preview.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    goToSlide(index + 1);
-                }
-            });
-        });
+    // プレビュー画像を設定
+    if (previewLeft && previewRight && data.length > 1) {
+        updatePreviews();
     }
     
     // スライダーの操作処理
     let currentIndex = 1; // 最初のクローンの次（実際の最初のスライド）
     const slideWidth = 100; // 100%
-    
-    // スライダー状態を保存するためのグローバル変数
-    window.currentSliderIndex = 0;
     
     // 初期化時にトランジションなしで位置を設定
     slider.style.transition = 'none';
@@ -360,17 +328,6 @@ function initializeEnhancedSlider(data) {
         slider.style.transition = 'transform 0.5s ease';
     }, 50);
     
-    // 特定のスライドに移動する関数
-    function goToSlide(index) {
-        if (data.length <= 1) return; // スライドが1つだけなら何もしない
-        
-        // 拡張データでのインデックスに変換
-        const extendedIndex = index + 1;
-        currentIndex = extendedIndex;
-        window.currentSliderIndex = index;
-        updateSlider();
-    }
-    
     // スライダーを更新する関数
     function updateSlider(withTransition = true) {
         if (withTransition) {
@@ -380,24 +337,66 @@ function initializeEnhancedSlider(data) {
         }
         slider.style.transform = `translateX(-${currentIndex * slideWidth}%)`;
         
-        // プレビューハイライトの更新
-        updatePreviewHighlight();
+        // プレビューを更新
+        if (data.length > 1) {
+            updatePreviews();
+        }
+    }
+    
+    // 前後の画像プレビューを更新する関数
+    function updatePreviews() {
+        // プレビュー要素がない場合はスキップ
+        if (!previewLeft || !previewRight) return;
+        
+        // データが1つしかない場合はプレビューを非表示
+        if (data.length <= 1) {
+            previewLeft.style.display = 'none';
+            previewRight.style.display = 'none';
+            return;
+        }
+        
+        // プレビューを表示
+        previewLeft.style.display = 'block';
+        previewRight.style.display = 'block';
+        
+        // 実際のデータのインデックスを計算
+        let realIndex = currentIndex - 1;
+        if (realIndex < 0) realIndex = data.length - 1;
+        if (realIndex >= data.length) realIndex = 0;
+        
+        const prevIndex = (realIndex - 1 + data.length) % data.length;
+        const nextIndex = (realIndex + 1) % data.length;
+        
+        // プレビュー要素の内部を取得
+        const leftPreviewInner = previewLeft.querySelector('.slider-preview-inner');
+        const rightPreviewInner = previewRight.querySelector('.slider-preview-inner');
+        
+        if (leftPreviewInner && rightPreviewInner) {
+            // 前後のスライドの背景画像を設定
+            leftPreviewInner.style.backgroundImage = `url('${data[prevIndex].image || 'images/placeholder.jpg'}')`;
+            rightPreviewInner.style.backgroundImage = `url('${data[nextIndex].image || 'images/placeholder.jpg'}')`;
+        }
+        
+        // プレビューのクリックイベント
+        previewLeft.onclick = function() {
+            prevSlide();
+        };
+        
+        previewRight.onclick = function() {
+            nextSlide();
+        };
     }
     
     // 次のスライドに移動
     function nextSlide() {
-        if (data.length <= 1) return; // スライドが1つだけなら何もしない
-        
         currentIndex++;
-        window.currentSliderIndex = (window.currentSliderIndex + 1) % data.length;
         updateSlider();
         
         // 最後のクローンに到達した場合
-        if (currentIndex === extendedData.length - 1) {
+        if (data.length > 1 && currentIndex === extendedData.length - 1) {
             // トランジション完了後に最初のスライドに瞬時に戻す
             setTimeout(() => {
                 currentIndex = 1;
-                window.currentSliderIndex = 0;
                 updateSlider(false);
             }, 500);
         }
@@ -405,18 +404,14 @@ function initializeEnhancedSlider(data) {
     
     // 前のスライドに移動
     function prevSlide() {
-        if (data.length <= 1) return; // スライドが1つだけなら何もしない
-        
         currentIndex--;
-        window.currentSliderIndex = (window.currentSliderIndex - 1 + data.length) % data.length;
         updateSlider();
         
         // 最初のクローンに到達した場合
-        if (currentIndex === 0) {
+        if (data.length > 1 && currentIndex === 0) {
             // トランジション完了後に最後のスライドに瞬時に戻す
             setTimeout(() => {
                 currentIndex = extendedData.length - 2;
-                window.currentSliderIndex = data.length - 1;
                 updateSlider(false);
             }, 500);
         }
@@ -424,8 +419,6 @@ function initializeEnhancedSlider(data) {
     
     // 矢印ボタンのクリックイベント
     if (prevButton) {
-        prevButton.innerHTML = '◀';
-        prevButton.setAttribute('aria-label', '前のスライド');
         prevButton.addEventListener('click', function(e) {
             e.preventDefault();
             prevSlide();
@@ -433,8 +426,6 @@ function initializeEnhancedSlider(data) {
     }
     
     if (nextButton) {
-        nextButton.innerHTML = '▶';
-        nextButton.setAttribute('aria-label', '次のスライド');
         nextButton.addEventListener('click', function(e) {
             e.preventDefault();
             nextSlide();
