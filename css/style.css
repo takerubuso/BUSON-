@@ -104,7 +104,7 @@ h2::after {
 .slider-container {
     position: relative;
     width: 80%;
-    padding-top: 45%; /* 16:9比率 */
+    padding-top: 56.25%; /* 16:9比率に変更 */
     border-radius: 15px;
     overflow: hidden;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
@@ -251,18 +251,31 @@ h2::after {
         width: 100%;
     }
     
+    /* プレビューを非表示にする */
     .slider-preview {
-        width: 25%;
-        padding-top: 15%;
-        margin: 5px 0;
+        display: none;
     }
     
-    .slider-preview-left {
-        align-self: flex-start;
+    /* 矢印ボタンの調整 */
+    .slider-prev, .slider-next {
+        width: 36px;
+        height: 36px;
+        font-size: 18px;
+        background: rgba(255, 255, 255, 0.9);
+        z-index: 15;
     }
     
-    .slider-preview-right {
-        align-self: flex-end;
+    .slider-prev {
+        left: 5px;
+    }
+    
+    .slider-next {
+        right: 5px;
+    }
+    
+    .slider-caption {
+        max-width: 75%;
+        padding: 10px 15px;
     }
 }
 
@@ -1282,11 +1295,23 @@ footer {
 }
 
 @media (max-width: 480px) {
-    .slider-caption {
-        max-width: 90%;
-        padding: 8px 12px;
+    .slider-container {
+        padding-top: 56.25%; /* 16:9比率を維持 */
     }
-
+    
+    .slider-prev, .slider-next {
+        width: 30px;
+        height: 30px;
+        font-size: 14px;
+    }
+    
+    .slider-caption {
+        bottom: 10px;
+        left: 10px;
+        padding: 8px 12px;
+        max-width: 80%;
+    }
+    
     .slider-caption h3 {
         font-size: 16px;
     }
