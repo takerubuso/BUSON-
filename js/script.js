@@ -1202,7 +1202,7 @@ function displaySimpleYouTubeVideos() {
     });
 }
 
-// 漫画ブログのカードデザインで表示する関数（画像とテキストのみ表示）
+// 漫画ブログのカードデザインで表示する関数（日付なし）
 function displayMangaBlogCards() {
     const mangaContainer = document.querySelector('.manga-container');
     if (!mangaContainer) return;
@@ -1210,7 +1210,7 @@ function displayMangaBlogCards() {
     // コンテナをクリア
     mangaContainer.innerHTML = '';
     
-    // 漫画ブログデータ（画像とテキスト）
+    // 漫画ブログデータ
     const mangaData = {
         image: "images/mangablog/header.PNG",
         title: "BUSONコンテンツ",
@@ -1218,23 +1218,22 @@ function displayMangaBlogCards() {
         url: "https://buson.blog.jp"
     };
     
-    // 漫画ブログカードを生成（シンプルデザイン）
+    // 漫画ブログカードを生成（日付なし）
     const card = document.createElement('div');
-    card.className = 'manga-card simple-design';
+    card.className = 'manga-card';
     
     card.innerHTML = `
-        <a href="${mangaData.url}" target="_blank" class="manga-link">
-            <div class="manga-img full-card">
-                <img data-src="${mangaData.image}" src="images/placeholder.jpg" alt="${mangaData.title}" onerror="this.onerror=null; this.src='images/placeholder.jpg';">
-            </div>
-            <div class="manga-content">
-                <h3>${mangaData.title}</h3>
-                <p>${mangaData.description}</p>
-            </div>
-        </a>
+        <div class="manga-img">
+            <img src="${mangaData.image}" alt="BUSON漫画ブログ" onerror="this.onerror=null; this.src='images/placeholder.jpg';">
+        </div>
+        <div class="manga-info">
+            <h3><a href="${mangaData.url}" target="_blank">${mangaData.title}</a></h3>
+            <p>${mangaData.description}</p>
+        </div>
     `;
     
     mangaContainer.appendChild(card);
+}
     
     // 遅延読み込みを設定
     setupLazyLoading();
