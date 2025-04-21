@@ -1,55 +1,75 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // フォーカス可能要素のエラーを回避するためのコード
-    const sliderElements = document.querySelectorAll('.slider-content, .slider-prev, .slider-next');
-    sliderElements.forEach(element => {
-        if (!element.hasAttribute('tabindex')) {
-            element.setAttribute('tabindex', '0');
-        }
-    });
+    // デバッグ情報を表示
+    console.log('ページ読み込み開始');
     
-    // プレビュー要素にもtabindex属性を追加
-    const previewElements = document.querySelectorAll('.slider-preview-left, .slider-preview-right');
-    previewElements.forEach(element => {
-        if (!element.hasAttribute('tabindex')) {
-            element.setAttribute('tabindex', '0');
+    // フォーカス可能要素のエラーを回避するためのコード - 修正版
+    function setFocusableAttributes() {
+        const sliderElements = document.querySelectorAll('.slider-content, .slider-prev, .slider-next');
+        if (sliderElements.length > 0) {
+            console.log('フォーカス可能要素を設定:', sliderElements.length);
+            sliderElements.forEach(element => {
+                if (!element.hasAttribute('tabindex')) {
+                    element.setAttribute('tabindex', '0');
+                }
+            });
+        } else {
+            console.log('フォーカス可能要素が見つかりません');
         }
-    });
+        
+        // プレビュー要素にもtabindex属性を追加
+        const previewElements = document.querySelectorAll('.slider-preview-left, .slider-preview-right');
+        if (previewElements.length > 0) {
+            previewElements.forEach(element => {
+                if (!element.hasAttribute('tabindex')) {
+                    element.setAttribute('tabindex', '0');
+                }
+            });
+        }
+    }
     
-    // エラーハンドリングの強化
+    // エラーハンドリングの改善 - エラーを表示するようにする
     window.addEventListener('error', function(event) {
-        console.warn('エラーが発生しましたが、処理を継続します:', event.error);
-        // エラーの伝播を停止
-        event.stopPropagation();
-        // デフォルトのエラーハンドリングを抑制
-        event.preventDefault();
+        console.error('エラーが発生しました:', event.error);
+        // エラーのデバッグ情報を表示するだけにして、伝播は停止しない
+        // イベントのデフォルト動作も妨げない
     }, true);
     
-    // フォームフィールドとラベルの修正
+    // フォームフィールドとラベルの修正 - IDとnameをきちんと設定
     const formFields = document.querySelectorAll('input, textarea, select');
+    console.log('フォームフィールド数:', formFields.length);
     formFields.forEach((field, index) => {
         if (!field.id) {
-            field.id = `field-${index}`;
+            const uniqueId = `field-${index}-${Math.random().toString(36).substring(2, 7)}`;
+            field.id = uniqueId;
+            console.log('フィールドID設定:', uniqueId);
         }
         if (!field.name) {
-            field.name = `field-${index}`;
+            field.name = field.id;
         }
     });
     
-    // ラベルのfor属性を修正
+    // ラベルのfor属性を修正 - 修正版
     const labels = document.querySelectorAll('label[for]');
+    console.log('ラベル数:', labels.length);
     labels.forEach(label => {
         const forValue = label.getAttribute('for');
-        const targetElement = document.getElementById(forValue);
-        if (!targetElement) {
-            // for属性が指す要素が存在しない場合、修正または削除
+        if (!forValue || forValue === 'FORM_ELEMENT') {
+            label.removeAttribute('for'); // 不正な値は一旦削除
+            
+            // 隣接する入力要素を探す
             const nearestField = label.nextElementSibling;
             if (nearestField && (nearestField.tagName === 'INPUT' || nearestField.tagName === 'TEXTAREA' || nearestField.tagName === 'SELECT')) {
                 if (!nearestField.id) {
-                    nearestField.id = `field-${forValue}`;
+                    const uniqueId = `field-${Math.random().toString(36).substring(2, 9)}`;
+                    nearestField.id = uniqueId;
                 }
                 label.setAttribute('for', nearestField.id);
-            } else {
-                // 関連するフィールドが見つからない場合、for属性を削除
+                console.log('ラベルfor属性を修正:', nearestField.id);
+            }
+        } else {
+            const targetElement = document.getElementById(forValue);
+            if (!targetElement) {
+                console.log('ラベルが参照する要素が見つかりません:', forValue);
                 label.removeAttribute('for');
             }
         }
@@ -58,8 +78,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // モバイルメニューの制御
     setupMobileMenu();
     
-    // スライダーデータを読み込み
-    loadData('./data/slider.json', [
+    // スライダーデータを読み込み - パスを修正
+    loadData('slider.json', [
         {
             "image": "images/placeholder.jpg",
             "title": "新キャラクター「ピンキー」登場！",
@@ -67,23 +87,40 @@ document.addEventListener('DOMContentLoaded', function() {
             "url": "#characters"
         }
     ]).then(data => {
+        console.log('スライダーデータ読み込み完了');
         initializeEnhancedSlider(data);
+    }).catch(error => {
+        console.error('スライダーデータ読み込みエラー:', error);
+        // デフォルトデータで初期化
+        initializeEnhancedSlider([
+            {
+                "image": "images/placeholder.jpg",
+                "title": "新キャラクター「ピンキー」登場！",
+                "description": "宇宙からやってきた不思議な猫型キャラクター",
+                "url": "#characters"
+            }
+        ]);
     });
 
-    // キャラクターデータを読み込み
-    loadData('./data/characters.json', []).then(data => {
+    // キャラクターデータを読み込み - パスを修正
+    loadData('characters.json', []).then(data => {
+        console.log('キャラクターデータ読み込み完了:', data.length);
         if (data && data.length > 0) {
             initializeCharacters(data);
             setupCharacterModal(data); // モーダル設定を追加
+        } else {
+            console.error('キャラクターデータが空です');
         }
+    }).catch(error => {
+        console.error('キャラクターデータ読み込みエラー:', error);
     });
 
-    // グッズデータを読み込み
-    loadData('./data/goods.json', [
+    // グッズデータを読み込み - パスを修正
+    loadData('goods.json', [
         {
             "id": 1,
             "name": "モフタロウ ぬいぐるみ",
-            "image": "images/placeholder.jpg",
+            "image": "images/goods/1.png",
             "price": 2649,
             "category": "plush",
             "url": "https://suzuri.jp/buson2025/15723649/acrylic-keychain/50x50mm/clear"
@@ -105,8 +142,11 @@ document.addEventListener('DOMContentLoaded', function() {
             "url": "https://booth.pm/"
         }
     ]).then(data => {
+        console.log('グッズデータ読み込み完了:', data.length);
         initializeGoods(data);
         setupGoodsFilter();
+    }).catch(error => {
+        console.error('グッズデータ読み込みエラー:', error);
     });
 
     // 書籍セクションの初期化
@@ -115,8 +155,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // LINEスタンプセクションの初期化
     initializeLineStamps();
 
-    // ニュースデータを読み込み
-    loadData('./data/news.json', [
+    // ニュースデータを読み込み - パスを修正
+    loadData('news.json', [
         {
             "id": 1,
             "date": "2025-04-15",
@@ -139,9 +179,12 @@ document.addEventListener('DOMContentLoaded', function() {
             "url": "#"
         }
     ]).then(data => {
+        console.log('ニュースデータ読み込み完了:', data.length);
         // 最新の3つのニュースだけを表示
         const latestNews = data.slice(0, 3);
         initializeNews(latestNews);
+    }).catch(error => {
+        console.error('ニュースデータ読み込みエラー:', error);
     });
         
     // YouTubeデータの初期化
@@ -155,18 +198,38 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 画像の遅延読み込み設定
     setupLazyLoading();
+
+    // フォーカス可能要素の設定実行
+    setFocusableAttributes();
+    
+    console.log('ページ初期化完了');
 });
 
-// データ読み込み用の汎用関数
+// データ読み込み用の汎用関数 - エラーハンドリング改善版
 async function loadData(url, defaultData = []) {
+    console.log(`${url}の読み込みを開始`);
+    
     try {
-        const response = await fetch(url);
+        // 相対パスをURLオブジェクトに変換して、絶対パスの確認
+        const fullUrl = new URL(url, window.location.href);
+        console.log('読み込み絶対パス:', fullUrl.href);
+        
+        const response = await fetch(fullUrl);
         if (!response.ok) {
-            throw new Error(`データの読み込みに失敗: ${response.status}`);
+            throw new Error(`データの読み込みに失敗: ${response.status} ${response.statusText}`);
         }
-        return await response.json();
+        
+        try {
+            const data = await response.json();
+            console.log(`${url}を正常に読み込みました:`, data);
+            return data;
+        } catch (parseError) {
+            console.error(`${url}のJSONパースに失敗:`, parseError);
+            throw new Error(`JSONの解析に失敗: ${parseError.message}`);
+        }
     } catch (error) {
-        console.error(`${url}の読み込みに失敗しました:`, error);
+        console.error(`${url}の読み込みに失敗:`, error);
+        console.log(`デフォルトデータを使用します:`, defaultData);
         return defaultData;
     }
 }
@@ -177,14 +240,19 @@ function setupMobileMenu() {
     const navMenu = document.querySelector('nav ul');
     
     if (mobileMenuButton && navMenu) {
+        console.log('モバイルメニューを設定');
         mobileMenuButton.addEventListener('click', function() {
             navMenu.classList.toggle('active');
         });
+    } else {
+        console.log('モバイルメニュー要素が見つかりません');
     }
 }
 
 // 画像の遅延読み込み
 function setupLazyLoading() {
+    console.log('遅延読み込みを設定');
+    
     if ('IntersectionObserver' in window) {
         const imageObserver = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
@@ -194,6 +262,7 @@ function setupLazyLoading() {
                     if (src) {
                         img.src = src;
                         img.removeAttribute('data-src');
+                        console.log('画像読み込み:', src);
                     }
                     observer.unobserve(img);
                 }
@@ -201,11 +270,14 @@ function setupLazyLoading() {
         });
         
         // 対象画像に適用
-        document.querySelectorAll('img[data-src]').forEach(img => {
+        const lazyImages = document.querySelectorAll('img[data-src]');
+        console.log('遅延読み込み対象画像数:', lazyImages.length);
+        lazyImages.forEach(img => {
             imageObserver.observe(img);
         });
     } else {
         // IntersectionObserverが使えない環境では通常の遅延読み込み
+        console.log('IntersectionObserverが使用できないため、代替方法を使用');
         const lazyImages = document.querySelectorAll('img[data-src]');
         window.addEventListener('scroll', function() {
             lazyImages.forEach(img => {
@@ -279,6 +351,8 @@ function initializeEnhancedSlider(data) {
     } else {
         extendedData = [...data]; // データ配列のコピーを作成
     }
+    
+    console.log('拡張スライダーデータ:', extendedData.length);
     
     // スライドアイテムを作成
     extendedData.forEach((item, index) => {
@@ -550,6 +624,8 @@ function initializeEnhancedSlider(data) {
 
 // キャラクターモーダルのナビゲーションにタッチイベントを追加
 function setupMobileTouchEvents() {
+    console.log('モバイルタッチイベントを設定');
+    
     const prevButton = document.querySelector('.nav-prev');
     const nextButton = document.querySelector('.nav-next');
     
@@ -566,19 +642,32 @@ function setupMobileTouchEvents() {
             // クリックイベントをトリガー
             nextButton.click();
         }, {passive: false});
+    } else {
+        console.log('モーダルナビゲーションボタンが見つかりません');
     }
 }
 
 // キャラクターの初期化関数を修正（カテゴリ属性を追加）
 function initializeCharacters(data) {
+    console.log('キャラクターデータを初期化します');
+    
     const characterContainer = document.querySelector('.character-container');
-    if (!characterContainer || !data || data.length === 0) return;
+    if (!characterContainer) {
+        console.error('キャラクターコンテナが見つかりません');
+        return;
+    }
+    
+    if (!data || data.length === 0) {
+        console.error('キャラクターデータが空です');
+        return;
+    }
 
     // キャラクターカードをクリア
     characterContainer.innerHTML = '';
+    console.log(`${data.length}個のキャラクターカードを作成します`);
 
     // キャラクターカードを生成
-    data.forEach(character => {
+    data.forEach((character, index) => {
         const card = document.createElement('div');
         card.className = 'character-card';
         card.setAttribute('data-character', character.name); // data属性を追加
@@ -589,6 +678,7 @@ function initializeCharacters(data) {
         
         // 画像パスの生成
         const imagePath = character.image || 'images/character/1.png';
+        console.log(`キャラクター${index+1}の画像パス:`, imagePath);
         
         card.innerHTML = `
             <div class="character-img">
@@ -601,22 +691,41 @@ function initializeCharacters(data) {
     
     // フィルター機能を初期化
     setupCharacterFilter();
+    console.log('キャラクター初期化完了');
 }
 
 // キャラクターフィルター機能を追加
 function setupCharacterFilter() {
+    console.log('キャラクターフィルターを設定');
+    
     const filterButtons = document.querySelectorAll('.character-filter .filter-button');
     const characterCards = document.querySelectorAll('.character-card');
+    
+    if (filterButtons.length === 0) {
+        console.log('フィルターボタンが見つかりません');
+        return;
+    }
+    
+    if (characterCards.length === 0) {
+        console.log('キャラクターカードが見つかりません');
+        return;
+    }
+    
+    console.log(`${filterButtons.length}個のフィルターボタンと${characterCards.length}個のカードを設定`);
     
     filterButtons.forEach(button => {
         button.addEventListener('click', function(e) {
             e.preventDefault();
             
             // アクティブボタンのスタイルを切り替え
-            document.querySelector('.character-filter .filter-button.active').classList.remove('active');
+            const activeButton = document.querySelector('.character-filter .filter-button.active');
+            if (activeButton) {
+                activeButton.classList.remove('active');
+            }
             this.classList.add('active');
             
             const filterValue = this.getAttribute('data-filter');
+            console.log('フィルター適用:', filterValue);
             
             characterCards.forEach(card => {
                 const category = card.getAttribute('data-category');
@@ -629,27 +738,43 @@ function setupCharacterFilter() {
             });
         });
     });
+    
+    console.log('キャラクターフィルター設定完了');
 }
 
 // キャラクターモーダルの設定関数を修正（左右移動機能を追加）
 function setupCharacterModal(characters) {
+    console.log('キャラクターモーダルを設定');
+    
     const modal = document.getElementById('characterModal');
     const modalContent = document.getElementById('modalCharacterContent');
     const closeButton = document.querySelector('.close-button');
     const prevButton = document.querySelector('.nav-prev');
     const nextButton = document.querySelector('.nav-next');
 
+    if (!modal || !modalContent) {
+        console.error('モーダル要素が見つかりません');
+        return;
+    }
+
     // 現在表示中のキャラクターインデックスを追跡
     let currentCharacterIndex = 0;
 
     // キャラクターカードにクリックイベントを追加
     const characterCards = document.querySelectorAll('.character-card');
+    console.log(`${characterCards.length}個のキャラクターカードにクリックイベントを設定`);
 
     characterCards.forEach((card, index) => {
         card.addEventListener('click', function() {
             const characterName = this.getAttribute('data-character');
+            console.log('キャラクターカードクリック:', characterName);
+            
             // クリックされたカードのインデックスを保存
             currentCharacterIndex = characters.findIndex(char => char.name === characterName);
+            if (currentCharacterIndex === -1) {
+                currentCharacterIndex = 0;
+                console.log('該当するキャラクターが見つからないため、最初のキャラクターを表示');
+            }
             showCharacterModal(currentCharacterIndex, characters);
         });
         
@@ -663,10 +788,12 @@ function setupCharacterModal(characters) {
     });
 
     // 閉じるボタンのクリックイベント
-    closeButton.addEventListener('click', function() {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto'; // スクロールを再有効化
-    });
+    if (closeButton) {
+        closeButton.addEventListener('click', function() {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto'; // スクロールを再有効化
+        });
+    }
 
     // モーダル外のクリックで閉じる
     window.addEventListener('click', function(event) {
@@ -685,21 +812,27 @@ function setupCharacterModal(characters) {
     });
 
     // 前のキャラクターボタン
-    prevButton.addEventListener('click', function(e) {
-        e.stopPropagation(); // イベントの伝播を停止
-        currentCharacterIndex = (currentCharacterIndex - 1 + characters.length) % characters.length;
-        showCharacterModal(currentCharacterIndex, characters);
-    });
+    if (prevButton) {
+        prevButton.addEventListener('click', function(e) {
+            e.stopPropagation(); // イベントの伝播を停止
+            currentCharacterIndex = (currentCharacterIndex - 1 + characters.length) % characters.length;
+            showCharacterModal(currentCharacterIndex, characters);
+        });
+    }
 
     // 次のキャラクターボタン
-    nextButton.addEventListener('click', function(e) {
-        e.stopPropagation(); // イベントの伝播を停止
-        currentCharacterIndex = (currentCharacterIndex + 1) % characters.length;
-        showCharacterModal(currentCharacterIndex, characters);
-    });
+    if (nextButton) {
+        nextButton.addEventListener('click', function(e) {
+            e.stopPropagation(); // イベントの伝播を停止
+            currentCharacterIndex = (currentCharacterIndex + 1) % characters.length;
+            showCharacterModal(currentCharacterIndex, characters);
+        });
+    }
 
     // キャラクターモーダルを表示する関数（インデックスベースに変更）
     function showCharacterModal(index, characters) {
+        console.log('キャラクターモーダル表示:', index);
+        
         const character = characters[index];
 
         if (character) {
@@ -756,7 +889,7 @@ function setupCharacterModal(characters) {
                         <img src="${imagePath}" alt="${character.name}" onerror="this.onerror=null; this.src='images/character/1.png';">
                     </div>
                     <h2 class="character-name">${character.name}</h2>
-                    <p class="character-description">${character.profile}</p>
+                    <p class="character-description">${character.profile || ''}</p>
                     <div class="character-social">
                         ${socialLinksHTML}
                     </div>
@@ -797,26 +930,41 @@ function setupCharacterModal(characters) {
             document.body.style.overflow = 'hidden';
             
             // フォーカスを閉じるボタンに設定（キーボードナビゲーション用）
-            closeButton.focus();
+            if (closeButton) {
+                closeButton.focus();
+            }
+            
+            console.log('キャラクターモーダル表示完了:', character.name);
+        } else {
+            console.error('指定されたインデックスのキャラクターが見つかりません:', index);
         }
     }
+    
+    console.log('キャラクターモーダル設定完了');
 }
 
 // グッズの初期化を修正
 function initializeGoods(data) {
+    console.log('グッズデータを初期化');
+    
     const goodsContainer = document.querySelector('.goods-container');
-    if (!goodsContainer || !data || data.length === 0) {
-        console.error('グッズデータまたはコンテナが見つかりません');
+    if (!goodsContainer) {
+        console.error('グッズコンテナが見つかりません');
+        return;
+    }
+    
+    if (!data || data.length === 0) {
+        console.error('グッズデータが空です');
         return;
     }
 
     // グッズカードをクリア
     goodsContainer.innerHTML = '';
     
-    console.log('グッズデータを読み込みました:', data);
+    console.log(`${data.length}個のグッズカードを作成`);
 
     // グッズカードを生成
-    data.forEach(item => {
+    data.forEach((item, index) => {
         const card = document.createElement('div');
         card.className = 'goods-card';
         // カテゴリ属性を追加
@@ -824,12 +972,13 @@ function initializeGoods(data) {
 
         // 画像パスの生成
         const imagePath = item.image || 'images/placeholder.jpg';
+        console.log(`グッズ${index+1}の画像パス:`, imagePath);
         
         // デフォルト画像のパスを調整
         const fallbackImagePath = 'images/placeholder.jpg';
         
         // 価格をフォーマット
-        const formattedPrice = item.price + '円（税込）';
+        const formattedPrice = item.price ? item.price + '円（税込）' : '価格未設定';
 
         card.innerHTML = `
             <div class="goods-img">
@@ -847,22 +996,41 @@ function initializeGoods(data) {
     
     // 遅延読み込みを設定
     setupLazyLoading();
+    console.log('グッズ初期化完了');
 }
 
 // グッズのフィルタリング機能を追加
 function setupGoodsFilter() {
+    console.log('グッズフィルターを設定');
+    
     const filterButtons = document.querySelectorAll('.goods-filter .filter-button');
     const goodsCards = document.querySelectorAll('.goods-card');
+    
+    if (filterButtons.length === 0) {
+        console.log('グッズフィルターボタンが見つかりません');
+        return;
+    }
+    
+    if (goodsCards.length === 0) {
+        console.log('グッズカードが見つかりません');
+        return;
+    }
+    
+    console.log(`${filterButtons.length}個のフィルターボタンと${goodsCards.length}個のカードを設定`);
     
     filterButtons.forEach(button => {
         button.addEventListener('click', function(e) {
             e.preventDefault();
             
             // アクティブボタンのスタイルを切り替え
-            document.querySelector('.goods-filter .filter-button.active').classList.remove('active');
+            const activeButton = document.querySelector('.goods-filter .filter-button.active');
+            if (activeButton) {
+                activeButton.classList.remove('active');
+            }
             this.classList.add('active');
             
             const filterValue = this.getAttribute('data-filter');
+            console.log('フィルター適用:', filterValue);
             
             goodsCards.forEach(card => {
                 const category = card.getAttribute('data-category');
@@ -875,15 +1043,20 @@ function setupGoodsFilter() {
             });
         });
     });
+    
+    console.log('グッズフィルター設定完了');
 }
 
 // 書籍セクションの初期化を修正
 function initializeBooks() {
-    loadData('./data/books.json', [
+    console.log('書籍データを初期化');
+    
+    // パスを修正
+    loadData('books.json', [
         {
             id: 1,
             name: "しきぶちゃんの日常",
-            image: "images/books/book1.jpg",
+            image: "images/books/1.jpg",
             price: 1500,
             category: "paper",
             url: "https://example.com/book1"
@@ -891,7 +1064,7 @@ function initializeBooks() {
         {
             id: 2,
             name: "ピンキーの不思議な冒険",
-            image: "images/books/book2.jpg",
+            image: "images/books/2.jpg",
             price: 1200,
             category: "paper",
             url: "https://example.com/book2"
@@ -899,26 +1072,51 @@ function initializeBooks() {
         {
             id: 3,
             name: "クマゴローと森のともだち",
-            image: "images/books/book3.jpg",
+            image: "images/books/4.png",
             price: 1300,
             category: "ebook",
             url: "https://example.com/book3"
-        },
-        {
-            id: 4,
-            name: "BUSON STUDIO キャラクターコレクション",
-            image: "images/books/book4.jpg",
-            price: 2500,
-            category: "ebook",
-            url: "https://example.com/book4"
         }
     ]).then(data => {
+        console.log('書籍データ読み込み完了:', data.length);
         displayBooks(data);
+        setupBooksFilter();
+    }).catch(error => {
+        console.error('書籍データ読み込みエラー:', error);
+        // デフォルトデータで初期化
+        displayBooks([
+            {
+                id: 1,
+                name: "しきぶちゃんの日常",
+                image: "images/books/1.jpg",
+                price: 1500,
+                category: "paper",
+                url: "https://example.com/book1"
+            },
+            {
+                id: 2,
+                name: "ピンキーの不思議な冒険",
+                image: "images/books/2.jpg",
+                price: 1200,
+                category: "paper",
+                url: "https://example.com/book2"
+            },
+            {
+                id: 3,
+                name: "クマゴローと森のともだち",
+                image: "images/books/4.png",
+                price: 1300,
+                category: "ebook",
+                url: "https://example.com/book3"
+            }
+        ]);
         setupBooksFilter();
     });
 }
 
 function displayBooks(data) {
+    console.log(`${data.length}個の書籍カードを表示`);
+    
     const booksContainer = document.getElementById('books-container');
     if (!booksContainer) {
         console.error('書籍コンテナが見つかりません');
@@ -929,17 +1127,21 @@ function displayBooks(data) {
     booksContainer.innerHTML = '';
     
     // 書籍カードを生成
-    data.forEach(book => {
+    data.forEach((book, index) => {
         const card = document.createElement('div');
         card.className = 'goods-card';
         card.setAttribute('data-category', book.category || 'all');
         
+        // 画像パスの生成
+        const imagePath = book.image || 'images/placeholder.jpg';
+        console.log(`書籍${index+1}の画像パス:`, imagePath);
+        
         // 価格をフォーマット
-        const formattedPrice = book.price + '円（税込）';
+        const formattedPrice = book.price ? book.price + '円（税込）' : '価格未設定';
         
         card.innerHTML = `
             <div class="goods-img">
-                <img data-src="${book.image}" src="images/placeholder.jpg" alt="${book.name}" 
+                <img data-src="${imagePath}" src="images/placeholder.jpg" alt="${book.name}" 
                      onerror="this.onerror=null; this.src='images/placeholder.jpg';">
             </div>
             <div class="goods-info">
@@ -953,21 +1155,40 @@ function displayBooks(data) {
     
     // 遅延読み込みを設定
     setupLazyLoading();
+    console.log('書籍表示完了');
 }
 
 function setupBooksFilter() {
+    console.log('書籍フィルターを設定');
+    
     const filterButtons = document.querySelectorAll('.books-filter .filter-button');
     const bookCards = document.querySelectorAll('#books-container .goods-card');
+    
+    if (filterButtons.length === 0) {
+        console.log('書籍フィルターボタンが見つかりません');
+        return;
+    }
+    
+    if (bookCards.length === 0) {
+        console.log('書籍カードが見つかりません');
+        return;
+    }
+    
+    console.log(`${filterButtons.length}個のフィルターボタンと${bookCards.length}個のカードを設定`);
     
     filterButtons.forEach(button => {
         button.addEventListener('click', function(e) {
             e.preventDefault();
             
             // アクティブなボタンのスタイルを切り替え
-            document.querySelector('.books-filter .filter-button.active').classList.remove('active');
+            const activeButton = document.querySelector('.books-filter .filter-button.active');
+            if (activeButton) {
+                activeButton.classList.remove('active');
+            }
             this.classList.add('active');
             
             const filterValue = this.getAttribute('data-filter');
+            console.log('フィルター適用:', filterValue);
             
             bookCards.forEach(card => {
                 if (filterValue === 'all' || card.getAttribute('data-category') === filterValue) {
@@ -978,15 +1199,20 @@ function setupBooksFilter() {
             });
         });
     });
+    
+    console.log('書籍フィルター設定完了');
 }
 
 // LINEスタンプの初期化
 function initializeLineStamps() {
-    loadData('./data/line.json', [
+    console.log('LINEスタンプを初期化');
+    
+    // パスを修正
+    loadData('line.json', [
         {
             id: 1,
             name: "しきぶちゃんスタンプ 基本セット",
-            image: "images/stamps/stamp1.jpg",
+            image: "images/line/stamp/1.jpeg",
             price: 120,
             category: "stamp",
             url: "https://line.me/S/sticker/"
@@ -994,7 +1220,7 @@ function initializeLineStamps() {
         {
             id: 2,
             name: "しきぶちゃん 日常会話セット",
-            image: "images/stamps/stamp2.jpg",
+            image: "images/line/stamp/2.png",
             price: 120,
             category: "stamp",
             url: "https://line.me/S/sticker/"
@@ -1002,7 +1228,7 @@ function initializeLineStamps() {
         {
             id: 3,
             name: "ピンキー スタンプ",
-            image: "images/stamps/stamp3.jpg",
+            image: "images/line/emoji/1.png",
             price: 120,
             category: "emoji",
             url: "https://line.me/S/sticker/"
@@ -1010,20 +1236,54 @@ function initializeLineStamps() {
         {
             id: 4,
             name: "クマゴロー＆ポポタン スタンプ",
-            image: "images/stamps/stamp4.jpg",
+            image: "images/line/theme/1.jpeg",
             price: 120,
             category: "theme",
             url: "https://line.me/S/sticker/"
         }
     ]).then(data => {
+        console.log('LINEスタンプデータ読み込み完了:', data.length);
         displayLineStamps(data);
         setupStampsFilter();
         // 画面サイズに応じたグリッドレイアウトの設定
+        updateGridLayout();
+    }).catch(error => {
+        console.error('LINEスタンプデータ読み込みエラー:', error);
+        // デフォルトデータで初期化
+        displayLineStamps([
+            {
+                id: 1,
+                name: "しきぶちゃんスタンプ 基本セット",
+                image: "images/line/stamp/1.jpeg",
+                price: 120,
+                category: "stamp",
+                url: "https://line.me/S/sticker/"
+            },
+            {
+                id: 2,
+                name: "しきぶちゃん 日常会話セット",
+                image: "images/line/stamp/2.png",
+                price: 120,
+                category: "stamp",
+                url: "https://line.me/S/sticker/"
+            },
+            {
+                id: 3,
+                name: "ピンキー スタンプ",
+                image: "images/line/emoji/1.png",
+                price: 120,
+                category: "emoji",
+                url: "https://line.me/S/sticker/"
+            }
+        ]);
+        setupStampsFilter();
         updateGridLayout();
     });
 }
 
 function displayLineStamps(data) {
+    console.log(`${data.length}個のLINEスタンプカードを表示`);
+    
     const stampsContainer = document.getElementById('stamps-container');
     if (!stampsContainer) {
         console.error('LINEスタンプコンテナが見つかりません');
@@ -1034,17 +1294,21 @@ function displayLineStamps(data) {
     stampsContainer.innerHTML = '';
     
     // スタンプカードを生成
-    data.forEach(stamp => {
+    data.forEach((stamp, index) => {
         const card = document.createElement('div');
         card.className = 'stamp-card';
         card.setAttribute('data-category', stamp.category || 'all');
         
+        // 画像パスの生成
+        const imagePath = stamp.image || 'images/placeholder.jpg';
+        console.log(`スタンプ${index+1}の画像パス:`, imagePath);
+        
         // 価格をフォーマット
-        const formattedPrice = stamp.price + '円';
+        const formattedPrice = stamp.price ? stamp.price + '円' : '価格未設定';
         
         card.innerHTML = `
             <div class="stamp-img">
-                <img data-src="${stamp.image}" src="images/placeholder.jpg" alt="${stamp.name}" 
+                <img data-src="${imagePath}" src="images/placeholder.jpg" alt="${stamp.name}" 
                      onerror="this.onerror=null; this.src='images/placeholder.jpg';">
             </div>
             <div class="stamp-info">
@@ -1058,31 +1322,54 @@ function displayLineStamps(data) {
     
     // 遅延読み込みを設定
     setupLazyLoading();
+    console.log('LINEスタンプ表示完了');
 }
 
 // 画面サイズに応じてグリッドレイアウトを更新
 function updateGridLayout() {
+    console.log('グリッドレイアウトを更新');
+    
     const stampsContainer = document.getElementById('stamps-container');
-    if (!stampsContainer) return;
+    if (!stampsContainer) {
+        console.log('スタンプコンテナが見つかりません');
+        return;
+    }
     
     const width = window.innerWidth;
     
     if (width <= 480) {
         // スマホサイズ
         stampsContainer.style.gridTemplateColumns = 'repeat(2, 1fr)';
+        console.log('スマホサイズのレイアウトを適用: 2列');
     } else if (width <= 768) {
         // タブレットサイズ
         stampsContainer.style.gridTemplateColumns = 'repeat(3, 1fr)';
+        console.log('タブレットサイズのレイアウトを適用: 3列');
     } else {
         // PC/大画面サイズ
         stampsContainer.style.gridTemplateColumns = 'repeat(4, 1fr)';
+        console.log('PCサイズのレイアウトを適用: 4列');
     }
 }
 
 // LINEスタンプフィルター機能
 function setupStampsFilter() {
+    console.log('LINEスタンプフィルターを設定');
+    
     const filterButtons = document.querySelectorAll('.stamps-filter .filter-button');
     const stampCards = document.querySelectorAll('#stamps-container .stamp-card');
+    
+    if (filterButtons.length === 0) {
+        console.log('スタンプフィルターボタンが見つかりません');
+        return;
+    }
+    
+    if (stampCards.length === 0) {
+        console.log('スタンプカードが見つかりません');
+        return;
+    }
+    
+    console.log(`${filterButtons.length}個のフィルターボタンと${stampCards.length}個のカードを設定`);
     
     filterButtons.forEach(button => {
         button.addEventListener('click', function(e) {
@@ -1097,6 +1384,7 @@ function setupStampsFilter() {
             this.classList.add('active');
             
             const filterValue = this.getAttribute('data-filter');
+            console.log('フィルター適用:', filterValue);
             
             stampCards.forEach(card => {
                 if (filterValue === 'all' || card.getAttribute('data-category') === filterValue) {
@@ -1107,6 +1395,8 @@ function setupStampsFilter() {
             });
         });
     });
+    
+    console.log('LINEスタンプフィルター設定完了');
 }
 
 // リサイズ時にグリッドレイアウトを更新
@@ -1116,43 +1406,57 @@ window.addEventListener('resize', function() {
 
 // ニュースの初期化
 function initializeNews(data) {
+    console.log('ニュースデータを初期化');
+    
     const newsContainer = document.querySelector('.news-container');
-    if (!newsContainer || !data || data.length === 0) {
-        console.error('ニュースデータまたはコンテナが見つかりません');
+    if (!newsContainer) {
+        console.error('ニュースコンテナが見つかりません');
+        return;
+    }
+    
+    if (!data || data.length === 0) {
+        console.error('ニュースデータが空です');
         return;
     }
 
     // ニュースコンテナをクリア
     newsContainer.innerHTML = '';
     
-    console.log('ニュースデータを表示します:', data);
+    console.log(`${data.length}個のニュースアイテムを表示`);
 
     // ニュースアイテムを生成
-    data.forEach(item => {
+    data.forEach((item, index) => {
         const newsItem = document.createElement('div');
         newsItem.className = 'news-item';
         
         // 日付フォーマットを変換（YYYY-MM-DD → YYYY.MM.DD）
-        const formattedDate = item.date.replace(/-/g, '.');
+        const formattedDate = item.date ? item.date.replace(/-/g, '.') : '';
+        console.log(`ニュース${index+1}の日付:`, formattedDate);
         
         newsItem.innerHTML = `
             <p class="date">${formattedDate}</p>
-            <h3>${item.title}</h3>
-            <p>${item.summary}</p>
-            <a href="${item.url}" class="read-more">もっと見る</a>
+            <h3>${item.title || 'タイトルなし'}</h3>
+            <p>${item.summary || '説明なし'}</p>
+            <a href="${item.url || '#'}" class="read-more">もっと見る</a>
         `;
         newsContainer.appendChild(newsItem);
     });
+    
+    console.log('ニュース初期化完了');
 }
 
 // YouTube動画を表示する関数
 function initializeYouTube() {
+    console.log('YouTube動画を初期化');
     displaySimpleYouTubeVideos();
 }
 
 function displaySimpleYouTubeVideos() {
     const youtubeContainer = document.querySelector('.youtube-container');
-    if (!youtubeContainer) return;
+    if (!youtubeContainer) {
+        console.error('YouTubeコンテナが見つかりません');
+        return;
+    }
     
     // 表示する動画（指定のURLを使用）
     const videos = [
@@ -1173,42 +1477,57 @@ function displaySimpleYouTubeVideos() {
         }
     ];
     
+    console.log(`${videos.length}個のYouTube動画を表示`);
+    
     // コンテナをクリア
     youtubeContainer.innerHTML = '';
     
     // 動画カードを生成
-    videos.forEach(video => {
+    videos.forEach((video, index) => {
         const card = document.createElement('div');
         card.className = 'youtube-card';
+        
+        // Content Security Policy対応: evalの代わりにJSONParseを使用
+        const videoTitle = video.title || '';
+        const videoDesc = video.description || '';
+        const videoUrl = video.url || '';
+        
+        console.log(`YouTube動画${index+1}:`, videoTitle);
         
         card.innerHTML = `
             <div class="youtube-embed">
                 <iframe 
-                    src="${video.url}" 
-                    title="${video.title}" 
+                    src="${videoUrl}" 
+                    title="${videoTitle}" 
                     frameborder="0" 
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                     allowfullscreen
                 ></iframe>
             </div>
             <div class="youtube-info">
-                <h3>${video.title}</h3>
-                <p>${video.description}</p>
+                <h3>${videoTitle}</h3>
+                <p>${videoDesc}</p>
             </div>
         `;
         
         youtubeContainer.appendChild(card);
     });
+    
+    console.log('YouTube動画表示完了');
 }
 
 // 漫画ブログのカードデザインで表示する関数（日付を非表示）
 function initializeMangaBlog() {
+    console.log('漫画ブログを初期化');
     displayMangaBlogCards();
 }
 
 function displayMangaBlogCards() {
     const mangaContainer = document.querySelector('.manga-container');
-    if (!mangaContainer) return;
+    if (!mangaContainer) {
+        console.error('漫画ブログコンテナが見つかりません');
+        return;
+    }
     
     // コンテナをクリア
     mangaContainer.innerHTML = '';
@@ -1220,6 +1539,8 @@ function displayMangaBlogCards() {
         description: "ほぼ毎日漫画更新中!!",
         url: "https://buson.blog.jp"
     };
+    
+    console.log('漫画ブログカードを表示:', mangaData.title);
     
     // カードのスタイルを改良してより大きく表示
     const style = document.createElement('style');
@@ -1276,7 +1597,7 @@ function displayMangaBlogCards() {
     `;
     
     mangaContainer.appendChild(card);
-}
+    console.log('漫画ブログカード表示完了');
     
     // テキスト内容を非表示にする
     setTimeout(() => {
@@ -1289,6 +1610,8 @@ function displayMangaBlogCards() {
 
 // ページ読み込み完了後にニュースを確認し、必要なら強制表示
 window.addEventListener('load', function() {
+    console.log('ページ読み込み完了イベント');
+    
     // ニュースセクションを確認
     const newsContainer = document.querySelector('.news-container');
     if (newsContainer && newsContainer.children.length === 0) {
