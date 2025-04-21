@@ -822,14 +822,13 @@ function initializeGoods(data) {
         // カテゴリ属性を追加
         card.setAttribute('data-category', item.category || 'all');
 
-        // 画像パスの生成 - フォールバック画像を設定
-        // 存在しないパスの場合はプレースホルダー画像を使用
+        // 画像パスの生成
         const imagePath = item.image || 'images/placeholder.jpg';
         
         // デフォルト画像のパスを調整
         const fallbackImagePath = 'images/placeholder.jpg';
         
-        // 価格をフォーマット - カンマなしの表示に修正
+        // 価格をフォーマット
         const formattedPrice = item.price + '円（税込）';
 
         card.innerHTML = `
@@ -935,7 +934,7 @@ function displayBooks(data) {
         card.className = 'goods-card';
         card.setAttribute('data-category', book.category || 'all');
         
-        // 価格をフォーマット - カンマなしの表示に修正
+        // 価格をフォーマット
         const formattedPrice = book.price + '円（税込）';
         
         card.innerHTML = `
