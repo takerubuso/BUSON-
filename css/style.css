@@ -195,7 +195,7 @@ h2::after {
     margin-top: 5px;
 }
 
-/* スライダーの矢印ボタンのスタイルを修正 */
+/* 矢印ボタン */
 .slider-prev, .slider-next {
     position: absolute;
     top: 50%;
@@ -229,27 +229,6 @@ h2::after {
     transform: translateY(-50%) scale(1.1);
 }
 
-/* スマホ表示の調整 */
-@media (max-width: 480px) {
-    .slider-prev, .slider-next {
-        width: 36px;
-        height: 36px;
-        font-size: 14px;
-    }
-    
-    .slider-prev {
-        left: 8px;
-    }
-    
-    .slider-next {
-        right: 8px;
-    }
-    
-    /* スマホ表示では左右のプレビューを非表示にする */
-    .slider-preview-container {
-        display: none !important;
-    }
-}
 /* スマートフォン対応のためのハンバーガーメニュー追加 */
 .mobile-menu-button {
     display: none;
@@ -638,54 +617,6 @@ h2::after {
     color: white;
 }
 
-/* レスポンシブ対応の追加 */
-@media (max-width: 768px) {
-    #stamps-container {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 15px;
-    }
-    
-    .stamp-info h3 {
-        font-size: 14px;
-        line-height: 1.3;
-    }
-    
-    .stamp-card {
-        min-height: 320px; /* タブレット向け調整 */
-    }
-}
-
-@media (max-width: 480px) {
-    #stamps-container {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-    }
-    
-    .stamp-info {
-        padding: 10px;
-    }
-    
-    .stamp-info h3 {
-        font-size: 14px;
-        margin-bottom: 5px;
-        -webkit-line-clamp: 3; /* スマホでも3行表示 */
-    }
-    
-    .stamp-info .price {
-        margin-bottom: 10px;
-        font-size: 14px;
-    }
-    
-    .stamp-info .button {
-        padding: 8px 0;
-        font-size: 14px;
-    }
-    
-    .stamp-card {
-        min-height: 280px; /* スマホ向け調整 */
-    }
-}
-
 /* YouTube セクション */
 .youtube-container {
     display: grid;
@@ -764,7 +695,7 @@ h2::after {
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* 漫画ブログセクション（1つだけ表示するバージョン） */
+/* 漫画ブログセクション - オリジナル */
 .manga-container {
     display: flex;
     justify-content: center;
@@ -856,6 +787,60 @@ h2::after {
 .manga-card.image-only .date {
     display: none;
 }
+
+/* 漫画ブログ - シンプルデザイン（日付なし、白背景なし） */
+.manga-card.simple-design {
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: transparent;
+}
+
+.manga-card.simple-design:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.manga-card.simple-design .manga-link {
+    text-decoration: none;
+    display: block;
+    position: relative;
+}
+
+.manga-card.simple-design .manga-img.full-card {
+    height: auto;
+    width: 100%;
+}
+
+.manga-card.simple-design .manga-img.full-card img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.manga-card.simple-design .manga-content {
+    background-color: rgba(255, 107, 136, 0.8); /* ピンク色の半透明背景 */
+    padding: 15px;
+    color: white;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+
+.manga-card.simple-design .manga-content h3 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 5px;
+    color: white;
+}
+
+.manga-card.simple-design .manga-content p {
+    font-size: 16px;
+    margin: 0;
+}
+
 /* フッタースタイル */
 footer {
     background-color: #ffd1dc;
@@ -1333,7 +1318,11 @@ footer {
     
     .stamp-info h3 {
         font-size: 14px;
-        height: 2.6em;
+        line-height: 1.3;
+    }
+    
+    .stamp-card {
+        min-height: 320px; /* タブレット向け調整 */
     }
 
     .youtube-container {
@@ -1406,23 +1395,20 @@ footer {
     .slider-prev, .slider-next {
         width: 36px;
         height: 36px;
-        font-size: 18px;
+        font-size: 14px;
     }
     
     .slider-prev {
-        left: 10px;
+        left: 8px;
     }
     
     .slider-next {
-        right: 10px;
+        right: 8px;
     }
     
     /* スマホ表示では左右のプレビューを非表示にする */
-    .slider-preview-container, 
-    .slider-preview-left, 
-    .slider-preview-right,
-    .preview-label {
-        display: none;
+    .slider-preview-container {
+        display: none !important;
     }
 
     .slider-caption {
@@ -1466,8 +1452,7 @@ footer {
     .stamp-info h3 {
         font-size: 14px;
         margin-bottom: 5px;
-        -webkit-line-clamp: 2;
-        height: 2.6em;
+        -webkit-line-clamp: 3; /* スマホでも3行表示 */
     }
     
     .stamp-info .price {
@@ -1478,6 +1463,10 @@ footer {
     .stamp-info .button {
         padding: 8px 0;
         font-size: 14px;
+    }
+    
+    .stamp-card {
+        min-height: 280px; /* スマホ向け調整 */
     }
 
     .news-container {
@@ -1508,5 +1497,18 @@ footer {
     }
     .info-label-text {
         font-size: 9px;
+    }
+    
+    /* 漫画ブログ - スマホ対応 */
+    .manga-card.simple-design .manga-content {
+        padding: 10px;
+    }
+    
+    .manga-card.simple-design .manga-content h3 {
+        font-size: 18px;
+    }
+    
+    .manga-card.simple-design .manga-content p {
+        font-size: 14px;
     }
 }
