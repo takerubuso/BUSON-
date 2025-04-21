@@ -269,6 +269,14 @@ function initializeEnhancedSlider(data) {
     if (previewLeft) previewLeft.innerHTML = '';
     if (previewRight) previewRight.innerHTML = '';
     
+    // プレビューコンテナの確認・作成
+    let previewsContainer = document.querySelector('.slider-previews-container');
+    if (!previewsContainer) {
+        previewsContainer = document.createElement('div');
+        previewsContainer.className = 'slider-previews-container';
+        sliderContainer.parentNode.appendChild(previewsContainer);
+    }
+    
     // スライドの複製を含むデータを準備（無限ループのため）
     let extendedData = [];
     
@@ -349,52 +357,91 @@ function initializeEnhancedSlider(data) {
     
     // 前後の画像プレビューを更新する関数
     function updatePreviews() {
-        // プレビュー要素がない場合はスキップ
-        if (!previewLeft || !previewRight) return;
-        
-        // データが1つしかない場合はプレビューを非表示
-        if (data.length <= 1) {
-            previewLeft.style.display = 'none';
-            previewRight.style.display = 'none';
-            return;
+        // デスクトップ用プレビュー
+        if (previewLeft && previewRight) {
+            // データが1つしかない場合はプレビューを非表示
+            if (data.length <= 1) {
+                previewLeft.style.display = 'none';
+                previewRight.style.display = 'none';
+                return;
+            }
+            
+            // プレビューを表示
+            previewLeft.style.display = 'block';
+            previewRight.style.display = 'block';
+            
+            // 実際のデータのインデックスを計算
+            let realIndex = currentIndex - 1;
+            if (realIndex < 0) realIndex = data.length - 1;
+            if (realIndex >= data.length) realIndex = 0;
+            
+            const prevIndex = (realIndex - 1 + data.length) % data.length;
+            const nextIndex = (realIndex + 1) % data.length;
+            
+            // プレビュー要素をクリア
+            previewLeft.innerHTML = '';
+            previewRight.innerHTML = '';
+            
+            // 前のスライドのプレビューを作成
+            const leftPreviewInner = document.createElement('div');
+            leftPreviewInner.className = 'slider-preview-inner';
+            leftPreviewInner.style.backgroundImage = `url('${data[prevIndex].image || 'images/placeholder.jpg'}')`;
+            previewLeft.appendChild(leftPreviewInner);
+            
+            // 次のスライドのプレビューを作成
+            const rightPreviewInner = document.createElement('div');
+            rightPreviewInner.className = 'slider-preview-inner';
+            rightPreviewInner.style.backgroundImage = `url('${data[nextIndex].image || 'images/placeholder.jpg'}')`;
+            previewRight.appendChild(rightPreviewInner);
+            
+            // プレビューのクリックイベント
+            previewLeft.onclick = function() {
+                prevSlide();
+            };
+            
+            previewRight.onclick = function() {
+                nextSlide();
+            };
         }
         
-        // プレビューを表示
-        previewLeft.style.display = 'block';
-        previewRight.style.display = 'block';
-        
-        // 実際のデータのインデックスを計算
-        let realIndex = currentIndex - 1;
-        if (realIndex < 0) realIndex = data.length - 1;
-        if (realIndex >= data.length) realIndex = 0;
-        
-        const prevIndex = (realIndex - 1 + data.length) % data.length;
-        const nextIndex = (realIndex + 1) % data.length;
-        
-        // プレビュー要素をクリア
-        previewLeft.innerHTML = '';
-        previewRight.innerHTML = '';
-        
-        // 前のスライドのプレビューを作成
-        const leftPreviewInner = document.createElement('div');
-        leftPreviewInner.className = 'slider-preview-inner';
-        leftPreviewInner.style.backgroundImage = `url('${data[prevIndex].image || 'images/placeholder.jpg'}')`;
-        previewLeft.appendChild(leftPreviewInner);
-        
-        // 次のスライドのプレビューを作成
-        const rightPreviewInner = document.createElement('div');
-        rightPreviewInner.className = 'slider-preview-inner';
-        rightPreviewInner.style.backgroundImage = `url('${data[nextIndex].image || 'images/placeholder.jpg'}')`;
-        previewRight.appendChild(rightPreviewInner);
-        
-        // プレビューのクリックイベント
-        previewLeft.onclick = function() {
-            prevSlide();
-        };
-        
-        previewRight.onclick = function() {
-            nextSlide();
-        };
+        // モバイル用プレビュー（スライダーの下に全てのサムネイルを表示）
+        if (previewsContainer) {
+            // コンテナをクリア
+            previewsContainer.innerHTML = '';
+            
+            // データが1つしかない場合はプレビューを非表示
+            if (data.length <= 1) {
+                previewsContainer.style.display = 'none';
+                return;
+            }
+            
+            // プレビューを表示
+            previewsContainer.style.display = 'flex';
+            
+            // 実際のデータのインデックスを計算
+            let realIndex = currentIndex - 1;
+            if (realIndex < 0) realIndex = data.length - 1;
+            if (realIndex >= data.length) realIndex = 0;
+            
+            // すべてのスライドのプレビューを生成
+            data.forEach((item, idx) => {
+                const preview = document.createElement('div');
+                preview.className = `slider-preview ${idx === realIndex ? 'active' : ''}`;
+                
+                const previewInner = document.createElement('div');
+                previewInner.className = 'slider-preview-inner';
+                previewInner.style.backgroundImage = `url('${item.image || 'images/placeholder.jpg'}')`;
+                
+                preview.appendChild(previewInner);
+                previewsContainer.appendChild(preview);
+                
+                // クリックイベント
+                preview.addEventListener('click', function() {
+                    currentIndex = idx + 1; // クローンを考慮したインデックス
+                    updateSlider();
+                });
+            });
+        }
     }
     
     // 次のスライドに移動
@@ -462,6 +509,31 @@ function initializeEnhancedSlider(data) {
             nextSlide();
         }
     });
+    
+    // タッチスワイプ対応（モバイル用）
+    let touchStartX = 0;
+    let touchEndX = 0;
+    
+    sliderContainer.addEventListener('touchstart', function(e) {
+        touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    
+    sliderContainer.addEventListener('touchend', function(e) {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    }, { passive: true });
+    
+    function handleSwipe() {
+        // スワイプ感度を調整（ここでは50ピクセル）
+        if (touchEndX < touchStartX - 50) {
+            // 左にスワイプ → 次へ
+            nextSlide();
+        }
+        if (touchEndX > touchStartX + 50) {
+            // 右にスワイプ → 前へ
+            prevSlide();
+        }
+    }
     
     // デバッグ情報
     console.log('スライダー初期化完了:', {
