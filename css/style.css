@@ -558,6 +558,7 @@ h2::after {
     height: 100%;
     display: flex;
     flex-direction: column;
+    min-height: 340px; /* カード全体の最小高さを設定 */
 }
 
 .stamp-card:hover {
@@ -599,13 +600,16 @@ h2::after {
     font-size: 16px;
     margin-bottom: 10px;
     color: #4a4a4a;
-    /* 文字を複数行にする場合のスタイル */
+    /* 文字を複数行にする場合のスタイル - 修正部分 */
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 3; /* 2行から3行に変更 */
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    height: 2.8em;
+    height: auto; /* 固定高さを解除 */
+    min-height: 2.8em; /* 最小高さを設定 */
+    max-height: 4.2em; /* 最大高さを設定（3行分） */
+    line-height: 1.4; /* 行間を調整 */
 }
 
 .stamp-info .price {
@@ -632,6 +636,54 @@ h2::after {
 .stamp-info .button:hover {
     background-color: #ff6b88;
     color: white;
+}
+
+/* レスポンシブ対応の追加 */
+@media (max-width: 768px) {
+    #stamps-container {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+    }
+    
+    .stamp-info h3 {
+        font-size: 14px;
+        line-height: 1.3;
+    }
+    
+    .stamp-card {
+        min-height: 320px; /* タブレット向け調整 */
+    }
+}
+
+@media (max-width: 480px) {
+    #stamps-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+    }
+    
+    .stamp-info {
+        padding: 10px;
+    }
+    
+    .stamp-info h3 {
+        font-size: 14px;
+        margin-bottom: 5px;
+        -webkit-line-clamp: 3; /* スマホでも3行表示 */
+    }
+    
+    .stamp-info .price {
+        margin-bottom: 10px;
+        font-size: 14px;
+    }
+    
+    .stamp-info .button {
+        padding: 8px 0;
+        font-size: 14px;
+    }
+    
+    .stamp-card {
+        min-height: 280px; /* スマホ向け調整 */
+    }
 }
 
 /* YouTube セクション */
