@@ -1267,12 +1267,14 @@ function displayMangaBlogCards() {
         .manga-text-content h3 {
             font-size: 18px;
             margin-bottom: 5px;
-            color: #4a4a4a;
+            color: #000000; /* 黒色に変更 */
+            text-decoration: none;
         }
         
         .manga-text-content p {
             font-size: 14px;
-            color: #777;
+            color: #000000; /* 黒色に変更 */
+            text-decoration: none;
             margin: 0;
         }
     `;
@@ -1297,13 +1299,7 @@ function displayMangaBlogCards() {
     
     mangaContainer.appendChild(card);
     
-    // テキスト内容を非表示にする
-    setTimeout(() => {
-        const textContent = document.querySelector('.manga-text-content');
-        if (textContent) {
-            textContent.style.display = 'none';
-        }
-    }, 100);
+    // テキスト非表示のsetTimeoutを削除
 }
 
 // ページ読み込み完了後にニュースを確認し、必要なら強制表示
