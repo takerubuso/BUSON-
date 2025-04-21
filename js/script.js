@@ -146,13 +146,16 @@ document.addEventListener('DOMContentLoaded', function() {
     setupMobileTouchEvents();
 });
 
-// 強化されたスライダーの初期化（前後の画像を表示する）
-function initializeEnhancedSlider(data) {
+// スライダーの初期化
+function initializeSlider(data) {
     const sliderContainer = document.querySelector('.slider-container');
     if (!sliderContainer || !data || data.length === 0) return;
 
-    // スライダー内容をクリア
     const slider = document.querySelector('.slider');
+    const previewLeft = document.querySelector('.slider-preview-left');
+    const previewRight = document.querySelector('.slider-preview-right');
+    
+    // スライダー内容をクリア
     slider.innerHTML = '';
 
     // スライドアイテムを全て作成
@@ -184,14 +187,54 @@ function initializeEnhancedSlider(data) {
         slider.appendChild(sliderItem);
     });
 
-    // 前後の画像プレビュー要素を取得
-    const peekLeft = document.querySelector('.slider-peek-left');
-    const peekRight = document.querySelector('.slider-peek-right');
-
     // スライダーの操作処理
     let currentIndex = 0;
     const slideWidth = 100; // 100%
 
+    // 前後のプレビュー画像を更新する関数
+    function updatePreviews() {
+        // データが1つしかない場合はプレビューを非表示
+        if (data.length <= 1) {
+            previewLeft.style.display = 'none';
+            previewRight.style.display = 'none';
+            return;
+        }
+
+        const prevIndex = (currentIndex - 1 + data.length) % data.length;
+        const nextIndex = (currentIndex + 1) % data.length;
+        
+        // プレビュー要素を更新
+        previewLeft.innerHTML = '';
+        previewRight.innerHTML = '';
+        
+        const prevDiv = document.createElement('div');
+        prevDiv.style.backgroundImage = `url('${data[prevIndex].image}')`;
+        
+        const nextDiv = document.createElement('div');
+        nextDiv.style.backgroundImage = `url('${data[nextIndex].image}')`;
+        
+        previewLeft.appendChild(prevDiv);
+        previewRight.appendChild(nextDiv);
+        
+        // プレビューのクリックイベント
+        previewLeft.onclick = function() {
+            currentIndex = prevIndex;
+            updateSlider();
+        };
+        
+        previewRight.onclick = function() {
+            currentIndex = nextIndex;
+            updateSlider();
+        };
+    }
+
+    // スライダーを更新する関数
+    function updateSlider() {
+        slider.style.transform = `translateX(-${currentIndex * slideWidth}%)`;
+        updatePreviews();
+    }
+
+    // 矢印ボタンのイベント
     document.querySelector('.slider-next').addEventListener('click', function() {
         currentIndex = (currentIndex + 1) % data.length;
         updateSlider();
@@ -201,42 +244,9 @@ function initializeEnhancedSlider(data) {
         currentIndex = (currentIndex - 1 + data.length) % data.length;
         updateSlider();
     });
-
-    // 左右のプレビュー画像をクリックした時の動作
-    peekLeft.addEventListener('click', function() {
-        currentIndex = (currentIndex - 1 + data.length) % data.length;
-        updateSlider();
-    });
-
-    peekRight.addEventListener('click', function() {
-        currentIndex = (currentIndex + 1) % data.length;
-        updateSlider();
-    });
-
-    function updateSlider() {
-        slider.style.transform = `translateX(-${currentIndex * slideWidth}%)`;
-        
-        // 前後の画像プレビューを更新
-        if (data.length > 1) {
-            const prevIndex = (currentIndex - 1 + data.length) % data.length;
-            const nextIndex = (currentIndex + 1) % data.length;
-            
-            peekLeft.style.display = 'block';
-            peekRight.style.display = 'block';
-            
-            peekLeft.style.backgroundImage = 'none';
-            peekRight.style.backgroundImage = 'none';
-            
-            peekLeft.querySelector('::before').style.backgroundImage = `url('${data[prevIndex].image}')`;
-            peekRight.querySelector('::before').style.backgroundImage = `url('${data[nextIndex].image}')`;
-        } else {
-            // 画像が1枚しかない場合はプレビューを非表示
-            peekLeft.style.display = 'none';
-            peekRight.style.display = 'none';
-        }
-    }
     
-    // 初期表示のセットアップ
+    // 初期表示
+    updatePreviews();
     updateSlider();
     
     // 自動スライド（5秒間隔）
@@ -247,6 +257,8 @@ function initializeEnhancedSlider(data) {
         }, 5000);
     }
 }
+
+// 既存のinitializeSliderは上記の関数に置き換え、他の関数はそのまま残す
 
 // キャラクターモーダルのナビゲーションにタッチイベントを追加
 function setupMobileTouchEvents() {
