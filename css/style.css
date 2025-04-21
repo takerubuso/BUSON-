@@ -409,31 +409,47 @@ h2::after {
     transform: scale(1.05);
 }
 
-.goods-info {
+/* 商品情報の修正部分 */
+.goods-info, .stamp-info {
     padding: 15px;
     background: #fff;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
+    position: relative; /* 相対位置指定を追加 */
+    min-height: 120px; /* 最小高さを設定 */
 }
 
-.goods-info h3 {
-    font-size: 16px; /* サイズを小さくして表示を改善 */
+/* 商品タイトル部分 */
+.goods-info h3, .stamp-info h3 {
+    font-size: 16px;
     margin-bottom: 10px;
     color: #4a4a4a;
+    /* 文字を複数行にする場合のスタイル */
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* 最大3行まで表示 */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-height: 3.6em; /* 最小高さを設定（3行分） */
+    line-height: 1.2; /* 行間を調整 */
 }
 
-.goods-info .price {
+/* 価格の位置を固定 */
+.goods-info .price, .stamp-info .price {
     font-weight: 700;
     color: #ff6b88;
-    margin-bottom: 15px;
+    margin-top: auto; /* 上部の余白を自動調整 */
+    margin-bottom: 15px; /* ボタンとの間隔 */
     display: block;
+    text-align: center; /* 中央揃え */
 }
 
-.goods-info .button {
+/* ボタンスタイルの統一 */
+.goods-info .button, .stamp-info .button, .read-more {
     display: block;
     text-align: center;
-    padding: 10px;
+    padding: 10px 0;
     background: #ffd1dc;
     color: #4a4a4a;
     border-radius: 25px;
@@ -441,11 +457,20 @@ h2::after {
     text-decoration: none;
     transition: background-color 0.3s ease, color 0.3s ease;
     margin-top: auto; /* 下部に配置 */
+    width: 100%; /* 幅を100%に */
 }
 
-.goods-info .button:hover {
+.goods-info .button:hover, .stamp-info .button:hover, .read-more:hover {
     background-color: #ff6b88;
     color: white;
+}
+
+/* 「詳しく見る」ボタンの統一スタイル */
+.goods-info .button, .stamp-info .button, .read-more {
+    font-size: 14px;
+    background-color: #ffd1dc;
+    border: none;
+    color: #4a4a4a;
 }
 
 /* ピンク背景の購入ボタン */
@@ -460,8 +485,8 @@ h2::after {
 
 .pink-button-style .goods-info .button {
     margin-top: auto; /* 下部に配置 */
-    border-radius: 0;
-    background-color: #ffc0cb;
+    border-radius: 25px;
+    background-color: #ffd1dc;
     padding: 10px;
     font-size: 14px; /* フォントサイズを小さく調整 */
 }
@@ -573,48 +598,6 @@ h2::after {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-}
-
-.stamp-info h3 {
-    font-size: 16px;
-    margin-bottom: 10px;
-    color: #4a4a4a;
-    /* 文字を複数行にする場合のスタイル - 修正部分 */
-    display: -webkit-box;
-    -webkit-line-clamp: 3; /* 2行から3行に変更 */
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    height: auto; /* 固定高さを解除 */
-    min-height: 2.8em; /* 最小高さを設定 */
-    max-height: 4.2em; /* 最大高さを設定（3行分） */
-    line-height: 1.4; /* 行間を調整 */
-}
-
-.stamp-info .price {
-    font-weight: 700;
-    color: #ff6b88;
-    margin-bottom: 15px;
-    display: block;
-}
-
-.stamp-info .button {
-    display: block;
-    text-align: center;
-    padding: 10px;
-    background: #ffd1dc;
-    color: #4a4a4a;
-    border-radius: 25px;
-    font-weight: 500;
-    text-decoration: none;
-    transition: background-color 0.3s ease, color 0.3s ease;
-    margin-top: auto;
-    width: 100%;
-}
-
-.stamp-info .button:hover {
-    background-color: #ff6b88;
-    color: white;
 }
 
 /* YouTube セクション */
