@@ -737,8 +737,6 @@ footer {
 .links-container {
     max-width: 1200px;
     margin: 0 auto;
-    display: flex;
-    flex-direction: column; /* 縦方向に配置を変更 */
     padding: 0 20px;
 }
 
@@ -785,14 +783,10 @@ footer {
 
 .footer-links-row {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     flex-wrap: wrap;
     gap: 15px;
     margin-bottom: 20px;
-}
-
-.footer-links-row .external-link {
-    margin-bottom: 0; /* マージンをリセット */
 }
 
 .links-list {
@@ -805,13 +799,14 @@ footer {
     margin-bottom: 8px;
 }
 
-.links-list a, .external-link, .small-link {
+.external-link, .small-link {
     color: #4a4a4a;
     text-decoration: none;
     font-size: 14px;
-    display: flex;
-    align-items: center;
+    display: inline-block;
     transition: color 0.3s;
+    white-space: nowrap;
+    margin: 5px 10px;
 }
 
 .external-link::before {
@@ -834,19 +829,7 @@ footer {
     justify-content: center;
     gap: 15px;
     margin: 0 auto;
-    max-width: 1000px;
     padding: 0 20px;
-}
-
-.small-link {
-    color: #4a4a4a;
-    text-decoration: none;
-    font-size: 14px;
-    display: inline-block; /* flexからinline-blockに変更 */
-    align-items: center;
-    transition: color 0.3s;
-    white-space: nowrap; /* 改行を防止 */
-    margin: 5px;
 }
 
 .small-link::before {
@@ -870,6 +853,20 @@ footer {
 
 .copyright-section p {
     margin-bottom: 10px;
+}
+
+/* レスポンシブ対応 - モバイル表示時は縦並び */
+@media (max-width: 768px) {
+    .footer-links-row,
+    .second-links-row {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .external-link, .small-link {
+        margin: 5px 0;
+    }
 }
 
 /* モーダルスタイル */
