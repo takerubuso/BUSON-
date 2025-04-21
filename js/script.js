@@ -167,13 +167,17 @@ function setupMobileTouchEvents() {
     }
 }
 
-// スライダーの初期化
-function initializeSlider(data) {
-    const sliderContainer = document.querySelector('.slider-container');
-    if (!sliderContainer || !data || data.length === 0) return;
+// // 強化されたスライダーの初期化
+function initializeEnhancedSlider(data) {
+    const sliderWithThumbnails = document.querySelector('.slider-with-thumbnails');
+    if (!sliderWithThumbnails || !data || data.length === 0) return;
 
-    // スライダー内容をクリア
+    const sliderContainer = document.querySelector('.slider-container');
     const slider = document.querySelector('.slider');
+    const prevThumbnail = document.querySelector('.thumbnail-prev');
+    const nextThumbnail = document.querySelector('.thumbnail-next');
+    
+    // スライダー内容をクリア
     slider.innerHTML = '';
 
     // スライドアイテムを全て作成
@@ -205,19 +209,37 @@ function initializeSlider(data) {
         slider.appendChild(sliderItem);
     });
 
-    // スライダーのチラ見せ要素を追加
-    const peekLeft = document.createElement('div');
-    peekLeft.className = 'slider-peek slider-peek-left';
-    sliderContainer.appendChild(peekLeft);
-    
-    const peekRight = document.createElement('div');
-    peekRight.className = 'slider-peek slider-peek-right';
-    sliderContainer.appendChild(peekRight);
-
     // スライダーの操作処理
     let currentIndex = 0;
     const slideWidth = 100; // 100%
 
+    // 前後のサムネイル画像を更新
+    function updateThumbnails() {
+        const prevIndex = (currentIndex - 1 + data.length) % data.length;
+        const nextIndex = (currentIndex + 1) % data.length;
+        
+        prevThumbnail.innerHTML = `<img src="${data[prevIndex].image}" alt="前の画像">`;
+        nextThumbnail.innerHTML = `<img src="${data[nextIndex].image}" alt="次の画像">`;
+        
+        // サムネイルクリック時の動作
+        prevThumbnail.onclick = function() {
+            currentIndex = prevIndex;
+            updateSlider();
+        };
+        
+        nextThumbnail.onclick = function() {
+            currentIndex = nextIndex;
+            updateSlider();
+        };
+    }
+
+    // スライダー更新関数
+    function updateSlider() {
+        slider.style.transform = `translateX(-${currentIndex * slideWidth}%)`;
+        updateThumbnails();
+    }
+
+    // 矢印ボタン操作
     document.querySelector('.slider-next').addEventListener('click', function() {
         currentIndex = (currentIndex + 1) % data.length;
         updateSlider();
@@ -227,26 +249,9 @@ function initializeSlider(data) {
         currentIndex = (currentIndex - 1 + data.length) % data.length;
         updateSlider();
     });
-
-    function updateSlider() {
-        slider.style.transform = `translateX(-${currentIndex * slideWidth}%)`;
-        
-        // チラ見せ部分を更新
-        if (data.length > 1) {
-            const prevIndex = (currentIndex - 1 + data.length) % data.length;
-            const nextIndex = (currentIndex + 1) % data.length;
-            
-            peekLeft.style.backgroundImage = `url('${data[prevIndex].image}')`;
-            peekLeft.style.backgroundSize = 'cover';
-            peekLeft.style.backgroundPosition = 'center';
-            
-            peekRight.style.backgroundImage = `url('${data[nextIndex].image}')`;
-            peekRight.style.backgroundSize = 'cover';
-            peekRight.style.backgroundPosition = 'center';
-        }
-    }
     
     // 初期表示のセットアップ
+    updateThumbnails();
     updateSlider();
     
     // 自動スライド（5秒間隔）
@@ -257,6 +262,34 @@ function initializeSlider(data) {
         }, 5000);
     }
 }
+
+// 既存の初期化関数を置き換える
+document.addEventListener('DOMContentLoaded', function() {
+    // スライダーデータを読み込み
+    fetch('data/slider.json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('スライダーデータの読み込みに失敗: ' + response.status);
+            }
+            return response.json();
+        })
+        .then(data => {
+            initializeEnhancedSlider(data);
+        })
+        .catch(error => {
+            console.error('スライダーデータの読み込みに失敗しました:', error);
+            // エラー時にデフォルトデータで表示
+            const defaultSliderData = [
+                {
+                    "image": "images/slider1.jpg",
+                    "title": "新キャラクター「ピンキー」登場！",
+                    "description": "宇宙からやってきた不思議な猫型キャラクター",
+                    "url": "#characters"
+                }
+            ];
+            initializeEnhancedSlider(defaultSliderData);
+        });
+});
 
 // キャラクターの初期化関数を修正（カテゴリ属性を追加）
 function initializeCharacters(data) {
