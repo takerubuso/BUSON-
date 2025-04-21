@@ -201,12 +201,7 @@ h2::after {
     background-position: center;
 }
 
-/* レスポンシブ対応 */
-@media (max-width: 768px) {
-    .slider-with-navigation {
-        flex-direction: column;
-    }
-    /* スマートフォン対応のためのハンバーガーメニュー追加 */
+/* スマートフォン対応のためのハンバーガーメニュー追加 */
 .mobile-menu-button {
     display: none;
     cursor: pointer;
@@ -220,6 +215,8 @@ h2::after {
     margin: 5px 0;
     transition: 0.3s;
 }
+
+/* レスポンシブ対応 */
 @media (max-width: 768px) {
     .mobile-menu-button {
         display: block;
@@ -245,7 +242,10 @@ h2::after {
     nav ul li {
         margin: 10px 0;
     }
-}
+    
+    .slider-with-navigation {
+        flex-direction: column;
+    }
     
     .slider-container {
         width: 100%;
