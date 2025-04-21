@@ -1239,7 +1239,7 @@ function displayMangaBlogCards() {
         
         .manga-card-16-9 a {
             display: block;
-            text-decoration: none;
+            text-decoration: none !important;
         }
         
         .manga-img-16-9 {
@@ -1267,15 +1267,20 @@ function displayMangaBlogCards() {
         .manga-text-content h3 {
             font-size: 18px;
             margin-bottom: 5px;
-            color: #000000; /* 黒色に変更 */
-            text-decoration: none;
+            color: #000000 !important; /* 黒色に変更、!importantで強制 */
+            text-decoration: none !important;
         }
         
         .manga-text-content p {
             font-size: 14px;
-            color: #000000; /* 黒色に変更 */
-            text-decoration: none;
+            color: #000000 !important; /* 黒色に変更、!importantで強制 */
+            text-decoration: none !important;
             margin: 0;
+        }
+        
+        /* リンクスタイルを上書き */
+        .manga-text-content a {
+            text-decoration: none !important;
         }
     `;
     document.head.appendChild(style);
@@ -1298,8 +1303,6 @@ function displayMangaBlogCards() {
     `;
     
     mangaContainer.appendChild(card);
-    
-    // テキスト非表示のsetTimeoutを削除
 }
 
 // ページ読み込み完了後にニュースを確認し、必要なら強制表示
