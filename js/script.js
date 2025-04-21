@@ -1221,6 +1221,25 @@ function displayMangaBlogCards() {
         url: "https://buson.blog.jp"
     };
     
+    // 既存のスタイルを無効化するためのスタイルを追加
+    const resetStyle = document.createElement('style');
+    resetStyle.textContent = `
+        .manga-card-16-9 * {
+            text-decoration: none !important;
+        }
+        
+        .manga-text-content h3,
+        .manga-text-content p,
+        .manga-text-content a {
+            color: #000000 !important;
+            text-decoration: none !important;
+            border-bottom: none !important;
+            text-decoration-line: none !important;
+            text-decoration-style: none !important;
+        }
+    `;
+    document.head.appendChild(resetStyle);
+    
     // カスタムスタイルを動的に追加
     const style = document.createElement('style');
     style.textContent = `
@@ -1267,20 +1286,15 @@ function displayMangaBlogCards() {
         .manga-text-content h3 {
             font-size: 18px;
             margin-bottom: 5px;
-            color: #000000 !important; /* 黒色に変更、!importantで強制 */
+            color: #000000 !important;
             text-decoration: none !important;
         }
         
         .manga-text-content p {
             font-size: 14px;
-            color: #000000 !important; /* 黒色に変更、!importantで強制 */
+            color: #000000 !important;
             text-decoration: none !important;
             margin: 0;
-        }
-        
-        /* リンクスタイルを上書き */
-        .manga-text-content a {
-            text-decoration: none !important;
         }
     `;
     document.head.appendChild(style);
@@ -1289,20 +1303,38 @@ function displayMangaBlogCards() {
     const card = document.createElement('div');
     card.className = 'manga-card-16-9';
     
-    // カードの内容を設定
+    // インラインスタイルを直接適用（最も優先度が高い）
     card.innerHTML = `
-        <a href="${mangaData.url}" target="_blank">
+        <a href="${mangaData.url}" target="_blank" style="text-decoration: none !important;">
             <div class="manga-img-16-9">
                 <img src="${mangaData.image}" alt="${mangaData.title}" onerror="this.onerror=null; this.src='images/placeholder.jpg';">
             </div>
             <div class="manga-text-content">
-                <h3>${mangaData.title}</h3>
-                <p>${mangaData.description}</p>
+                <h3 style="color: #000000 !important; text-decoration: none !important; border-bottom: none !important;">${mangaData.title}</h3>
+                <p style="color: #000000 !important; text-decoration: none !important; border-bottom: none !important;">${mangaData.description}</p>
             </div>
         </a>
     `;
     
     mangaContainer.appendChild(card);
+    
+    // 直接DOMに変更を加える（最も確実な方法）
+    setTimeout(() => {
+        const titleElement = card.querySelector('.manga-text-content h3');
+        const descElement = card.querySelector('.manga-text-content p');
+        
+        if (titleElement) {
+            titleElement.style.color = '#000000';
+            titleElement.style.textDecoration = 'none';
+            titleElement.style.borderBottom = 'none';
+        }
+        
+        if (descElement) {
+            descElement.style.color = '#000000';
+            descElement.style.textDecoration = 'none';
+            descElement.style.borderBottom = 'none';
+        }
+    }, 100);
 }
 
 // ページ読み込み完了後にニュースを確認し、必要なら強制表示
