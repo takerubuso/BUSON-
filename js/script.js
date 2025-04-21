@@ -1221,35 +1221,38 @@ function displayMangaBlogCards() {
         url: "https://buson.blog.jp"
     };
     
-    // カスタムスタイルを動的に追加
+    // カードのスタイルを改良してより大きく表示
     const style = document.createElement('style');
     style.textContent = `
-        .manga-card-16-9 {
+        .manga-card-improved {
             border-radius: 15px;
             overflow: hidden;
             box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             width: 100%;
+            margin-bottom: 20px;
         }
         
-        .manga-card-16-9:hover {
+        .manga-card-improved:hover {
             transform: translateY(-5px);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
         
-        .manga-card-16-9 a {
+        .manga-card-improved a {
             display: block;
             text-decoration: none;
+            width: 100%;
+            height: 100%;
         }
         
-        .manga-img-16-9 {
+        .manga-img-improved {
             position: relative;
             width: 100%;
             padding-top: 56.25%; /* 16:9比率 */
             overflow: hidden;
         }
         
-        .manga-img-16-9 img {
+        .manga-img-improved img {
             position: absolute;
             top: 0;
             left: 0;
@@ -1257,45 +1260,23 @@ function displayMangaBlogCards() {
             height: 100%;
             object-fit: cover;
         }
-        
-        .manga-text-content {
-            background: white;
-            padding: 15px;
-            display: block;
-        }
-        
-        .manga-text-content h3 {
-            font-size: 18px;
-            margin-bottom: 5px;
-            color: #4a4a4a;
-        }
-        
-        .manga-text-content p {
-            font-size: 14px;
-            color: #777;
-            margin: 0;
-        }
     `;
     document.head.appendChild(style);
     
-    // 漫画ブログカードを生成（新しい16:9のスタイルを適用）
+    // 漫画ブログカードを生成（改良版）
     const card = document.createElement('div');
-    card.className = 'manga-card-16-9';
+    card.className = 'manga-card-improved';
     
-    // カードの内容を設定
     card.innerHTML = `
         <a href="${mangaData.url}" target="_blank">
-            <div class="manga-img-16-9">
+            <div class="manga-img-improved">
                 <img src="${mangaData.image}" alt="${mangaData.title}" onerror="this.onerror=null; this.src='images/placeholder.jpg';">
-            </div>
-            <div class="manga-text-content">
-                <h3>${mangaData.title}</h3>
-                <p>${mangaData.description}</p>
             </div>
         </a>
     `;
     
     mangaContainer.appendChild(card);
+}
     
     // テキスト内容を非表示にする
     setTimeout(() => {
