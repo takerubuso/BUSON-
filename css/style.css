@@ -191,6 +191,13 @@ h2::after {
     transform: scale(1.05);
 }
 
+.slider-preview.active {
+    opacity: 1;
+    transform: scale(1.05);
+    box-shadow: 0 3px 10px rgba(255, 107, 136, 0.5);
+    border: 2px solid #ff6b88;
+}
+
 .slider-preview-inner {
     position: absolute;
     top: 0;
@@ -199,6 +206,16 @@ h2::after {
     height: 100%;
     background-size: cover;
     background-position: center;
+}
+
+/* プレビュー要素のコンテナ */
+.slider-previews-container {
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+    margin-top: 10px;
+    width: 100%;
+    flex-wrap: wrap;
 }
 
 /* スマートフォン対応のためのハンバーガーメニュー追加 */
@@ -249,11 +266,19 @@ h2::after {
     
     .slider-container {
         width: 100%;
+        margin-bottom: 10px; /* スライダーとプレビューの間に余白を追加 */
     }
     
-    /* プレビューを非表示にする */
+    /* プレビュー表示方法の変更 */
+    .slider-preview-left,
+    .slider-preview-right {
+        display: none; /* 既存の左右プレビューを非表示 */
+    }
+    
     .slider-preview {
-        display: none;
+        width: 15%; /* 幅を調整 */
+        padding-top: 8%; /* アスペクト比を維持 */
+        margin: 0 4px; /* 左右に余白を追加 */
     }
     
     /* 矢印ボタンの調整 */
@@ -276,6 +301,13 @@ h2::after {
     .slider-caption {
         max-width: 75%;
         padding: 10px 15px;
+    }
+}
+
+/* プレビュー要素 - デスクトップ表示用 */
+@media (min-width: 769px) {
+    .slider-previews-container {
+        display: none; /* 769px以上では非表示 */
     }
 }
 
