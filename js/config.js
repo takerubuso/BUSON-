@@ -37,24 +37,25 @@ const SITE_CONFIG = {
     tiktok: 'https://www.tiktok.com/@busonStudio'
   },
   
-  // フッターリンク
-  footerLinks: {
+ // フッターリンク
+footerLinks: {
     showSocial: true, // ソーシャルメディアアイコンを表示
     mainLinks: [
-      { text: '会社情報', url: '/company.html' },
-      { text: 'ニュースリリース', url: '/news.html' },
-      { text: 'BUSONスタジオのライセンスビジネス事例', url: '/license.html' },
-      { text: 'よくあるご質問', url: '/faq.html' }
+        { text: '会社情報', url: '/company.html' },
+        { text: 'ニュースリリース', url: '/news.html' },
+        { text: 'PR企業案件事例', url: '/buson-studio-business.html' },
+        { text: 'BUSONスタジオのライセンスビジネス事例', url: '/license.html' },
+        { text: 'よくあるご質問', url: '/faq.html' }
     ],
     subLinks: [
-      { text: '重要なお知らせ', url: '/important.html' },
-      { text: 'このサイトについて', url: '/about-site.html' },
-      { text: 'ソーシャルメディアポリシー', url: '/social-policy.html' },
-      { text: 'プライバシーポリシー', url: '/privacy.html' },
-      { text: 'ウェブアクセシビリティ方針', url: '/accessibility.html' },
-      { text: 'サイトマップ', url: '/sitemap.html' }
+        { text: '重要なお知らせ', url: '/important.html' },
+        { text: 'このサイトについて', url: '/about-site.html' },
+        { text: 'ソーシャルメディアポリシー', url: '/social-policy.html' },
+        { text: 'プライバシーポリシー', url: '/privacy.html' },
+        { text: 'ウェブアクセシビリティ方針', url: '/accessibility.html' },
+        { text: 'サイトマップ', url: '/sitemap.html' }
     ]
-  }
+}
 };
 
 // 他のJavaScriptファイルからアクセスできるようにする
