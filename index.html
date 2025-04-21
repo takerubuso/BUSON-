@@ -6,15 +6,14 @@
     <title>BUSON STUDIO | キャラクター開発スタジオ</title>
     <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <!-- 既存のCSSファイル読み込み -->
+    <!-- スタイルシートの読み込み -->
     <link rel="stylesheet" href="css/style.css">
-    <!-- 新しいYouTubeとマンガブログのスタイル -->
     <link rel="stylesheet" href="css/youtube-manga-style.css">
     
-    <!-- 最後にJavaScriptファイルを読み込み -->
+    <!-- JavaScriptファイルの読み込み -->
     <script src="js/config.js" defer></script>
-    <script src="js/youtube-api.js" defer></script>
     <script src="js/script.js" defer></script>
+    <script src="js/youtube-api.js" defer></script>
 </head>
 <body>
     <header>
@@ -34,26 +33,32 @@
                     <li><a href="#manga">漫画ブログ</a></li>
                 </ul>
             </nav>
+            <!-- モバイルメニューボタンの追加 -->
+            <div class="mobile-menu-button">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
         </div>
     </header>
     <main>
-      <section id="top">
-    <div class="slider-with-navigation">
-        <div class="slider-preview slider-preview-left">
-            <!-- 前の画像のプレビュー -->
-        </div>
-        <div class="slider-container">
-            <div class="slider">
-                <!-- スライダーコンテンツはJavaScriptで生成されます -->
+        <section id="top">
+            <div class="slider-with-navigation">
+                <div class="slider-preview slider-preview-left" tabindex="0">
+                    <!-- 前の画像のプレビュー -->
+                </div>
+                <div class="slider-container">
+                    <div class="slider">
+                        <!-- スライダーコンテンツはJavaScriptで生成されます -->
+                    </div>
+                    <button class="slider-prev" tabindex="0">◀</button>
+                    <button class="slider-next" tabindex="0">▶</button>
+                </div>
+                <div class="slider-preview slider-preview-right" tabindex="0">
+                    <!-- 次の画像のプレビュー -->
+                </div>
             </div>
-            <button class="slider-prev">◀</button>
-            <button class="slider-next">▶</button>
-        </div>
-        <div class="slider-preview slider-preview-right">
-            <!-- 次の画像のプレビュー -->
-        </div>
-    </div>
-</section>
+        </section>
         <section id="characters">
             <h2>キャラクター紹介</h2>
             <div class="character-filter">
@@ -138,8 +143,8 @@
             <div class="modal-content">
                 <span class="close-button">×</span>
                 <div class="character-navigation">
-                    <button class="nav-prev" title="前のキャラクター">◀</button>
-                    <button class="nav-next" title="次のキャラクター">▶</button>
+                    <button class="nav-prev" title="前のキャラクター" tabindex="0">◀</button>
+                    <button class="nav-next" title="次のキャラクター" tabindex="0">▶</button>
                 </div>
                 <div id="modalCharacterContent">
                     <!-- モーダルコンテンツはJavaScriptで生成されます -->
