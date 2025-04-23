@@ -9,42 +9,10 @@
   },
   {
     "id": 2,
-    "name": "ピンキー アクリルキーホルダー",
-    "image": "images/goods2.jpg",
-    "price": 800,
-    "category": "plush",
-    "url": "https://booth.pm/"
-  },
-  {
-    "id": 3,
     "name": "しきぶちゃんマスキングテープ",
     "image": "images/goods/2.png",
     "price": 1210,
     "category": "plush",
     "url": "https://suzuri.jp/buson2025/3825956/masking-tape/15mm/white"
-  },
-  {
-    "id": 4,
-    "name": "クマゴロー Tシャツ",
-    "image": "images/goods4.jpg",
-    "price": 3200,
-    "category": "plush",
-    "url": "https://base.shop/"
-  },
-  {
-    "id": 5,
-    "name": "ミント トートバッグ",
-    "image": "images/goods5.jpg",
-    "price": 1800,
-    "category": "plush",
-    "url": "https://base.shop/"
-  },
-  {
-    "id": 6,
-    "name": "ポポタン マグカップ",
-    "image": "images/goods6.jpg",
-    "price": 1500,
-    "category": "plush",
-    "url": "https://booth.pm/"
   }
 ]
