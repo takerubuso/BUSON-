@@ -1,9 +1,9 @@
 [
   {
     "id": 1,
-    "name": "モフタロウ ぬいぐるみ",
+    "name": "しきぶちゃんアクリルキーホルダー",
     "image": "images/goods/1.png",
-    "price": 2,649,
+    "price": 1439,
     "category": "plush",
     "url": "https://suzuri.jp/buson2025/15723649/acrylic-keychain/50x50mm/clear"
   },
@@ -17,11 +17,11 @@
   },
   {
     "id": 3,
-    "name": "キャラクター マスキングテープ",
-    "image": "images/goods3.jpg",
-    "price": 550,
+    "name": "しきぶちゃんマスキングテープ",
+    "image": "images/goods/2.png",
+    "price": 1210,
     "category": "plush",
-    "url": "https://booth.pm/"
+    "url": "https://suzuri.jp/buson2025/3825956/masking-tape/15mm/white"
   },
   {
     "id": 4,
