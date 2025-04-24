@@ -118,26 +118,27 @@
                 <!-- LINEスタンプコンテンツはJavaScriptで生成されます -->
             </div>
         </section>
-        <section id="news">
-            <h2>最新ニュース</h2>
-            <div class="news-container" role="list">
-                <!-- ニュースコンテンツはJavaScriptで生成されます -->
-            </div>
-            <div class="news-more-container">
-                <a href="news.html" class="news-more-button">その他のニュースを見る</a>
-            </div>
-        </section>
+       <section id="news">
+    <h2>最新ニュース</h2>
+    
+    <!-- ニュース用スライダーコンテナ -->
+    <div class="news-slider-container">
+        <div class="news-slider" role="list">
+            <!-- ニュース記事はJavaScriptで動的に生成されます -->
+        </div>
+        <button class="news-prev" aria-label="前のニュース">◀</button>
+        <button class="news-next" aria-label="次のニュース">▶</button>
         
-        <!-- YouTubeセクション -->
-        <section id="youtube">
-            <h2>YouTube</h2>
-            <div class="youtube-container" role="list">
-                <!-- YouTube動画はJavaScriptで生成されます -->
-            </div>
-            <div class="youtube-button-container">
-                <a href="https://www.youtube.com/channel/UCtRCF2NLRULCmf-oLAF455w" class="youtube-button" target="_blank" rel="noopener noreferrer">チャンネルはこちら</a>
-            </div>
-        </section>
+        <!-- スライダーのインジケーター -->
+        <div class="news-dots-container">
+            <!-- ドットはJavaScriptで動的に生成されます -->
+        </div>
+    </div>
+    
+    <div class="news-more-container">
+        <a href="https://buson.blog.jp/archives/cat_179698.html" class="news-more-button" target="_blank" rel="noopener noreferrer">すべてのニュースを見る</a>
+    </div>
+</section>
         
         <!-- 漫画ブログセクション -->
 <section id="manga">
