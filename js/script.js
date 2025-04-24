@@ -1,65 +1,28 @@
+/**
+ * BUSON STUDIO ウェブサイトのメインスクリプト
+ * - 2025年4月最終更新
+ */
+
 document.addEventListener('DOMContentLoaded', function() {
-    // フォーカス可能要素のエラーを回避するためのコード
-    const sliderElements = document.querySelectorAll('.slider-content, .slider-prev, .slider-next');
-    sliderElements.forEach(element => {
-        if (!element.hasAttribute('tabindex')) {
-            element.setAttribute('tabindex', '0');
-        }
-    });
+    // スキップリンクの追加（アクセシビリティ向上）
+    const skipLink = document.createElement('a');
+    skipLink.href = '#main-content';
+    skipLink.className = 'skip-link';
+    skipLink.textContent = 'メインコンテンツにスキップ';
+    document.body.insertBefore(skipLink, document.body.firstChild);
     
-    // プレビュー要素にもtabindex属性を追加
-    const previewElements = document.querySelectorAll('.slider-preview-left, .slider-preview-right');
-    previewElements.forEach(element => {
-        if (!element.hasAttribute('tabindex')) {
-            element.setAttribute('tabindex', '0');
-        }
-    });
-    
-    // エラーハンドリングの強化
-    window.addEventListener('error', function(event) {
-        console.warn('エラーが発生しましたが、処理を継続します:', event.error);
-        // エラーの伝播を停止
-        event.stopPropagation();
-        // デフォルトのエラーハンドリングを抑制
-        event.preventDefault();
-    }, true);
-    
-    // フォームフィールドとラベルの修正
-    const formFields = document.querySelectorAll('input, textarea, select');
-    formFields.forEach((field, index) => {
-        if (!field.id) {
-            field.id = `field-${index}`;
-        }
-        if (!field.name) {
-            field.name = `field-${index}`;
-        }
-    });
-    
-    // ラベルのfor属性を修正
-    const labels = document.querySelectorAll('label[for]');
-    labels.forEach(label => {
-        const forValue = label.getAttribute('for');
-        const targetElement = document.getElementById(forValue);
-        if (!targetElement) {
-            // for属性が指す要素が存在しない場合、修正または削除
-            const nearestField = label.nextElementSibling;
-            if (nearestField && (nearestField.tagName === 'INPUT' || nearestField.tagName === 'TEXTAREA' || nearestField.tagName === 'SELECT')) {
-                if (!nearestField.id) {
-                    nearestField.id = `field-${forValue}`;
-                }
-                label.setAttribute('for', nearestField.id);
-            } else {
-                // 関連するフィールドが見つからない場合、for属性を削除
-                label.removeAttribute('for');
-            }
-        }
-    });
+    // メインコンテンツにID追加
+    const mainElement = document.querySelector('main');
+    if (mainElement) {
+        mainElement.id = 'main-content';
+        mainElement.setAttribute('tabindex', '-1');
+    }
     
     // モバイルメニューの制御
     setupMobileMenu();
     
     // スライダーデータを読み込み
-    loadData('./data/slider.json', [
+    loadData('data/slider.json', SITE_CONFIG.defaultSlider || [
         {
             "image": "images/placeholder.jpg",
             "title": "新キャラクター「ピンキー」登場！",
@@ -71,40 +34,17 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // キャラクターデータを読み込み
-    loadData('./data/characters.json', []).then(data => {
+    loadData('data/characters.json', []).then(data => {
         if (data && data.length > 0) {
             initializeCharacters(data);
-            setupCharacterModal(data); // モーダル設定を追加
+            setupCharacterModal(data);
         }
     });
 
     // グッズデータを読み込み
-    loadData('./data/goods.json', [
-        {
-            "id": 1,
-            "name": "モフタロウ ぬいぐるみ",
-            "image": "images/placeholder.jpg",
-            "price": 2649,
-            "category": "plush",
-            "url": "https://suzuri.jp/buson2025/15723649/acrylic-keychain/50x50mm/clear"
-        },
-        {
-            "id": 2,
-            "name": "ピンキー アクリルキーホルダー",
-            "image": "images/placeholder.jpg",
-            "price": 800,
-            "category": "collection",
-            "url": "https://booth.pm/"
-        },
-        {
-            "id": 3,
-            "name": "キャラクター マスキングテープ",
-            "image": "images/placeholder.jpg",
-            "price": 550,
-            "category": "stationary",
-            "url": "https://booth.pm/"
-        }
-    ]).then(data => {
+    loadData('data/goods.json', []).then(data => {
+        // カテゴリーを新しい設定に更新
+        updateGoodsCategories(data);
         initializeGoods(data);
         setupGoodsFilter();
     });
@@ -116,38 +56,28 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeLineStamps();
 
     // ニュースデータを読み込み
-    loadData('./data/news.json', [
-        {
-            "id": 1,
-            "date": "2025-04-15",
-            "title": "新キャラクター「ピンキー」登場！",
-            "summary": "宇宙からやってきた不思議な猫型キャラクター「ピンキー」が仲間入り！特設ページでプロフィールを公開中です。",
-            "url": "#"
-        },
-        {
-            "id": 2,
-            "date": "2025-04-10",
-            "title": "コラボカフェ開催のお知らせ",
-            "summary": "4月20日から5月15日まで、渋谷のカフェ「スイートタイム」にてBUSONスタジオキャラクターズのコラボカフェを開催します！",
-            "url": "#"
-        },
-        {
-            "id": 3,
-            "date": "2025-04-01",
-            "title": "グッズ新発売のお知らせ",
-            "summary": "人気キャラクター「モフタロウ」のぬいぐるみなど、新グッズが発売開始！BOOTHとBASEにて販売中です。",
-            "url": "#"
+    loadData('data/news.json', SITE_CONFIG.defaultNews || []).then(data => {
+        // 日付でソート（新しい順）
+        const sortedNews = sortNewsByDate(data);
+        
+        // トップページでは最新3件のみ表示
+        const isTopPage = window.location.pathname.endsWith('index.html') || 
+                        window.location.pathname.endsWith('/');
+        
+        if (isTopPage) {
+            // 最新3件を表示
+            const latestNews = sortedNews.slice(0, 3);
+            initializeNews(latestNews);
+        } else if (window.location.pathname.includes('news.html')) {
+            // ニュースページでは全件表示
+            initializeAllNews(sortedNews);
         }
-    ]).then(data => {
-        // 最新の3つのニュースだけを表示
-        const latestNews = data.slice(0, 3);
-        initializeNews(latestNews);
     });
         
-    // YouTubeデータの初期化
+    // YouTubeセクションの初期化
     initializeYouTube();
     
-    // 漫画ブログデータの初期化
+    // 漫画ブログセクションの初期化
     initializeMangaBlog();
     
     // モバイルタッチイベントを設定
@@ -155,9 +85,157 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 画像の遅延読み込み設定
     setupLazyLoading();
+    
+    // リンクの安全性向上
+    enhanceExternalLinks();
+    
+    // フォーム検証設定
+    setupFormValidation();
 });
 
-// データ読み込み用の汎用関数
+/**
+ * 日付でニュースを新しい順にソート
+ * @param {Array} newsData - ニュースデータ配列
+ * @return {Array} ソート済みデータ
+ */
+function sortNewsByDate(newsData) {
+    if (!Array.isArray(newsData)) return [];
+    
+    return [...newsData].sort((a, b) => {
+        const dateA = new Date(a.date.replace(/\./g, '-'));
+        const dateB = new Date(b.date.replace(/\./g, '-'));
+        return dateB - dateA; // 降順（新しい順）
+    });
+}
+
+/**
+ * グッズカテゴリーを最新の設定に更新
+ * @param {Array} goodsData - グッズデータ配列
+ */
+function updateGoodsCategories(goodsData) {
+    // カテゴリー対応マッピング - 古いカテゴリー名から新しいカテゴリー名へ
+    const categoryMapping = {
+        'fashion': 'lifestyle',
+        'daily': 'lifestyle',
+        'stationary': 'stationery',
+        'collection': 'lifestyle',
+        'plush': 'plush',
+        'interior': 'lifestyle',
+        'seasonal': 'seasonal'
+    };
+    
+    // 各商品のカテゴリーを更新
+    goodsData.forEach(item => {
+        if (item.category in categoryMapping) {
+            item.category = categoryMapping[item.category];
+        } else if (item.category !== 'all') {
+            // デフォルトはライフスタイル
+            item.category = 'lifestyle';
+        }
+    });
+}
+
+/**
+ * 外部リンクのセキュリティ強化
+ */
+function enhanceExternalLinks() {
+    const externalLinks = document.querySelectorAll('a[href^="http"]:not([href*="' + window.location.hostname + '"])');
+    
+    externalLinks.forEach(link => {
+        // rel属性が既に設定されているか確認
+        const rel = link.getAttribute('rel');
+        if (!rel || !rel.includes('noopener')) {
+            // rel属性を追加または更新
+            link.setAttribute('rel', rel ? rel + ' noopener noreferrer' : 'noopener noreferrer');
+        }
+        
+        // target属性が設定されていない場合は_blankを追加
+        if (!link.hasAttribute('target')) {
+            link.setAttribute('target', '_blank');
+        }
+    });
+}
+
+/**
+ * フォーム検証の設定
+ */
+function setupFormValidation() {
+    const forms = document.querySelectorAll('form');
+    
+    forms.forEach(form => {
+        // 必須入力フィールドにaria-required属性を追加
+        const requiredFields = form.querySelectorAll('[required]');
+        requiredFields.forEach(field => {
+            field.setAttribute('aria-required', 'true');
+            
+            // エラーメッセージ用の要素を追加
+            const errorElement = document.createElement('div');
+            errorElement.className = 'error-message';
+            errorElement.id = field.id + '-error';
+            errorElement.textContent = '入力してください。';
+            field.parentNode.appendChild(errorElement);
+            
+            // aria-describedby属性を設定
+            field.setAttribute('aria-describedby', errorElement.id);
+            
+            // 入力チェックイベント
+            field.addEventListener('blur', function() {
+                validateField(this);
+            });
+            
+            field.addEventListener('input', function() {
+                // 入力があれば検証エラーを消去
+                if (this.value.trim() !== '') {
+                    this.parentNode.classList.remove('has-error');
+                }
+            });
+        });
+        
+        // フォーム送信イベント
+        form.addEventListener('submit', function(e) {
+            let isValid = true;
+            
+            // すべての必須フィールドを検証
+            requiredFields.forEach(field => {
+                if (!validateField(field)) {
+                    isValid = false;
+                }
+            });
+            
+            // 検証に失敗したら送信を中止
+            if (!isValid) {
+                e.preventDefault();
+                // エラーのある最初のフィールドにフォーカス
+                form.querySelector('.has-error input, .has-error textarea, .has-error select').focus();
+            }
+        });
+    });
+}
+
+/**
+ * フィールド検証
+ * @param {HTMLElement} field - 検証するフィールド要素
+ * @return {boolean} 検証結果
+ */
+function validateField(field) {
+    const value = field.value.trim();
+    const isValid = value !== '';
+    
+    if (isValid) {
+        field.parentNode.classList.remove('has-error');
+    } else {
+        field.parentNode.classList.add('has-error');
+    }
+    
+    return isValid;
+}
+
+/**
+ * データ読み込み用の汎用関数
+ * @param {string} url - データファイルのURL
+ * @param {Array} defaultData - デフォルトデータ
+ * @return {Promise} 読み込まれたデータまたはデフォルトデータ
+ */
 async function loadData(url, defaultData = []) {
     try {
         const response = await fetch(url);
@@ -166,24 +244,73 @@ async function loadData(url, defaultData = []) {
         }
         return await response.json();
     } catch (error) {
-        console.error(`${url}の読み込みに失敗しました:`, error);
+        console.warn(`${url}の読み込みに失敗しました:`, error);
         return defaultData;
     }
 }
 
-// モバイルメニューの制御
+/**
+ * モバイルメニューの制御
+ */
 function setupMobileMenu() {
     const mobileMenuButton = document.querySelector('.mobile-menu-button');
     const navMenu = document.querySelector('nav ul');
     
     if (mobileMenuButton && navMenu) {
+        // クリックイベント
         mobileMenuButton.addEventListener('click', function() {
+            this.classList.toggle('active');
             navMenu.classList.toggle('active');
+            
+            // アクセシビリティ対応
+            const isExpanded = navMenu.classList.contains('active');
+            mobileMenuButton.setAttribute('aria-expanded', isExpanded);
+            navMenu.setAttribute('aria-hidden', !isExpanded);
+        });
+        
+        // キーボードイベント
+        mobileMenuButton.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.click();
+            }
+        });
+        
+        // 初期状態の設定
+        mobileMenuButton.setAttribute('aria-expanded', 'false');
+        mobileMenuButton.setAttribute('aria-controls', 'mobile-menu');
+        navMenu.id = 'mobile-menu';
+        navMenu.setAttribute('aria-hidden', 'true');
+        
+        // メニュー内のリンクをクリックしたらメニューを閉じる
+        const menuLinks = navMenu.querySelectorAll('a');
+        menuLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                if (window.innerWidth <= 768) {
+                    mobileMenuButton.classList.remove('active');
+                    navMenu.classList.remove('active');
+                    mobileMenuButton.setAttribute('aria-expanded', 'false');
+                    navMenu.setAttribute('aria-hidden', 'true');
+                }
+            });
+        });
+        
+        // 画面サイズ変更時の処理
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768 && navMenu.classList.contains('active')) {
+                // 画面サイズが大きくなったらメニューを閉じる
+                mobileMenuButton.classList.remove('active');
+                navMenu.classList.remove('active');
+                mobileMenuButton.setAttribute('aria-expanded', 'false');
+                navMenu.setAttribute('aria-hidden', 'true');
+            }
         });
     }
 }
 
-// 画像の遅延読み込み
+/**
+ * 画像の遅延読み込み
+ */
 function setupLazyLoading() {
     if ('IntersectionObserver' in window) {
         const imageObserver = new IntersectionObserver((entries, observer) => {
@@ -221,7 +348,11 @@ function setupLazyLoading() {
     }
 }
 
-// 要素が表示領域内かチェック
+/**
+ * 要素が表示領域内かチェック
+ * @param {HTMLElement} element - 確認する要素
+ * @return {boolean} 表示領域内かどうか
+ */
 function isInViewport(element) {
     const rect = element.getBoundingClientRect();
     return (
@@ -232,9 +363,12 @@ function isInViewport(element) {
     );
 }
 
-// 改良版スライダー初期化関数 - 修正版
+/**
+ * 改良版スライダー初期化関数
+ * @param {Array} data - スライダーデータ
+ */
 function initializeEnhancedSlider(data) {
-    console.log('スライダーデータを初期化しています:', data);
+    console.log('スライダーデータを初期化しています');
     
     const sliderContainer = document.querySelector('.slider-container');
     const slider = document.querySelector('.slider');
@@ -285,7 +419,8 @@ function initializeEnhancedSlider(data) {
         const sliderItem = document.createElement('div');
         sliderItem.className = 'slider-content';
         sliderItem.setAttribute('tabindex', '0');
-        sliderItem.setAttribute('aria-label', `スライド ${index + 1}: ${item.title || ''}`);
+        sliderItem.setAttribute('role', 'button');
+        sliderItem.setAttribute('aria-label', `スライド ${index + 1}: ${item.title || ''}${item.description ? ' - ' + item.description : ''}`);
         
         // 画像を背景として設定
         if (item.image) {
@@ -341,6 +476,15 @@ function initializeEnhancedSlider(data) {
         }
         slider.style.transform = `translateX(-${currentIndex * slideWidth}%)`;
         
+        // アクセシビリティ - 現在のスライドを通知
+        const currentSlide = slider.children[currentIndex];
+        if (currentSlide) {
+            Array.from(slider.children).forEach(slide => {
+                slide.setAttribute('aria-hidden', 'true');
+            });
+            currentSlide.setAttribute('aria-hidden', 'false');
+        }
+        
         // プレビューを更新
         if (data.length > 1) {
             updatePreviews();
@@ -371,9 +515,12 @@ function initializeEnhancedSlider(data) {
         if (previewLeft) {
             previewLeft.style.backgroundImage = `url('${data[prevIndex].image || 'images/placeholder.jpg'}')`;
             
-            // 前のスライドに移動するクリックイベント
+            // アクセシビリティ - プレビュー説明
             const previewLeftContainer = document.querySelector('.slider-preview-left');
             if (previewLeftContainer) {
+                previewLeftContainer.setAttribute('aria-label', `前のスライド: ${data[prevIndex].title || ''}`);
+                
+                // 前のスライドに移動するクリックイベント
                 previewLeftContainer.onclick = function() {
                     prevSlide();
                 };
@@ -383,9 +530,12 @@ function initializeEnhancedSlider(data) {
         if (previewRight) {
             previewRight.style.backgroundImage = `url('${data[nextIndex].image || 'images/placeholder.jpg'}')`;
             
-            // 次のスライドに移動するクリックイベント
+            // アクセシビリティ - プレビュー説明
             const previewRightContainer = document.querySelector('.slider-preview-right');
             if (previewRightContainer) {
+                previewRightContainer.setAttribute('aria-label', `次のスライド: ${data[nextIndex].title || ''}`);
+                
+                // 次のスライドに移動するクリックイベント
                 previewRightContainer.onclick = function() {
                     nextSlide();
                 };
@@ -427,27 +577,19 @@ function initializeEnhancedSlider(data) {
         }
     }
     
-    // 矢印ボタンのCSSを修正
+    // 矢印ボタンの設定
     if (prevButton && nextButton) {
-        // 左右の余白を調整
-        prevButton.style.left = '15px';
-        nextButton.style.right = '15px';
+        // アクセシビリティ設定
+        prevButton.setAttribute('role', 'button');
+        nextButton.setAttribute('role', 'button');
         
-        // z-indexを上げて最前面に
-        prevButton.style.zIndex = '100';
-        nextButton.style.zIndex = '100';
-    }
-    
-    // 矢印ボタンのクリックイベント
-    if (prevButton) {
+        // クリックイベント
         prevButton.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation(); // イベントの伝播を停止
             prevSlide();
         });
-    }
-    
-    if (nextButton) {
+        
         nextButton.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation(); // イベントの伝播を停止
@@ -539,37 +681,12 @@ function initializeEnhancedSlider(data) {
     // 初期表示時とリサイズ時にレイアウト更新
     updateResponsiveLayout();
     window.addEventListener('resize', updateResponsiveLayout);
-    
-    // デバッグ情報
-    console.log('スライダー初期化完了:', {
-        スライド数: data.length,
-        拡張スライド数: extendedData.length,
-        現在のインデックス: currentIndex
-    });
 }
 
-// キャラクターモーダルのナビゲーションにタッチイベントを追加
-function setupMobileTouchEvents() {
-    const prevButton = document.querySelector('.nav-prev');
-    const nextButton = document.querySelector('.nav-next');
-    
-    if (prevButton && nextButton) {
-        // タッチデバイス用のイベントを追加
-        prevButton.addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            // クリックイベントをトリガー
-            prevButton.click();
-        }, {passive: false});
-        
-        nextButton.addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            // クリックイベントをトリガー
-            nextButton.click();
-        }, {passive: false});
-    }
-}
-
-// キャラクターの初期化関数を修正（カテゴリ属性を追加）
+/**
+ * キャラクターの初期化
+ * @param {Array} data - キャラクターデータ
+ */
 function initializeCharacters(data) {
     const characterContainer = document.querySelector('.character-container');
     if (!characterContainer || !data || data.length === 0) return;
@@ -578,32 +695,40 @@ function initializeCharacters(data) {
     characterContainer.innerHTML = '';
 
     // キャラクターカードを生成
-    data.forEach(character => {
+    data.forEach((character, index) => {
         const card = document.createElement('div');
         card.className = 'character-card';
-        card.setAttribute('data-character', character.name); // data属性を追加
-        card.setAttribute('tabindex', '0'); // タブフォーカス可能に
+        card.setAttribute('data-character', character.name);
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('role', 'listitem');
+        card.setAttribute('aria-label', character.name);
         
         // カテゴリー属性を追加
         card.setAttribute('data-category', character.category || 'all');
         
         // 画像パスの生成
-        const imagePath = character.image || 'images/character/1.png';
+        const imagePath = character.image || 'images/character/placeholder.png';
         
         card.innerHTML = `
             <div class="character-img">
-                <img src="${imagePath}" alt="${character.name}" onerror="this.onerror=null; this.src='images/character/1.png';">
+                <img src="${imagePath}" alt="${character.name}" onerror="this.onerror=null; this.src='images/character/placeholder.png';">
             </div>
             <h3>${character.name}</h3>
         `;
         characterContainer.appendChild(card);
     });
     
+    // アクセシビリティ向上 - containerにrole="list"を追加
+    characterContainer.setAttribute('role', 'list');
+    characterContainer.setAttribute('aria-label', 'キャラクター一覧');
+    
     // フィルター機能を初期化
     setupCharacterFilter();
 }
 
-// キャラクターフィルター機能を追加
+/**
+ * キャラクターフィルター機能
+ */
 function setupCharacterFilter() {
     const filterButtons = document.querySelectorAll('.character-filter .filter-button');
     const characterCards = document.querySelectorAll('.character-card');
@@ -618,20 +743,40 @@ function setupCharacterFilter() {
             
             const filterValue = this.getAttribute('data-filter');
             
-            characterCards.forEach(card => {
+            // アクセシビリティ - フィルター状態を通知
+            const liveRegion = document.getElementById('filter-live-region');
+            if (!liveRegion) {
+                const newLiveRegion = document.createElement('div');
+                newLiveRegion.id = 'filter-live-region';
+                newLiveRegion.className = 'visually-hidden';
+                newLiveRegion.setAttribute('aria-live', 'polite');
+                document.body.appendChild(newLiveRegion);
+            }
+            
+            const visibleCount = Array.from(characterCards).filter(card => {
                 const category = card.getAttribute('data-category');
+                const isVisible = filterValue === 'all' || category === filterValue;
                 
-                if (filterValue === 'all' || category === filterValue) {
+                if (isVisible) {
                     card.style.display = 'block';
                 } else {
                     card.style.display = 'none';
                 }
-            });
+                
+                return isVisible;
+            }).length;
+            
+            // フィルター結果を通知
+            document.getElementById('filter-live-region').textContent = 
+                `${filterValue === 'all' ? 'すべての' : filterValue + 'カテゴリーの'} キャラクターを表示中。 ${visibleCount}件が該当します。`;
         });
     });
 }
 
-// キャラクターモーダルの設定関数を修正（左右移動機能を追加）
+/**
+ * キャラクターモーダルの設定
+ * @param {Array} characters - キャラクターデータ
+ */
 function setupCharacterModal(characters) {
     const modal = document.getElementById('characterModal');
     const modalContent = document.getElementById('modalCharacterContent');
@@ -662,54 +807,94 @@ function setupCharacterModal(characters) {
         });
     });
 
+    // モーダルのアクセシビリティ設定
+    if (modal) {
+        modal.setAttribute('role', 'dialog');
+        modal.setAttribute('aria-modal', 'true');
+        modal.setAttribute('aria-labelledby', 'characterModalTitle');
+        modal.setAttribute('aria-hidden', 'true');
+    }
+
     // 閉じるボタンのクリックイベント
-    closeButton.addEventListener('click', function() {
-        modal.style.display = 'none';
-        document.body.style.overflow = 'auto'; // スクロールを再有効化
-    });
+    if (closeButton) {
+        closeButton.addEventListener('click', function() {
+            closeModal();
+        });
+        
+        // キーボードアクセシビリティ
+        closeButton.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                this.click();
+            }
+        });
+    }
 
     // モーダル外のクリックで閉じる
     window.addEventListener('click', function(event) {
         if (event.target === modal) {
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto'; // スクロールを再有効化
+            closeModal();
         }
     });
 
     // ESCキーでモーダルを閉じる
     window.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && modal.style.display === 'block') {
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
+            closeModal();
         }
     });
 
+    // キャラクター移動ボタンのアクセシビリティ設定
+    if (prevButton) {
+        prevButton.setAttribute('aria-label', '前のキャラクター');
+    }
+    
+    if (nextButton) {
+        nextButton.setAttribute('aria-label', '次のキャラクター');
+    }
+
     // 前のキャラクターボタン
-    prevButton.addEventListener('click', function(e) {
-        e.stopPropagation(); // イベントの伝播を停止
-        currentCharacterIndex = (currentCharacterIndex - 1 + characters.length) % characters.length;
-        showCharacterModal(currentCharacterIndex, characters);
-    });
+    if (prevButton) {
+        prevButton.addEventListener('click', function(e) {
+            e.stopPropagation(); // イベントの伝播を停止
+            currentCharacterIndex = (currentCharacterIndex - 1 + characters.length) % characters.length;
+            showCharacterModal(currentCharacterIndex, characters);
+        });
+    }
 
     // 次のキャラクターボタン
-    nextButton.addEventListener('click', function(e) {
-        e.stopPropagation(); // イベントの伝播を停止
-        currentCharacterIndex = (currentCharacterIndex + 1) % characters.length;
-        showCharacterModal(currentCharacterIndex, characters);
-    });
+    if (nextButton) {
+        nextButton.addEventListener('click', function(e) {
+            e.stopPropagation(); // イベントの伝播を停止
+            currentCharacterIndex = (currentCharacterIndex + 1) % characters.length;
+            showCharacterModal(currentCharacterIndex, characters);
+        });
+    }
 
-    // キャラクターモーダルを表示する関数（インデックスベースに変更）
+    // モーダルを閉じる関数
+    function closeModal() {
+        modal.style.display = 'none';
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = 'auto'; // スクロールを再有効化
+        
+        // フォーカスを元のカードに戻す
+        if (currentCharacterIndex >= 0 && currentCharacterIndex < characterCards.length) {
+            characterCards[currentCharacterIndex].focus();
+        }
+    }
+
+    // キャラクターモーダルを表示する関数
     function showCharacterModal(index, characters) {
         const character = characters[index];
 
         if (character) {
             // 画像パスの生成
-            const imagePath = character.image || `images/character/1.png`;
+            const imagePath = character.image || 'images/character/placeholder.png';
 
             // ソーシャルリンクを生成
             const socialLinksHTML = character.socialLinks && character.socialLinks.length > 0
                 ? character.socialLinks.map(link =>
-                    `<a href="${link.url}" target="_blank">${link.name}</a>`
+                    `<a href="${link.url}" target="_blank" rel="noopener noreferrer">${link.name}</a>`
                 ).join('')
                 : '';
 
@@ -736,7 +921,7 @@ function setupCharacterModal(characters) {
                 
                 return `
                     <div class="info-item">
-                        <div class="info-circle" data-info="${iconInfo.key}" tabindex="0">
+                        <div class="info-circle" data-info="${iconInfo.key}" tabindex="0" role="button" aria-label="${iconInfo.label}: ${value}">
                             <img src="${iconInfo.icon}" alt="${iconInfo.label}" onerror="this.onerror=null; this.style.display='none';">
                             <div class="info-popup" role="tooltip">${value}</div>
                         </div>
@@ -752,11 +937,11 @@ function setupCharacterModal(characters) {
             // モーダル内容を生成
             modalContent.innerHTML = `
                 <div class="character-profile">
+                    <h2 id="characterModalTitle" class="character-name">${character.name}</h2>
                     <div class="character-image">
-                        <img src="${imagePath}" alt="${character.name}" onerror="this.onerror=null; this.src='images/character/1.png';">
+                        <img src="${imagePath}" alt="${character.name}" onerror="this.onerror=null; this.src='images/character/placeholder.png';">
                     </div>
-                    <h2 class="character-name">${character.name}</h2>
-                    <p class="character-description">${character.profile}</p>
+                    <p class="character-description">${character.profile || ''}</p>
                     <div class="character-social">
                         ${socialLinksHTML}
                     </div>
@@ -780,6 +965,9 @@ function setupCharacterModal(characters) {
                             }
                         });
                         popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
+                        
+                        // ポップアップの状態を更新
+                        this.setAttribute('aria-expanded', popup.style.display === 'block');
                     }
                 });
                 
@@ -790,56 +978,85 @@ function setupCharacterModal(characters) {
                         this.click();
                     }
                 });
+                
+                // 初期状態設定
+                circle.setAttribute('aria-expanded', 'false');
             });
 
             // モーダルを表示
             modal.style.display = 'block';
-            document.body.style.overflow = 'hidden';
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden'; // 背景スクロールを無効化
             
             // フォーカスを閉じるボタンに設定（キーボードナビゲーション用）
-            closeButton.focus();
+            if (closeButton) {
+                closeButton.focus();
+            }
         }
     }
 }
 
-// グッズの初期化を修正
+/**
+ * キャラクターモーダルのナビゲーションにタッチイベントを追加
+ */
+function setupMobileTouchEvents() {
+    const prevButton = document.querySelector('.nav-prev');
+    const nextButton = document.querySelector('.nav-next');
+    
+    if (prevButton && nextButton) {
+        // タッチデバイス用のイベントを追加
+        prevButton.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            // クリックイベントをトリガー
+            prevButton.click();
+        }, {passive: false});
+        
+        nextButton.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            // クリックイベントをトリガー
+            nextButton.click();
+        }, {passive: false});
+    }
+}
+
+/**
+ * グッズの初期化
+ * @param {Array} data - グッズデータ
+ */
 function initializeGoods(data) {
     const goodsContainer = document.querySelector('.goods-container');
     if (!goodsContainer || !data || data.length === 0) {
-        console.error('グッズデータまたはコンテナが見つかりません');
+        console.warn('グッズデータまたはコンテナが見つかりません');
         return;
     }
 
     // グッズカードをクリア
     goodsContainer.innerHTML = '';
-    
-    console.log('グッズデータを読み込みました:', data);
 
     // グッズカードを生成
     data.forEach(item => {
         const card = document.createElement('div');
         card.className = 'goods-card';
+        card.setAttribute('role', 'listitem');
+        
         // カテゴリ属性を追加
-        card.setAttribute('data-category', item.category || 'all');
+        card.setAttribute('data-category', item.category || 'lifestyle');
 
         // 画像パスの生成
         const imagePath = item.image || 'images/placeholder.jpg';
-        
-        // デフォルト画像のパスを調整
-        const fallbackImagePath = 'images/placeholder.jpg';
         
         // 価格をフォーマット
         const formattedPrice = item.price + '円（税込）';
 
         card.innerHTML = `
             <div class="goods-img">
-                <img data-src="${imagePath}" src="${fallbackImagePath}" alt="${item.name}" 
-                     onerror="this.onerror=null; this.src='${fallbackImagePath}';">
+                <img data-src="${imagePath}" src="images/placeholder.jpg" alt="${item.name}" 
+                     onerror="this.onerror=null; this.src='images/placeholder.jpg';">
             </div>
             <div class="goods-info">
                 <h3>${item.name}</h3>
                 <p class="price">${formattedPrice}</p>
-                <a href="${item.url}" class="button" target="_blank">詳しく見る</a>
+                <a href="${item.url}" class="button" target="_blank" rel="noopener noreferrer">詳しく見る</a>
             </div>
         `;
         goodsContainer.appendChild(card);
@@ -849,7 +1066,9 @@ function initializeGoods(data) {
     setupLazyLoading();
 }
 
-// グッズのフィルタリング機能を追加
+/**
+ * グッズのフィルタリング機能
+ */
 function setupGoodsFilter() {
     const filterButtons = document.querySelectorAll('.goods-filter .filter-button');
     const goodsCards = document.querySelectorAll('.goods-card');
@@ -864,64 +1083,54 @@ function setupGoodsFilter() {
             
             const filterValue = this.getAttribute('data-filter');
             
-            goodsCards.forEach(card => {
+            // フィルター状態を通知
+            const liveRegion = document.getElementById('goods-filter-live-region');
+            if (!liveRegion) {
+                const newLiveRegion = document.createElement('div');
+                newLiveRegion.id = 'goods-filter-live-region';
+                newLiveRegion.className = 'visually-hidden';
+                newLiveRegion.setAttribute('aria-live', 'polite');
+                document.body.appendChild(newLiveRegion);
+            }
+            
+            const visibleCount = Array.from(goodsCards).filter(card => {
                 const category = card.getAttribute('data-category');
+                const isVisible = filterValue === 'all' || category === filterValue;
                 
-                if (filterValue === 'all' || category === filterValue) {
+                if (isVisible) {
                     card.style.display = 'block';
                 } else {
                     card.style.display = 'none';
                 }
-            });
+                
+                return isVisible;
+            }).length;
+            
+            // フィルター結果を通知
+            document.getElementById('goods-filter-live-region').textContent = 
+                `${filterValue === 'all' ? 'すべての' : filterValue}カテゴリーのグッズを表示中。 ${visibleCount}件が該当します。`;
         });
     });
 }
 
-// 書籍セクションの初期化を修正
+/**
+ * 書籍セクションの初期化
+ */
 function initializeBooks() {
-    loadData('./data/books.json', [
-        {
-            id: 1,
-            name: "しきぶちゃんの日常",
-            image: "images/books/book1.jpg",
-            price: 1500,
-            category: "paper",
-            url: "https://example.com/book1"
-        },
-        {
-            id: 2,
-            name: "ピンキーの不思議な冒険",
-            image: "images/books/book2.jpg",
-            price: 1200,
-            category: "paper",
-            url: "https://example.com/book2"
-        },
-        {
-            id: 3,
-            name: "クマゴローと森のともだち",
-            image: "images/books/book3.jpg",
-            price: 1300,
-            category: "ebook",
-            url: "https://example.com/book3"
-        },
-        {
-            id: 4,
-            name: "BUSON STUDIO キャラクターコレクション",
-            image: "images/books/book4.jpg",
-            price: 2500,
-            category: "ebook",
-            url: "https://example.com/book4"
-        }
-    ]).then(data => {
+    loadData('data/books.json', []).then(data => {
         displayBooks(data);
         setupBooksFilter();
     });
 }
 
+/**
+ * 書籍データの表示
+ * @param {Array} data - 書籍データ
+ */
 function displayBooks(data) {
     const booksContainer = document.getElementById('books-container');
     if (!booksContainer) {
-        console.error('書籍コンテナが見つかりません');
+        console.warn('書籍コンテナが見つかりません');
         return;
     }
     
@@ -933,6 +1142,7 @@ function displayBooks(data) {
         const card = document.createElement('div');
         card.className = 'goods-card';
         card.setAttribute('data-category', book.category || 'all');
+        card.setAttribute('role', 'listitem');
         
         // 価格をフォーマット
         const formattedPrice = book.price + '円（税込）';
@@ -945,7 +1155,7 @@ function displayBooks(data) {
             <div class="goods-info">
                 <h3>${book.name}</h3>
                 <p class="price">${formattedPrice}</p>
-                <a href="${book.url}" class="button" target="_blank">詳しく見る</a>
+                <a href="${book.url}" class="button" target="_blank" rel="noopener noreferrer">詳しく見る</a>
             </div>
         `;
         booksContainer.appendChild(card);
@@ -955,6 +1165,9 @@ function displayBooks(data) {
     setupLazyLoading();
 }
 
+/**
+ * 書籍フィルター設定
+ */
 function setupBooksFilter() {
     const filterButtons = document.querySelectorAll('.books-filter .filter-button');
     const bookCards = document.querySelectorAll('#books-container .goods-card');
@@ -976,46 +1189,33 @@ function setupBooksFilter() {
                     card.style.display = 'none';
                 }
             });
+            
+            // フィルター状態を通知
+            const liveRegion = document.getElementById('books-filter-live-region');
+            if (!liveRegion) {
+                const newLiveRegion = document.createElement('div');
+                newLiveRegion.id = 'books-filter-live-region';
+                newLiveRegion.className = 'visually-hidden';
+                newLiveRegion.setAttribute('aria-live', 'polite');
+                document.body.appendChild(newLiveRegion);
+            }
+            
+            const visibleCount = Array.from(bookCards).filter(card => 
+                filterValue === 'all' || card.getAttribute('data-category') === filterValue
+            ).length;
+            
+            // フィルター結果を通知
+            document.getElementById('books-filter-live-region').textContent = 
+                `${filterValue === 'all' ? 'すべての' : filterValue}カテゴリーの書籍を表示中。 ${visibleCount}件が該当します。`;
         });
     });
 }
 
-// LINEスタンプの初期化
+/**
+ * LINEスタンプの初期化
+ */
 function initializeLineStamps() {
-    loadData('./data/line.json', [
-        {
-            id: 1,
-            name: "しきぶちゃんスタンプ 基本セット",
-            image: "images/stamps/stamp1.jpg",
-            price: 120,
-            category: "stamp",
-            url: "https://line.me/S/sticker/"
-        },
-        {
-            id: 2,
-            name: "しきぶちゃん 日常会話セット",
-            image: "images/stamps/stamp2.jpg",
-            price: 120,
-            category: "stamp",
-            url: "https://line.me/S/sticker/"
-        },
-        {
-            id: 3,
-            name: "ピンキー スタンプ",
-            image: "images/stamps/stamp3.jpg",
-            price: 120,
-            category: "emoji",
-            url: "https://line.me/S/sticker/"
-        },
-        {
-            id: 4,
-            name: "クマゴロー＆ポポタン スタンプ",
-            image: "images/stamps/stamp4.jpg",
-            price: 120,
-            category: "theme",
-            url: "https://line.me/S/sticker/"
-        }
-    ]).then(data => {
+    loadData('data/line.json', []).then(data => {
         displayLineStamps(data);
         setupStampsFilter();
         // 画面サイズに応じたグリッドレイアウトの設定
@@ -1023,10 +1223,14 @@ function initializeLineStamps() {
     });
 }
 
+/**
+ * LINEスタンプの表示
+ * @param {Array} data - スタンプデータ
+ */
 function displayLineStamps(data) {
     const stampsContainer = document.getElementById('stamps-container');
     if (!stampsContainer) {
-        console.error('LINEスタンプコンテナが見つかりません');
+        console.warn('LINEスタンプコンテナが見つかりません');
         return;
     }
     
@@ -1038,6 +1242,7 @@ function displayLineStamps(data) {
         const card = document.createElement('div');
         card.className = 'stamp-card';
         card.setAttribute('data-category', stamp.category || 'all');
+        card.setAttribute('role', 'listitem');
         
         // 価格をフォーマット
         const formattedPrice = stamp.price + '円';
@@ -1050,7 +1255,7 @@ function displayLineStamps(data) {
             <div class="stamp-info">
                 <h3 title="${stamp.name}">${stamp.name}</h3>
                 <p class="price">${formattedPrice}</p>
-                <a href="${stamp.url}" class="button" target="_blank">詳しく見る</a>
+                <a href="${stamp.url}" class="button" target="_blank" rel="noopener noreferrer">詳しく見る</a>
             </div>
         `;
         stampsContainer.appendChild(card);
@@ -1060,7 +1265,9 @@ function displayLineStamps(data) {
     setupLazyLoading();
 }
 
-// 画面サイズに応じてグリッドレイアウトを更新
+/**
+ * 画面サイズに応じてグリッドレイアウトを更新
+ */
 function updateGridLayout() {
     const stampsContainer = document.getElementById('stamps-container');
     if (!stampsContainer) return;
@@ -1079,7 +1286,9 @@ function updateGridLayout() {
     }
 }
 
-// LINEスタンプフィルター機能
+/**
+ * LINEスタンプフィルター機能
+ */
 function setupStampsFilter() {
     const filterButtons = document.querySelectorAll('.stamps-filter .filter-button');
     const stampCards = document.querySelectorAll('#stamps-container .stamp-card');
@@ -1105,32 +1314,53 @@ function setupStampsFilter() {
                     card.style.display = 'none';
                 }
             });
+            
+            // フィルター状態を通知
+            const liveRegion = document.getElementById('stamps-filter-live-region');
+            if (!liveRegion) {
+                const newLiveRegion = document.createElement('div');
+                newLiveRegion.id = 'stamps-filter-live-region';
+                newLiveRegion.className = 'visually-hidden';
+                newLiveRegion.setAttribute('aria-live', 'polite');
+                document.body.appendChild(newLiveRegion);
+            }
+            
+            const visibleCount = Array.from(stampCards).filter(card => 
+                filterValue === 'all' || card.getAttribute('data-category') === filterValue
+            ).length;
+            
+            document.getElementById('stamps-filter-live-region').textContent = 
+                `${filterValue === 'all' ? 'すべての' : filterValue}カテゴリーのスタンプを表示中。 ${visibleCount}件が該当します。`;
         });
     });
 }
 
-// リサイズ時にグリッドレイアウトを更新
+/**
+ * リサイズ時にグリッドレイアウトを更新
+ */
 window.addEventListener('resize', function() {
     updateGridLayout();
 });
 
-// ニュースの初期化
+/**
+ * ニュースの初期化（トップページ用）
+ * @param {Array} data - ニュースデータ
+ */
 function initializeNews(data) {
     const newsContainer = document.querySelector('.news-container');
     if (!newsContainer || !data || data.length === 0) {
-        console.error('ニュースデータまたはコンテナが見つかりません');
+        console.warn('ニュースデータまたはコンテナが見つかりません');
         return;
     }
 
     // ニュースコンテナをクリア
     newsContainer.innerHTML = '';
-    
-    console.log('ニュースデータを表示します:', data);
 
     // ニュースアイテムを生成
     data.forEach(item => {
         const newsItem = document.createElement('div');
         newsItem.className = 'news-item';
+        newsItem.setAttribute('role', 'listitem');
         
         // 日付フォーマットを変換（YYYY-MM-DD → YYYY.MM.DD）
         const formattedDate = item.date.replace(/-/g, '.');
@@ -1143,35 +1373,65 @@ function initializeNews(data) {
         `;
         newsContainer.appendChild(newsItem);
     });
+    
+    // もっと見るボタンを表示
+    const newsMoreContainer = document.querySelector('.news-more-container');
+    if (newsMoreContainer) {
+        newsMoreContainer.style.display = 'block';
+    }
 }
 
-// YouTube動画を表示する関数
+/**
+ * ニュースの初期化（ニュースページ用）
+ * @param {Array} data - ニュースデータ
+ */
+function initializeAllNews(data) {
+    const newsContainer = document.querySelector('.news-list');
+    if (!newsContainer || !data || data.length === 0) {
+        console.warn('ニュースデータまたはコンテナが見つかりません');
+        return;
+    }
+
+    // ニュースコンテナをクリア
+    newsContainer.innerHTML = '';
+
+    // ニュースアイテムを生成
+    data.forEach(item => {
+        const newsItem = document.createElement('article');
+        newsItem.className = 'news-item';
+        
+        // 日付フォーマットを変換（YYYY-MM-DD → YYYY.MM.DD）
+        const formattedDate = item.date.replace(/-/g, '.');
+        
+        newsItem.innerHTML = `
+            <p class="news-date">${formattedDate}</p>
+            <h2 class="news-title">${item.title}</h2>
+            <p class="news-summary">${item.summary}</p>
+            <a href="${item.url}" class="read-more">詳細を見る</a>
+        `;
+        newsContainer.appendChild(newsItem);
+    });
+}
+
+/**
+ * YouTube動画を表示する関数
+ */
 function initializeYouTube() {
-    displaySimpleYouTubeVideos();
+    // SITE_CONFIGからYouTube設定を取得
+    const youtubeConfig = SITE_CONFIG.youtube || {};
+    const defaultVideos = youtubeConfig.defaultVideos || [];
+    
+    // 動画表示関数を呼び出し
+    displayYouTubeVideos(defaultVideos);
 }
 
-function displaySimpleYouTubeVideos() {
+/**
+ * YouTube動画表示
+ * @param {Array} videos - 動画データ配列
+ */
+function displayYouTubeVideos(videos) {
     const youtubeContainer = document.querySelector('.youtube-container');
     if (!youtubeContainer) return;
-    
-    // 表示する動画（指定のURLを使用）
-    const videos = [
-        {
-            url: 'https://www.youtube.com/embed/gfKDzxeEcEM',
-            title: '部活動あるある',
-            description: '各種部活動にありがちなことが一気にわかる'
-        },
-        {
-            url: 'https://www.youtube.com/embed/AXITHLfhaO8',
-            title: '妊婦さんあるある',
-            description: '妊娠・出産する前に役立つ漫画動画'
-        },
-        {
-            url: 'https://www.youtube.com/embed/hcthPFLLF0U',
-            title: '47都道府県あるある',
-            description: '漫画動画であるある250連まとめ'
-        }
-    ];
     
     // コンテナをクリア
     youtubeContainer.innerHTML = '';
@@ -1180,6 +1440,7 @@ function displaySimpleYouTubeVideos() {
     videos.forEach(video => {
         const card = document.createElement('div');
         card.className = 'youtube-card';
+        card.setAttribute('role', 'listitem');
         
         card.innerHTML = `
             <div class="youtube-embed">
@@ -1189,187 +1450,65 @@ function displaySimpleYouTubeVideos() {
                     frameborder="0" 
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
                     allowfullscreen
+                    loading="lazy"
                 ></iframe>
             </div>
             <div class="youtube-info">
                 <h3>${video.title}</h3>
-                <p>${video.description}</p>
+                <p>${video.description || ''}</p>
             </div>
         `;
         
         youtubeContainer.appendChild(card);
     });
+    
+    // YouTubeボタンのリンクを設定
+    const youtubeButton = document.querySelector('.youtube-button');
+    if (youtubeButton && youtubeConfig.channelUrl) {
+        youtubeButton.href = youtubeConfig.channelUrl;
+    }
 }
 
-// 漫画ブログのカードデザインで表示する関数（日付を非表示）
+/**
+ * 漫画ブログの表示（画像のみ）
+ */
 function initializeMangaBlog() {
-    displayMangaBlogCards();
+    // SITE_CONFIGから漫画ブログ設定を取得
+    const mangaBlogConfig = SITE_CONFIG.mangaBlog || {};
+    
+    displayMangaBlogImageOnly(mangaBlogConfig);
 }
 
-function displayMangaBlogCards() {
+/**
+ * 漫画ブログを画像のみで表示
+ * @param {Object} config - 漫画ブログ設定
+ */
+function displayMangaBlogImageOnly(config) {
     const mangaContainer = document.querySelector('.manga-container');
     if (!mangaContainer) return;
     
     // コンテナをクリア
     mangaContainer.innerHTML = '';
     
-    // 漫画ブログデータ
-    const mangaData = {
-        image: "images/mangablog/header.PNG",
-        title: "BUSONコンテンツ",
-        description: "ほぼ毎日漫画更新中!!",
-        url: "https://buson.blog.jp"
-    };
-    
-    // 既存のスタイルを無効化するためのスタイルを追加
-    const resetStyle = document.createElement('style');
-    resetStyle.textContent = `
-        .manga-card-16-9 * {
-            text-decoration: none !important;
-        }
-        
-        .manga-text-content h3,
-        .manga-text-content p,
-        .manga-text-content a {
-            color: #000000 !important;
-            text-decoration: none !important;
-            border-bottom: none !important;
-            text-decoration-line: none !important;
-            text-decoration-style: none !important;
-        }
-    `;
-    document.head.appendChild(resetStyle);
-    
-    // カスタムスタイルを動的に追加
-    const style = document.createElement('style');
-    style.textContent = `
-        .manga-card-16-9 {
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            width: 100%;
-        }
-        
-        .manga-card-16-9:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        .manga-card-16-9 a {
-            display: block;
-            text-decoration: none !important;
-        }
-        
-        .manga-img-16-9 {
-            position: relative;
-            width: 100%;
-            padding-top: 56.25%; /* 16:9比率 */
-            overflow: hidden;
-        }
-        
-        .manga-img-16-9 img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .manga-text-content {
-            background: white;
-            padding: 15px;
-            display: block;
-        }
-        
-        .manga-text-content h3 {
-            font-size: 18px;
-            margin-bottom: 5px;
-            color: #000000 !important;
-            text-decoration: none !important;
-        }
-        
-        .manga-text-content p {
-            font-size: 14px;
-            color: #000000 !important;
-            text-decoration: none !important;
-            margin: 0;
-        }
-    `;
-    document.head.appendChild(style);
-    
-    // 漫画ブログカードを生成（新しい16:9のスタイルを適用）
+    // 漫画ブログカードを生成（画像のみ）
     const card = document.createElement('div');
-    card.className = 'manga-card-16-9';
+    card.className = 'manga-card';
     
-    // インラインスタイルを直接適用（最も優先度が高い）
     card.innerHTML = `
-        <a href="${mangaData.url}" target="_blank" style="text-decoration: none !important;">
-            <div class="manga-img-16-9">
-                <img src="${mangaData.image}" alt="${mangaData.title}" onerror="this.onerror=null; this.src='images/placeholder.jpg';">
-            </div>
-            <div class="manga-text-content">
-                <h3 style="color: #000000 !important; text-decoration: none !important; border-bottom: none !important;">${mangaData.title}</h3>
-                <p style="color: #000000 !important; text-decoration: none !important; border-bottom: none !important;">${mangaData.description}</p>
+        <a href="${config.url || 'https://buson.blog.jp'}" class="manga-link" target="_blank" rel="noopener noreferrer">
+            <div class="manga-img">
+                <img src="${config.defaultImage || 'images/mangablog/header.PNG'}" 
+                     alt="${config.title || 'BUSONコンテンツ'}" 
+                     onerror="this.onerror=null; this.src='images/placeholder.jpg';">
             </div>
         </a>
     `;
     
     mangaContainer.appendChild(card);
     
-    // 直接DOMに変更を加える（最も確実な方法）
-    setTimeout(() => {
-        const titleElement = card.querySelector('.manga-text-content h3');
-        const descElement = card.querySelector('.manga-text-content p');
-        
-        if (titleElement) {
-            titleElement.style.color = '#000000';
-            titleElement.style.textDecoration = 'none';
-            titleElement.style.borderBottom = 'none';
-        }
-        
-        if (descElement) {
-            descElement.style.color = '#000000';
-            descElement.style.textDecoration = 'none';
-            descElement.style.borderBottom = 'none';
-        }
-    }, 100);
-}
-
-// ページ読み込み完了後にニュースを確認し、必要なら強制表示
-window.addEventListener('load', function() {
-    // ニュースセクションを確認
-    const newsContainer = document.querySelector('.news-container');
-    if (newsContainer && newsContainer.children.length === 0) {
-        console.log('ニュースが読み込まれていないため、バックアップデータを表示します');
-        
-        // バックアップニュースデータ
-        const backupNews = [
-            {
-                id: 1,
-                date: "2025-04-15",
-                title: "新キャラクター「ピンキー」登場！",
-                summary: "宇宙からやってきた不思議な猫型キャラクター「ピンキー」が仲間入り！特設ページでプロフィールを公開中です。",
-                url: "#"
-            },
-            {
-                id: 2,
-                date: "2025-04-10",
-                title: "コラボカフェ開催のお知らせ",
-                summary: "4月20日から5月15日まで、渋谷のカフェ「スイートタイム」にてBUSONスタジオキャラクターズのコラボカフェを開催します！",
-                url: "#"
-            },
-            {
-                id: 3,
-                date: "2025-04-01",
-                title: "グッズ新発売のお知らせ",
-                summary: "人気キャラクター「モフタロウ」のぬいぐるみなど、新グッズが発売開始！BOOTHとBASEにて販売中です。",
-                url: "#"
-            }
-        ];
-        
-        // 強制的に表示
-        initializeNews(backupNews);
+    // 漫画ブログボタンのリンクを設定
+    const mangaButton = document.querySelector('.manga-button');
+    if (mangaButton && config.url) {
+        mangaButton.href = config.url;
     }
-});
+}
