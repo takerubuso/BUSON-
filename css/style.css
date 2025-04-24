@@ -1641,7 +1641,7 @@ select:focus,
 }
 
 .news-item {
-    flex: 0 0 100%;
+    flex: 0 0 33.333%; /* 3つ並べて表示するため幅を1/3に変更 */
     background: white;
     border-radius: 15px;
     padding: 20px;
@@ -1749,6 +1749,7 @@ select:focus,
 /* レスポンシブ対応 */
 @media (max-width: 768px) {
     .news-item {
+        flex: 0 0 100%; /* タブレット以下では1つずつ表示 */
         padding: 15px;
         min-height: 220px;
     }
