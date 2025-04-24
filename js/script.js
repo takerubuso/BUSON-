@@ -1481,50 +1481,32 @@ function displayYouTubeVideos(videos) {
  * 漫画ブログの表示
  */
 function initializeMangaBlog() {
-    // SITE_CONFIGから漫画ブログ設定を取得
-    const mangaBlogConfig = SITE_CONFIG.mangaBlog || {};
-    
-    // 漫画ブログデータの取得
-    loadData('data/mangablog.json', []).then(data => {
-        displayMangaBlog(data, mangaBlogConfig);
-    });
-}
-
-/**
- * 漫画ブログの表示（画像とテキスト情報を含む）
- * @param {Array} data - 漫画ブログデータ
- * @param {Object} config - 漫画ブログ設定
- */
-function displayMangaBlog(data, config) {
     const mangaContainer = document.querySelector('.manga-container');
     if (!mangaContainer) return;
     
     // コンテナをクリア
     mangaContainer.innerHTML = '';
     
-    // 漫画ブログカード（画像とテキスト情報を含む）を生成
-    const card = document.createElement('div');
-    card.className = 'manga-card';
-    
-    card.innerHTML = `
-        <a href="${config.url || 'https://buson.blog.jp'}" class="manga-link" target="_blank" rel="noopener noreferrer">
-            <div class="manga-img">
-                <img src="${config.defaultImage || 'images/mangablog/header.PNG'}" 
-                     alt="${config.title || 'BUSONコンテンツ'}" 
-                     onerror="this.onerror=null; this.src='images/placeholder.jpg';">
-            </div>
-            <div class="manga-content">
-                <h4>BUSONコンテンツ</h4>
-                <p>ほぼ毎日漫画更新中!!</p>
-            </div>
-        </a>
+    // 漫画ブログカード（画像とテキスト情報を含む）を直接HTMLで挿入
+    mangaContainer.innerHTML = `
+        <div class="manga-card">
+            <a href="https://buson.blog.jp" class="manga-link" target="_blank" rel="noopener noreferrer">
+                <div class="manga-img">
+                    <img src="images/mangablog/header.PNG" 
+                         alt="BUSONコンテンツ" 
+                         onerror="this.onerror=null; this.src='images/placeholder.jpg';">
+                </div>
+                <div class="manga-content">
+                    <h4>BUSONコンテンツ</h4>
+                    <p>ほぼ毎日漫画更新中!!</p>
+                </div>
+            </a>
+        </div>
     `;
-    
-    mangaContainer.appendChild(card);
     
     // 漫画ブログボタンのリンクを設定
     const mangaButton = document.querySelector('.manga-button');
-    if (mangaButton && config.url) {
-        mangaButton.href = config.url;
+    if (mangaButton) {
+        mangaButton.href = "https://buson.blog.jp";
     }
 }
