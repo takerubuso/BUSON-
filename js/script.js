@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeLineStamps();
 
     // ニュースデータを読み込み
-    loadData('data/news.json', SITE_CONFIG.defaultNews || []).then(data => {
+    loadData('./data/news.json', SITE_CONFIG.defaultNews || []).then(data => {
         // 日付でソート（新しい順）
         const sortedNews = sortNewsByDate(data);
         
