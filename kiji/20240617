@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BUSON × 公正取引委員会 キャンペーン開始 | BUSON STUDIO</title>
+    <style>
+        /* 基本スタイル */
+        :root {
+            --primary-color: #ff6b6b;
+            --secondary-color: #4ecdc4;
+            --text-color: #333;
+            --light-gray: #f8f9fa;
+            --dark-gray: #495057;
+            --white: #ffffff;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Helvetica Neue', Arial, sans-serif; }
+        body { color: var(--text-color); line-height: 1.6; background-color: var(--light-gray); }
+        /* ヘッダー */
+        header { background-color: var(--white); padding: 20px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header-inner { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .logo { font-size: 24px; font-weight: 700; color: var(--primary-color); text-decoration: none; }
+        /* メインコンテンツ */
+        .news-detail { max-width: 800px; margin: 50px auto; padding: 30px; background-color: var(--white); border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .news-date { color: var(--dark-gray); font-size: 14px; margin-bottom: 10px; }
+        .news-title { font-size: 28px; margin-bottom: 20px; color: var(--primary-color); }
+        .news-image { width: 100%; border-radius: 8px; margin-bottom: 20px; }
+        .news-content { margin-bottom: 30px; }
+        .news-content p { margin-bottom: 15px; }
+        .character-profile { background-color: var(--light-gray); padding: 20px; border-radius: 8px; margin-bottom: 30px; }
+        .character-profile h3 { margin-bottom: 15px; color: var(--primary-color); }
+        .btn { display: inline-block; padding: 12px 30px; background-color: var(--primary-color); color: var(--white); text-decoration: none; border-radius: 50px; font-weight: 600; transition: all 0.3s ease; text-align: center; }
+        .btn:hover { background-color: #ff5252; transform: translateY(-2px); }
+        .btn-container { text-align: center; margin-top: 30px; }
+        /* レスポンシブデザイン */
+        @media (max-width: 768px) { .news-title { font-size: 24px; } }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-inner">
+            <a href="/" class="logo">BUSON STUDIO</a>
+        </div>
+    </header>
+
+    <div class="news-detail">
+        <div class="news-date">2024.06.17</div>
+        <h1 class="news-title">BUSON × 公正取引委員会　フリーランス法公式広報キャンペーン開始</h1>
+        <img src="images/news/2.png" alt="BUSON × 公正取引委員会 キャンペーンビジュアル" class="news-image">
+        <div class="news-content">
+            <p>このたび、BUSONは<a href="https://www.jftc.go.jp/" target="_blank" rel="noopener">公正取引委員会</a>と連携し、2024年11月1日施行予定の「フリーランス法」（特定受託事業者に係る取引の適正化等に関する法律）の周知広報キャンペーンに参画することになりました。</p>
+            <p>私のキャラクター「しきぶちゃん」を起用し、イラスト・4コマ漫画でフリーランスが直面しやすい“あるある”を取り上げつつ、法律のポイントをわかりやすく解説しています。</p>
+            <p>特設サイトでは解説動画や理解度クイズ、BUSON描き下ろしのリーフレットが無料でダウンロード可能です。全国8都市で開催される合同説明会や、交通広告・店頭広告など多角的に展開中。ぜひご覧ください。</p>
+            <ul>
+                <li>発注内容を書面で明示（メール可）</li>
+                <li>報酬の一方的減額・支払い遅延禁止</li>
+                <li>ハラスメント防止措置の義務化</li>
+            </ul>
+        </div>
+        <div class="character-profile">
+            <h3>キャンペーン概要</h3>
+            <p><strong>特設サイト公開：</strong>6月17日〜 法律解説動画・クイズ・リーフレット</p>
+            <p><strong>交通広告：</strong>6月17日〜7月7日 東京メトロ車内ビジョン</p>
+            <p><strong>店頭広告：</strong>6月18日〜7月8日 ファミリーマート店内モニター</p>
+            <p><strong>SNS投稿：</strong>6月17日 BUSON公式Instagram／ブログ</p>
+            <p><strong>全国説明会：</strong>札幌・仙台・東京ほか全8都市で開催</p>
+        </div>
+        <div class="btn-container">
+            <a href="/news.html" class="btn">記事一覧へ</a>
+        </div>
+    </div>
+</body>
+</html>
