@@ -55,33 +55,37 @@ document.addEventListener('DOMContentLoaded', function() {
     // LINEスタンプセクションの初期化
     initializeLineStamps();
 
-  // ニュースデータを読み込み
-loadData('./data/news.json', SITE_CONFIG.defaultNews || [])
-    .catch(error => {
-        console.error('ニュースデータの読み込みに失敗しました:', error);
-        // 代替としてデフォルトのニュースデータを使用
-        return SITE_CONFIG.defaultNews || [];
-    })
-    .then(data => {
-        // データの受信を確認
-        console.log('読み込まれたニュースデータ:', data);
-        
-        // 日付でソート（新しい順）
-        const sortedNews = sortNewsByDate(data);
-        
-        // トップページでは最新3件のみ表示
-        const isTopPage = window.location.pathname.endsWith('index.html') || 
-                        window.location.pathname.endsWith('/');
-        
-        if (isTopPage) {
-            // 最新3件を表示
-            const latestNews = sortedNews.slice(0, 3);
-            initializeNews(latestNews);
-        } else if (window.location.pathname.includes('news.html')) {
-            // ニュースページでは全件表示
-            initializeAllNews(sortedNews);
-        }
-    });
+    // ニュースデータを読み込み
+    loadData('./data/news.json', SITE_CONFIG.defaultNews || [])
+        .catch(error => {
+            console.error('ニュースデータの読み込みに失敗しました:', error);
+            // 代替としてデフォルトのニュースデータを使用
+            return SITE_CONFIG.defaultNews || [];
+        })
+        .then(data => {
+            // データの受信を確認
+            console.log('読み込まれたニュースデータ:', data);
+            
+            // 日付でソート（新しい順）
+            const sortedNews = sortNewsByDate(data);
+            
+            // トップページでは最新3件のみ表示
+            const isTopPage = window.location.pathname.endsWith('index.html') || 
+                            window.location.pathname.endsWith('/');
+            
+            if (isTopPage) {
+                // 最新3件を表示
+                const latestNews = sortedNews.slice(0, 3);
+                initializeNews(latestNews);
+                // 更新ボタンを追加
+                addRefreshButton('news-container');
+            } else if (window.location.pathname.includes('news.html')) {
+                // ニュースページでは全件表示
+                initializeAllNews(sortedNews);
+                // 更新ボタンを追加
+                addRefreshButton('news-list');
+            }
+        });
         
     // YouTubeセクションの初期化
     initializeYouTube();
@@ -101,6 +105,44 @@ loadData('./data/news.json', SITE_CONFIG.defaultNews || [])
     // フォーム検証設定
     setupFormValidation();
 });
+
+/**
+ * ニュース更新ボタンを追加
+ * @param {string} containerId - ニュースコンテナのID
+ */
+function addRefreshButton(containerId) {
+    const container = document.querySelector('.' + containerId);
+    if (!container) return;
+    
+    const refreshButton = document.createElement('button');
+    refreshButton.className = 'refresh-button';
+    refreshButton.innerHTML = '最新のニュースを読み込む <i class="fas fa-sync-alt"></i>';
+    refreshButton.onclick = function() {
+        this.innerHTML = '読み込み中... <i class="fas fa-spinner fa-spin"></i>';
+        this.disabled = true;
+        
+        // 強制的に最新データを取得
+        loadData('./data/news.json?t=' + new Date().getTime(), SITE_CONFIG.defaultNews || [])
+            .then(data => {
+                const sortedNews = sortNewsByDate(data);
+                
+                if (containerId === 'news-container') {
+                    const latestNews = sortedNews.slice(0, 3);
+                    initializeNews(latestNews);
+                } else {
+                    initializeAllNews(sortedNews);
+                }
+                
+                this.innerHTML = '更新しました <i class="fas fa-check"></i>';
+                setTimeout(() => {
+                    this.innerHTML = '最新のニュースを読み込む <i class="fas fa-sync-alt"></i>';
+                    this.disabled = false;
+                }, 2000);
+            });
+    };
+    
+    container.parentNode.insertBefore(refreshButton, container);
+}
 
 /**
  * 日付でニュースを新しい順にソート
@@ -246,8 +288,11 @@ function validateField(field) {
  * @return {Promise} 読み込まれたデータまたはデフォルトデータ
  */
 async function loadData(url, defaultData = []) {
+    // キャッシュバスティングのためのタイムスタンプを追加
+    const cacheBustUrl = `${url}?t=${new Date().getTime()}`;
+    
     try {
-        const response = await fetch(url);
+        const response = await fetch(cacheBustUrl);
         if (!response.ok) {
             throw new Error(`データの読み込みに失敗: ${response.status}`);
         }
@@ -1513,7 +1558,7 @@ function initializeMangaBlog() {
         </div>
     `;
     
-    // 漫画ブログボタンのリンクを設定
+   // 漫画ブログボタンのリンクを設定
     const mangaButton = document.querySelector('.manga-button');
     if (mangaButton) {
         mangaButton.href = "https://buson.blog.jp";
