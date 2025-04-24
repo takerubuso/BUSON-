@@ -55,24 +55,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // LINEスタンプセクションの初期化
     initializeLineStamps();
 
-    // ニュースデータを読み込み
-    loadData('./data/news.json', SITE_CONFIG.defaultNews || []).then(data => {
-        // 日付でソート（新しい順）
-        const sortedNews = sortNewsByDate(data);
-        
-        // トップページでは最新3件のみ表示
-        const isTopPage = window.location.pathname.endsWith('index.html') || 
-                        window.location.pathname.endsWith('/');
-        
-        if (isTopPage) {
-            // 最新3件を表示
-            const latestNews = sortedNews.slice(0, 3);
-            initializeNews(latestNews);
-        } else if (window.location.pathname.includes('news.html')) {
-            // ニュースページでは全件表示
-            initializeAllNews(sortedNews);
-        }
-    });
+    // ニューススライダーを初期化
+    initializeNewsSlider();
         
     // YouTubeセクションの初期化
     initializeYouTube();
@@ -94,6 +78,18 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 /**
+ * ニューススライダーの初期化と設定
+ */
+function initializeNewsSlider() {
+    // ニュースデータを読み込み
+    loadData('./data/news.json', SITE_CONFIG.defaultNews || []).then(data => {
+        // 日付でソート（新しい順）
+        const sortedNews = sortNewsByDate(data);
+        displayNewsSlider(sortedNews);
+    });
+}
+
+/**
  * 日付でニュースを新しい順にソート
  * @param {Array} newsData - ニュースデータ配列
  * @return {Array} ソート済みデータ
@@ -106,6 +102,214 @@ function sortNewsByDate(newsData) {
         const dateB = new Date(b.date.replace(/\./g, '-'));
         return dateB - dateA; // 降順（新しい順）
     });
+}
+
+/**
+ * ニューススライダーを表示
+ * @param {Array} newsData - ニュースデータ配列
+ */
+function displayNewsSlider(newsData) {
+    const newsSlider = document.querySelector('.news-slider');
+    const dotsContainer = document.querySelector('.news-dots-container');
+    
+    if (!newsSlider || !newsData || newsData.length === 0) {
+        console.warn('ニュースデータまたはスライダーが見つかりません');
+        return;
+    }
+    
+    // スライダーをクリア
+    newsSlider.innerHTML = '';
+    
+    // ドットコンテナをクリア
+    if (dotsContainer) {
+        dotsContainer.innerHTML = '';
+    }
+    
+    // ニュースアイテムを生成
+    newsData.forEach((item, index) => {
+        const newsItem = document.createElement('div');
+        newsItem.className = 'news-item';
+        newsItem.setAttribute('role', 'listitem');
+        newsItem.setAttribute('aria-label', `ニュース ${index + 1}: ${item.title}`);
+        
+        // Flexレイアウトと高さを設定
+        newsItem.style.display = 'flex';
+        newsItem.style.flexDirection = 'column';
+        newsItem.style.height = '100%';
+        
+        // 日付フォーマットを変換（YYYY-MM-DD → YYYY.MM.DD）
+        const formattedDate = item.date.replace(/-/g, '.');
+        
+        newsItem.innerHTML = `
+            <p class="date">${formattedDate}</p>
+            <h3>${item.title}</h3>
+            <p>${item.summary}</p>
+            <a href="${item.url}" class="read-more" style="margin-top: auto;">もっと見る</a>
+        `;
+        
+        newsSlider.appendChild(newsItem);
+        
+        // ドットインジケーターを追加
+        if (dotsContainer) {
+            const dot = document.createElement('div');
+            dot.className = 'news-dot';
+            if (index === 0) {
+                dot.classList.add('active');
+            }
+            dot.setAttribute('data-index', index);
+            dot.setAttribute('role', 'button');
+            dot.setAttribute('tabindex', '0');
+            dot.setAttribute('aria-label', `ニュース ${index + 1} に移動`);
+            
+            // クリックイベント
+            dot.addEventListener('click', function() {
+                goToSlide(index);
+            });
+            
+            // キーボードアクセシビリティ
+            dot.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    goToSlide(index);
+                }
+            });
+            
+            dotsContainer.appendChild(dot);
+        }
+    });
+    
+    // スライダーの設定
+    let currentIndex = 0;
+    const slides = newsSlider.querySelectorAll('.news-item');
+    const slideCount = slides.length;
+    
+    // 初期位置を設定
+    updateSlider();
+    
+    // 前のスライドボタン
+    const prevButton = document.querySelector('.news-prev');
+    if (prevButton) {
+        prevButton.addEventListener('click', function() {
+            prevSlide();
+        });
+    }
+    
+    // 次のスライドボタン
+    const nextButton = document.querySelector('.news-next');
+    if (nextButton) {
+        nextButton.addEventListener('click', function() {
+            nextSlide();
+        });
+    }
+    
+    // 前のスライドに移動
+    function prevSlide() {
+        currentIndex = (currentIndex - 1 + slideCount) % slideCount;
+        updateSlider();
+    }
+    
+    // 次のスライドに移動
+    function nextSlide() {
+        currentIndex = (currentIndex + 1) % slideCount;
+        updateSlider();
+    }
+    
+    // 特定のスライドに移動
+    function goToSlide(index) {
+        currentIndex = index;
+        updateSlider();
+    }
+    
+    // スライダーの表示を更新
+    function updateSlider() {
+        // スライド位置を更新
+        newsSlider.style.transform = `translateX(-${currentIndex * 100}%)`;
+        
+        // アクセシビリティ - 現在のスライドを通知
+        slides.forEach((slide, index) => {
+            if (index === currentIndex) {
+                slide.removeAttribute('aria-hidden');
+            } else {
+                slide.setAttribute('aria-hidden', 'true');
+            }
+        });
+        
+        // ドットの状態を更新
+        const dots = dotsContainer.querySelectorAll('.news-dot');
+        dots.forEach((dot, index) => {
+            if (index === currentIndex) {
+                dot.classList.add('active');
+                dot.setAttribute('aria-current', 'true');
+            } else {
+                dot.classList.remove('active');
+                dot.removeAttribute('aria-current');
+            }
+        });
+    }
+    
+    // タッチスワイプ対応
+    let touchStartX = 0;
+    let touchEndX = 0;
+    
+    newsSlider.addEventListener('touchstart', function(e) {
+        touchStartX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    
+    newsSlider.addEventListener('touchend', function(e) {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+    }, { passive: true });
+    
+    function handleSwipe() {
+        const SWIPE_THRESHOLD = 50;
+        if (touchEndX < touchStartX - SWIPE_THRESHOLD) {
+            nextSlide(); // 左にスワイプ -> 次のスライド
+        } else if (touchEndX > touchStartX + SWIPE_THRESHOLD) {
+            prevSlide(); // 右にスワイプ -> 前のスライド
+        }
+    }
+    
+    // キーボードナビゲーション
+    newsSlider.tabIndex = 0;
+    newsSlider.addEventListener('keydown', function(e) {
+        if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            prevSlide();
+        } else if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            nextSlide();
+        }
+    });
+    
+    // 自動スライド
+    let autoSlideInterval;
+    
+    function startAutoSlide() {
+        if (slideCount > 1) {
+            autoSlideInterval = setInterval(() => {
+                nextSlide();
+            }, 7000); // 7秒間隔
+        }
+    }
+    
+    function stopAutoSlide() {
+        clearInterval(autoSlideInterval);
+    }
+    
+    // 自動スライドを開始
+    startAutoSlide();
+    
+    // マウスオーバーで自動スライドを一時停止
+    const sliderContainer = document.querySelector('.news-slider-container');
+    if (sliderContainer) {
+        sliderContainer.addEventListener('mouseenter', stopAutoSlide);
+        sliderContainer.addEventListener('mouseleave', startAutoSlide);
+        sliderContainer.addEventListener('touchstart', stopAutoSlide, { passive: true });
+        sliderContainer.addEventListener('touchend', startAutoSlide, { passive: true });
+    }
+    
+    // スライダーの状態を更新（初期表示用）
+    updateSlider();
 }
 
 /**
@@ -1341,85 +1545,6 @@ function setupStampsFilter() {
 window.addEventListener('resize', function() {
     updateGridLayout();
 });
-
-/**
- * ニュースの初期化（トップページ用）
- * @param {Array} data - ニュースデータ
- */
-function initializeNews(data) {
-    const newsContainer = document.querySelector('.news-container');
-    if (!newsContainer || !data || data.length === 0) {
-        console.warn('ニュースデータまたはコンテナが見つかりません');
-        return;
-    }
-
-    // ニュースコンテナをクリア
-    newsContainer.innerHTML = '';
-
-    // ニュースアイテムを生成
-    data.forEach(item => {
-        const newsItem = document.createElement('div');
-        newsItem.className = 'news-item';
-        newsItem.setAttribute('role', 'listitem');
-        // Flexレイアウトと高さを追加
-        newsItem.style.display = 'flex';
-        newsItem.style.flexDirection = 'column';
-        newsItem.style.height = '100%';
-        
-        // 日付フォーマットを変換（YYYY-MM-DD → YYYY.MM.DD）
-        const formattedDate = item.date.replace(/-/g, '.');
-        
-        newsItem.innerHTML = `
-            <p class="date">${formattedDate}</p>
-            <h3>${item.title}</h3>
-            <p>${item.summary}</p>
-            <a href="${item.url}" class="read-more" style="margin-top: auto;">もっと見る</a>
-        `;
-        newsContainer.appendChild(newsItem);
-    });
-    
-    // もっと見るボタンを表示
-    const newsMoreContainer = document.querySelector('.news-more-container');
-    if (newsMoreContainer) {
-        newsMoreContainer.style.display = 'block';
-    }
-}
-
-/**
- * ニュースの初期化（ニュースページ用）
- * @param {Array} data - ニュースデータ
- */
-function initializeAllNews(data) {
-    const newsContainer = document.querySelector('.news-list');
-    if (!newsContainer || !data || data.length === 0) {
-        console.warn('ニュースデータまたはコンテナが見つかりません');
-        return;
-    }
-
-    // ニュースコンテナをクリア
-    newsContainer.innerHTML = '';
-
-    // ニュースアイテムを生成
-    data.forEach(item => {
-        const newsItem = document.createElement('article');
-        newsItem.className = 'news-item';
-        // Flexレイアウトと高さを追加
-        newsItem.style.display = 'flex';
-        newsItem.style.flexDirection = 'column';
-        newsItem.style.height = '100%';
-        
-        // 日付フォーマットを変換（YYYY-MM-DD → YYYY.MM.DD）
-        const formattedDate = item.date.replace(/-/g, '.');
-        
-        newsItem.innerHTML = `
-            <p class="news-date">${formattedDate}</p>
-            <h2 class="news-title">${item.title}</h2>
-            <p class="news-summary">${item.summary}</p>
-            <a href="${item.url}" class="read-more" style="margin-top: auto;">詳細を見る</a>
-        `;
-        newsContainer.appendChild(newsItem);
-    });
-}
 
 /**
  * YouTube動画を表示する関数
