@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BUSON × 公正取引委員会 キャンペーン開始 | BUSON STUDIO</title>
+    <title>新キャラクター「ピンキー」登場！ | BUSON STUDIO</title>
     <style>
         /* 基本スタイル */
         :root {
@@ -14,59 +14,230 @@
             --dark-gray: #495057;
             --white: #ffffff;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Helvetica Neue', Arial, sans-serif; }
-        body { color: var(--text-color); line-height: 1.6; background-color: var(--light-gray); }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        body {
+            color: var(--text-color);
+            line-height: 1.6;
+            background-color: var(--light-gray);
+        }
+        
         /* ヘッダー */
-        header { background-color: var(--white); padding: 20px 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .header-inner { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-        .logo { font-size: 24px; font-weight: 700; color: var(--primary-color); text-decoration: none; }
+        header {
+            background-color: var(--white);
+            padding: 20px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+        
         /* メインコンテンツ */
-        .news-detail { max-width: 800px; margin: 50px auto; padding: 30px; background-color: var(--white); border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .news-date { color: var(--dark-gray); font-size: 14px; margin-bottom: 10px; }
-        .news-title { font-size: 28px; margin-bottom: 20px; color: var(--primary-color); }
-        .news-image { width: 100%; border-radius: 8px; margin-bottom: 20px; }
-        .news-content { margin-bottom: 30px; }
-        .news-content p { margin-bottom: 15px; }
-        .character-profile { background-color: var(--light-gray); padding: 20px; border-radius: 8px; margin-bottom: 30px; }
-        .character-profile h3 { margin-bottom: 15px; color: var(--primary-color); }
-        .btn { display: inline-block; padding: 12px 30px; background-color: var(--primary-color); color: var(--white); text-decoration: none; border-radius: 50px; font-weight: 600; transition: all 0.3s ease; text-align: center; }
-        .btn:hover { background-color: #ff5252; transform: translateY(-2px); }
-        .btn-container { text-align: center; margin-top: 30px; }
+        .news-detail {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: var(--white);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .news-date {
+            color: var(--dark-gray);
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        
+        .news-title {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+        
+        .news-image {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .news-content {
+            margin-bottom: 30px;
+        }
+        
+        .news-content p {
+            margin-bottom: 15px;
+        }
+        
+        .character-profile {
+            background-color: var(--light-gray);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        
+        .character-profile h3 {
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: var(--primary-color);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            background-color: #ff5252;
+            transform: translateY(-2px);
+        }
+        
+        .btn-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        /* 新しく追加したスタイル */
+        .content-section {
+            margin-bottom: 30px;
+        }
+        
+        .content-section h2 {
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+        
+        .content-section h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            margin-top: 20px;
+        }
+        
+        .content-section ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+        
+        .content-section li {
+            margin-bottom: 8px;
+        }
+        
+        .content-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        .content-table th, .content-table td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .content-table th {
+            text-align: left;
+            font-weight: bold;
+        }
+        
+        strong {
+            font-weight: bold;
+        }
+        
         /* レスポンシブデザイン */
-        @media (max-width: 768px) { .news-title { font-size: 24px; } }
+        @media (max-width: 768px) {
+            .news-title {
+                font-size: 24px;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- ヘッダー -->
     <header>
         <div class="header-inner">
-            <a href="/" class="logo">BUSON STUDIO</a>
+            <a href="../index.html" class="logo">BUSON STUDIO</a>
         </div>
     </header>
 
+    <!-- ニュース詳細 -->
     <div class="news-detail">
-        <div class="news-date">2024.06.17</div>
-        <h1 class="news-title">BUSON × 公正取引委員会　フリーランス法公式広報キャンペーン開始</h1>
-        <img src="images/news/2.png" alt="BUSON × 公正取引委員会 キャンペーンビジュアル" class="news-image">
+        <div class="news-date">2025.04.15</div>
+        <h1 class="news-title">【お知らせ】BUSON × 公正取引委員会 ― フリーランス法の公式広報にしきぶちゃんが登場しました</h1>
+        
+        <img src="../images/news/2.png" alt="BUSON × 公正取引委員会 コラボレーション" class="news-image">
+        
         <div class="news-content">
-            <p>このたび、BUSONは<a href="https://www.jftc.go.jp/" target="_blank" rel="noopener">公正取引委員会</a>と連携し、2024年11月1日施行予定の「フリーランス法」（特定受託事業者に係る取引の適正化等に関する法律）の周知広報キャンペーンに参画することになりました。</p>
-            <p>私のキャラクター「しきぶちゃん」を起用し、イラスト・4コマ漫画でフリーランスが直面しやすい“あるある”を取り上げつつ、法律のポイントをわかりやすく解説しています。</p>
-            <p>特設サイトでは解説動画や理解度クイズ、BUSON描き下ろしのリーフレットが無料でダウンロード可能です。全国8都市で開催される合同説明会や、交通広告・店頭広告など多角的に展開中。ぜひご覧ください。</p>
+            <p>このたび、BUSONは<a href="https://www.jftc.go.jp/" target="_blank"><strong>公正取引委員会</strong></a>と連携し、2024年11月1日に施行される「フリーランス法（正式名称：特定受託事業者に係る取引の適正化等に関する法律）」の広報活動に協力させていただくことになりました。</p>
+            <p>本キャンペーンでは、私の描くキャラクター「しきぶちゃん」がメインビジュアルとして採用され、 法律のポイントを"あるある漫画"の形式で、わかりやすく、親しみやすく紹介しています。</p>
+        </div>
+        
+        <div class="content-section">
+            <h3>フリーランス法とは？</h3>
+            <p>フリーランスとして働く方々と発注側企業との取引を公正・透明にするための新しい法律です。 以下のような内容が盛り込まれています：</p>
             <ul>
-                <li>発注内容を書面で明示（メール可）</li>
-                <li>報酬の一方的減額・支払い遅延禁止</li>
-                <li>ハラスメント防止措置の義務化</li>
+                <li>発注内容を文書で明示する義務</li>
+                <li>報酬の不当な減額や支払い遅延の禁止</li>
+                <li>ハラスメント対策の義務化 など</li>
             </ul>
+            <p>これからの時代に必要とされる「一人で働く人を守るルール」です。</p>
         </div>
-        <div class="character-profile">
-            <h3>キャンペーン概要</h3>
-            <p><strong>特設サイト公開：</strong>6月17日〜 法律解説動画・クイズ・リーフレット</p>
-            <p><strong>交通広告：</strong>6月17日〜7月7日 東京メトロ車内ビジョン</p>
-            <p><strong>店頭広告：</strong>6月18日〜7月8日 ファミリーマート店内モニター</p>
-            <p><strong>SNS投稿：</strong>6月17日 BUSON公式Instagram／ブログ</p>
-            <p><strong>全国説明会：</strong>札幌・仙台・東京ほか全8都市で開催</p>
+        
+        <div class="content-section">
+            <h3>今回の取り組み内容</h3>
+            <table class="content-table">
+                <tr>
+                    <th>内容概要</th>
+                    <td><strong>特設サイト公開</strong>フリーランス法の解説、しきぶちゃんの描き下ろし漫画・イラストリーフレットを掲載</td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <td><strong>動画広告</strong>YouTubeやWeb上で法律のポイントを紹介</td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <td><strong>交通広告・店頭モニター</strong>東京メトロ、ファミリーマートでのビジュアル展開</td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <td><strong>SNS連動</strong>BUSONのInstagram／ブログにて広報用マンガを配信</td>
+                </tr>
+                <tr>
+                    <th></th>
+                    <td><strong>全国説明会</strong>全国8都市にて中小企業庁・厚労省と合同で開催予定</td>
+                </tr>
+            </table>
         </div>
+        
+        <div class="content-section">
+            <h3>イラストを通して伝えたいこと</h3>
+            <p>私自身もフリーランスとして長く活動してきた中で、 "こんなこと、相談してもいいの？" "これって普通なのかな？" と不安になる場面に出会ってきました。</p>
+            <p>今回の取り組みでは、そうした"あるある"を題材に、 「これは違反行為なんだ」と気づいてもらえるような内容に仕上げています。</p>
+            <p>しきぶちゃんの世界観を通して、難しく思える法律も少しでも身近に感じていただけたら幸いです。</p>
+        </div>
+        
         <div class="btn-container">
-            <a href="/news.html" class="btn">記事一覧へ</a>
+            <a href="../index.html" class="btn">戻る</a>
         </div>
     </div>
 </body>
