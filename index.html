@@ -4,16 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BUSON STUDIO | キャラクター開発スタジオ</title>
+    <meta name="description" content="オリジナルキャラクターとグッズの制作・販売を行うBUSON STUDIOの公式サイトです。">
+    <meta name="keywords" content="BUSON STUDIO, キャラクター, グッズ, イラスト, 漫画">
     <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <!-- スタイルシートの読み込み -->
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/youtube-manga-style.css">
     
+    <!-- お気に入りアイコン -->
+    <link rel="icon" href="images/favicon.ico">
+    
     <!-- JavaScriptファイルの読み込み -->
     <script src="js/config.js" defer></script>
     <script src="js/script.js" defer></script>
-    <script src="js/youtube-api.js" defer></script>
 </head>
 <body>
     <header>
@@ -34,7 +38,7 @@
                 </ul>
             </nav>
             <!-- モバイルメニューボタンの追加 -->
-            <div class="mobile-menu-button">
+            <div class="mobile-menu-button" aria-label="メニュー" tabindex="0" role="button">
                 <span></span>
                 <span></span>
                 <span></span>
@@ -44,23 +48,23 @@
     <main>
         <section id="top">
             <div class="slider-with-navigation">
-                <div class="slider-preview-container">
-                    <div class="slider-preview-left">
+                <div class="slider-preview-container" aria-hidden="true">
+                    <div class="slider-preview-left" tabindex="0" role="button">
                         <div class="slider-preview-inner"></div>
                     </div>
                     <div class="preview-label"><br></div>
                 </div>
                 
                 <div class="slider-container">
-                    <div class="slider">
+                    <div class="slider" role="region" aria-label="メインスライダー">
                         <!-- スライダーコンテンツはJavaScriptで生成されます -->
                     </div>
                     <button class="slider-prev" tabindex="0" aria-label="前のスライド">◀</button>
                     <button class="slider-next" tabindex="0" aria-label="次のスライド">▶</button>
                 </div>
                 
-                <div class="slider-preview-container">
-                    <div class="slider-preview-right">
+                <div class="slider-preview-container" aria-hidden="true">
+                    <div class="slider-preview-right" tabindex="0" role="button">
                         <div class="slider-preview-inner"></div>
                     </div>
                     <div class="preview-label"><br></div>
@@ -74,7 +78,7 @@
                 <button class="filter-button" data-filter="human">人</button>
                 <button class="filter-button" data-filter="animal">動物</button>
             </div>
-            <div class="character-container">
+            <div class="character-container" role="list">
                 <!-- キャラクターコンテンツはJavaScriptで生成されます -->
             </div>
         </section>
@@ -82,15 +86,12 @@
             <h2>グッズ紹介</h2>
             <div class="goods-filter">
                 <button class="filter-button active" data-filter="all">すべて</button>
-                <button class="filter-button" data-filter="fashion">ファッション</button>
-                <button class="filter-button" data-filter="daily">日用品</button>
-                <button class="filter-button" data-filter="stationary">文房具</button>
-                <button class="filter-button" data-filter="collection">コレクション</button>
+                <button class="filter-button" data-filter="lifestyle">ライフスタイル</button>
+                <button class="filter-button" data-filter="stationery">文房具</button>
                 <button class="filter-button" data-filter="plush">ぬいぐるみ</button>
-                <button class="filter-button" data-filter="interior">インテリア</button>
                 <button class="filter-button" data-filter="seasonal">季節限定</button>
             </div>
-            <div class="goods-container pink-button-style">
+            <div class="goods-container pink-button-style" role="list">
                 <!-- グッズコンテンツはJavaScriptで生成されます -->
             </div>
         </section>
@@ -101,7 +102,7 @@
                 <button class="filter-button" data-filter="paper">紙の本</button>
                 <button class="filter-button" data-filter="ebook">電子書籍</button>
             </div>
-            <div class="goods-container pink-button-style" id="books-container">
+            <div class="goods-container pink-button-style" id="books-container" role="list">
                 <!-- 書籍コンテンツはJavaScriptで生成されます -->
             </div>
         </section>
@@ -114,45 +115,48 @@
                 <button class="filter-button" data-filter="emoji">絵文字</button>
                 <button class="filter-button" data-filter="theme">着せかえ</button>
             </div>
-            <div class="stamps-container" id="stamps-container">
+            <div class="stamps-container" id="stamps-container" role="list">
                 <!-- LINEスタンプコンテンツはJavaScriptで生成されます -->
             </div>
         </section>
         <section id="news">
             <h2>最新ニュース</h2>
-            <div class="news-container">
+            <div class="news-container" role="list">
                 <!-- ニュースコンテンツはJavaScriptで生成されます -->
+            </div>
+            <div class="news-more-container">
+                <a href="news.html" class="news-more-button">その他のニュースを見る</a>
             </div>
         </section>
         
         <!-- YouTubeセクション -->
         <section id="youtube">
             <h2>YouTube</h2>
-            <div class="youtube-container">
+            <div class="youtube-container" role="list">
                 <!-- YouTube動画はJavaScriptで生成されます -->
             </div>
             <div class="youtube-button-container">
-                <a href="https://www.youtube.com/channel/UCtRCF2NLRULCmf-oLAF455w" class="youtube-button" target="_blank">チャンネルはこちら</a>
+                <a href="https://www.youtube.com/channel/UCtRCF2NLRULCmf-oLAF455w" class="youtube-button" target="_blank" rel="noopener noreferrer">チャンネルはこちら</a>
             </div>
         </section>
         
         <!-- 漫画ブログセクション -->
         <section id="manga">
             <h2>漫画ブログ</h2>
-            <div class="manga-container">
+            <div class="manga-container" role="list">
                 <!-- 漫画ブログコンテンツはJavaScriptで生成されます -->
             </div>
             <div class="manga-button-container">
-                <a href="https://buson.blog.jp" class="manga-button" target="_blank">漫画ブログを見る</a>
+                <a href="https://buson.blog.jp" class="manga-button" target="_blank" rel="noopener noreferrer">漫画ブログを見る</a>
             </div>
         </section>
 
-        <div id="characterModal" class="modal">
+        <div id="characterModal" class="modal" role="dialog" aria-labelledby="characterModalTitle" aria-hidden="true">
             <div class="modal-content">
-                <span class="close-button">×</span>
+                <span class="close-button" role="button" tabindex="0" aria-label="閉じる">×</span>
                 <div class="character-navigation">
-                    <button class="nav-prev" title="前のキャラクター" tabindex="0">◀</button>
-                    <button class="nav-next" title="次のキャラクター" tabindex="0">▶</button>
+                    <button class="nav-prev" title="前のキャラクター" tabindex="0" aria-label="前のキャラクター">◀</button>
+                    <button class="nav-next" title="次のキャラクター" tabindex="0" aria-label="次のキャラクター">▶</button>
                 </div>
                 <div id="modalCharacterContent">
                     <!-- モーダルコンテンツはJavaScriptで生成されます -->
@@ -166,10 +170,10 @@
                 <div class="social-follow-section">
                     <h3>FOLLOW</h3>
                     <div class="social-icons">
-                        <a href="https://twitter.com/busonStudio" class="social-circle"><i class="fab fa-x-twitter"></i></a>
-                        <a href="https://www.youtube.com/channel/UCtRCF2NLRULCmf-oLAF455w" class="social-circle"><i class="fab fa-youtube"></i></a>
-                        <a href="https://www.instagram.com/buson2025/" class="social-circle"><i class="fab fa-instagram"></i></a>
-                        <a href="https://www.tiktok.com/@buson2025" class="social-circle"><i class="fab fa-tiktok"></i></a>
+                        <a href="https://twitter.com/busonStudio" class="social-circle" aria-label="Twitter" rel="noopener noreferrer" target="_blank"><i class="fab fa-x-twitter"></i></a>
+                        <a href="https://www.youtube.com/channel/UCtRCF2NLRULCmf-oLAF455w" class="social-circle" aria-label="YouTube" rel="noopener noreferrer" target="_blank"><i class="fab fa-youtube"></i></a>
+                        <a href="https://www.instagram.com/buson2025/" class="social-circle" aria-label="Instagram" rel="noopener noreferrer" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.tiktok.com/@buson2025" class="social-circle" aria-label="TikTok" rel="noopener noreferrer" target="_blank"><i class="fab fa-tiktok"></i></a>
                     </div>
                 </div>
 
@@ -199,6 +203,9 @@
                 <p>© 2025 BUSON STUDIO All Rights Reserved.</p>
             </div>
         </div>
+    </footer>
+</body>
+</html>
     </footer>
 </body>
 </html>
