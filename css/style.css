@@ -557,16 +557,6 @@ h2::after {
     height: 100%; /* 高さを統一 */
 }
 
-.news-item .date,
-.news-item h3,
-.news-item p {
-    margin-bottom: 10px;
-}
-
-.news-item .read-more {
-    margin-top: auto; /* ボタンを下部に配置 */
-}
-
 .news-item:hover {
     transform: translateY(-5px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
@@ -596,6 +586,7 @@ h2::after {
     font-weight: 500;
     font-size: 14px;
     transition: color 0.3s ease;
+    margin-top: auto; /* ボタンを下部に配置 */
 }
 
 .news-item .read-more:hover {
@@ -804,6 +795,23 @@ h2::after {
     height: 100%;
     object-fit: cover;
     display: block;
+}
+
+/* 漫画コンテンツスタイル追加 */
+.manga-content {
+    padding: 15px;
+    background: white;
+}
+
+.manga-content h4 {
+    font-size: 18px;
+    color: #ff6b88;
+    margin-bottom: 5px;
+}
+
+.manga-content p {
+    font-size: 14px;
+    color: #666;
 }
 
 .manga-button-container {
