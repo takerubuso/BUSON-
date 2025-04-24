@@ -1654,6 +1654,11 @@ select:focus,
     margin: 0 10px;
 }
 
+.news-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
 /* ニュースのサムネイル画像 */
 .news-thumbnail {
     width: 100%;
