@@ -128,29 +128,34 @@ function displayNewsSlider(newsData) {
     // 表示するニュース数を最大3つに制限
     const displayNews = newsData.slice(0, 3);
     
-    // ニュースアイテムを生成
-    displayNews.forEach((item, index) => {
-        const newsItem = document.createElement('div');
-        newsItem.className = 'news-item';
-        newsItem.setAttribute('role', 'listitem');
-        newsItem.setAttribute('aria-label', `ニュース ${index + 1}: ${item.title}`);
-        
-        // Flexレイアウトと高さを設定
-        newsItem.style.display = 'flex';
-        newsItem.style.flexDirection = 'column';
-        newsItem.style.height = '100%';
-        
-        // 日付フォーマットを変換（YYYY-MM-DD → YYYY.MM.DD）
-        const formattedDate = item.date.replace(/-/g, '.');
-        
-        newsItem.innerHTML = `
+   // ニュースアイテムを生成
+displayNews.forEach((item, index) => {
+    const newsItem = document.createElement('div');
+    newsItem.className = 'news-item';
+    newsItem.setAttribute('role', 'listitem');
+    newsItem.setAttribute('aria-label', `ニュース ${index + 1}: ${item.title}`);
+    
+    // 日付フォーマットを変換（YYYY-MM-DD → YYYY.MM.DD）
+    const formattedDate = item.date.replace(/-/g, '.');
+    
+    // サムネイル画像のパスを設定（ない場合はデフォルト画像）
+    const thumbnailPath = item.thumbnail || `images/news/thumbnail_${index + 1}.jpg`;
+    
+    newsItem.innerHTML = `
+        <div class="news-thumbnail">
+            <img src="${thumbnailPath}" alt="${item.title}" onerror="this.onerror=null; this.src='images/placeholder.jpg';">
+        </div>
+        <div class="news-content">
             <p class="date">${formattedDate}</p>
             <h3>${item.title}</h3>
             <p>${item.summary}</p>
-            <a href="${item.url}" class="read-more" style="margin-top: auto;">もっと見る</a>
-        `;
-        
-        newsSlider.appendChild(newsItem);
+            <div class="read-more-container">
+                <a href="${item.url}" class="read-more">もっと見る</a>
+            </div>
+        </div>
+    `;
+    
+    newsSlider.appendChild(newsItem);
         
         // ドットインジケーターを追加
         if (dotsContainer) {
