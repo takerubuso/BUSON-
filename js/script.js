@@ -104,7 +104,10 @@ function sortNewsByDate(newsData) {
     });
 }
 
-// ニュースアイテムを生成する関数
+/**
+ * ニュースアイテムを生成する関数
+ * @param {Array} newsData - ニュースデータ配列
+ */
 function displayNewsSlider(newsData) {
     const newsSlider = document.querySelector('.news-slider');
     const dotsContainer = document.querySelector('.news-dots-container');
@@ -157,32 +160,6 @@ function displayNewsSlider(newsData) {
         newsSlider.appendChild(newsItem);
         
         // ドットインジケーターの追加
-        if (dotsContainer) {
-            const dot = document.createElement('div');
-            dot.className = 'news-dot';
-            if (index === 0) {
-                dot.classList.add('active');
-            }
-            dot.setAttribute('data-index', index);
-            dot.setAttribute('role', 'button');
-            dot.setAttribute('tabindex', '0');
-            dot.setAttribute('aria-label', `ニュース ${index + 1} に移動`);
-            
-            // クリックイベント
-            dot.addEventListener('click', function() {
-                goToSlide(index);
-            });
-            
-            dotsContainer.appendChild(dot);
-        }
-    });
-    
-    // スライダーの操作関連コード（省略）...
-    
-    // 自動スライドは無効化
-}
-        
-        // ドットインジケーターを追加
         if (dotsContainer) {
             const dot = document.createElement('div');
             dot.className = 'news-dot';
@@ -314,7 +291,7 @@ function displayNewsSlider(newsData) {
         }
     });
     
-    // 自動スライドは実装しない
+    // 自動スライドは無効化
     // スライダーの状態を更新（初期表示用）
     updateSlider();
 }
