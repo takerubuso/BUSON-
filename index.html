@@ -20,9 +20,6 @@
     <script src="js/script.js?v=20250424" defer></script>
 </head>
 <body>
-    <!-- スキップリンク -->
-    <a href="#main-content" class="skip-link">メインコンテンツにスキップ</a>
-
     <header>
         <div class="header-container">
             <div class="logo">
@@ -48,7 +45,7 @@
             </div>
         </div>
     </header>
-    <main id="main-content" tabindex="-1">
+    <main>
         <section id="top">
             <div class="slider-with-navigation">
                 <div class="slider-preview-container" aria-hidden="true">
@@ -123,16 +120,11 @@
         </section>
         <section id="news">
             <h2>最新ニュース</h2>
-            <!-- ニュースナビゲーション -->
-            <div class="news-slider-container">
-                <div class="news-slider" role="region" aria-label="ニューススライダー">
-                    <!-- ニュースコンテンツはJavaScriptで生成されます -->
-                </div>
-                <button class="news-slider-prev" tabindex="0" aria-label="前のニュース">◀</button>
-                <button class="news-slider-next" tabindex="0" aria-label="次のニュース">▶</button>
+            <div class="news-container" role="list">
+                <!-- ニュースコンテンツはJavaScriptで生成されます -->
             </div>
-            <div class="news-dots-container">
-                <!-- ドットナビゲーションはJavaScriptで生成されます -->
+            <div class="news-more-container">
+                <a href="news.html" class="news-more-button">その他のニュースを見る</a>
             </div>
         </section>
         
@@ -148,25 +140,25 @@
         </section>
         
         <!-- 漫画ブログセクション -->
-        <section id="manga">
-            <h2>漫画ブログ</h2>
-            <div class="manga-container" role="list">
-                <div class="manga-card">
-                    <a href="https://buson.blog.jp" class="manga-link" target="_blank" rel="noopener noreferrer">
-                        <div class="manga-img">
-                            <img src="images/mangablog/header.PNG" alt="BUSONコンテンツ">
-                        </div>
-                        <div class="manga-content">
-                            <h4>BUSONコンテンツ</h4>
-                            <p>ほぼ毎日漫画更新中!!</p>
-                        </div>
-                    </a>
+<section id="manga">
+    <h2>漫画ブログ</h2>
+    <div class="manga-container" role="list">
+        <div class="manga-card">
+            <a href="https://buson.blog.jp" class="manga-link" target="_blank" rel="noopener noreferrer">
+                <div class="manga-img">
+                    <img src="images/mangablog/header.PNG" alt="BUSONコンテンツ">
                 </div>
-            </div>
-            <div class="manga-button-container">
-                <a href="https://buson.blog.jp" class="manga-button" target="_blank" rel="noopener noreferrer">漫画ブログを見る</a>
-            </div>
-        </section>
+                <div class="manga-content">
+                    <h4>BUSONコンテンツ</h4>
+                    <p>ほぼ毎日漫画更新中!!</p>
+                </div>
+            </a>
+        </div>
+    </div>
+    <div class="manga-button-container">
+        <a href="https://buson.blog.jp" class="manga-button" target="_blank" rel="noopener noreferrer">漫画ブログを見る</a>
+    </div>
+</section>
 
         <div id="characterModal" class="modal" role="dialog" aria-labelledby="characterModalTitle" aria-hidden="true">
             <div class="modal-content">
@@ -196,7 +188,7 @@
 
                 <div class="footer-links-row">
                     <a href="company.html" class="external-link">会社情報</a>
-                    <a href="important.html" class="external-link">重要なお知らせ</a>
+                    <a href="news.html" class="external-link">ニュースリリース</a>
                     <a href="buson-studio-business.html" class="external-link">PR企業案件事例</a>
                     <a href="license.html" class="external-link">BUSONスタジオのライセンスビジネス事例</a>
                     <a href="faq.html" class="external-link">よくあるご質問</a>
@@ -206,6 +198,7 @@
             <div class="links-divider"></div>
 
             <div class="links-container second-links-row">
+                <a href="important.html" class="small-link">重要なお知らせ</a>
                 <a href="about-site.html" class="small-link">このサイトについて</a>
                 <a href="social-policy.html" class="small-link">ソーシャルメディアポリシー</a>
                 <a href="privacy.html" class="small-link">プライバシーポリシー</a>
@@ -219,6 +212,9 @@
                 <p>© 2025 BUSON STUDIO All Rights Reserved.</p>
             </div>
         </div>
+    </footer>
+</body>
+</html>
     </footer>
 </body>
 </html>
