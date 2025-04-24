@@ -77,13 +77,12 @@ document.addEventListener('DOMContentLoaded', function() {
     setupFormValidation();
 });
 
-/**
- * ニューススライダーの初期化と設定
- */
+// ニューススライダーの初期化と設定
 function initializeNewsSlider() {
     // ニュースデータを読み込み
-    // パスから先頭の./を取り除く
-    loadData('data/news.json', SITE_CONFIG.defaultNews || []).then(data => {
+    // GitHubページ向けのパス修正
+    const basePath = window.location.pathname.includes('/BUSON-/') ? '/BUSON-' : '';
+    loadData(basePath + '/data/news.json', SITE_CONFIG.defaultNews || []).then(data => {
         console.log("読み込まれたニュースデータ:", data);
         // 日付でソート（新しい順）
         const sortedNews = sortNewsByDate(data);
