@@ -55,8 +55,17 @@ document.addEventListener('DOMContentLoaded', function() {
     // LINEスタンプセクションの初期化
     initializeLineStamps();
 
-    // ニュースデータを読み込み
-    loadData('./data/news.json', SITE_CONFIG.defaultNews || []).then(data => {
+  // ニュースデータを読み込み
+loadData('./data/news.json', SITE_CONFIG.defaultNews || [])
+    .catch(error => {
+        console.error('ニュースデータの読み込みに失敗しました:', error);
+        // 代替としてデフォルトのニュースデータを使用
+        return SITE_CONFIG.defaultNews || [];
+    })
+    .then(data => {
+        // データの受信を確認
+        console.log('読み込まれたニュースデータ:', data);
+        
         // 日付でソート（新しい順）
         const sortedNews = sortNewsByDate(data);
         
