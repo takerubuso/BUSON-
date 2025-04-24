@@ -12,6 +12,21 @@ body {
     line-height: 1.6;
 }
 
+a {
+    text-decoration: none;
+    color: #4a4a4a;
+    transition: color 0.3s;
+}
+
+a:hover {
+    color: #ff6b88;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
 /* ヘッダー */
 header {
     background-color: #fff;
@@ -56,6 +71,52 @@ nav ul li a {
 
 nav ul li a:hover {
     color: #ff6b88;
+}
+
+/* モバイルメニューボタン */
+.mobile-menu-button {
+    display: none;
+    cursor: pointer;
+    width: 30px;
+    height: 24px;
+    position: relative;
+    z-index: 1001;
+}
+
+.mobile-menu-button span {
+    display: block;
+    width: 100%;
+    height: 3px;
+    background-color: #ff6b88;
+    position: absolute;
+    left: 0;
+    transition: all 0.3s ease;
+}
+
+.mobile-menu-button span:first-child {
+    top: 0;
+}
+
+.mobile-menu-button span:nth-child(2) {
+    top: 10px;
+}
+
+.mobile-menu-button span:last-child {
+    top: 20px;
+}
+
+.mobile-menu-button.active span:first-child {
+    transform: rotate(45deg);
+    top: 10px;
+}
+
+.mobile-menu-button.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.mobile-menu-button.active span:last-child {
+    transform: rotate(-45deg);
+    top: 10px;
 }
 
 /* メインコンテンツ */
@@ -229,21 +290,6 @@ h2::after {
     transform: translateY(-50%) scale(1.1);
 }
 
-/* スマートフォン対応のためのハンバーガーメニュー追加 */
-.mobile-menu-button {
-    display: none;
-    cursor: pointer;
-    padding: 10px;
-}
-.mobile-menu-button span {
-    display: block;
-    width: 25px;
-    height: 3px;
-    background-color: #ff6b88;
-    margin: 5px 0;
-    transition: 0.3s;
-}
-
 /* 共通フィルターボタンスタイル */
 .character-filter, .goods-filter, .books-filter, .stamps-filter {
     display: flex;
@@ -360,7 +406,7 @@ h2::after {
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
-/* ここから新しいグッズ画像スタイルに置き換え */
+/* グッズ画像スタイル */
 .goods-img {
     width: 100%;
     height: 180px;
@@ -403,7 +449,6 @@ h2::after {
 #books-container .goods-card {
     border: 1px solid #f0f0f0;
 }
-/* ここまで新しいスタイル */
 
 .goods-card:hover .goods-img img {
     transform: scale(1.05);
@@ -544,6 +589,31 @@ h2::after {
     text-decoration: underline;
 }
 
+/* もっと見るボタン */
+.news-more-container {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.news-more-button {
+    display: inline-block;
+    padding: 12px 25px;
+    background-color: #ffd1dc;
+    color: #4a4a4a;
+    border-radius: 25px;
+    font-weight: 500;
+    transition: background-color 0.3s, transform 0.3s;
+    text-decoration: none;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+}
+
+.news-more-button:hover {
+    background-color: #ff6b88;
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
 /* LINEスタンプセクションのスタイル */
 #stamps-container {
     display: grid;
@@ -678,59 +748,56 @@ h2::after {
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* 漫画ブログセクション - オリジナル */
+/* 漫画ブログセクション - 画像のみ表示タイプ */
 .manga-container {
-    display: flex;
-    justify-content: center;
-    padding: 10px 0 20px;
     max-width: 600px;
     margin: 0 auto;
+    padding: 10px 0 20px;
 }
+
 .manga-card {
-    background: white;
     border-radius: 15px;
     overflow: hidden;
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-    width: 100%;
+    background: transparent;
 }
+
 .manga-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
+
+.manga-link {
+    display: block;
+    position: relative;
+    text-decoration: none;
+}
+
 .manga-img {
     width: 100%;
-    height: 200px;
+    height: 0;
+    padding-top: 56.25%; /* 16:9のアスペクト比 */
+    position: relative;
     overflow: hidden;
 }
+
 .manga-img img {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.3s ease;
+    display: block;
 }
-.manga-card:hover .manga-img img {
-    transform: scale(1.05);
-}
-.manga-info {
-    padding: 15px;
-}
-.manga-info .date {
-    font-size: 14px;
-    color: #aaa;
-    margin-bottom: 5px;
-    display: none !important; /* 日付を非表示にする */
-}
-.manga-info h3 {
-    font-size: 18px;
-    margin-bottom: 10px;
-    color: #4a4a4a;
-}
+
 .manga-button-container {
     text-align: center;
     margin-top: 20px;
     margin-bottom: 40px;
 }
+
 .manga-button {
     display: inline-block;
     padding: 12px 25px;
@@ -742,78 +809,12 @@ h2::after {
     transition: background-color 0.3s, color 0.3s, transform 0.3s, box-shadow 0.3s;
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.1);
 }
+
 .manga-button:hover {
     background-color: #ff6b88;
     color: white;
     transform: translateY(-2px);
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
-}
-
-/* 漫画ブログの画像のみ表示用スタイル */
-.manga-img.full-card {
-    height: auto;
-    min-height: 200px;
-    width: 100%;
-}
-.manga-img.full-card img {
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-}
-
-/* 画像のみのカードスタイル - 白い部分と日付を非表示 */
-.manga-card.image-only {
-    border-radius: 15px;
-    overflow: hidden;
-    background: transparent; /* 背景を透明にして白い部分を見せない */
-}
-.manga-card.image-only .manga-info,
-.manga-card.image-only .date {
-    display: none;
-}
-
-/* 漫画ブログ - シンプルデザイン（16:9アスペクト比に変更） */
-.manga-card.simple-design {
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    background: transparent;
-}
-
-.manga-card.simple-design:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-}
-
-.manga-card.simple-design .manga-link {
-    text-decoration: none;
-    display: block;
-    position: relative;
-}
-
-/* 16:9のアスペクト比に変更 */
-.manga-card.simple-design .manga-img.full-card {
-    width: 100%;
-    height: 0;
-    padding-top: 56.25%; /* 16:9のアスペクト比 */
-    position: relative;
-    overflow: hidden;
-}
-
-.manga-card.simple-design .manga-img.full-card img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-/* テキスト部分を削除して画像のみ表示 */
-.manga-card.simple-design .manga-content {
-    display: none;
 }
 
 /* フッタースタイル */
@@ -1171,6 +1172,87 @@ footer {
     right: -20px; /* 右に配置 */
 }
 
+.nav-prev:hover, .nav-next:hover {
+    background-color: rgba(255, 255, 255, 0.9);
+    transform: translateY(-50%) scale(1.1);
+}
+
+/* ボタン共通スタイル */
+.btn {
+  display: inline-block;
+  background-color: #ff6b88;
+  color: #fff;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 25px;
+  font-weight: 600;
+  font-size: 14px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.btn:hover {
+  background-color: #e05570;
+  transform: translateY(-2px);
+}
+
+/* 特定のエラー表示を修正 */
+.error-message {
+    color: #ff6b88;
+    font-size: 14px;
+    margin-top: 5px;
+    display: none;
+}
+
+.has-error .error-message {
+    display: block;
+}
+
+.has-error input,
+.has-error textarea,
+.has-error select {
+    border-color: #ff6b88;
+}
+
+/* アクセシビリティ改善 */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+}
+
+/* フォーカス表示の改善 */
+a:focus, 
+button:focus, 
+input:focus, 
+textarea:focus, 
+select:focus, 
+[tabindex]:focus {
+    outline: 3px solid rgba(255, 107, 136, 0.5);
+    outline-offset: 2px;
+}
+
+/* スキップリンク */
+.skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: #ff6b88;
+    color: white;
+    padding: 8px;
+    z-index: 1001;
+    transition: top 0.3s;
+}
+
+.skip-link:focus {
+    top: 0;
+}
+
 /* レスポンシブデザイン - PC表示からタブレットに切り替え */
 @media (max-width: 992px) {
     .slider-container {
@@ -1183,33 +1265,58 @@ footer {
         width: 100px;
         height: 60px;
     }
+    
+    .goods-container {
+        grid-template-columns: repeat(3, 1fr); /* タブレットでは3列表示 */
+    }
+    
+    #stamps-container {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .youtube-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 /* レスポンシブデザイン - タブレット表示 */
 @media (max-width: 768px) {
-    nav ul {
-        display: none; /* 768px以下でナビゲーションを非表示（ハンバーガーメニューなどに変更推奨） */
-    }
-    
+    /* モバイルメニューボタンを表示 */
     .mobile-menu-button {
         display: block;
     }
     
-    nav ul.active {
-        display: flex;
-        position: absolute;
+    nav ul {
+        display: none;
+        position: fixed;
         top: 60px;
         left: 0;
         width: 100%;
+        height: auto;
+        max-height: 70vh;
+        overflow-y: auto;
         background-color: #fff;
         box-shadow: 0 5px 10px rgba(0,0,0,0.1);
-        padding: 10px 0;
+        padding: 20px 0;
         flex-direction: column;
         align-items: center;
+        z-index: 999;
+    }
+    
+    nav ul.active {
+        display: flex;
     }
     
     nav ul li {
         margin: 10px 0;
+        width: 100%;
+        text-align: center;
+    }
+    
+    nav ul li a {
+        display: block;
+        padding: 12px 0;
+        width: 100%;
     }
 
     .slider-with-navigation {
@@ -1287,7 +1394,7 @@ footer {
     }
 
     #stamps-container {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
         gap: 15px;
     }
     
@@ -1461,48 +1568,38 @@ footer {
         width: 50px;
         height: 50px;
     }
+    
     .info-circle img {
         max-width: 40%;
         max-height: 40%;
     }
+    
     .info-popup {
         top: -25px;
         padding: 5px 8px;
         font-size: 9px;
     }
+    
     .info-label-text {
         font-size: 9px;
     }
     
     /* 漫画ブログ - スマホ対応 */
-    .manga-card.simple-design .manga-content {
+    .manga-card .manga-content {
         padding: 10px;
     }
     
-    .manga-card.simple-design .manga-content h3 {
+    .manga-card .manga-content h3 {
         font-size: 18px;
     }
     
-    .manga-card.simple-design .manga-content p {
+    .manga-card .manga-content p {
         font-size: 14px;
     }
-}
-
-/* ボタン共通スタイル */
-.btn {
-  display: inline-block;
-  background-color: #ff6b88;
-  color: #fff;
-  padding: 10px 20px;
-  text-decoration: none;
-  border-radius: 25px;
-  font-weight: 600;
-  font-size: 14px;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.btn:hover {
-  background-color: #e05570;
-  transform: translateY(-2px);
+    
+    /* ボタンの最適化 */
+    .btn, .news-more-button, .youtube-button, .manga-button {
+        padding: 10px 15px;
+        font-size: 14px;
+    }
 }
