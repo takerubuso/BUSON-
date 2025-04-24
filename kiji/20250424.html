@@ -39,9 +39,6 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
         
         .logo {
@@ -49,26 +46,6 @@
             font-weight: 700;
             color: var(--primary-color);
             text-decoration: none;
-        }
-        
-        nav ul {
-            display: flex;
-            list-style: none;
-        }
-        
-        nav ul li {
-            margin-left: 30px;
-        }
-        
-        nav ul li a {
-            text-decoration: none;
-            color: var(--text-color);
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-        
-        nav ul li a:hover {
-            color: var(--primary-color);
         }
         
         /* メインコンテンツ */
@@ -141,49 +118,8 @@
             margin-top: 30px;
         }
         
-        /* フッター */
-        footer {
-            background-color: var(--dark-gray);
-            color: var(--white);
-            padding: 30px 0;
-            text-align: center;
-        }
-        
-        .footer-links {
-            margin: 20px 0;
-        }
-        
-        .footer-links a {
-            color: var(--white);
-            margin: 0 10px;
-            text-decoration: none;
-        }
-        
-        .footer-links a:hover {
-            text-decoration: underline;
-        }
-        
-        .copyright {
-            font-size: 14px;
-            opacity: 0.8;
-        }
-        
         /* レスポンシブデザイン */
         @media (max-width: 768px) {
-            .header-inner {
-                flex-direction: column;
-            }
-            
-            nav ul {
-                margin-top: 15px;
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            
-            nav ul li {
-                margin: 5px 10px;
-            }
-            
             .news-title {
                 font-size: 24px;
             }
@@ -195,13 +131,6 @@
     <header>
         <div class="header-inner">
             <a href="index.html" class="logo">BUSON STUDIO</a>
-            <nav>
-                <ul>
-                    <li><a href="index.html">ホーム</a></li>
-                    <li><a href="buson-studio-business.html">企業の方へ</a></li>
-                    <li><a href="#contact">お問い合わせ</a></li>
-                </ul>
-            </nav>
         </div>
     </header>
 
@@ -232,17 +161,5 @@
             <a href="index.html" class="btn">ニュース一覧に戻る</a>
         </div>
     </div>
-
-    <!-- フッター -->
-    <footer>
-        <div class="footer-links">
-            <a href="index.html">ホーム</a>
-            <a href="buson-studio-business.html">企業の方へ</a>
-            <a href="#contact">お問い合わせ</a>
-        </div>
-        <div class="copyright">
-            Copyright © 2025 BUSON STUDIO. All Rights Reserved.
-        </div>
-    </footer>
 </body>
 </html>
