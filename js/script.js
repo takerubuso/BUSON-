@@ -125,8 +125,11 @@ function displayNewsSlider(newsData) {
         dotsContainer.innerHTML = '';
     }
     
+    // 表示するニュース数を最大3つに制限
+    const displayNews = newsData.slice(0, 3);
+    
     // ニュースアイテムを生成
-    newsData.forEach((item, index) => {
+    displayNews.forEach((item, index) => {
         const newsItem = document.createElement('div');
         newsItem.className = 'news-item';
         newsItem.setAttribute('role', 'listitem');
@@ -281,33 +284,7 @@ function displayNewsSlider(newsData) {
         }
     });
     
-    // 自動スライド
-    let autoSlideInterval;
-    
-    function startAutoSlide() {
-        if (slideCount > 1) {
-            autoSlideInterval = setInterval(() => {
-                nextSlide();
-            }, 7000); // 7秒間隔
-        }
-    }
-    
-    function stopAutoSlide() {
-        clearInterval(autoSlideInterval);
-    }
-    
-    // 自動スライドを開始
-    startAutoSlide();
-    
-    // マウスオーバーで自動スライドを一時停止
-    const sliderContainer = document.querySelector('.news-slider-container');
-    if (sliderContainer) {
-        sliderContainer.addEventListener('mouseenter', stopAutoSlide);
-        sliderContainer.addEventListener('mouseleave', startAutoSlide);
-        sliderContainer.addEventListener('touchstart', stopAutoSlide, { passive: true });
-        sliderContainer.addEventListener('touchend', startAutoSlide, { passive: true });
-    }
-    
+    // 自動スライドは実装しない
     // スライダーの状態を更新（初期表示用）
     updateSlider();
 }
