@@ -82,9 +82,12 @@ document.addEventListener('DOMContentLoaded', function() {
  */
 function initializeNewsSlider() {
     // ニュースデータを読み込み
-    loadData('./data/news.json', SITE_CONFIG.defaultNews || []).then(data => {
+    // パスから先頭の./を取り除く
+    loadData('data/news.json', SITE_CONFIG.defaultNews || []).then(data => {
+        console.log("読み込まれたニュースデータ:", data);
         // 日付でソート（新しい順）
         const sortedNews = sortNewsByDate(data);
+        console.log("ソート後のニュースデータ:", sortedNews);
         displayNewsSlider(sortedNews);
     });
 }
@@ -98,8 +101,9 @@ function sortNewsByDate(newsData) {
     if (!Array.isArray(newsData)) return [];
     
     return [...newsData].sort((a, b) => {
-        const dateA = new Date(a.date.replace(/\./g, '-'));
-        const dateB = new Date(b.date.replace(/\./g, '-'));
+        // 日付フォーマットの違いに対応（YYY-MM-DDとYYYY.MM.DDの両方に対応）
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
         return dateB - dateA; // 降順（新しい順）
     });
 }
@@ -135,10 +139,15 @@ function displayNewsSlider(newsData) {
         newsItem.setAttribute('role', 'listitem');
         newsItem.setAttribute('aria-label', `ニュース ${index + 1}: ${item.title}`);
         
-        // 日付フォーマットを変換（YYYY-MM-DD → YYYY.MM.DD）
-        const formattedDate = item.date.replace(/-/g, '.');
+        // 日付フォーマットの処理 - 両方のフォーマットに対応
+        let formattedDate = item.date;
+        if (formattedDate.includes('-')) {
+            // YYYY-MM-DD から YYYY.MM.DD へ変換
+            formattedDate = formattedDate.replace(/-/g, '.');
+        }
         
         // サムネイル画像のパスを設定（ない場合はデフォルト画像）
+        // 明示的にthumbnailプロパティを確認
         const thumbnailPath = item.thumbnail || `images/news/thumbnail_${index + 1}.jpg`;
         
         // テキスト内容を一定長さに制限（文字数を制限する代わりにCSSでの切り詰めを使用）
@@ -426,13 +435,17 @@ function validateField(field) {
  */
 async function loadData(url, defaultData = []) {
     try {
+        console.log(`データを読み込み中: ${url}`);
         const response = await fetch(url);
         if (!response.ok) {
             throw new Error(`データの読み込みに失敗: ${response.status}`);
         }
-        return await response.json();
+        const data = await response.json();
+        console.log(`データの読み込み成功: ${url}`, data);
+        return data;
     } catch (error) {
         console.warn(`${url}の読み込みに失敗しました:`, error);
+        console.log(`デフォルトデータを使用します:`, defaultData);
         return defaultData;
     }
 }
