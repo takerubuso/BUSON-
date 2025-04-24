@@ -1490,16 +1490,21 @@ function displayMangaBlogImageOnly(config) {
     // コンテナをクリア
     mangaContainer.innerHTML = '';
     
-    // 漫画ブログカードを生成（画像のみ）
+    // 漫画ブログカード（画像とテキスト情報を含む）を生成
     const card = document.createElement('div');
     card.className = 'manga-card';
     
     card.innerHTML = `
+        <h3>漫画ブログ</h3>
         <a href="${config.url || 'https://buson.blog.jp'}" class="manga-link" target="_blank" rel="noopener noreferrer">
             <div class="manga-img">
                 <img src="${config.defaultImage || 'images/mangablog/header.PNG'}" 
                      alt="${config.title || 'BUSONコンテンツ'}" 
                      onerror="this.onerror=null; this.src='images/placeholder.jpg';">
+            </div>
+            <div class="manga-content">
+                <h4>BUSONコンテンツ</h4>
+                <p>ほぼ毎日漫画更新中!!</p>
             </div>
         </a>
     `;
@@ -1511,4 +1516,5 @@ function displayMangaBlogImageOnly(config) {
     if (mangaButton && config.url) {
         mangaButton.href = config.url;
     }
+}
 }
