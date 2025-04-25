@@ -470,7 +470,7 @@
             color: var(--primary-color);
         }
 
-        /* 信頼と実績セクション （旧: 実績ギャラリー） */
+        /* 信頼と実績セクション */
         .portfolio-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -686,42 +686,32 @@
 
         /* 制作プロセスセクション */
         .process-timeline {
-            position: relative;
+            display: flex;
+            flex-direction: column;
             max-width: 1000px;
             margin: var(--spacing-xxl) auto 0;
-        }
-
-        .process-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: var(--spacing-xxl);
+            gap: var(--spacing-lg);
         }
 
         .process-step {
-            flex: 0 0 45%;
-            position: relative;
-        }
-
-        .process-step-container {
+            display: flex;
             background-color: white;
             border-radius: var(--border-radius-md);
             padding: var(--spacing-md);
             box-shadow: var(--shadow-md);
-            height: 100%;
+            position: relative;
             transition: transform 0.3s, box-shadow 0.3s;
         }
 
-        .process-step:hover .process-step-container {
+        .process-step:hover {
             transform: translateY(-5px);
             box-shadow: var(--shadow-lg);
         }
 
         .process-number {
-            position: absolute;
-            top: -20px;
-            left: 20px;
-            width: 40px;
-            height: 40px;
+            flex: 0 0 60px;
+            width: 60px;
+            height: 60px;
             background-color: var(--primary-color);
             color: white;
             border-radius: 50%;
@@ -729,19 +719,18 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 1.2rem;
-            z-index: 1;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .process-step h3 {
-            font-size: 1.4rem;
-            color: var(--primary-color);
-            margin: var(--spacing-sm) 0;
+            font-size: 1.5rem;
+            margin-right: var(--spacing-md);
         }
 
         .process-content {
-            padding-top: var(--spacing-sm);
+            flex: 1;
+        }
+
+        .process-content h3 {
+            font-size: 1.4rem;
+            color: var(--primary-color);
+            margin-bottom: var(--spacing-sm);
         }
 
         /* サービス詳細セクション */
@@ -1014,9 +1003,8 @@
             transform: translateY(-3px);
         }
 
-        /* フッターの新しいソーシャルアイコン */
         .social-icons .fa-x-twitter::before {
-            content: "\f099"; /* FontAwesome 5のXアイコン */
+            content: "\f099";
         }
 
         .footer-links-row {
@@ -1139,15 +1127,6 @@
                 grid-template-columns: 1fr;
             }
             
-            .process-row {
-                flex-direction: column;
-                gap: var(--spacing-xl);
-            }
-            
-            .process-step {
-                flex: 0 0 100%;
-            }
-
             .contact-content {
                 grid-template-columns: 1fr;
             }
@@ -1254,7 +1233,7 @@
     <header id="header">
         <div class="container header-container">
             <a href="index.html" class="logo">
-                <img src="images/logo.png" alt="BUSON STUDIO">
+                <img src="/api/placeholder/150/40" alt="BUSON STUDIO">
             </a>
             <nav>
                 <ul id="menu">
@@ -1367,7 +1346,7 @@
             <div class="case-study-card">
                 <div class="case-study-content">
                     <div class="case-study-image">
-                        <iframe src="https://www.instagram.com/p/CTWopKyhCQ0/embed/captioned" frameborder="0" scrolling="no" allowtransparency="true"></iframe>
+                        <img src="/api/placeholder/480/480" alt="ココナッツサブレ × BUSONコラボレーション">
                     </div>
                     <div class="case-study-details">
                         <span class="case-study-tag">パッケージデザイン</span>
@@ -1382,7 +1361,7 @@
                             <li>SNS PR</li>
                         </ul>
                         
-                        <a href="https://youtu.be/KnBXFFWkoWM?si=6Ece3fHHIZbOzS-u" target="_blank" class="case-study-link">YouTubeプロモーション動画 <i class="fas fa-external-link-alt"></i></a>
+                        <a href="https://youtu.be/KnBXFFWkoWM?si=6Ece3fHHIZbOzS-u" target="_blank" class="btn">YouTubeプロモーション動画 <i class="fas fa-external-link-alt"></i></a>
                     </div>
                 </div>
             </div>
@@ -1391,7 +1370,7 @@
             <div class="case-study-card">
                 <div class="case-study-content">
                     <div class="case-study-image">
-                        <iframe src="https://www.instagram.com/p/CNj2QjIn2At/embed/captioned" frameborder="0" scrolling="no" allowtransparency="true"></iframe>
+                        <img src="/api/placeholder/480/480" alt="花王バスマジックリン × BUSONコラボレーション">
                     </div>
                     <div class="case-study-details">
                         <span class="case-study-tag">SNS PR</span>
@@ -1411,7 +1390,7 @@
             <div class="case-study-card">
                 <div class="case-study-content">
                     <div class="case-study-image">
-                        <iframe src="https://www.instagram.com/p/C9jFhW0PaZi/embed/captioned" frameborder="0" scrolling="no" allowtransparency="true"></iframe>
+                        <img src="/api/placeholder/480/480" alt="Netflix「地面師たち」プロモーション">
                     </div>
                     <div class="case-study-details">
                         <span class="case-study-tag">漫画制作</span>
@@ -1430,7 +1409,7 @@
         </div>
     </section>
 
-    <!-- 信頼と実績セクション (旧実績ギャラリーセクション) -->
+    <!-- 信頼と実績セクション -->
     <section id="portfolio" class="section">
         <div class="container">
             <h2 class="section-title">信頼と実績</h2>
@@ -1611,88 +1590,66 @@
             <p class="section-description">企画から納品までのステップをご紹介します</p>
             
             <div class="process-timeline">
-                <div class="process-row">
-                    <!-- ステップ1 -->
-                    <div class="process-step">
-                        <div class="process-number">1</div>
-                        <div class="process-step-container">
-                            <h3>ヒアリング</h3>
-                            <div class="process-content">
-                                <p>お客様の企画内容や課題、ニーズ、ターゲット層、ブランドイメージなどをお伺いします。目的達成のための最適な提案の土台となります。</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- ステップ2 -->
-                    <div class="process-step">
-                        <div class="process-number">2</div>
-                        <div class="process-step-container">
-                            <h3>企画提案</h3>
-                            <div class="process-content">
-                                <p>ヒアリング内容をもとに、最適な表現方法や活用方法、展開プランなどを提案します。</p>
-                            </div>
-                        </div>
+                <!-- ステップ1 -->
+                <div class="process-step">
+                    <div class="process-number">1</div>
+                    <div class="process-content">
+                        <h3>ヒアリング</h3>
+                        <p>お客様の企画内容や課題、ニーズ、ターゲット層、ブランドイメージなどをお伺いします。目的達成のための最適な提案の土台となります。</p>
                     </div>
                 </div>
                 
-                <div class="process-row">
-                    <!-- ステップ3 -->
-                    <div class="process-step">
-                        <div class="process-number">3</div>
-                        <div class="process-step-container">
-                            <h3>ラフ（テキスト）</h3>
-                            <div class="process-content">
-                                <p>キャラクター設定や漫画のアイデア、セリフなどのテキスト案を作成し、方向性のすり合わせを行います。</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- ステップ4 -->
-                    <div class="process-step">
-                        <div class="process-number">4</div>
-                      <div class="process-step-container">
-                            <h3>ラフ（下書き）</h3>
-                            <div class="process-content">
-                                <p>確定したテキストをもとに、キャラクターや漫画のラフデザインを作成。具体的なビジュアルをご確認いただきます。</p>
-                            </div>
-                        </div>
+                <!-- ステップ2 -->
+                <div class="process-step">
+                    <div class="process-number">2</div>
+                    <div class="process-content">
+                        <h3>企画提案</h3>
+                        <p>ヒアリング内容をもとに、最適な表現方法や活用方法、展開プランなどを提案します。</p>
                     </div>
                 </div>
                 
-                <div class="process-row">
-                    <!-- ステップ5 -->
-                    <div class="process-step">
-                        <div class="process-number">5</div>
-                        <div class="process-step-container">
-                            <h3>本制作</h3>
-                            <div class="process-content">
-                                <p>ご承認いただいたラフをもとに、最終的なデザインを制作。カラーリングや細部の調整を行います。</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- ステップ6 -->
-                    <div class="process-step">
-                        <div class="process-number">6</div>
-                        <div class="process-step-container">
-                            <h3>修正・納品</h3>
-                            <div class="process-content">
-                                <p>最終確認と必要に応じた修正を行い、データ納品やSNSでPR投稿をします。</p>
-                            </div>
-                        </div>
+                <!-- ステップ3 -->
+                <div class="process-step">
+                    <div class="process-number">3</div>
+                    <div class="process-content">
+                        <h3>ラフ（テキスト）</h3>
+                        <p>キャラクター設定や漫画のアイデア、セリフなどのテキスト案を作成し、方向性のすり合わせを行います。</p>
                     </div>
                 </div>
                 
-                <div class="process-row">
-                    <!-- ステップ7 -->
-                    <div class="process-step">
-                        <div class="process-number">7</div>
-                        <div class="process-step-container">
-                            <h3>効果測定・分析</h3>
-                            <div class="process-content">
-                                <p>SNS投稿などの場合は、反応や効果を分析しレポートをご提供します。次回の施策改善にも活かせます。</p>
-                            </div>
-                        </div>
+                <!-- ステップ4 -->
+                <div class="process-step">
+                    <div class="process-number">4</div>
+                    <div class="process-content">
+                        <h3>ラフ（下書き）</h3>
+                        <p>確定したテキストをもとに、キャラクターや漫画のラフデザインを作成。具体的なビジュアルをご確認いただきます。</p>
+                    </div>
+                </div>
+                
+                <!-- ステップ5 -->
+                <div class="process-step">
+                    <div class="process-number">5</div>
+                    <div class="process-content">
+                        <h3>本制作</h3>
+                        <p>ご承認いただいたラフをもとに、最終的なデザインを制作。カラーリングや細部の調整を行います。</p>
+                    </div>
+                </div>
+                
+                <!-- ステップ6 -->
+                <div class="process-step">
+                    <div class="process-number">6</div>
+                    <div class="process-content">
+                        <h3>修正・納品</h3>
+                        <p>最終確認と必要に応じた修正を行い、データ納品やSNSでPR投稿をします。</p>
+                    </div>
+                </div>
+                
+                <!-- ステップ7 -->
+                <div class="process-step">
+                    <div class="process-number">7</div>
+                    <div class="process-content">
+                        <h3>効果測定・分析</h3>
+                        <p>SNS投稿などの場合は、反応や効果を分析しレポートをご提供します。次回の施策改善にも活かせます。</p>
                     </div>
                 </div>
             </div>
@@ -1794,42 +1751,14 @@
                                 <label for="service">ご興味のあるサービス<span class="required-mark">*</span></label>
                                 <select id="service" name="service" required>
                                     <option value="">選択してください</option>
-                                    <option value="イラスト制作">イラスト制作</option>
+                                    <option value="広告イラスト制作">広告イラスト制作</option>
                                     <option value="キャラクターデザイン">キャラクターデザイン</option>
-                                    <option value="漫画制作">漫画制作</option>
                                     <option value="パッケージデザイン">パッケージデザイン</option>
-                                    <option value="SNSコンテンツ制作">SNSコンテンツ制作</option>
+                                    <option value="SNS PR">SNS PR</option>
+                                    <option value="漫画・ストーリー制作">漫画・ストーリー制作</option>
+                                    <option value="イベントコラボ">イベントコラボ</option>
                                     <option value="その他">その他</option>
                                 </select>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="usage">ご利用目的・媒体</label>
-                                <select id="usage" name="usage">
-                                    <option value="">選択してください</option>
-                                    <option value="SNS広告">SNS広告</option>
-                                    <option value="Web広告">Web広告</option>
-                                    <option value="商品パッケージ">商品パッケージ</option>
-                                    <option value="印刷物">印刷物（チラシ・冊子など）</option>
-                                    <option value="企業サイト">企業サイト</option>
-                                    <option value="社内利用">社内利用</option>
-                                    <option value="その他">その他</option>
-                                </select>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="copyright">著作権・利用範囲について</label>
-                                <select id="copyright" name="copyright">
-                                    <option value="">選択してください</option>
-                                    <option value="著作権譲渡希望">著作権譲渡希望</option>
-                                    <option value="利用権のみ">利用権のみ（著作権譲渡なし）</option>
-                                    <option value="未定">未定（ご相談したい）</option>
-                                </select>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="deadline">希望納期</label>
-                                <input type="text" id="deadline" name="deadline" placeholder="例：2025年6月頃、〇月〇日までに必要 など">
                             </div>
                             
                             <div class="form-group full-width">
@@ -1991,5 +1920,3 @@
             });
         }
     </script>
-</body>
-</html>
