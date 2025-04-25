@@ -384,7 +384,7 @@
             transform: translateX(5px);
         }
 
-        /* 成功事例セクション */
+        /* 事例セクション */
         .case-studies {
             position: relative;
         }
@@ -415,22 +415,18 @@
             min-height: 300px;
             position: relative;
             overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .case-study-image::before {
-            content: '';
+        .case-study-image iframe {
+            width: 100%;
+            height: 100%;
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 107, 136, 0.1);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .case-study-card:hover .case-study-image::before {
-            opacity: 1;
+            border: none;
         }
 
         .case-study-details {
@@ -477,23 +473,7 @@
             color: var(--primary-color);
         }
 
-        .case-study-link {
-            display: inline-flex;
-            align-items: center;
-            font-weight: 500;
-            margin-top: var(--spacing-sm);
-        }
-
-        .case-study-link i {
-            margin-left: 5px;
-            transition: transform 0.3s;
-        }
-
-        .case-study-link:hover i {
-            transform: translateX(5px);
-        }
-
-        /* ポートフォリオセクション */
+        /* 信頼と実績セクション （旧: 実績ギャラリー） */
         .portfolio-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -568,77 +548,99 @@
         }
 
         /* クリエイター紹介セクション */
-        .team-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: var(--spacing-lg);
-            margin-top: var(--spacing-xl);
-        }
-
-        .team-member {
+        .creator-profile {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 800px;
+            margin: 0 auto;
             background-color: white;
             border-radius: var(--border-radius-md);
-            overflow: hidden;
+            padding: var(--spacing-xl);
             box-shadow: var(--shadow-md);
-            transition: transform 0.3s, box-shadow 0.3s;
         }
 
-        .team-member:hover {
-            transform: translateY(-10px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .team-image {
-            width: 100%;
-            aspect-ratio: 1 / 1;
-            object-fit: cover;
-        }
-
-        .team-details {
-            padding: var(--spacing-md);
-            text-align: center;
-        }
-
-        .team-name {
-            font-size: 1.3rem;
-            color: var(--primary-color);
-            margin-bottom: 5px;
-        }
-
-        .team-role {
-            font-size: 0.9rem;
-            color: var(--text-light);
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .team-bio {
-            font-size: 0.95rem;
-            margin-bottom: var(--spacing-sm);
-        }
-
-        .team-social {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: var(--spacing-sm);
-        }
-
-        .team-social a {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 36px;
-            height: 36px;
-            background-color: var(--bg-light);
-            color: var(--primary-color);
+        .creator-image {
+            width: 200px;
+            height: 200px;
             border-radius: 50%;
-            transition: background-color 0.3s, color 0.3s, transform 0.3s;
+            object-fit: cover;
+            margin-bottom: var(--spacing-md);
+            border: 5px solid var(--primary-light);
         }
 
-        .team-social a:hover {
-            background-color: var(--primary-color);
-            color: white;
-            transform: translateY(-3px);
+        .creator-name {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: var(--spacing-xs);
+            font-weight: 700;
+        }
+
+        .creator-role {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .creator-bio {
+            text-align: center;
+            margin-bottom: var(--spacing-lg);
+            line-height: 1.8;
+        }
+
+        .message-card {
+            background-color: var(--bg-light);
+            border-radius: var(--border-radius-md);
+            padding: var(--spacing-lg);
+            margin-top: var(--spacing-lg);
+            text-align: center;
+            width: 100%;
+            position: relative;
+        }
+
+        .message-card::before {
+            content: '"';
+            position: absolute;
+            top: -30px;
+            left: 20px;
+            font-size: 80px;
+            color: var(--primary-light);
+            font-family: serif;
+            line-height: 1;
+        }
+
+        .message-card p {
+            margin-bottom: var(--spacing-md);
+            position: relative;
+            z-index: 1;
+        }
+
+        .message-card ul {
+            text-align: left;
+            margin: var(--spacing-md) 0;
+            list-style: none;
+        }
+
+        .message-card ul li {
+            position: relative;
+            padding-left: 1.5em;
+            margin-bottom: 0.5em;
+        }
+
+        .message-card ul li::before {
+            content: '•';
+            color: var(--primary-color);
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        .message-signature {
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-top: var(--spacing-md);
+            font-size: 1.2rem;
+            text-align: right;
         }
 
         /* 選ぶ理由セクション */
@@ -683,72 +685,6 @@
 
         .reason-card:hover h3 i {
             transform: rotateY(180deg);
-        }
-
-        /* 信頼と実績セクション */
-        .trusted-partners {
-            padding: var(--spacing-xxl) 0;
-            text-align: center;
-        }
-
-        .trusted-partners h2 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            text-align: center;
-            margin-bottom: var(--spacing-md);
-            position: relative;
-            padding-bottom: var(--spacing-sm);
-        }
-
-        .trusted-partners h2::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 4px;
-            background: var(--primary-light);
-            border-radius: 2px;
-        }
-
-        .trusted-partners p {
-            text-align: center;
-            max-width: 800px;
-            margin: 0 auto var(--spacing-xl);
-            font-size: 1.1rem;
-        }
-
-        .partner-links {
-            list-style: none;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: var(--spacing-md);
-            max-width: 1000px;
-            margin: var(--spacing-lg) auto;
-            padding: 0;
-        }
-
-        .partner-links li {
-            background-color: var(--bg-light);
-            padding: var(--spacing-sm) var(--spacing-md);
-            border-radius: var(--border-radius-sm);
-            box-shadow: var(--shadow-sm);
-            transition: transform 0.3s, box-shadow 0.3s;
-            font-size: 1rem;
-        }
-
-        .partner-links li:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .note {
-            font-size: 0.9rem;
-            color: var(--text-light);
-            margin-top: var(--spacing-md);
         }
 
         /* 制作プロセスセクション */
@@ -1209,6 +1145,10 @@
             transform: translateY(-5px);
         }
 
+        .bold-text {
+            font-weight: 700;
+        }
+
         /* レスポンシブ対応 */
         @media (max-width: 992px) {
             .section-title {
@@ -1289,7 +1229,7 @@
 
             .case-study-image {
                 flex: 0 0 100%;
-                min-height: 200px;
+                min-height: 300px;
             }
 
             .form-grid {
@@ -1347,9 +1287,9 @@
             <nav>
                 <ul id="menu">
                     <li class="active"><a href="#services">サービス</a></li>
-                    <li><a href="#case-studies">成功事例</a></li>
-                    <li><a href="#portfolio">実績ギャラリー</a></li>
-                    <li><a href="#team">クリエイター紹介</a></li>
+                    <li><a href="#case-studies">事例</a></li>
+                    <li><a href="#portfolio">信頼と実績</a></li>
+                    <li><a href="#team">代表クリエイター紹介</a></li>
                     <li><a href="#contact">お問い合わせ</a></li>
                 </ul>
                 <div class="mobile-menu-btn" id="mobile-menu-btn">
@@ -1448,13 +1388,15 @@
     <!-- 事例セクション -->
     <section id="case-studies" class="section section-alt case-studies">
         <div class="container">
-            <h2 class="section-title">成功事例</h2>
+            <h2 class="section-title">事例</h2>
             <p class="section-description">私たちが手がけた事例をご紹介します</p>
             
             <!-- 事例1 -->
             <div class="case-study-card">
                 <div class="case-study-content">
-                    <div class="case-study-image" style="background-image: url('/api/placeholder/500/500');"></div>
+                    <div class="case-study-image">
+                        <iframe src="https://www.instagram.com/p/CTWopKyhCQ0/embed" frameborder="0" scrolling="no" allowtransparency="true"></iframe>
+                    </div>
                     <div class="case-study-details">
                         <span class="case-study-tag">パッケージデザイン</span>
                         <h3>ココナッツサブレ × BUSONコラボレーション</h3>
@@ -1468,7 +1410,7 @@
                             <li>SNS PR</li>
                         </ul>
                         
-                        <a href="https://www.instagram.com/buson2025/p/CTWopKyhCQ0/?img_index=6" target="_blank" class="case-study-link">Instagramで詳細を見る <i class="fas fa-external-link-alt"></i></a>
+                        <a href="https://youtu.be/KnBXFFWkoWM?si=6Ece3fHHIZbOzS-u" target="_blank" class="case-study-link">YouTubeプロモーション動画 <i class="fas fa-external-link-alt"></i></a>
                     </div>
                 </div>
             </div>
@@ -1476,7 +1418,9 @@
             <!-- 事例2 -->
             <div class="case-study-card">
                 <div class="case-study-content">
-                    <div class="case-study-image" style="background-image: url('/api/placeholder/500/500');"></div>
+                    <div class="case-study-image">
+                        <iframe src="https://www.instagram.com/p/CNj2QjIn2At/embed" frameborder="0" scrolling="no" allowtransparency="true"></iframe>
+                    </div>
                     <div class="case-study-details">
                         <span class="case-study-tag">SNS PR</span>
                         <h3>花王バスマジックリン × BUSONコラボレーション</h3>
@@ -1487,8 +1431,6 @@
                             <li>Instagram向け3コマの「お風呂掃除あるある」漫画</li>
                             <li>SNS PR</li>
                         </ul>
-                        
-                        <a href="https://www.instagram.com/p/CNj2QjIn2At/" target="_blank" class="case-study-link">Instagramで詳細を見る <i class="fas fa-external-link-alt"></i></a>
                     </div>
                 </div>
             </div>
@@ -1496,7 +1438,9 @@
             <!-- 事例3 -->
             <div class="case-study-card">
                 <div class="case-study-content">
-                    <div class="case-study-image" style="background-image: url('/api/placeholder/500/500');"></div>
+                    <div class="case-study-image">
+                        <iframe src="https://www.instagram.com/p/C9jFhW0PaZi/embed" frameborder="0" scrolling="no" allowtransparency="true"></iframe>
+                    </div>
                     <div class="case-study-details">
                         <span class="case-study-tag">漫画制作</span>
                         <h3>Netflix「地面師たち」プロモーション</h3>
@@ -1508,170 +1452,136 @@
                             <li>視聴者が共感できる「騙されそうになりそうな瞬間」をユーモラスに表現</li>
                             <li>作品の世界観を紹介するキャラクターイラスト</li>
                         </ul>
-                        
-                        <a href="https://www.instagram.com/p/C9jFhW0PaZi/" target="_blank" class="case-study-link">Instagramで詳細を見る <i class="fas fa-external-link-alt"></i></a>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 実績ギャラリーセクション -->
+    <!-- 信頼と実績セクション (旧実績ギャラリーセクション) -->
     <section id="portfolio" class="section">
         <div class="container">
-            <h2 class="section-title">実績ギャラリー</h2>
-            <p class="section-description">私たちが制作した作品の一部をご紹介します</p>
+            <h2 class="section-title">信頼と実績</h2>
+            <p class="section-description">これまでに多数の企業・団体様とコラボレーションを行ってきました</p>
             
             <div class="portfolio-grid">
                 <!-- ポートフォリオ項目1 -->
                 <div class="portfolio-item">
-                    <img src="/api/placeholder/400/400" alt="ポートフォリオ1" class="portfolio-image">
+                    <img src="/api/placeholder/400/400" alt="Netflix 様" class="portfolio-image">
                     <div class="portfolio-overlay">
-                        <h3>ココナッツサブレパッケージ</h3>
-                        <p>学校あるあるをテーマにしたパッケージデザイン</p>
-                        <a href="#" class="portfolio-btn">詳細を見る</a>
+                        <h3>Netflix 様</h3>
+                        <p>「地面師たち」不動産詐欺あるあるをテーマにした漫画コンテンツ</p>
+                        <a href="https://www.instagram.com/p/C9jFhW0PaZi/" target="_blank" class="portfolio-btn">詳細を見る</a>
                     </div>
                 </div>
                 
                 <!-- ポートフォリオ項目2 -->
                 <div class="portfolio-item">
-                    <img src="/api/placeholder/400/400" alt="ポートフォリオ2" class="portfolio-image">
+                    <img src="/api/placeholder/400/400" alt="李錦記 様" class="portfolio-image">
                     <div class="portfolio-overlay">
-                        <h3>花王バスマジックリン</h3>
-                        <p>お風呂掃除あるあるをテーマにしたSNS漫画</p>
-                        <a href="#" class="portfolio-btn">詳細を見る</a>
+                        <h3>李錦記 様</h3>
+                        <p>中華料理調味料のレシピ提案イラスト</p>
+                        <a href="https://www.instagram.com/p/C2lnyhrS_9b/" target="_blank" class="portfolio-btn">詳細を見る</a>
                     </div>
                 </div>
                 
                 <!-- ポートフォリオ項目3 -->
                 <div class="portfolio-item">
-                    <img src="/api/placeholder/400/400" alt="ポートフォリオ3" class="portfolio-image">
+                    <img src="/api/placeholder/400/400" alt="コカ・コーラ 様" class="portfolio-image">
                     <div class="portfolio-overlay">
-                        <h3>Netflix「地面師たち」</h3>
-                        <p>不動産詐欺あるあるをテーマにした漫画コンテンツ</p>
-                        <a href="#" class="portfolio-btn">詳細を見る</a>
+                        <h3>コカ・コーラ 様</h3>
+                        <p>夏のキャンペーン向けイラスト制作</p>
+                        <a href="https://www.instagram.com/p/Cs3K6STp4il/" target="_blank" class="portfolio-btn">詳細を見る</a>
                     </div>
                 </div>
                 
                 <!-- ポートフォリオ項目4 -->
                 <div class="portfolio-item">
-                    <img src="/api/placeholder/400/400" alt="ポートフォリオ4" class="portfolio-image">
+                    <img src="/api/placeholder/400/400" alt="JRA 様" class="portfolio-image">
                     <div class="portfolio-overlay">
-                        <h3>コカ・コーラ</h3>
-                        <p>夏のキャンペーン向けイラスト制作</p>
-                        <a href="#" class="portfolio-btn">詳細を見る</a>
+                        <h3>JRA 様</h3>
+                        <p>競馬初心者向けの親しみやすいPR漫画</p>
+                        <a href="https://www.instagram.com/p/Cj2kTUjvIZl/" target="_blank" class="portfolio-btn">詳細を見る</a>
                     </div>
                 </div>
                 
                 <!-- ポートフォリオ項目5 -->
                 <div class="portfolio-item">
-                    <img src="/api/placeholder/400/400" alt="ポートフォリオ5" class="portfolio-image">
+                    <img src="/api/placeholder/400/400" alt="Visa 様" class="portfolio-image">
                     <div class="portfolio-overlay">
-                        <h3>Visa</h3>
+                        <h3>Visa 様</h3>
                         <p>キャッシュレス決済のメリットを伝える漫画</p>
-                        <a href="#" class="portfolio-btn">詳細を見る</a>
+                        <a href="https://www.instagram.com/p/CbmwW3JMfxK/" target="_blank" class="portfolio-btn">詳細を見る</a>
                     </div>
                 </div>
                 
                 <!-- ポートフォリオ項目6 -->
                 <div class="portfolio-item">
-                    <img src="/api/placeholder/400/400" alt="ポートフォリオ6" class="portfolio-image">
+                    <img src="/api/placeholder/400/400" alt="LINE 様" class="portfolio-image">
                     <div class="portfolio-overlay">
-                        <h3>森永製菓</h3>
-                        <p>お菓子あるあるをテーマにしたSNSコンテンツ</p>
-                        <a href="#" class="portfolio-btn">詳細を見る</a>
+                        <h3>LINE 様</h3>
+                        <p>アプリ機能紹介イラスト</p>
+                        <a href="https://buson.blog.jp/archives/27701665.html" target="_blank" class="portfolio-btn">詳細を見る</a>
                     </div>
                 </div>
                 
                 <!-- ポートフォリオ項目7 -->
                 <div class="portfolio-item">
-                    <img src="/api/placeholder/400/400" alt="ポートフォリオ7" class="portfolio-image">
+                    <img src="/api/placeholder/400/400" alt="Calbee 様" class="portfolio-image">
                     <div class="portfolio-overlay">
-                        <h3>JRA</h3>
-                        <p>競馬初心者向けの親しみやすいPR漫画</p>
-                        <a href="#" class="portfolio-btn">詳細を見る</a>
+                        <h3>Calbee 様</h3>
+                        <p>ココナッツサブレ学校あるある内袋デザイン</p>
+                        <a href="https://www.calbee.co.jp/newsrelease/220926.php" target="_blank" class="portfolio-btn">詳細を見る</a>
                     </div>
                 </div>
                 
                 <!-- ポートフォリオ項目8 -->
                 <div class="portfolio-item">
-                    <img src="/api/placeholder/400/400" alt="ポートフォリオ8" class="portfolio-image">
+                    <img src="/api/placeholder/400/400" alt="森永製菓 様" class="portfolio-image">
                     <div class="portfolio-overlay">
-                        <h3>李錦記</h3>
-                        <p>中華料理調味料のレシピ提案イラスト</p>
-                        <a href="#" class="portfolio-btn">詳細を見る</a>
+                        <h3>森永製菓 様</h3>
+                        <p>お菓子あるあるをテーマにしたSNSコンテンツ</p>
+                        <a href="https://www.instagram.com/p/Ckp2hWOMHUN/" target="_blank" class="portfolio-btn">詳細を見る</a>
                     </div>
                 </div>
-            </div>
-            
-            <div class="text-center" style="margin-top: 40px;">
-                <a href="#" class="btn">もっと見る</a>
+                
+                <!-- ポートフォリオ項目9 -->
+                <div class="portfolio-item">
+                    <img src="/api/placeholder/400/400" alt="公正取引委員会 様" class="portfolio-image">
+                    <div class="portfolio-overlay">
+                        <h3>公正取引委員会 様</h3>
+                        <p>フリーランス・ガイドライン普及啓発</p>
+                        <a href="https://www.jftc.go.jp/freelancelaw_2024/index.html" target="_blank" class="portfolio-btn">詳細を見る</a>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- クリエイター紹介セクション -->
+    <!-- 代表クリエイター紹介セクション -->
     <section id="team" class="section section-alt">
         <div class="container">
-            <h2 class="section-title">クリエイター紹介</h2>
-            <p class="section-description">BUSONスタジオのクリエイティブチームをご紹介します</p>
+            <h2 class="section-title">代表クリエイター紹介</h2>
+            <p class="section-description">BUSON STUDIOを率いるクリエイター</p>
             
-            <div class="team-grid">
-                <!-- チームメンバー1 -->
-                <div class="team-member">
-                    <img src="/api/placeholder/300/300" alt="クリエイター1" class="team-image">
-                    <div class="team-details">
-                        <h3 class="team-name">BUSON</h3>
-                        <p class="team-role">イラストレーター / 漫画家</p>
-                        <p class="team-bio">あるあるネタをテーマにした漫画で人気を集め、SNSで100万人以上のフォロワーを持つクリエイター。</p>
-                        <div class="team-social">
-                            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                            <a href="#" aria-label="Twitter"><i class="fab fa-x-twitter"></i></a>
-                            <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
-                        </div>
-                    </div>
-                </div>
+            <div class="creator-profile">
+                <img src="/api/placeholder/400/400" alt="BUSON" class="creator-image">
+                <h3 class="creator-name">BUSON</h3>
+                <p class="creator-role">イラストレーター／漫画家／IPプロデューサー</p>
+                <p class="creator-bio">「日常の"あるある"を笑顔に変える」作風が支持され、SNSを中心に幅広いファンベースを築く。キャラクターIP「しきぶちゃん」をはじめとする作品群は、テレビ・出版・グッズ・NFTなど多彩なメディアで展開され、国内外の企業コラボにも発展。独自のストーリーテリングとマーケティング視点を活かし、ブランドの世界観を生活者の日常へスムーズに届ける仕組みづくりを手掛けている。現在は株式会社TAKER代表として、<span class="bold-text">AI×クリエイティブ</span>の最前線から企業課題に寄り添うソリューションを提供中。</p>
                 
-                <!-- チームメンバー2 -->
-                <div class="team-member">
-                    <img src="/api/placeholder/300/300" alt="クリエイター2" class="team-image">
-                    <div class="team-details">
-                        <h3 class="team-name">鈴木 健太</h3>
-                        <p class="team-role">アートディレクター</p>
-                        <p class="team-bio">広告代理店での10年の経験を持ち、多数のブランドキャンペーンのビジュアルデザインを担当。</p>
-                        <div class="team-social">
-                            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                            <a href="#" aria-label="Behance"><i class="fab fa-behance"></i></a>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- チームメンバー3 -->
-                <div class="team-member">
-                    <img src="/api/placeholder/300/300" alt="クリエイター3" class="team-image">
-                    <div class="team-details">
-                        <h3 class="team-name">田中 美咲</h3>
-                        <p class="team-role">キャラクターデザイナー</p>
-                        <p class="team-bio">アニメーション業界で培った経験を活かし、親しみやすいキャラクターデザインを得意とする。</p>
-                        <div class="team-social">
-                            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                            <a href="#" aria-label="ArtStation"><i class="fab fa-artstation"></i></a>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- チームメンバー4 -->
-                <div class="team-member">
-                    <img src="/api/placeholder/300/300" alt="クリエイター4" class="team-image">
-                    <div class="team-details">
-                        <h3 class="team-name">佐藤 太郎</h3>
-                        <p class="team-role">マーケティングディレクター</p>
-                        <p class="team-bio">大手消費財メーカーでの経験を持ち、クライアントのビジネス課題を的確に捉えた提案を行う。</p>
-                        <div class="team-social">
-                            <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                            <a href="#" aria-label="Twitter"><i class="fab fa-x-twitter"></i></a>
-                        </div>
-                    </div>
+                <div class="message-card">
+                    <p>ご覧いただいた皆さまへ</p>
+                    <p>はじめまして。私たちは「ニヤッと笑顔が生まれる瞬間」を起点に、<span class="bold-text">ビジュアルとストーリーが自然に拡散される仕組み</span>を設計しています。</p>
+                    
+                    <ul>
+                        <li><span class="bold-text">「広告感を抑えつつ商品を深く印象づけたい」</span></li>
+                        <li><span class="bold-text">「キャラクターを活用して長く愛されるブランド資産をつくりたい」</span></li>
+                    </ul>
+                    
+                    <p>――そんな課題がありましたら、ぜひ一度お声がけください。ともに、貴社らしい物語を世の中へ届けましょう。</p>
+                    
+                    <p class="message-signature">BUSON</p>
                 </div>
             </div>
         </div>
@@ -1720,27 +1630,6 @@
                     <p>長崎県警や公正取引委員会など行政機関との取り組み実績。公共性の高いメッセージも親しみやすく伝えます。</p>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- 信頼と実績セクション -->
-    <section class="trusted-partners section-alt">
-        <div class="container">
-            <h2>信頼と実績</h2>
-            <p>BUSON Studioは、これまでに以下の企業様とのコラボレーションやPR実績があります。</p>
-
-            <ul class="partner-links">
-                <li>🎥 <a href="https://www.instagram.com/p/C9jFhW0PaZi/" target="_blank">Netflix 様（PR投稿はこちら）</a></li>
-                <li>🍜 <a href="https://www.instagram.com/p/C2lnyhrS_9b/" target="_blank">李錦記 様（PR投稿はこちら）</a></li>
-                <li>🥤 <a href="https://www.instagram.com/p/Cs3K6STp4il/" target="_blank">コカ・コーラ 様（PR投稿はこちら）</a></li>
-                <li>🏇 <a href="https://www.instagram.com/p/Cj2kTUjvIZl/" target="_blank">JRA 様（PR投稿はこちら）</a></li>
-                <li>💳 <a href="https://www.instagram.com/p/CbmwW3JMfxK/" target="_blank">Visa 様（PR投稿はこちら）</a></li>
-                <li>💬 <a href="https://buson.blog.jp/archives/27701665.html" target="_blank">LINE 様（紹介記事はこちら）</a></li>
-                <li>🥔 <a href="https://www.calbee.co.jp/newsrelease/220926.php" target="_blank">Calbee 様（プレスリリース）</a></li>
-                <li>🍫 <a href="https://www.instagram.com/p/Ckp2hWOMHUN/" target="_blank">森永製菓 様（PR投稿はこちら）</a></li>
-            </ul>
-
-            <p class="note">※リンク先は各コラボ・PR実績の一部紹介投稿です。</p>
         </div>
     </section>
 
@@ -2075,7 +1964,7 @@
             });
         }, observerOptions);
         
-        document.querySelectorAll('.service-card, .reason-card, .case-study-card, .process-step, .team-member, .portfolio-item, .factor-item').forEach(element => {
+        document.querySelectorAll('.service-card, .reason-card, .case-study-card, .process-step, .portfolio-item, .factor-item, .creator-profile').forEach(element => {
             observer.observe(element);
         });
         
@@ -2101,7 +1990,7 @@
                     // フォームリセット
                     contactForm.reset();
                     
-                    // 3秒後に元に戻す
+                    // 5秒後に元に戻す
                     setTimeout(() => {
                         formSubmit.innerHTML = `<button type="submit" class="btn">${originalButtonText}</button>`;
                     }, 5000);
