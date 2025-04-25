@@ -187,6 +187,11 @@
             transition: transform 0.3s;
         }
 
+        .logo img {
+            height: 40px;
+            width: auto;
+        }
+
         .logo:hover {
             transform: scale(1.05);
         }
@@ -298,7 +303,7 @@
             font-size: 3rem;
             color: var(--primary-color);
             margin-bottom: var(--spacing-md);
-            line-height: 1.2;
+            line-height: 1.4;
         }
 
         .hero p {
@@ -410,22 +415,14 @@
 
         .case-study-image {
             flex: 0 0 40%;
-            background-size: cover;
-            background-position: center;
-            min-height: 300px;
             position: relative;
             overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            height: 480px;
         }
 
         .case-study-image iframe {
             width: 100%;
             height: 100%;
-            position: absolute;
-            top: 0;
-            left: 0;
             border: none;
         }
 
@@ -690,52 +687,39 @@
         /* 制作プロセスセクション */
         .process-timeline {
             position: relative;
-            max-width: 800px;
+            max-width: 1000px;
             margin: var(--spacing-xxl) auto 0;
         }
 
-        .process-timeline:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 4px;
-            height: 100%;
-            background-color: var(--primary-light);
-        }
-
-        .process-step {
-            position: relative;
+        .process-row {
+            display: flex;
+            justify-content: space-between;
             margin-bottom: var(--spacing-xxl);
         }
 
-        .process-step:last-child {
-            margin-bottom: 0;
+        .process-step {
+            flex: 0 0 45%;
+            position: relative;
         }
 
-        .process-content {
-            position: relative;
-            width: 45%;
-            padding: var(--spacing-md);
+        .process-step-container {
             background-color: white;
             border-radius: var(--border-radius-md);
+            padding: var(--spacing-md);
             box-shadow: var(--shadow-md);
+            height: 100%;
             transition: transform 0.3s, box-shadow 0.3s;
         }
 
-        .process-step:hover .process-content {
+        .process-step:hover .process-step-container {
             transform: translateY(-5px);
             box-shadow: var(--shadow-lg);
         }
 
-        .process-step:nth-child(odd) .process-content {
-            margin-left: auto;
-        }
-
         .process-number {
             position: absolute;
-            top: 0;
+            top: -20px;
+            left: 20px;
             width: 40px;
             height: 40px;
             background-color: var(--primary-color);
@@ -748,25 +732,16 @@
             font-size: 1.2rem;
             z-index: 1;
             box-shadow: var(--shadow-sm);
-            transition: transform 0.3s;
         }
 
-        .process-step:hover .process-number {
-            transform: scale(1.1);
-        }
-
-        .process-step:nth-child(odd) .process-number {
-            left: -20px;
-        }
-
-        .process-step:nth-child(even) .process-number {
-            right: -20px;
-        }
-
-        .process-content h3 {
+        .process-step h3 {
             font-size: 1.4rem;
             color: var(--primary-color);
-            margin-bottom: var(--spacing-xs);
+            margin: var(--spacing-sm) 0;
+        }
+
+        .process-content {
+            padding-top: var(--spacing-sm);
         }
 
         /* サービス詳細セクション */
@@ -792,7 +767,7 @@
 
         .pricing-factors {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: var(--spacing-md);
             margin: var(--spacing-lg) 0;
         }
@@ -803,6 +778,7 @@
             padding: var(--spacing-md);
             box-shadow: var(--shadow-sm);
             transition: transform 0.3s, box-shadow 0.3s;
+            height: 100%;
         }
 
         .factor-item:hover {
@@ -1159,19 +1135,17 @@
                 font-size: 2.5rem;
             }
 
-            .process-timeline:before {
-                left: 30px;
+            .pricing-factors {
+                grid-template-columns: 1fr;
             }
-
-            .process-content {
-                width: calc(100% - 60px);
-                margin-left: 60px !important;
+            
+            .process-row {
+                flex-direction: column;
+                gap: var(--spacing-xl);
             }
-
-            .process-step:nth-child(odd) .process-number,
-            .process-step:nth-child(even) .process-number {
-                left: 10px;
-                right: auto;
+            
+            .process-step {
+                flex: 0 0 100%;
             }
 
             .contact-content {
@@ -1227,9 +1201,13 @@
                 align-items: center;
             }
 
+            .case-study-content {
+                flex-direction: column;
+            }
+
             .case-study-image {
                 flex: 0 0 100%;
-                min-height: 300px;
+                height: 480px;
             }
 
             .form-grid {
@@ -1258,16 +1236,8 @@
                 font-size: 1.1rem;
             }
 
-            .process-content {
-                width: calc(100% - 50px);
-                margin-left: 50px !important;
-                padding: var(--spacing-sm);
-            }
-
-            .partner-links {
-                flex-direction: column;
-                align-items: center;
-                gap: var(--spacing-sm);
+            .case-study-image {
+                height: 400px;
             }
 
             .back-to-top {
@@ -1283,7 +1253,9 @@
     <!-- ヘッダー -->
     <header id="header">
         <div class="container header-container">
-            <a href="index.html" class="logo">BUSON STUDIO</a>
+            <a href="index.html" class="logo">
+                <img src="images/logo.png" alt="BUSON STUDIO">
+            </a>
             <nav>
                 <ul id="menu">
                     <li class="active"><a href="#services">サービス</a></li>
@@ -1305,8 +1277,8 @@
     <section class="hero" id="top">
         <div class="container">
             <div class="hero-content fade-in">
-                <h1>「ニヤッと笑顔に」あなたのビジネスに命を吹き込む</h1>
-                <p>BUSONのキャラクターが親しみやすく企業メッセージを伝えブランドファンを増やします</p>
+                <h1>「ニヤッと笑顔に」<br>あなたのビジネスに命を吹き込む</h1>
+                <p>BUSONのキャラクターが親しみやすく企業メッセージを伝え<br>ブランドファンを増やします</p>
                 <div class="hero-buttons">
                     <a href="#services" class="btn">サービスを見る</a>
                     <a href="#contact" class="btn btn-outline">お問い合わせ</a>
@@ -1395,7 +1367,7 @@
             <div class="case-study-card">
                 <div class="case-study-content">
                     <div class="case-study-image">
-                        <iframe src="https://www.instagram.com/p/CTWopKyhCQ0/embed" frameborder="0" scrolling="no" allowtransparency="true"></iframe>
+                        <iframe src="https://www.instagram.com/p/CTWopKyhCQ0/embed/captioned" frameborder="0" scrolling="no" allowtransparency="true"></iframe>
                     </div>
                     <div class="case-study-details">
                         <span class="case-study-tag">パッケージデザイン</span>
@@ -1419,7 +1391,7 @@
             <div class="case-study-card">
                 <div class="case-study-content">
                     <div class="case-study-image">
-                        <iframe src="https://www.instagram.com/p/CNj2QjIn2At/embed" frameborder="0" scrolling="no" allowtransparency="true"></iframe>
+                        <iframe src="https://www.instagram.com/p/CNj2QjIn2At/embed/captioned" frameborder="0" scrolling="no" allowtransparency="true"></iframe>
                     </div>
                     <div class="case-study-details">
                         <span class="case-study-tag">SNS PR</span>
@@ -1439,7 +1411,7 @@
             <div class="case-study-card">
                 <div class="case-study-content">
                     <div class="case-study-image">
-                        <iframe src="https://www.instagram.com/p/C9jFhW0PaZi/embed" frameborder="0" scrolling="no" allowtransparency="true"></iframe>
+                        <iframe src="https://www.instagram.com/p/C9jFhW0PaZi/embed/captioned" frameborder="0" scrolling="no" allowtransparency="true"></iframe>
                     </div>
                     <div class="case-study-details">
                         <span class="case-study-tag">漫画制作</span>
@@ -1562,7 +1534,6 @@
     <section id="team" class="section section-alt">
         <div class="container">
             <h2 class="section-title">代表クリエイター紹介</h2>
-            <p class="section-description">BUSON STUDIOを率いるクリエイター</p>
             
             <div class="creator-profile">
                 <img src="/api/placeholder/400/400" alt="BUSON" class="creator-image">
@@ -1640,66 +1611,88 @@
             <p class="section-description">企画から納品までのステップをご紹介します</p>
             
             <div class="process-timeline">
-                <!-- ステップ1 -->
-                <div class="process-step">
-                    <div class="process-number">1</div>
-                    <div class="process-content">
-                        <h3>ヒアリング</h3>
-                        <p>お客様の企画内容や課題、ニーズ、ターゲット層、ブランドイメージなどをお伺いします。目的達成のための最適な提案の土台となります。</p>
+                <div class="process-row">
+                    <!-- ステップ1 -->
+                    <div class="process-step">
+                        <div class="process-number">1</div>
+                        <div class="process-step-container">
+                            <h3>ヒアリング</h3>
+                            <div class="process-content">
+                                <p>お客様の企画内容や課題、ニーズ、ターゲット層、ブランドイメージなどをお伺いします。目的達成のための最適な提案の土台となります。</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- ステップ2 -->
+                    <div class="process-step">
+                        <div class="process-number">2</div>
+                        <div class="process-step-container">
+                            <h3>企画提案</h3>
+                            <div class="process-content">
+                                <p>ヒアリング内容をもとに、最適な表現方法や活用方法、展開プランなどを提案します。</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- ステップ2 -->
-                <div class="process-step">
-                    <div class="process-number">2</div>
-                    <div class="process-content">
-                        <h3>企画提案</h3>
-                        <p>ヒアリング内容をもとに、最適な表現方法や活用方法、展開プランなどを提案します。</p>
+                <div class="process-row">
+                    <!-- ステップ3 -->
+                    <div class="process-step">
+                        <div class="process-number">3</div>
+                        <div class="process-step-container">
+                            <h3>ラフ（テキスト）</h3>
+                            <div class="process-content">
+                                <p>キャラクター設定や漫画のアイデア、セリフなどのテキスト案を作成し、方向性のすり合わせを行います。</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- ステップ4 -->
+                    <div class="process-step">
+                        <div class="process-number">4</div>
+                      <div class="process-step-container">
+                            <h3>ラフ（下書き）</h3>
+                            <div class="process-content">
+                                <p>確定したテキストをもとに、キャラクターや漫画のラフデザインを作成。具体的なビジュアルをご確認いただきます。</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- ステップ3 -->
-                <div class="process-step">
-                    <div class="process-number">3</div>
-                    <div class="process-content">
-                        <h3>ラフ（テキスト）</h3>
-                        <p>キャラクター設定や漫画のアイデア、セリフなどのテキスト案を作成し、方向性のすり合わせを行います。</p>
+                <div class="process-row">
+                    <!-- ステップ5 -->
+                    <div class="process-step">
+                        <div class="process-number">5</div>
+                        <div class="process-step-container">
+                            <h3>本制作</h3>
+                            <div class="process-content">
+                                <p>ご承認いただいたラフをもとに、最終的なデザインを制作。カラーリングや細部の調整を行います。</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- ステップ6 -->
+                    <div class="process-step">
+                        <div class="process-number">6</div>
+                        <div class="process-step-container">
+                            <h3>修正・納品</h3>
+                            <div class="process-content">
+                                <p>最終確認と必要に応じた修正を行い、データ納品やSNSでPR投稿をします。</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- ステップ4 -->
-                <div class="process-step">
-                    <div class="process-number">4</div>
-                    <div class="process-content">
-                        <h3>ラフ（下書き）</h3>
-                        <p>確定したテキストをもとに、キャラクターや漫画のラフデザインを作成。具体的なビジュアルをご確認いただきます。</p>
-                    </div>
-                </div>
-                
-                <!-- ステップ5 -->
-                <div class="process-step">
-                    <div class="process-number">5</div>
-                    <div class="process-content">
-                        <h3>本制作</h3>
-                        <p>ご承認いただいたラフをもとに、最終的なデザインを制作。カラーリングや細部の調整を行います。</p>
-                    </div>
-                </div>
-                
-                <!-- ステップ6 -->
-                <div class="process-step">
-                    <div class="process-number">6</div>
-                    <div class="process-content">
-                        <h3>修正・納品</h3>
-                        <p>最終確認と必要に応じた修正を行い、データ納品やSNSでPR投稿をします。</p>
-                    </div>
-                </div>
-                
-                <!-- ステップ7 -->
-                <div class="process-step">
-                    <div class="process-number">7</div>
-                    <div class="process-content">
-                        <h3>効果測定・分析</h3>
-                        <p>SNS投稿などの場合は、反応や効果を分析しレポートをご提供します。次回の施策改善にも活かせます。</p>
+                <div class="process-row">
+                    <!-- ステップ7 -->
+                    <div class="process-step">
+                        <div class="process-number">7</div>
+                        <div class="process-step-container">
+                            <h3>効果測定・分析</h3>
+                            <div class="process-content">
+                                <p>SNS投稿などの場合は、反応や効果を分析しレポートをご提供します。次回の施策改善にも活かせます。</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1740,7 +1733,7 @@
                 </div>
                 
                 <div class="service-cta">
-                    <p>※初回お見積りは無料です</p>
+                    <p>※お見積りは無料です</p>
                     <a href="#contact" class="btn">お見積り依頼はこちら</a>
                 </div>
             </div>
