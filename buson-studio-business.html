@@ -426,6 +426,12 @@
             border: none;
         }
 
+        /* Instagramプロフィール表示ボタンを非表示 */
+        .case-study-image iframe + div,
+        .case-study-image iframe footer {
+            display: none !important;
+        }
+
         .case-study-details {
             flex: 1;
             padding: var(--spacing-lg);
@@ -493,6 +499,7 @@
             transition: transform 0.5s;
         }
 
+        /* スマホでスクロールするだけで情報が表示されるように修正 */
         .portfolio-overlay {
             position: absolute;
             top: 0;
@@ -510,31 +517,20 @@
             transition: opacity 0.3s;
         }
 
-        /* デスクトップ表示ではホバー時に表示 */
-        @media (min-width: 769px) {
-            .portfolio-item:hover .portfolio-overlay {
+        /* モバイル表示時はオーバーレイを常に表示 */
+        @media (max-width: 768px) {
+            .portfolio-item .portfolio-overlay {
                 opacity: 1;
-            }
-
-            .portfolio-item:hover .portfolio-image {
-                transform: scale(1.1);
+                background: rgba(255, 107, 136, 0.9);
             }
         }
 
-        /* モバイル表示では常に表示するための設定 */
-        @media (max-width: 768px) {
-            .portfolio-item {
-                margin-bottom: 20px;
-            }
-            
-            .portfolio-overlay {
-                opacity: 1;
-                background: rgba(255, 107, 136, 0.8);
-            }
-            
-            .portfolio-image {
-                transform: scale(1.05);
-            }
+        .portfolio-item:hover .portfolio-overlay {
+            opacity: 1;
+        }
+
+        .portfolio-item:hover .portfolio-image {
+            transform: scale(1.1);
         }
 
         .portfolio-overlay h3 {
@@ -837,41 +833,14 @@
         }
 
         .contact-content {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: var(--spacing-xl);
+            display: flex;
+            justify-content: center;
             margin-top: var(--spacing-xl);
-            align-items: flex-start;
         }
 
+        /* 連絡先情報を非表示にし、フォームを中央に配置 */
         .contact-info {
-            background-color: white;
-            border-radius: var(--border-radius-md);
-            padding: var(--spacing-lg);
-            box-shadow: var(--shadow-md);
-            height: 100%;
-        }
-
-        .contact-info h3 {
-            font-size: 1.5rem;
-            color: var(--primary-color);
-            margin-bottom: var(--spacing-md);
-            position: relative;
-            padding-bottom: var(--spacing-xs);
-        }
-
-        .contact-info h3::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 40px;
-            height: 3px;
-            background-color: var(--primary-light);
-        }
-
-        .contact-method {
-            display: none; /* お問い合わせ先部分を非表示に */
+            display: none;
         }
 
         .contact-form {
@@ -879,6 +848,8 @@
             padding: var(--spacing-lg);
             border-radius: var(--border-radius-md);
             box-shadow: var(--shadow-md);
+            width: 100%;
+            max-width: 700px;
         }
 
         .form-grid {
@@ -1103,11 +1074,6 @@
             font-weight: 700;
         }
 
-        /* Instagramプロフィール表示ボタンを非表示 */
-        .profile-button, .btn-profile, [data-button="profile"] {
-            display: none !important;
-        }
-
         /* レスポンシブ対応 */
         @media (max-width: 992px) {
             .section-title {
@@ -1120,14 +1086,6 @@
 
             .pricing-factors {
                 grid-template-columns: 1fr;
-            }
-            
-            .contact-content {
-                grid-template-columns: 1fr;
-            }
-
-            .contact-info {
-                max-width: 100%;
             }
         }
 
@@ -1385,7 +1343,7 @@
             <div class="case-study-card">
                 <div class="case-study-content">
                     <div class="case-study-image">
-                        <iframe src="https://www.instagram.com/p/C3EhLErSIX-/?img_index=1/embed/captioned" frameborder="0" scrolling="no" allowtransparency="true"></iframe>
+                        <iframe src="https://www.instagram.com/p/C9jFhW0PaZi/embed/captioned" frameborder="0" scrolling="no" allowtransparency="true"></iframe>
                     </div>
                     <div class="case-study-details">
                         <span class="case-study-tag">漫画制作</span>
@@ -1411,7 +1369,7 @@
         <p class="section-description">これまでに多数の企業・団体様とコラボレーションを行ってきました</p>
         
         <div class="portfolio-grid">
-            <!-- ポートフォリオ項目1 - NetflixからSONYに変更 -->
+            <!-- ポートフォリオ項目1 - 変更したNetflix → SONY -->
             <div class="portfolio-item">
                 <img src="images/collaboration/1.png" alt="SONY 様" class="portfolio-image">
                 <div class="portfolio-overlay">
@@ -1630,7 +1588,7 @@
                     </div>
                 </div>
                 
-               <!-- ステップ6 -->
+                <!-- ステップ6 -->
                 <div class="process-step">
                     <div class="process-number">6</div>
                     <div class="process-content">
@@ -1699,26 +1657,6 @@
             <p class="section-description">ご質問やお見積りのご依頼はこちらからお気軽にご連絡ください</p>
             
             <div class="contact-content">
-                <div class="contact-info">
-                    <h3>お問い合わせ先</h3>
-                    
-                    <div class="contact-method">
-                        <i class="fas fa-envelope"></i>
-                        <div>
-                            <p>メールアドレス</p>
-                            <a href="mailto:buson@takerbiz.com">buson@takerbiz.com</a>
-                        </div>
-                    </div>
-                    
-                    <div class="contact-method">
-                        <i class="fas fa-map-marker-alt"></i>
-                        <div>
-                            <p>所在地</p>
-                            <p>〒810-0001<br>福岡県福岡市中央区天神2丁目3-10<br>天神パインクレスト716</p>
-                        </div>
-                    </div>
-                </div>
-                
                 <div class="contact-form">
                     <form action="#" method="post" id="contact-form">
                         <div class="form-grid">
