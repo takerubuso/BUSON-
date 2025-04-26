@@ -2114,75 +2114,80 @@ ul {
     </section>
 
     <!-- お問い合わせセクション -->
-    <section id="contact" class="section contact">
-        <div class="container">
-            <h2 class="section-title">お問い合わせ</h2>
-            <p class="section-description">ご質問やお見積りのご依頼はこちらからお気軽にご連絡ください</p>
-            
-            <div class="contact-content">
-                <div class="contact-form">
-                    <form action="#" method="post" id="contact-form">
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label for="company">会社名</label>
-                                <input type="text" id="company" name="company">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="name">お名前<span class="required-mark">*</span></label>
-                                <input type="text" id="name" name="name" required>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="email">メールアドレス<span class="required-mark">*</span></label>
-                                <input type="email" id="email" name="email" required>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="phone">電話番号</label>
-                                <input type="tel" id="phone" name="phone">
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="inquiry-type">お問い合わせ種別<span class="required-mark">*</span></label>
-                                <select id="inquiry-type" name="inquiry-type" required>
-                                    <option value="">選択してください</option>
-                                    <option value="サービス依頼">サービス依頼</option>
-                                    <option value="ライセンス利用">ライセンス利用</option>
-                                    <option value="お見積り">お見積り</option>
-                                    <option value="その他">その他</option>
-                                </select>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="service">ご興味のあるサービス<span class="required-mark">*</span></label>
-                                <select id="service" name="service" required>
-                                    <option value="">選択してください</option>
-                                    <option value="広告イラスト制作">広告イラスト制作</option>
-                                    <option value="キャラクターデザイン">キャラクターデザイン</option>
-                                    <option value="パッケージデザイン">パッケージデザイン</option>
-                                    <option value="SNS PR">SNS PR</option>
-                                    <option value="漫画・ストーリー制作">漫画・ストーリー制作</option>
-                                    <option value="イベントコラボ">イベントコラボ</option>
-                                    <option value="キャラクターライセンス">キャラクターライセンス</option>
-                                    <option value="その他">その他</option>
-                                </select>
-                            </div>
-                            
-                            <div class="form-group full-width">
-                                <label for="message">お問い合わせ内容<span class="required-mark">*</span></label>
-                                <textarea id="message" name="message" placeholder="ご依頼内容の詳細、ご質問など、お気軽にお書きください" required></textarea>
-                            </div>
+<section id="contact" class="section contact">
+    <div class="container">
+        <h2 class="section-title">お問い合わせ</h2>
+        <p class="section-description">ご質問やお見積りのご依頼はこちらからお気軽にご連絡ください</p>
+        
+        <div class="contact-content">
+            <div class="contact-form">
+                <form action="https://formspree.io/f/あなたのフォームID" method="POST" id="contact-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="company">会社名</label>
+                            <input type="text" id="company" name="company">
                         </div>
                         
-                        <div class="form-submit">
-                            <button type="submit" class="btn">送信する</button>
+                        <div class="form-group">
+                            <label for="name">お名前<span class="required-mark">*</span></label>
+                            <input type="text" id="name" name="name" required>
                         </div>
-                    </form>
-                </div>
+                        
+                        <div class="form-group">
+                            <label for="email">メールアドレス<span class="required-mark">*</span></label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phone">電話番号</label>
+                            <input type="tel" id="phone" name="phone">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="inquiry-type">お問い合わせ種別<span class="required-mark">*</span></label>
+                            <select id="inquiry-type" name="inquiry-type" required>
+                                <option value="">選択してください</option>
+                                <option value="サービス依頼">サービス依頼</option>
+                                <option value="ライセンス利用">ライセンス利用</option>
+                                <option value="お見積り">お見積り</option>
+                                <option value="その他">その他</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="service">ご興味のあるサービス<span class="required-mark">*</span></label>
+                            <select id="service" name="service" required>
+                                <option value="">選択してください</option>
+                                <option value="広告イラスト制作">広告イラスト制作</option>
+                                <option value="キャラクターデザイン">キャラクターデザイン</option>
+                                <option value="パッケージデザイン">パッケージデザイン</option>
+                                <option value="SNS PR">SNS PR</option>
+                                <option value="漫画・ストーリー制作">漫画・ストーリー制作</option>
+                                <option value="イベントコラボ">イベントコラボ</option>
+                                <option value="キャラクターライセンス">キャラクターライセンス</option>
+                                <option value="その他">その他</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label for="message">お問い合わせ内容<span class="required-mark">*</span></label>
+                            <textarea id="message" name="message" placeholder="ご依頼内容の詳細、ご質問など、お気軽にお書きください" required></textarea>
+                        </div>
+                        
+                        <!-- Formspree用の非表示フィールド（オプション） -->
+                        <input type="hidden" name="_subject" value="BUSON STUDIOウェブサイトからのお問い合わせ">
+                        <!-- スパム対策用ハニーポット -->
+                        <input type="text" name="_gotcha" style="display:none">
+                    </div>
+                    
+                    <div class="form-submit">
+                        <button type="submit" class="btn">送信する</button>
+                    </div>
+                </form>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
     <!-- フッター -->
     <footer>
