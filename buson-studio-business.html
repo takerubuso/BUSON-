@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BUSON STUDIO - 企業向けサービス</title>
+    <title>BUSON STUDIO - 企業向けサービス＆ライセンスビジネス</title>
     <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@300;400;500;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
@@ -1074,6 +1074,155 @@
             font-weight: 700;
         }
 
+        /* ライセンスセクション追加スタイル */
+        .license-intro {
+            background: white;
+            border-radius: var(--border-radius-md);
+            padding: var(--spacing-lg);
+            box-shadow: var(--shadow-md);
+            margin-bottom: var(--spacing-xl);
+            line-height: 1.8;
+        }
+        
+        .license-intro p {
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .license-intro ul {
+            list-style: none;
+            padding-left: var(--spacing-sm);
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .license-intro ul li {
+            position: relative;
+            padding-left: var(--spacing-md);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .license-intro ul li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: var(--primary-color);
+        }
+
+        .license-card {
+            background: white;
+            border-radius: var(--border-radius-md);
+            overflow: hidden;
+            box-shadow: var(--shadow-md);
+            margin-bottom: var(--spacing-xl);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .license-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .license-content {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        
+        .license-image {
+            flex: 0 0 40%;
+            min-height: 250px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .license-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+        
+        .license-card:hover .license-image img {
+            transform: scale(1.05);
+        }
+        
+        .license-details {
+            flex: 1;
+            padding: var(--spacing-lg);
+        }
+        
+        .license-tag {
+            display: inline-block;
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            padding: 5px 10px;
+            border-radius: var(--border-radius-sm);
+            font-size: 0.85rem;
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .license-details h3 {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: var(--spacing-sm);
+        }
+        
+        .license-text {
+            margin-bottom: var(--spacing-md);
+        }
+        
+        .license-list {
+            background: var(--bg-light);
+            border-radius: var(--border-radius-sm);
+            padding: var(--spacing-md);
+            margin-top: var(--spacing-md);
+        }
+        
+        .license-list h4 {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin-bottom: var(--spacing-sm);
+        }
+
+        /* タブ切り替え */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: var(--spacing-xl);
+            flex-wrap: wrap;
+        }
+        
+        .tab-button {
+            background: var(--bg-white);
+            border: 2px solid var(--primary-light);
+            color: var(--text-color);
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 0 5px 10px;
+            border-radius: var(--border-radius-sm);
+        }
+        
+        .tab-button:hover {
+            background: var(--primary-light);
+            color: var(--text-color);
+        }
+        
+        .tab-button.active {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.6s ease-out;
+        }
+
         /* レスポンシブ対応 */
         @media (max-width: 992px) {
             .section-title {
@@ -1086,6 +1235,16 @@
 
             .pricing-factors {
                 grid-template-columns: 1fr;
+            }
+            
+            .license-content {
+                flex-direction: column;
+            }
+            
+            .license-image {
+                flex: 0 0 100%;
+                max-width: 100%;
+                height: 300px;
             }
         }
 
@@ -1178,6 +1337,12 @@
                 width: 40px;
                 height: 40px;
             }
+            
+            .tab-button {
+                padding: 10px 15px;
+                font-size: 0.9rem;
+                margin-bottom: 8px;
+            }
         }
     </style>
 </head>
@@ -1191,13 +1356,14 @@
             <nav>
                 <ul id="menu">
                     <li class="active"><a href="#services">サービス</a></li>
-<li><a href="#case-studies">事例</a></li>
-<li><a href="#portfolio">信頼と実績</a></li>
-<li><a href="#team">代表クリエイター紹介</a></li>
-<li><a href="#reasons">選ばれる理由</a></li>
-<li><a href="#process">制作の流れ</a></li>
-<li><a href="#pricing">料金について</a></li>
-<li><a href="#contact">お問い合わせ</a></li>
+                    <li><a href="#case-studies">事例</a></li>
+                    <li><a href="#license">ライセンスビジネス</a></li>
+                    <li><a href="#portfolio">信頼と実績</a></li>
+                    <li><a href="#team">代表クリエイター紹介</a></li>
+                    <li><a href="#reasons">選ばれる理由</a></li>
+                    <li><a href="#process">制作の流れ</a></li>
+                    <li><a href="#pricing">料金について</a></li>
+                    <li><a href="#contact">お問い合わせ</a></li>
                 </ul>
                 <div class="mobile-menu-btn" id="mobile-menu-btn">
                     <span></span>
@@ -1216,7 +1382,7 @@
                 <p>BUSONのキャラクターが親しみやすく企業メッセージを伝え<br>ブランドファンを増やします</p>
                 <div class="hero-buttons">
                     <a href="#services" class="btn">サービスを見る</a>
-                    <a href="#contact" class="btn btn-outline">お問い合わせ</a>
+                    <a href="#license" class="btn btn-outline">ライセンスを見る</a>
                 </div>
             </div>
         </div>
@@ -1298,175 +1464,430 @@
             <h2 class="section-title">事例</h2>
             <p class="section-description">私たちが手がけた事例をご紹介します</p>
             
-            <!-- 事例1 -->
-            <div class="case-study-card">
-                <div class="case-study-content">
-                    <div class="case-study-image">
-                        <iframe src="https://www.instagram.com/p/CTWopKyhCQ0/embed/captioned" frameborder="0" scrolling="no" allowtransparency="true"></iframe>
+            <div class="tabs">
+                <button class="tab-button active" data-tab="all">すべて</button>
+                <button class="tab-button" data-tab="corporate">広告・企業PR</button>
+                <button class="tab-button" data-tab="package">商品・パッケージ</button>
+                <button class="tab-button" data-tab="sns">SNS活用</button>
+            </div>
+            
+            <div id="all" class="tab-content active">
+                <!-- 事例1 -->
+                <div class="case-study-card">
+                    <div class="case-study-content">
+                        <div class="case-study-image">
+                            <iframe src="https://www.instagram.com/p/CTWopKyhCQ0/embed/captioned" frameborder="0" scrolling="no" allowtransparency="true"></iframe>
+                        </div>
+                        <div class="case-study-details">
+                            <span class="case-study-tag">パッケージデザイン</span>
+                            <h3>ココナッツサブレ × BUSONコラボレーション</h3>
+                            <p><strong>プロジェクト概要</strong>：若年層へのリーチと話題性の創出を目指し、「学校あるある」をテーマにしたパッケージデザインを企画。</p>
+                            
+                            <p><strong>制作内容</strong>：</p>
+                            <ul>
+                                <li>16種類の「学校あるある」を描いた内袋デザイン</li>
+                                <li>パッケージ用イラスト（各2種類）</li>
+                                <li>SNS・YouTube向けプロモーション漫画</li>
+                                <li>SNS PR</li>
+                            </ul>
+                            
+                            <a href="https://youtu.be/KnBXFFWkoWM?si=6Ece3fHHIZbOzS-u" target="_blank" class="btn">YouTubeプロモーション動画 <i class="fas fa-external-link-alt"></i></a>
+                        </div>
                     </div>
-                    <div class="case-study-details">
-                        <span class="case-study-tag">パッケージデザイン</span>
-                        <h3>ココナッツサブレ × BUSONコラボレーション</h3>
-                        <p><strong>プロジェクト概要</strong>：若年層へのリーチと話題性の創出を目指し、「学校あるある」をテーマにしたパッケージデザインを企画。</p>
-                        
-                        <p><strong>制作内容</strong>：</p>
-                        <ul>
-                            <li>16種類の「学校あるある」を描いた内袋デザイン</li>
-                            <li>パッケージ用イラスト（各2種類）</li>
-                            <li>SNS・YouTube向けプロモーション漫画</li>
-                            <li>SNS PR</li>
-                        </ul>
-                        
-                        <a href="https://youtu.be/KnBXFFWkoWM?si=6Ece3fHHIZbOzS-u" target="_blank" class="btn">YouTubeプロモーション動画 <i class="fas fa-external-link-alt"></i></a>
+                </div>
+                
+                <!-- 事例2 -->
+                <div class="case-study-card">
+                    <div class="case-study-content">
+                        <div class="case-study-image">
+                            <iframe src="https://www.instagram.com/p/CNj2QjIn2At/embed/captioned" frameborder="0" scrolling="no" allowtransparency="true"></iframe>
+                        </div>
+                        <div class="case-study-details">
+                            <span class="case-study-tag">SNS PR</span>
+                            <h3>花王バスマジックリン × BUSONコラボレーション</h3>
+                            <p><strong>プロジェクト概要</strong>：家事の悩みを解決する製品の魅力を、共感性の高い「お風呂掃除あるある」を通じて伝えるSNSキャンペーン。</p>
+                            
+                            <p><strong>制作内容</strong>：</p>
+                            <ul>
+                                <li>Instagram向け3コマの「お風呂掃除あるある」漫画</li>
+                                <li>SNS PR</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 事例3 -->
+                <div class="case-study-card">
+                    <div class="case-study-content">
+                        <div class="case-study-image">
+                            <iframe src="https://www.instagram.com/p/C9jFhW0PaZi/embed/captioned" frameborder="0" scrolling="no" allowtransparency="true"></iframe>
+                        </div>
+                        <div class="case-study-details">
+                            <span class="case-study-tag">漫画制作</span>
+                            <h3>Netflix「地面師たち」プロモーション</h3>
+                            <p><strong>プロジェクト概要</strong>：Netflixオリジナルシリーズ「地面師たち」の認知拡大と視聴促進を目的とした漫画コンテンツ制作。</p>
+                            
+                            <p><strong>制作内容</strong>：</p>
+                            <ul>
+                                <li>「不動産詐欺あるある」をテーマにした2コマの漫画コンテンツ</li>
+                                <li>視聴者が共感できる「騙されそうになりそうな瞬間」をユーモラスに表現</li>
+                                <li>作品の世界観を紹介するキャラクターイラスト</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 事例4：ライセンス事例から追加 -->
+                <div class="case-study-card">
+                    <div class="case-study-content">
+                        <div class="case-study-image">
+                            <img src="images/news/5.png" alt="大丸札幌店" onerror="this.src='/api/placeholder/800/480'">
+                        </div>
+                        <div class="case-study-details">
+                            <span class="case-study-tag">イベントコラボ</span>
+                            <h3>大丸札幌店 × BUSONコラボレーション</h3>
+                            <p><strong>プロジェクト概要</strong>：「ニヤッと笑える」様々な職業や物事のあるある作品を展示したイベント。インスタ映えするフォトスポットも設置。</p>
+                            
+                            <p><strong>制作内容</strong>：</p>
+                            <ul>
+                                <li>多種多様なあるある漫画展示</li>
+                                <li>フォトスポット用イラスト制作</li>
+                                <li>イベントSNS PR</li>
+                                <li>トークライブ</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <!-- 事例2 -->
-            <div class="case-study-card">
-                <div class="case-study-content">
-                    <div class="case-study-image">
-                        <iframe src="https://www.instagram.com/p/CNj2QjIn2At/embed/captioned" frameborder="0" scrolling="no" allowtransparency="true"></iframe>
+            <div id="corporate" class="tab-content">
+                <!-- 企業PR用事例のみ表示 -->
+                <div class="case-study-card">
+                    <div class="case-study-content">
+                        <div class="case-study-image">
+                            <iframe src="https://www.instagram.com/p/C9jFhW0PaZi/embed/captioned" frameborder="0" scrolling="no" allowtransparency="true"></iframe>
+                        </div>
+                        <div class="case-study-details">
+                            <span class="case-study-tag">漫画制作</span>
+                            <h3>Netflix「地面師たち」プロモーション</h3>
+                            <p><strong>プロジェクト概要</strong>：Netflixオリジナルシリーズ「地面師たち」の認知拡大と視聴促進を目的とした漫画コンテンツ制作。</p>
+                            
+                            <p><strong>制作内容</strong>：</p>
+                            <ul>
+                                <li>「不動産詐欺あるある」をテーマにした2コマの漫画コンテンツ</li>
+                                <li>視聴者が共感できる「騙されそうになりそうな瞬間」をユーモラスに表現</li>
+                                <li>作品の世界観を紹介するキャラクターイラスト</li>
+                            </ul>
+                        </div>
                     </div>
-                    <div class="case-study-details">
-                        <span class="case-study-tag">SNS PR</span>
-                        <h3>花王バスマジックリン × BUSONコラボレーション</h3>
-                        <p><strong>プロジェクト概要</strong>：家事の悩みを解決する製品の魅力を、共感性の高い「お風呂掃除あるある」を通じて伝えるSNSキャンペーン。</p>
-                        
-                        <p><strong>制作内容</strong>：</p>
-                        <ul>
-                            <li>Instagram向け3コマの「お風呂掃除あるある」漫画</li>
-                            <li>SNS PR</li>
-                        </ul>
+                </div>
+                
+                <div class="case-study-card">
+                    <div class="case-study-content">
+                        <div class="case-study-image">
+                            <img src="images/news/2.png" alt="公正取引委員会コラボレーション" onerror="this.src='/api/placeholder/800/480'">
+                        </div>
+                        <div class="case-study-details">
+                            <span class="case-study-tag">行政広報</span>
+                            <h3>公正取引委員会 フリーランス法の広報活動</h3>
+                            <p><strong>プロジェクト概要</strong>：令和６年１１月１日の施行に向けて、フリーランス法の認知度を高めるとともに、違反行為の未然防止を図るための広報活動。</p>
+                            
+                            <p><strong>制作内容</strong>：</p>
+                            <ul>
+                                <li>公正取引委員会ウェブサイト内イラスト</li>
+                                <li>発注事業者及びフリーランスそれぞれに向けた説明動画内イラスト</li>
+                                <li>フリーランス法の理解度診断</li>
+                                <li>発注事業者向けの禁止行為「あるあるチェック」</li>
+                            </ul>
+                            
+                            <a href="https://www.jftc.go.jp/freelancelaw_2024/index.html" target="_blank" class="btn">公式サイトを見る <i class="fas fa-external-link-alt"></i></a>
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <!-- 事例3 -->
-            <div class="case-study-card">
-                <div class="case-study-content">
-                    <div class="case-study-image">
-                        <iframe src="https://www.instagram.com/p/C9jFhW0PaZi/embed/captioned" frameborder="0" scrolling="no" allowtransparency="true"></iframe>
+            <div id="package" class="tab-content">
+                <!-- パッケージデザインの事例のみ表示 -->
+                <div class="case-study-card">
+                    <div class="case-study-content">
+                        <div class="case-study-image">
+                            <iframe src="https://www.instagram.com/p/CTWopKyhCQ0/embed/captioned" frameborder="0" scrolling="no" allowtransparency="true"></iframe>
+                        </div>
+                        <div class="case-study-details">
+                            <span class="case-study-tag">パッケージデザイン</span>
+                            <h3>ココナッツサブレ × BUSONコラボレーション</h3>
+                            <p><strong>プロジェクト概要</strong>：若年層へのリーチと話題性の創出を目指し、「学校あるある」をテーマにしたパッケージデザインを企画。</p>
+                            
+                            <p><strong>制作内容</strong>：</p>
+                            <ul>
+                                <li>16種類の「学校あるある」を描いた内袋デザイン</li>
+                                <li>パッケージ用イラスト（各2種類）</li>
+                                <li>SNS・YouTube向けプロモーション漫画</li>
+                                <li>SNS PR</li>
+                            </ul>
+                            
+                            <a href="https://youtu.be/KnBXFFWkoWM?si=6Ece3fHHIZbOzS-u" target="_blank" class="btn">YouTubeプロモーション動画 <i class="fas fa-external-link-alt"></i></a>
+                        </div>
                     </div>
-                    <div class="case-study-details">
-                        <span class="case-study-tag">漫画制作</span>
-                        <h3>Netflix「地面師たち」プロモーション</h3>
-                        <p><strong>プロジェクト概要</strong>：Netflixオリジナルシリーズ「地面師たち」の認知拡大と視聴促進を目的とした漫画コンテンツ制作。</p>
-                        
-                        <p><strong>制作内容</strong>：</p>
-                        <ul>
-                            <li>「不動産詐欺あるある」をテーマにした2コマの漫画コンテンツ</li>
-                            <li>視聴者が共感できる「騙されそうになりそうな瞬間」をユーモラスに表現</li>
-                            <li>作品の世界観を紹介するキャラクターイラスト</li>
-                        </ul>
+                </div>
+            </div>
+            
+            <div id="sns" class="tab-content">
+                <!-- SNS事例のみ表示 -->
+                <div class="case-study-card">
+                    <div class="case-study-content">
+                        <div class="case-study-image">
+                            <iframe src="https://www.instagram.com/p/CNj2QjIn2At/embed/captioned" frameborder="0" scrolling="no" allowtransparency="true"></iframe>
+                        </div>
+                        <div class="case-study-details">
+                            <span class="case-study-tag">SNS PR</span>
+                            <h3>花王バスマジックリン × BUSONコラボレーション</h3>
+                            <p><strong>プロジェクト概要</strong>：家事の悩みを解決する製品の魅力を、共感性の高い「お風呂掃除あるある」を通じて伝えるSNSキャンペーン。</p>
+                            
+                            <p><strong>制作内容</strong>：</p>
+                            <ul>
+                                <li>Instagram向け3コマの「お風呂掃除あるある」漫画</li>
+                                <li>SNS PR</li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-  <!-- 信頼と実績セクション -->
-<section id="portfolio" class="section">
-    <div class="container">
-        <h2 class="section-title">信頼と実績</h2>
-        <p class="section-description">これまでに多数の企業・団体様とコラボレーションを行ってきました</p>
-        
-        <div class="portfolio-grid">
-            <!-- ポートフォリオ項目1 - 変更したNetflix → SONY -->
-            <div class="portfolio-item">
-                <img src="images/collaboration/1.png" alt="SONY 様" class="portfolio-image">
-                <div class="portfolio-overlay">
-                    <h3>SONY 様</h3>
-                    <p>NURO光 PR漫画作成</p>
-                    <a href="https://www.instagram.com/p/C9jFhW0PaZi/" target="_blank" class="portfolio-btn">詳細を見る</a>
+    <!-- ライセンスビジネスセクション -->
+    <section id="license" class="section">
+        <div class="container">
+            <h2 class="section-title">ライセンスビジネス</h2>
+            <p class="section-description">BUSONキャラクターをあなたのビジネスに活用する新しい選択肢</p>
+            
+            <div class="license-intro">
+                <p>BUSON STUDIOでは、当社が保有するオリジナルキャラクターのライセンス提供を行っています。様々な企業や団体様とのコラボレーションにより、キャラクターの魅力を多方面で活かしたいただけます。</p>
+                
+                <p>当社のキャラクターは以下のような特徴があり、多様な用途でご活用いただけます：</p>
+                <ul>
+                    <li>親しみやすくポジティブなデザイン</li>
+                    <li>幅広い年齢層に受け入れられるユニバーサルな魅力</li>
+                    <li>多様なシーンで使えるバリエーション豊かなポーズやデザイン</li>
+                    <li>商品やサービスの魅力を高める表現力</li>
+                </ul>
+                
+                <p>以下では、実際にBUSON STUDIOのキャラクターをご活用いただいた事例をご紹介します。新たなコラボレーションやライセンス活用のご相談も随時承っておりますので、お気軽にお問い合わせください。</p>
+            </div>
+            
+            <div class="license-card">
+                <div class="license-content">
+                    <div class="license-image">
+                        <img src="images/news/1.jpeg" alt="カルビーコラボレーション" onerror="this.src='/api/placeholder/800/480'">
+                    </div>
+                    <div class="license-details">
+                        <span class="license-tag">パッケージ活用</span>
+                        <h3>ロングセラービスケット「ココナッツサブレ」とのコラボレーション</h3>
+                        <div class="license-text">
+                            <p>期間限定で全国発売され話題になりました。</p>
+                            <p>内袋には、クスッと笑えて思わず誰かに話したくなる16種類 (3品いずれも共通) の"学校あるある"ネタをデザインし、パッケージもBUSONさん描き下ろしのイラスト (各2種類) で楽しく仕上げました。</p>
+                        </div>
+                        <div class="license-list">
+                            <h4>実施内容</h4>
+                            <ul>
+                                <li>パッケージデザイン6種</li>
+                                <li>内袋には、クスッと笑えて思わず誰かに話したくなる16種類</li>
+                                <li>ココナッツサブレあるある漫画をSNS&YouTubeで配信</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <!-- ポートフォリオ項目2 -->
-            <div class="portfolio-item">
-                <img src="images/collaboration/2.png" alt="李錦記 様" class="portfolio-image">
-                <div class="portfolio-overlay">
-                    <h3>李錦記 様</h3>
-                    <p>中華料理調味料のレシピ提案イラスト</p>
-                    <a href="https://www.instagram.com/p/C2lnyhrS_9b/" target="_blank" class="portfolio-btn">詳細を見る</a>
+            <div class="license-card">
+                <div class="license-content">
+                    <div class="license-image">
+                        <img src="images/news/2.png" alt="公正取引委員会コラボレーション" onerror="this.src='/api/placeholder/800/480'">
+                    </div>
+                    <div class="license-details">
+                        <span class="license-tag">診断ページ活用</span>
+                        <h3>フリーランス法の広報活動</h3>
+                        <div class="license-text">
+                            <p>令和６年１１月１日の施行に向けて、フリーランス法の認知度を高めるとともに、違反行為の未然防止を図るため、広報強化期間の第１弾と位置付け「しきぶちゃん」とタイアップしたフリーランス法の広報活動を実施。</p>
+                            <p>公正取引委員会ウェブサイト内でしきぶちゃんが活用されています。</p>
+                        </div>
+                        <div class="license-list">
+                            <h4>実施内容</h4>
+                            <ul>
+                                <li>公正取引委員会ウェブサイト内イラスト</li>
+                                <li>発注事業者及びフリーランスそれぞれに向けた説明動画内イラスト</li>
+                                <li>フリーランス法の理解度診断</li>
+                                <li>発注事業者向けの禁止行為「あるあるチェック」</li>
+                                <li>キャラクターオリジナルリーフレット</li>
+                                <li>インターネット広告の掲載</li>
+                                <li>東京メトロ車内のビジョン広告</li>
+                                <li>ファミリーマート店内のレジ前液晶モニター広告</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <!-- ポートフォリオ項目3 -->
-            <div class="portfolio-item">
-                <img src="images/collaboration/3.png" alt="コカ・コーラ 様" class="portfolio-image">
-                <div class="portfolio-overlay">
-                    <h3>コカ・コーラ 様</h3>
-                    <p>夏のキャンペーン向けイラスト制作</p>
-                    <a href="https://www.instagram.com/p/Cs3K6STp4il/" target="_blank" class="portfolio-btn">詳細を見る</a>
+            <div class="license-card">
+                <div class="license-content">
+                    <div class="license-image">
+                        <img src="images/news/5.png" alt="大丸札幌店" onerror="this.src='/api/placeholder/800/480'">
+                    </div>
+                    <div class="license-details">
+                        <span class="license-tag">イベント活用</span>
+                        <h3>百貨店のキャラクター活用</h3>
+                        <div class="license-text">
+                            <p>「ニヤッと笑える」様々な職業や物事のあるある作品を展示。インスタ映えするフォトスポットも!</p>
+                        </div>
+                        <div class="license-list">
+                            <h4>実施内容</h4>
+                            <ul>
+                                <li>多種多様なあるある漫画展示</li>
+                                <li>フォトスポット用イラスト制作</li>
+                                <li>イベントSNS PR</li>
+                                <li>トークライブ</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="license-card">
+                <div class="license-content">
+                    <div class="license-image">
+                        <img src="images/news/6.png" alt="個人事業や中小企業でも活用できます" onerror="this.src='/api/placeholder/800/480'">
+                    </div>
+                    <div class="license-details">
+                        <span class="license-tag">二次創作ライセンス活用</span>
+                        <h3>年商2億円未満の事業者を対象としたプログラム「Shikibu World(通称SKB)」</h3>
+                        <div class="license-text">
+                            <p>ShikibuWorld（SKB）とCBAsは、NFT保有者が「二次創作でのキャラクターを商用利用」できるサービスです。</p>
+                            <p>個人や小規模事業者がキャラクターを活用することで、独自のビジネスを成長させるためのサポートを提供しています。</p>
+                            <a href="https://shikibuworld.com/" class="btn" target="_blank">詳しくはこちら <i class="fas fa-external-link-alt"></i></a>
+                        </div>
+                        <div class="license-list">
+                            <h4>活用事例</h4>
+                            <ul>
+                                <li>キッチンカー</li>
+                                <li>ラーメン屋</li>
+                                <li>ケーキ屋</li>
+                                <li>アパレルショップ</li>
+                                <li>オリジナルグッズ制作</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
             
-            <!-- ポートフォリオ項目4 -->
-            <div class="portfolio-item">
-                <img src="images/collaboration/4.png" alt="JRA 様" class="portfolio-image">
-                <div class="portfolio-overlay">
-                    <h3>JRA 様</h3>
-                    <p>競馬初心者向けの親しみやすいPR漫画</p>
-                    <a href="https://www.instagram.com/p/Cj2kTUjvIZl/" target="_blank" class="portfolio-btn">詳細を見る</a>
-                </div>
+            <div class="text-center" style="margin-top: 40px;">
+                <a href="#contact" class="btn">ライセンスについて相談する</a>
             </div>
+        </div>
+    </section>
+
+    <!-- 信頼と実績セクション -->
+    <section id="portfolio" class="section section-alt">
+        <div class="container">
+            <h2 class="section-title">信頼と実績</h2>
+            <p class="section-description">これまでに多数の企業・団体様とコラボレーションを行ってきました</p>
             
-            <!-- ポートフォリオ項目5 -->
-            <div class="portfolio-item">
-                <img src="images/collaboration/5.png" alt="Visa 様" class="portfolio-image">
-                <div class="portfolio-overlay">
-                    <h3>Visa 様</h3>
-                    <p>キャッシュレス決済のメリットを伝える漫画</p>
-                    <a href="https://www.instagram.com/p/CbmwW3JMfxK/" target="_blank" class="portfolio-btn">詳細を見る</a>
+            <div class="portfolio-grid">
+                <!-- ポートフォリオ項目1 -->
+                <div class="portfolio-item">
+                    <img src="images/collaboration/1.png" alt="SONY 様" class="portfolio-image">
+                    <div class="portfolio-overlay">
+                        <h3>SONY 様</h3>
+                        <p>NURO光 PR漫画作成</p>
+                        <a href="https://www.instagram.com/p/C9jFhW0PaZi/" target="_blank" class="portfolio-btn">詳細を見る</a>
+                    </div>
                 </div>
-            </div>
-            
-            <!-- ポートフォリオ項目6 -->
-            <div class="portfolio-item">
-                <img src="images/collaboration/6.png" alt="LINE 様" class="portfolio-image">
-                <div class="portfolio-overlay">
-                    <h3>LINE 様</h3>
-                    <p>アプリ機能紹介イラスト</p>
-                    <a href="https://buson.blog.jp/archives/27701665.html" target="_blank" class="portfolio-btn">詳細を見る</a>
+                
+                <!-- ポートフォリオ項目2 -->
+                <div class="portfolio-item">
+                    <img src="images/collaboration/2.png" alt="李錦記 様" class="portfolio-image">
+                    <div class="portfolio-overlay">
+                        <h3>李錦記 様</h3>
+                        <p>中華料理調味料のレシピ提案イラスト</p>
+                        <a href="https://www.instagram.com/p/C2lnyhrS_9b/" target="_blank" class="portfolio-btn">詳細を見る</a>
+                    </div>
                 </div>
-            </div>
-            
-            <!-- ポートフォリオ項目7 -->
-            <div class="portfolio-item">
-                <img src="images/collaboration/7.png" alt="Calbee 様" class="portfolio-image">
-                <div class="portfolio-overlay">
-                    <h3>Calbee 様</h3>
-                    <p>ココナッツサブレ学校あるある内袋デザイン</p>
-                    <a href="https://www.calbee.co.jp/newsrelease/220926.php" target="_blank" class="portfolio-btn">詳細を見る</a>
+                
+                <!-- ポートフォリオ項目3 -->
+                <div class="portfolio-item">
+                    <img src="images/collaboration/3.png" alt="コカ・コーラ 様" class="portfolio-image">
+                    <div class="portfolio-overlay">
+                        <h3>コカ・コーラ 様</h3>
+                        <p>夏のキャンペーン向けイラスト制作</p>
+                        <a href="https://www.instagram.com/p/Cs3K6STp4il/" target="_blank" class="portfolio-btn">詳細を見る</a>
+                    </div>
                 </div>
-            </div>
-            
-            <!-- ポートフォリオ項目8 -->
-            <div class="portfolio-item">
-                <img src="images/collaboration/8.png" alt="森永製菓 様" class="portfolio-image">
-                <div class="portfolio-overlay">
-                    <h3>森永製菓 様</h3>
-                    <p>お菓子あるあるをテーマにしたSNSコンテンツ</p>
-                    <a href="https://www.instagram.com/p/Ckp2hWOMHUN/" target="_blank" class="portfolio-btn">詳細を見る</a>
+                
+                <!-- ポートフォリオ項目4 -->
+                <div class="portfolio-item">
+                    <img src="images/collaboration/4.png" alt="JRA 様" class="portfolio-image">
+                    <div class="portfolio-overlay">
+                        <h3>JRA 様</h3>
+                        <p>競馬初心者向けの親しみやすいPR漫画</p>
+                        <a href="https://www.instagram.com/p/Cj2kTUjvIZl/" target="_blank" class="portfolio-btn">詳細を見る</a>
+                    </div>
                 </div>
-            </div>
-            
-            <!-- ポートフォリオ項目9 -->
-            <div class="portfolio-item">
-                <img src="images/collaboration/9.png" alt="公正取引委員会 様" class="portfolio-image">
-                <div class="portfolio-overlay">
-                    <h3>公正取引委員会 様</h3>
-                    <p>フリーランス・ガイドライン普及啓発</p>
-                    <a href="https://www.jftc.go.jp/freelancelaw_2024/index.html" target="_blank" class="portfolio-btn">詳細を見る</a>
+                
+                <!-- ポートフォリオ項目5 -->
+                <div class="portfolio-item">
+                    <img src="images/collaboration/5.png" alt="Visa 様" class="portfolio-image">
+                    <div class="portfolio-overlay">
+                        <h3>Visa 様</h3>
+                        <p>キャッシュレス決済のメリットを伝える漫画</p>
+                        <a href="https://www.instagram.com/p/CbmwW3JMfxK/" target="_blank" class="portfolio-btn">詳細を見る</a>
+                    </div>
+                </div>
+                
+                <!-- ポートフォリオ項目6 -->
+                <div class="portfolio-item">
+                    <img src="images/collaboration/6.png" alt="LINE 様" class="portfolio-image">
+                    <div class="portfolio-overlay">
+                        <h3>LINE 様</h3>
+                        <p>アプリ機能紹介イラスト</p>
+                        <a href="https://buson.blog.jp/archives/27701665.html" target="_blank" class="portfolio-btn">詳細を見る</a>
+                    </div>
+                </div>
+                
+                <!-- ポートフォリオ項目7 -->
+                <div class="portfolio-item">
+                    <img src="images/collaboration/7.png" alt="Calbee 様" class="portfolio-image">
+                    <div class="portfolio-overlay">
+                        <h3>Calbee 様</h3>
+                        <p>ココナッツサブレ学校あるある内袋デザイン</p>
+                        <a href="https://www.calbee.co.jp/newsrelease/220926.php" target="_blank" class="portfolio-btn">詳細を見る</a>
+                    </div>
+                </div>
+                
+                <!-- ポートフォリオ項目8 -->
+                <div class="portfolio-item">
+                    <img src="images/collaboration/8.png" alt="森永製菓 様" class="portfolio-image">
+                    <div class="portfolio-overlay">
+                        <h3>森永製菓 様</h3>
+                        <p>お菓子あるあるをテーマにしたSNSコンテンツ</p>
+                        <a href="https://www.instagram.com/p/Ckp2hWOMHUN/" target="_blank" class="portfolio-btn">詳細を見る</a>
+                    </div>
+                </div>
+                
+                <!-- ポートフォリオ項目9 -->
+                <div class="portfolio-item">
+                    <img src="images/collaboration/9.png" alt="公正取引委員会 様" class="portfolio-image">
+                    <div class="portfolio-overlay">
+                        <h3>公正取引委員会 様</h3>
+                        <p>フリーランス・ガイドライン普及啓発</p>
+                        <a href="https://www.jftc.go.jp/freelancelaw_2024/index.html" target="_blank" class="portfolio-btn">詳細を見る</a>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
     <!-- 代表クリエイター紹介セクション -->
-    <section id="team" class="section section-alt">
+    <section id="team" class="section">
         <div class="container">
             <h2 class="section-title">代表クリエイター紹介</h2>
             
@@ -1494,7 +1915,7 @@
     </section>
 
     <!-- BUSONを選ぶ理由セクション -->
-    <section class="section">
+    <section class="section section-alt">
         <div class="container">
             <h2 class="section-title">BUSONを選ぶ理由</h2>
             <p class="section-description">他社と比較して私たちが選ばれる6つの理由</p>
@@ -1613,7 +2034,7 @@
     </section>
 
     <!-- サービス詳細セクション -->
-    <section class="section section-alt">
+    <section id="pricing" class="section section-alt">
         <div class="container">
             <h2 class="section-title">サービス詳細</h2>
             <p class="section-description">お客様のニーズに合わせた最適なご提案をいたします</p>
@@ -1684,6 +2105,17 @@
                             </div>
                             
                             <div class="form-group">
+                                <label for="inquiry-type">お問い合わせ種別<span class="required-mark">*</span></label>
+                                <select id="inquiry-type" name="inquiry-type" required>
+                                    <option value="">選択してください</option>
+                                    <option value="サービス依頼">サービス依頼</option>
+                                    <option value="ライセンス利用">ライセンス利用</option>
+                                    <option value="お見積り">お見積り</option>
+                                    <option value="その他">その他</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
                                 <label for="service">ご興味のあるサービス<span class="required-mark">*</span></label>
                                 <select id="service" name="service" required>
                                     <option value="">選択してください</option>
@@ -1693,6 +2125,7 @@
                                     <option value="SNS PR">SNS PR</option>
                                     <option value="漫画・ストーリー制作">漫画・ストーリー制作</option>
                                     <option value="イベントコラボ">イベントコラボ</option>
+                                    <option value="キャラクターライセンス">キャラクターライセンス</option>
                                     <option value="その他">その他</option>
                                 </select>
                             </div>
@@ -1806,6 +2239,28 @@
             });
         });
         
+        // タブ切り替え
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.getAttribute('data-tab');
+                
+                // タブボタンのアクティブ状態を切り替え
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                // タブコンテンツの表示を切り替え
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                    if (content.id === tabId) {
+                        content.classList.add('active');
+                    }
+                });
+            });
+        });
+        
         // アニメーション効果
         const observerOptions = {
             root: null,
@@ -1822,7 +2277,7 @@
             });
         }, observerOptions);
         
-        document.querySelectorAll('.service-card, .reason-card, .case-study-card, .process-step, .portfolio-item, .factor-item, .creator-profile').forEach(element => {
+        document.querySelectorAll('.service-card, .reason-card, .case-study-card, .license-card, .process-step, .portfolio-item, .factor-item, .creator-profile').forEach(element => {
             observer.observe(element);
         });
         
