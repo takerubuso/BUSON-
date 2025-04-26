@@ -14,37 +14,5 @@
     "price": 1210,
     "category": "lifestyle",
     "url": "https://suzuri.jp/buson2025/3825956/masking-tape/15mm/white"
-  },
-  {
-    "id": 3,
-    "name": "しきぶちゃんぬいぐるみ",
-    "image": "images/goods/3.png",
-    "price": 3300,
-    "category": "plush",
-    "url": "https://suzuri.jp/buson2025/3825956/plush/m/white"
-  },
-  {
-    "id": 4,
-    "name": "しきぶちゃんトートバッグ",
-    "image": "images/goods/4.png",
-    "price": 1980,
-    "category": "lifestyle",
-    "url": "https://suzuri.jp/buson2025/3825956/tote-bag/m/white"
-  },
-  {
-    "id": 5,
-    "name": "しきぶちゃんスマホケース",
-    "image": "images/goods/5.png",
-    "price": 2750,
-    "category": "lifestyle",
-    "url": "https://suzuri.jp/buson2025/3825956/iphone-case/iphone8/white"
-  },
-  {
-    "id": 6,
-    "name": "クリスマス限定 しきぶちゃんキーホルダー",
-    "image": "images/goods/6.png",
-    "price": 1650,
-    "category": "seasonal",
-    "url": "https://suzuri.jp/buson2025/3825956/acrylic-keychain/50x50mm/white"
   }
 ]
