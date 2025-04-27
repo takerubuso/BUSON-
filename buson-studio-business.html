@@ -2302,35 +2302,64 @@ ul {
             observer.observe(element);
         });
         
-        // フォーム送信ハンドリング
-        const contactForm = document.getElementById('contact-form');
-        if (contactForm) {
-            contactForm.addEventListener('submit', function(e) {
-                e.preventDefault();
+       // フォーム送信ハンドリング
+const contactForm = document.getElementById('contact-form');
+if (contactForm) {
+    contactForm.addEventListener('submit', function(e) {
+        // フォーム送信時の表示制御
+        const formSubmit = document.querySelector('.form-submit');
+        const formButton = formSubmit.querySelector('.btn');
+        const originalButtonText = formButton.textContent;
+        
+        formButton.disabled = true;
+        formButton.textContent = '送信中...';
+        
+        // Formspreeにフォームデータを送信し、処理結果を受け取る
+        fetch(contactForm.action, {
+            method: contactForm.method,
+            body: new FormData(contactForm),
+            headers: {
+                'Accept': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.ok) {
+                // 送信成功
+                formSubmit.innerHTML = '<div class="success-message"><i class="fas fa-check-circle"></i> お問い合わせありがとうございます。担当者より折り返しご連絡いたします。</div>';
                 
-                // フォーム送信成功時のアニメーションとメッセージ
-                const formSubmit = document.querySelector('.form-submit');
-                const formButton = formSubmit.querySelector('.btn');
-                const originalButtonText = formButton.textContent;
+                // フォームリセット
+                contactForm.reset();
                 
-                formButton.disabled = true;
-                formButton.textContent = '送信中...';
-                
-                // 送信処理（実際にはサーバーへの送信コードを追加）
+                // 5秒後に元に戻す
                 setTimeout(() => {
-                    // 送信完了メッセージ
-                    formSubmit.innerHTML = '<div class="success-message"><i class="fas fa-check-circle"></i> お問い合わせありがとうございます。担当者より折り返しご連絡いたします。</div>';
-                    
-                    // フォームリセット
-                    contactForm.reset();
-                    
-                    // 5秒後に元に戻す
-                    setTimeout(() => {
-                        formSubmit.innerHTML = `<button type="submit" class="btn">${originalButtonText}</button>`;
-                    }, 5000);
-                }, 1500);
-            });
-        }
-    </script>
+                    formSubmit.innerHTML = `<button type="submit" class="btn">${originalButtonText}</button>`;
+                }, 5000);
+            } else {
+                // エラーメッセージ
+                formSubmit.innerHTML = '<div class="error-message"><i class="fas fa-exclamation-circle"></i> 送信に失敗しました。しばらくしてからもう一度お試しください。</div>';
+                
+                // 5秒後に元に戻す
+                setTimeout(() => {
+                    formSubmit.innerHTML = `<button type="submit" class="btn">${originalButtonText}</button>`;
+                    formButton.disabled = false;
+                }, 5000);
+            }
+        })
+        .catch(error => {
+            // エラーメッセージ
+            formSubmit.innerHTML = '<div class="error-message"><i class="fas fa-exclamation-circle"></i> 送信に失敗しました。しばらくしてからもう一度お試しください。</div>';
+            
+            // 5秒後に元に戻す
+            setTimeout(() => {
+                formSubmit.innerHTML = `<button type="submit" class="btn">${originalButtonText}</button>`;
+                formButton.disabled = false;
+            }, 5000);
+        });
+        
+        // フォームのデフォルト送信を防止
+        e.preventDefault();
+    });
+}
 </body>
 </html>
