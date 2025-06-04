@@ -238,6 +238,11 @@
             display: block;
         }
 
+        /* スマホ用メイン画像 */
+        .thumbnail-image-mobile {
+            display: none;
+        }
+
         .hero-title {
             font-size: 3em;
             color: #888;
@@ -686,13 +691,25 @@
                 height: 280px;
             }
 
+            /* スマホではメイン画像を切り替え */
             .thumbnail-image {
-                height: 300px;
+                display: none;
+            }
+
+            .thumbnail-image-mobile {
+                display: block;
+                width: 100%;
+                max-width: 360px;
+                height: 240px;
                 object-fit: cover;
+                border-radius: 25px;
+                border: 3px solid #ff6b9d;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                margin: 0 auto;
             }
 
             .thumbnail-placeholder {
-                height: 300px;
+                height: 240px;
             }
             
             .social-grid {
@@ -746,9 +763,15 @@
             </div>
             
             <div class="admin-section">
-                <h4>🎨 メインビジュアル</h4>
+                <h4>🎨 メインビジュアル（PC用）</h4>
                 <input type="text" class="url-input" id="thumbnailUrl" placeholder="メインビジュアルのURL">
                 <button class="update-btn" onclick="updateThumbnail()">ビジュアルを更新</button>
+            </div>
+
+            <div class="admin-section">
+                <h4>📱 メインビジュアル（スマホ用）</h4>
+                <input type="text" class="url-input" id="thumbnailMobileUrl" placeholder="スマホ用メインビジュアルのURL">
+                <button class="update-btn" onclick="updateThumbnailMobile()">スマホ用を更新</button>
             </div>
             
             <div class="admin-section">
@@ -793,7 +816,11 @@
         <!-- ヒーローセクション -->
         <section class="hero-section" id="about">
             <div class="thumbnail-area">
+                <!-- PC用画像 -->
                 <img src="images/marumayu/main.png" alt="メインビジュアル" class="thumbnail-image" id="thumbnailImage">
+                <!-- スマホ用画像 -->
+                <img src="images/marumayu/main2.png" alt="メインビジュアル" class="thumbnail-image-mobile" id="thumbnailImageMobile">
+                <!-- プレースホルダー -->
                 <div class="thumbnail-placeholder" id="thumbnailPlaceholder">
                     メインビジュアル
                 </div>
@@ -953,6 +980,11 @@
             threads: "#"
         };
 
+        // ページ読み込み時に最上部を表示するための処理
+        window.addEventListener('beforeunload', function() {
+            window.scrollTo(0, 0);
+        });
+
         // ロゴクリックで上部に戻る
         function scrollToTop() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -994,7 +1026,7 @@
             }
         }
 
-        // メインビジュアルの更新
+        // メインビジュアルの更新（PC用）
         function updateThumbnail() {
             const url = document.getElementById('thumbnailUrl').value.trim();
             const image = document.getElementById('thumbnailImage');
@@ -1004,12 +1036,26 @@
                 image.src = url;
                 image.style.display = 'block';
                 placeholder.style.display = 'none';
-                alert('メインビジュアルを更新しました！');
+                alert('メインビジュアル（PC用）を更新しました！');
             } else {
                 image.src = 'images/marumayu/main.png';
                 image.style.display = 'block';
                 placeholder.style.display = 'none';
-                alert('メインビジュアルをデフォルトに戻しました！');
+                alert('メインビジュアル（PC用）をデフォルトに戻しました！');
+            }
+        }
+
+        // メインビジュアルの更新（スマホ用）
+        function updateThumbnailMobile() {
+            const url = document.getElementById('thumbnailMobileUrl').value.trim();
+            const image = document.getElementById('thumbnailImageMobile');
+            
+            if (url) {
+                image.src = url;
+                alert('メインビジュアル（スマホ用）を更新しました！');
+            } else {
+                image.src = 'images/marumayu/main2.png';
+                alert('メインビジュアル（スマホ用）をデフォルトに戻しました！');
             }
         }
 
@@ -1135,7 +1181,9 @@
         // 初期化
         document.addEventListener('DOMContentLoaded', function() {
             // ページ読み込み時に最上部を表示
-            window.scrollTo(0, 0);
+            setTimeout(function() {
+                window.scrollTo(0, 0);
+            }, 100);
             
             // デフォルトで最初のキャラクターを選択
             selectCharacter('dog');
