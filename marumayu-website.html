@@ -688,7 +688,7 @@
 
             .thumbnail-image {
                 height: 300px;
-                object-fit: contain;
+                object-fit: cover;
             }
 
             .thumbnail-placeholder {
@@ -1134,6 +1134,9 @@
 
         // 初期化
         document.addEventListener('DOMContentLoaded', function() {
+            // ページ読み込み時に最上部を表示
+            window.scrollTo(0, 0);
+            
             // デフォルトで最初のキャラクターを選択
             selectCharacter('dog');
         });
