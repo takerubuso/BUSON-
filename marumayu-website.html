@@ -68,6 +68,7 @@
 
         .logo-area {
             display: block;
+            cursor: pointer;
         }
 
         .logo {
@@ -195,16 +196,7 @@
             position: relative;
         }
 
-        .hero-bg {
-            position: absolute;
-            top: -50px;
-            left: 0;
-            right: 0;
-            height: 400px;
-            background: linear-gradient(135deg, rgba(255, 182, 193, 0.3) 0%, rgba(255, 192, 203, 0.2) 100%);
-            border-radius: 50px;
-            z-index: -1;
-        }
+
 
         .thumbnail-area {
             margin-bottom: 40px;
@@ -214,8 +206,8 @@
 
         .thumbnail-placeholder {
             width: 100%;
-            max-width: 600px;
-            height: 300px;
+            max-width: 1080px;
+            height: 540px;
             background: rgba(255, 255, 255, 0.9);
             border: 3px dashed #ff6b9d;
             border-radius: 25px;
@@ -236,8 +228,8 @@
 
         .thumbnail-image {
             width: 100%;
-            max-width: 600px;
-            height: 300px;
+            max-width: 1080px;
+            height: 540px;
             object-fit: cover;
             border-radius: 25px;
             border: 3px solid #ff6b9d;
@@ -248,7 +240,7 @@
 
         .hero-title {
             font-size: 3em;
-            color: #ff6b9d;
+            color: #888;
             margin-bottom: 20px;
             text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.1);
             font-weight: 700;
@@ -538,7 +530,31 @@
             transition: all 0.3s ease;
         }
 
-        /* SNSセクション */
+        /* スマホ用お問い合わせボタン */
+        .mobile-contact {
+            display: none;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .mobile-contact-btn {
+            display: inline-block;
+            background: #ff6b9d;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(255, 107, 157, 0.3);
+        }
+
+        .mobile-contact-btn:hover {
+            background: #ff5a8a;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 107, 157, 0.4);
+        }
         .social-section {
             text-align: center;
             margin-bottom: 40px;
@@ -633,6 +649,10 @@
             .nav-links {
                 display: none;
             }
+
+            .mobile-contact {
+                display: block;
+            }
             
             .hero-title {
                 font-size: 2.2em;
@@ -660,6 +680,15 @@
             .fullbody-image {
                 width: 200px;
                 height: 280px;
+            }
+
+            .thumbnail-image {
+                height: 300px;
+                object-fit: contain;
+            }
+
+            .thumbnail-placeholder {
+                height: 300px;
             }
             
             .social-grid {
@@ -747,7 +776,7 @@
     <!-- ヘッダー -->
     <header class="header">
         <nav class="nav">
-            <div class="logo" id="logoArea">
+            <div class="logo" id="logoArea" onclick="scrollToTop()">
                 <img src="images/marumayu/logo.png" alt="ロゴ" class="logo-image">
             </div>
             <ul class="nav-links">
@@ -759,8 +788,6 @@
     <div class="container">
         <!-- ヒーローセクション -->
         <section class="hero-section" id="about">
-            <div class="hero-bg"></div>
-            
             <div class="thumbnail-area">
                 <img src="images/marumayu/main.png" alt="メインビジュアル" class="thumbnail-image" id="thumbnailImage">
                 <div class="thumbnail-placeholder" id="thumbnailPlaceholder">
@@ -769,11 +796,12 @@
             </div>
             
             <h1 class="hero-title">まるまーゆ<span class="hero-title-suffix">とは</span></h1>
-            <p class="hero-subtitle">まるい眉した子たち</p>
+            <p class="hero-subtitle">まるい眉をした、やさしくて不思議な仲間たちが暮らす世界。</p>
             <p class="hero-description">
-                小さくて愛らしい「まるまーゆ」の世界へようこそ。<br>
-                まるい眉毛がチャームポイントの、心温まるキャラクターたちが織りなす<br>
-                優しい物語をお楽しみください。
+                涙もろくて繊細だったり、いつも笑顔で前向きだったり、誰かのためにまっすぐ行動できたり。<br>
+                みんなちがうけど、そっと寄り添いながら、毎日を少しずつ乗り越えていきます。<br><br>
+                不安な日も、寂しい夜も、ふと心をあたためてくれる<br>
+                <strong>"ちいさな勇気"</strong>に満ちた物語です。
             </p>
         </section>
 
@@ -872,6 +900,11 @@
                     <span>@</span>
                 </a>
             </div>
+            
+            <!-- スマホ用お問い合わせボタン -->
+            <div class="mobile-contact">
+                <a href="https://buson2025.com/buson-studio-business.html#contact" target="_blank" class="mobile-contact-btn">お問い合わせ</a>
+            </div>
         </section>
     </div>
 
@@ -915,6 +948,11 @@
             tiktok: "#",
             threads: "#"
         };
+
+        // ロゴクリックで上部に戻る
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
         // 管理パネルの表示/非表示
         function toggleAdmin() {
