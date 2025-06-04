@@ -42,11 +42,8 @@
             background-position: center;
             background-repeat: no-repeat;
             opacity: 0.3;
-            display: none;
-        }
-
-        .background-image.active {
             display: block;
+            background-image: url('images/marumayu/background.png');
         }
 
         /* ヘッダー */
@@ -70,7 +67,7 @@
         }
 
         .logo-area {
-            display: none;
+            display: block;
         }
 
         .logo {
@@ -222,7 +219,7 @@
             background: rgba(255, 255, 255, 0.9);
             border: 3px dashed #ff6b9d;
             border-radius: 25px;
-            display: flex;
+            display: none;
             align-items: center;
             justify-content: center;
             color: #ff6b9d;
@@ -740,7 +737,7 @@
     <header class="header">
         <nav class="nav">
             <div class="logo" id="logoArea">
-                <img src="https://via.placeholder.com/150x60/ff6b9d/ffffff?text=LOGO" alt="ロゴ" class="logo-image">
+                <img src="images/marumayu/logo.png" alt="ロゴ" class="logo-image">
             </div>
             <ul class="nav-links">
                 <li><a href="https://buson2025.com/buson-studio-business.html#contact" target="_blank" class="contact-btn">お問い合わせ</a></li>
@@ -754,6 +751,7 @@
             <div class="hero-bg"></div>
             
             <div class="thumbnail-area">
+                <img src="images/marumayu/main.png" alt="メインビジュアル" class="thumbnail-image" id="thumbnailImage">
                 <div class="thumbnail-placeholder" id="thumbnailPlaceholder">
                     メインビジュアル
                 </div>
@@ -773,21 +771,21 @@
             <div class="characters-grid">
                 <div class="character-card" onclick="selectCharacter('dog')">
                     <div class="character" data-char="dog">
-                        <span>わんちゃん</span>
+                        <img src="images/marumayu/character1.png" alt="わんちゃん" class="character-image">
                     </div>
                     <div class="character-name">わんちゃん</div>
                 </div>
                 
                 <div class="character-card" onclick="selectCharacter('chick')">
                     <div class="character" data-char="chick">
-                        <span>ひよこちゃん</span>
+                        <img src="images/marumayu/character2.png" alt="ひよこちゃん" class="character-image">
                     </div>
                     <div class="character-name">ひよこちゃん</div>
                 </div>
                 
                 <div class="character-card" onclick="selectCharacter('rabbit')">
                     <div class="character" data-char="rabbit">
-                        <span>うさぎちゃん</span>
+                        <img src="images/marumayu/character3.png" alt="うさぎちゃん" class="character-image">
                     </div>
                     <div class="character-name">うさぎちゃん</div>
                 </div>
@@ -795,7 +793,8 @@
 
             <div class="profile-panel" id="profilePanel">
                 <div class="profile-left">
-                    <div class="fullbody-placeholder" id="fullbodyPlaceholder">
+                    <img src="images/marumayu/character1-2.png" alt="全身イラスト" class="fullbody-image" id="fullbodyImage">
+                    <div class="fullbody-placeholder" id="fullbodyPlaceholder" style="display: none;">
                         全身イラスト
                     </div>
                 </div>
@@ -885,19 +884,22 @@
                 name: "わんちゃん",
                 birthday: "4月1日",
                 personality: "とても元気で人懐っこい性格。いつもしっぽを振って皆を迎えてくれます。お散歩が大好きで、新しい友達を作るのが得意です。",
-                catchphrase: "わんわん！"
+                catchphrase: "わんわん！",
+                fullbodyImage: "images/marumayu/character1-2.png"
             },
             chick: {
                 name: "ひよこちゃん",
                 birthday: "3月15日",
                 personality: "好奇心旺盛で何事にも興味津々。小さな体で大きな夢を抱いている頑張り屋さんです。みんなのムードメーカー的存在。",
-                catchphrase: "ぴよぴよ～"
+                catchphrase: "ぴよぴよ～",
+                fullbodyImage: "images/marumayu/character2-2.png"
             },
             rabbit: {
                 name: "うさぎちゃん",
                 birthday: "5月10日",
                 personality: "優しくて思いやりのある性格。困っている友達がいると、すぐに駆けつけて助けてくれます。静かな場所で読書をするのが好きな知的な一面も。",
-                catchphrase: "うさ〜"
+                catchphrase: "うさ〜",
+                fullbodyImage: "images/marumayu/character3-2.png"
             }
         };
 
@@ -941,22 +943,27 @@
                 bgImage.classList.add('active');
                 alert('背景画像を更新しました！');
             } else {
-                bgImage.classList.remove('active');
-                alert('背景画像を削除しました！');
+                bgImage.style.backgroundImage = 'url(images/marumayu/background.png)';
+                alert('背景画像をデフォルトに戻しました！');
             }
         }
 
         // メインビジュアルの更新
         function updateThumbnail() {
             const url = document.getElementById('thumbnailUrl').value.trim();
+            const image = document.getElementById('thumbnailImage');
             const placeholder = document.getElementById('thumbnailPlaceholder');
             
             if (url) {
-                placeholder.innerHTML = `<img src="${url}" alt="メインビジュアル" class="thumbnail-image">`;
+                image.src = url;
+                image.style.display = 'block';
+                placeholder.style.display = 'none';
                 alert('メインビジュアルを更新しました！');
             } else {
-                placeholder.innerHTML = 'メインビジュアル';
-                alert('メインビジュアルをリセットしました！');
+                image.src = 'images/marumayu/main.png';
+                image.style.display = 'block';
+                placeholder.style.display = 'none';
+                alert('メインビジュアルをデフォルトに戻しました！');
             }
         }
 
@@ -969,23 +976,38 @@
                 charElement.innerHTML = `<img src="${url}" alt="${charType}" class="character-image">`;
                 alert(`${charType}の画像を更新しました！`);
             } else {
+                const defaultImages = { 
+                    dog: 'images/marumayu/character1.png', 
+                    chick: 'images/marumayu/character2.png', 
+                    rabbit: 'images/marumayu/character3.png' 
+                };
                 const names = { dog: 'わんちゃん', chick: 'ひよこちゃん', rabbit: 'うさぎちゃん' };
-                charElement.innerHTML = `<span>${names[charType]}</span>`;
-                alert(`${charType}の画像をリセットしました！`);
+                charElement.innerHTML = `<img src="${defaultImages[charType]}" alt="${names[charType]}" class="character-image">`;
+                alert(`${charType}の画像をデフォルトに戻しました！`);
             }
         }
 
         // 全身イラストの更新
         function updateFullbody() {
             const url = document.getElementById('fullbodyUrl').value.trim();
+            const image = document.getElementById('fullbodyImage');
             const placeholder = document.getElementById('fullbodyPlaceholder');
             
             if (url) {
-                placeholder.innerHTML = `<img src="${url}" alt="全身イラスト" class="fullbody-image">`;
+                image.src = url;
+                image.style.display = 'block';
+                placeholder.style.display = 'none';
                 alert('全身イラストを更新しました！');
             } else {
-                placeholder.innerHTML = '全身イラスト';
-                alert('全身イラストをリセットしました！');
+                // デフォルトに戻す場合は現在選択されているキャラクターの画像を使用
+                if (currentCharacter) {
+                    image.src = characterData[currentCharacter].fullbodyImage;
+                } else {
+                    image.src = 'images/marumayu/character1-2.png';
+                }
+                image.style.display = 'block';
+                placeholder.style.display = 'none';
+                alert('全身イラストをデフォルトに戻しました！');
             }
         }
 
@@ -1007,11 +1029,13 @@
             const birthdayElement = document.getElementById('charBirthday');
             const personalityElement = document.getElementById('charPersonality');
             const catchphraseElement = document.getElementById('charCatchphrase');
+            const fullbodyImage = document.getElementById('fullbodyImage');
             
             if (nameElement) nameElement.textContent = data.name;
             if (birthdayElement) birthdayElement.textContent = data.birthday;
             if (personalityElement) personalityElement.textContent = data.personality;
             if (catchphraseElement) catchphraseElement.textContent = data.catchphrase;
+            if (fullbodyImage) fullbodyImage.src = data.fullbodyImage;
             
             // プロフィールパネルを表示
             const panel = document.getElementById('profilePanel');
@@ -1066,7 +1090,8 @@
 
         // 初期化
         document.addEventListener('DOMContentLoaded', function() {
-            // 必要に応じて初期設定
+            // デフォルトで最初のキャラクターを選択
+            selectCharacter('dog');
         });
     </script>
 </body>
