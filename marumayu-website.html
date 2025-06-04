@@ -255,9 +255,15 @@
             animation: float 3s ease-in-out infinite;
         }
 
+        .hero-title .hero-title-suffix {
+            font-size: 0.6em;
+            color: #888;
+            font-weight: 300;
+        }
+
         .hero-subtitle {
             font-size: 1.5em;
-            color: #666;
+            color: #888;
             margin-bottom: 30px;
             font-weight: 300;
         }
@@ -413,6 +419,9 @@
         .profile-left {
             flex: 1;
             text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .profile-right {
@@ -429,7 +438,6 @@
             align-items: center;
             justify-content: center;
             color: #ff6b9d;
-            margin: 0 auto;
             font-weight: 500;
         }
 
@@ -440,7 +448,6 @@
             border-radius: 20px;
             border: 3px solid #ff6b9d;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-            margin: 0 auto;
             display: block;
         }
 
@@ -644,6 +651,10 @@
                 flex-direction: column;
                 gap: 30px;
             }
+
+            .profile-left {
+                align-self: center;
+            }
             
             .fullbody-placeholder,
             .fullbody-image {
@@ -708,20 +719,20 @@
             </div>
             
             <div class="admin-section">
-                <h4>🐕 わんちゃん画像</h4>
-                <input type="text" class="url-input" id="dogUrl" placeholder="わんちゃんの画像URL">
+                <h4>🐕 ピー画像</h4>
+                <input type="text" class="url-input" id="dogUrl" placeholder="ピーの画像URL">
                 <button class="update-btn" onclick="updateCharacter('dog')">更新</button>
             </div>
             
             <div class="admin-section">
-                <h4>🐤 ひよこちゃん画像</h4>
-                <input type="text" class="url-input" id="chickUrl" placeholder="ひよこちゃんの画像URL">
+                <h4>🐤 クー画像</h4>
+                <input type="text" class="url-input" id="chickUrl" placeholder="クーの画像URL">
                 <button class="update-btn" onclick="updateCharacter('chick')">更新</button>
             </div>
             
             <div class="admin-section">
-                <h4>🐰 うさぎちゃん画像</h4>
-                <input type="text" class="url-input" id="rabbitUrl" placeholder="うさぎちゃんの画像URL">
+                <h4>🐰 ウー画像</h4>
+                <input type="text" class="url-input" id="rabbitUrl" placeholder="ウーの画像URL">
                 <button class="update-btn" onclick="updateCharacter('rabbit')">更新</button>
             </div>
             
@@ -757,7 +768,7 @@
                 </div>
             </div>
             
-            <h1 class="hero-title">まるまーゆとは</h1>
+            <h1 class="hero-title">まるまーゆ<span class="hero-title-suffix">とは</span></h1>
             <p class="hero-subtitle">まるい眉した子たち</p>
             <p class="hero-description">
                 小さくて愛らしい「まるまーゆ」の世界へようこそ。<br>
@@ -771,23 +782,23 @@
             <div class="characters-grid">
                 <div class="character-card" onclick="selectCharacter('dog')">
                     <div class="character" data-char="dog">
-                        <img src="images/marumayu/character1.png" alt="わんちゃん" class="character-image">
+                        <img src="images/marumayu/character1.png" alt="ピー" class="character-image">
                     </div>
-                    <div class="character-name">わんちゃん</div>
+                    <div class="character-name">ピー</div>
                 </div>
                 
                 <div class="character-card" onclick="selectCharacter('chick')">
                     <div class="character" data-char="chick">
-                        <img src="images/marumayu/character2.png" alt="ひよこちゃん" class="character-image">
+                        <img src="images/marumayu/character2.png" alt="クー" class="character-image">
                     </div>
-                    <div class="character-name">ひよこちゃん</div>
+                    <div class="character-name">クー</div>
                 </div>
                 
                 <div class="character-card" onclick="selectCharacter('rabbit')">
                     <div class="character" data-char="rabbit">
-                        <img src="images/marumayu/character3.png" alt="うさぎちゃん" class="character-image">
+                        <img src="images/marumayu/character3.png" alt="ウー" class="character-image">
                     </div>
-                    <div class="character-name">うさぎちゃん</div>
+                    <div class="character-name">ウー</div>
                 </div>
             </div>
 
@@ -811,10 +822,6 @@
                         <div class="profile-item">
                             <span class="profile-label">性格</span>
                             <div class="profile-text" id="charPersonality">性格や特徴の説明</div>
-                        </div>
-                        <div class="profile-item">
-                            <span class="profile-label">口癖</span>
-                            <div class="profile-text" id="charCatchphrase">口癖</div>
                         </div>
                     </div>
                 </div>
@@ -881,24 +888,21 @@
         // キャラクタープロフィールデータ
         const characterData = {
             dog: {
-                name: "わんちゃん",
-                birthday: "4月1日",
-                personality: "とても元気で人懐っこい性格。いつもしっぽを振って皆を迎えてくれます。お散歩が大好きで、新しい友達を作るのが得意です。",
-                catchphrase: "わんわん！",
+                name: "ピー",
+                birthday: "4月5日",
+                personality: "繊細で泣き虫。感受性が豊かで、優しい心の持ち主です。困っている友達を見ると、自分のことのように心配してしまう、とても思いやりのあるキャラクターです。",
                 fullbodyImage: "images/marumayu/character1-2.png"
             },
             chick: {
-                name: "ひよこちゃん",
-                birthday: "3月15日",
-                personality: "好奇心旺盛で何事にも興味津々。小さな体で大きな夢を抱いている頑張り屋さんです。みんなのムードメーカー的存在。",
-                catchphrase: "ぴよぴよ～",
+                name: "クー",
+                birthday: "1月1日",
+                personality: "自由で好奇心旺盛。新しいことにどんどんチャレンジしていく積極的な性格です。いつも楽しいことを探していて、みんなを笑顔にするのが得意です。",
                 fullbodyImage: "images/marumayu/character2-2.png"
             },
             rabbit: {
-                name: "うさぎちゃん",
-                birthday: "5月10日",
-                personality: "優しくて思いやりのある性格。困っている友達がいると、すぐに駆けつけて助けてくれます。静かな場所で読書をするのが好きな知的な一面も。",
-                catchphrase: "うさ〜",
+                name: "ウー",
+                birthday: "8月2日",
+                personality: "正義感が強く、いつでも正しいことをしようとする真面目な性格。困っている人がいると放っておけない、頼りになるリーダー的存在です。",
                 fullbodyImage: "images/marumayu/character3-2.png"
             }
         };
@@ -981,7 +985,7 @@
                     chick: 'images/marumayu/character2.png', 
                     rabbit: 'images/marumayu/character3.png' 
                 };
-                const names = { dog: 'わんちゃん', chick: 'ひよこちゃん', rabbit: 'うさぎちゃん' };
+                const names = { dog: 'ピー', chick: 'クー', rabbit: 'ウー' };
                 charElement.innerHTML = `<img src="${defaultImages[charType]}" alt="${names[charType]}" class="character-image">`;
                 alert(`${charType}の画像をデフォルトに戻しました！`);
             }
@@ -1028,13 +1032,11 @@
             const nameElement = document.getElementById('charName');
             const birthdayElement = document.getElementById('charBirthday');
             const personalityElement = document.getElementById('charPersonality');
-            const catchphraseElement = document.getElementById('charCatchphrase');
             const fullbodyImage = document.getElementById('fullbodyImage');
             
             if (nameElement) nameElement.textContent = data.name;
             if (birthdayElement) birthdayElement.textContent = data.birthday;
             if (personalityElement) personalityElement.textContent = data.personality;
-            if (catchphraseElement) catchphraseElement.textContent = data.catchphrase;
             if (fullbodyImage) fullbodyImage.src = data.fullbodyImage;
             
             // プロフィールパネルを表示
