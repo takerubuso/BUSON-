@@ -332,7 +332,6 @@
             color: #ff6b9d;
             font-size: 1.2em;
             opacity: 0.7;
-            animation: bounce 2s infinite;
         }
 
         @keyframes bounce {
@@ -690,8 +689,12 @@
             }
 
             .character-name {
-                font-size: 1em;
-                margin-bottom: 5px;
+                font-size: 0.9em;
+                margin-bottom: 8px;
+            }
+
+            .character-card::after {
+                display: none; /* スマホでは矢印を非表示 */
             }
             
             .profile-panel.active {
@@ -1150,8 +1153,8 @@
             if (panel) {
                 panel.classList.add('active');
                 
-                // スムーズスクロール
-                panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // スムーズスクロール（上部に表示）
+                panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
 
