@@ -263,7 +263,7 @@
     "id": 11,
     "name": "クー",
     "image": "images/character/11.jpg",
-    "profile": "しきぶちゃんの愛犬",
+    "profile": "犬",
     "category": "animal",
     "socialLinks": [
       { "name": "X", "url": "https://x.com/positiveshikibu" },
@@ -289,7 +289,7 @@
     "id": 12,
     "name": "まろ",
     "image": "images/character/12.jpg",
-    "profile": "しきぶちゃんの愛猫",
+    "profile": "猫",
     "category": "animal",
    "socialLinks": [
       { "name": "X", "url": "https://x.com/positiveshikibu" },
@@ -391,9 +391,9 @@
   },
   {
     "id": 16,
-    "name": "ジャスバニ",
+    "name": "ウー",
     "image": "images/character/16.jpg",
-    "profile": "理不尽なことを撲滅しに宇宙からやってきた可愛いヒーロー",
+    "profile": "正義感が強い",
     "category": "animal",
    "socialLinks": [
       { "name": "X", "url": "https://x.com/positiveshikibu" },
