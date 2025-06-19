@@ -56,6 +56,7 @@
             flex: 1;
             display: flex;
             flex-direction: column;
+            justify-content: center;
         }
 
         .manga-image {
@@ -71,76 +72,6 @@
             font-size: 1.2em;
             color: #f57c00;
             min-height: 400px;
-            margin-bottom: 20px;
-        }
-
-        .choices-section {
-            margin-top: auto;
-        }
-
-        .choice-buttons {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .choice-button {
-            flex: 1;
-            background: linear-gradient(135deg, #ff9a9e, #fecfef);
-            color: white;
-            border: none;
-            padding: 15px 10px;
-            border-radius: 15px;
-            font-size: 1em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            min-height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            line-height: 1.3;
-        }
-
-        .choice-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(255, 154, 158, 0.4);
-        }
-
-        .choice-button:active {
-            transform: translateY(-1px);
-        }
-
-        .next-page-section {
-            margin-bottom: 20px;
-        }
-
-        .next-page-button {
-            width: 100%;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            padding: 15px 20px;
-            border-radius: 15px;
-            font-size: 1.1em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            min-height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-
-        .next-page-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-        }
-
-        .next-page-button:active {
-            transform: translateY(-1px);
         }
 
         .navigation {
@@ -229,23 +160,6 @@
                 max-height: 80vh;
             }
 
-            .choice-buttons {
-                gap: 25px;
-                margin-bottom: 30px;
-            }
-
-            .choice-button {
-                padding: 20px 15px;
-                font-size: 1.1em;
-                min-height: 70px;
-            }
-
-            .next-page-button {
-                padding: 20px 25px;
-                font-size: 1.2em;
-                min-height: 70px;
-            }
-
             .navigation {
                 gap: 20px;
                 margin-bottom: 30px;
@@ -276,15 +190,6 @@
                 padding: 15px;
             }
 
-            .choice-buttons {
-                gap: 10px;
-            }
-
-            .choice-button {
-                min-height: 50px;
-                font-size: 0.95em;
-            }
-
             .navigation {
                 justify-content: center;
                 flex-wrap: wrap;
@@ -306,11 +211,6 @@
         }
 
         @media (max-width: 480px) {
-            .choice-button {
-                padding: 12px 8px;
-                font-size: 0.9em;
-            }
-
             .update-notice {
                 padding: 12px;
             }
@@ -336,24 +236,6 @@
             <div class="manga-image" id="manga-image">
                 漫画画像<br>Loading...
             </div>
-
-            <div class="choices-section" id="choices-section">
-                <div class="choice-buttons" id="choice-buttons">
-                    <button class="choice-button" id="choice1" onclick="makeChoice('choice1')">
-                        Loading...
-                    </button>
-                    <button class="choice-button" id="choice2" onclick="makeChoice('choice2')">
-                        Loading...
-                    </button>
-                </div>
-                
-                <!-- 次のページボタン（選択肢なしの場合） -->
-                <div class="next-page-section" id="next-page-section" style="display: none;">
-                    <button class="next-page-button" id="next-page-button" onclick="goToNextPage()">
-                        📖 続きを読む
-                    </button>
-                </div>
-            </div>
         </div>
 
         <div class="navigation">
@@ -377,26 +259,7 @@
             // ページ基本情報
             title: "第2話-A：勇気ある一歩",
             image: "assets/images/ep1/2-1.jpg",
-            prevPage: "marumayu-ep1-1.html",
-            
-            // 選択肢表示設定
-            showChoices: true,  // true: 選択肢表示, false: 選択肢非表示
-            
-            // 選択肢設定（showChoices: true の場合のみ使用）
-            choice1: {
-                text: "✨ 光る粉に<br>触ってみる",
-                link: "marumayu-ep1-3a.html"
-            },
-            choice2: {
-                text: "📱 写真を撮って<br>SNSに投稿",
-                link: "marumayu-ep1-3b.html"
-            },
-            
-            // 次のページボタン設定（showChoices: false の場合のみ使用）
-            nextPage: {
-                text: "📖 続きを読む",
-                link: "marumayu-ep1-3.html"
-            }
+            prevPage: "marumayu-ep1-1.html"
         };
         // ============================================
 
@@ -414,87 +277,29 @@
             
             // 前のページリンク設定
             document.getElementById('prev-page').href = PAGE_CONFIG.prevPage;
-            
-            // 選択肢表示設定
-            if (PAGE_CONFIG.showChoices) {
-                // 選択肢ボタンを表示
-                document.getElementById('choice-buttons').style.display = 'flex';
-                document.getElementById('next-page-section').style.display = 'none';
-                
-                // 選択肢ボタン設定
-                document.getElementById('choice1').innerHTML = PAGE_CONFIG.choice1.text;
-                document.getElementById('choice2').innerHTML = PAGE_CONFIG.choice2.text;
-            } else {
-                // 次のページボタンを表示
-                document.getElementById('choice-buttons').style.display = 'none';
-                document.getElementById('next-page-section').style.display = 'block';
-                
-                // 次のページボタン設定
-                document.getElementById('next-page-button').innerHTML = PAGE_CONFIG.nextPage.text;
-            }
         }
 
-        function makeChoice(choice) {
-            if (choice === 'choice1') {
-                // 次のページが存在する場合
-                if (PAGE_CONFIG.choice1.link.endsWith('.html')) {
-                    window.location.href = PAGE_CONFIG.choice1.link;
-                } else {
-                    alert('第3話-A「魔法の体験」は準備中です！\n近日公開予定です。');
-                }
-            } else if (choice === 'choice2') {
-                // 次のページが存在する場合
-                if (PAGE_CONFIG.choice2.link.endsWith('.html')) {
-                    window.location.href = PAGE_CONFIG.choice2.link;
-                } else {
-                    alert('第3話-B「バズる投稿」は準備中です！\n近日公開予定です。');
-                }
-            }
-        }
-
-        function goToNextPage() {
-            // 次のページが存在する場合
-            if (PAGE_CONFIG.nextPage.link.endsWith('.html')) {
-                window.location.href = PAGE_CONFIG.nextPage.link;
-            } else {
-                alert('続きは準備中です！\n近日公開予定です。');
-            }
-        }
-
-        // 選択記録（将来の分析用）
-        function recordChoice() {
-            const choiceData = {
+        // 閲覧記録（将来の分析用）
+        function recordView() {
+            const viewData = {
                 episode: PAGE_CONFIG.title,
                 timestamp: new Date().toISOString(),
                 page: window.location.href
             };
             
             const progress = JSON.parse(localStorage.getItem('marumayu_progress') || '{}');
-            progress[PAGE_CONFIG.title] = choiceData;
+            progress[PAGE_CONFIG.title] = viewData;
             localStorage.setItem('marumayu_progress', JSON.stringify(progress));
         }
 
-        // ページ読み込み時に初期化と選択を記録
+        // ページ読み込み時に初期化と閲覧を記録
         window.addEventListener('load', function() {
             initializePage();
-            recordChoice();
+            recordView();
         });
 
         // キーボードナビゲーション
         document.addEventListener('keydown', function(e) {
-            if (PAGE_CONFIG.showChoices) {
-                // 選択肢がある場合
-                if (e.key === '1') makeChoice('choice1');
-                if (e.key === '2') makeChoice('choice2');
-            } else {
-                // 選択肢がない場合
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    goToNextPage();
-                }
-            }
-            
-            // 共通ナビゲーション
             if (e.key === 'h') window.location.href = 'manga-top.html';
             if (e.key === 'b') window.location.href = PAGE_CONFIG.prevPage;
         });
