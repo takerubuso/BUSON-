@@ -461,6 +461,71 @@
             line-height: 1.6;
         }
 
+        /* マンガセクション */
+        .manga-section {
+            margin-bottom: 80px;
+        }
+
+        .manga-title {
+            font-size: 2.5em;
+            color: #333;
+            text-align: center;
+            margin-bottom: 50px;
+            font-weight: 700;
+        }
+
+        .manga-slider-container {
+            position: relative;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 30px 20px;
+            border: 2px solid #ffb3d9;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .manga-slider {
+            display: flex;
+            gap: 0;
+            will-change: transform;
+        }
+
+        .manga-item {
+            flex: 0 0 300px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .manga-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .manga-cover {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 15px;
+            border: 3px solid #ff6b9d;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .manga-info {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .manga-series {
+            font-size: 0.9em;
+            color: #999;
+            margin-bottom: 5px;
+        }
+
+        .manga-episode {
+            font-size: 1.1em;
+            color: #333;
+            font-weight: 600;
+        }
+
         /* メニューセクション */
         .menu-section {
             margin-bottom: 60px;
@@ -731,6 +796,36 @@
                 font-size: 0.8em;
                 padding: 8px 12px;
             }
+
+            /* マンガセクション - スマホ対応 */
+            .manga-title {
+                font-size: 2em;
+            }
+
+            .manga-slider-container {
+                padding: 20px 15px;
+            }
+
+            .manga-item {
+                flex: 0 0 calc(33.333% - 15px);
+                margin: 0 7.5px;
+            }
+
+            .manga-cover {
+                height: 160px;
+            }
+
+            .manga-info {
+                margin-top: 8px;
+            }
+
+            .manga-series {
+                font-size: 0.7em;
+            }
+
+            .manga-episode {
+                font-size: 0.8em;
+            }
         }
 
         .admin-panel.hidden {
@@ -887,6 +982,50 @@
             </div>
         </section>
 
+        <!-- マンガセクション -->
+        <section class="manga-section" id="manga">
+            <h2 class="manga-title">マンガシリーズ</h2>
+            <div class="manga-slider-container">
+                <div class="manga-slider" id="mangaSlider">
+                    <div class="manga-item" onclick="openManga('https://example.com/manga1')">
+                        <img src="https://via.placeholder.com/300x400/4CAF50/white?text=まるまーゆ%0Aちいさな勇気編%0A第1話" alt="まるまーゆ ちいさな勇気編 第1話" class="manga-cover">
+                        <div class="manga-info">
+                            <div class="manga-series">まるまーゆ</div>
+                            <div class="manga-episode">ちいさな勇気編 第1話</div>
+                        </div>
+                    </div>
+                    <div class="manga-item" onclick="openManga('https://example.com/manga2')">
+                        <img src="https://via.placeholder.com/300x400/2196F3/white?text=まるまーゆ%0Aちいさな勇気編%0A第2話" alt="まるまーゆ ちいさな勇気編 第2話" class="manga-cover">
+                        <div class="manga-info">
+                            <div class="manga-series">まるまーゆ</div>
+                            <div class="manga-episode">ちいさな勇気編 第2話</div>
+                        </div>
+                    </div>
+                    <div class="manga-item" onclick="openManga('https://example.com/manga3')">
+                        <img src="https://via.placeholder.com/300x400/FF9800/white?text=まるまーゆ%0Aちいさな勇気編%0A第3話" alt="まるまーゆ ちいさな勇気編 第3話" class="manga-cover">
+                        <div class="manga-info">
+                            <div class="manga-series">まるまーゆ</div>
+                            <div class="manga-episode">ちいさな勇気編 第3話</div>
+                        </div>
+                    </div>
+                    <div class="manga-item" onclick="openManga('https://example.com/manga4')">
+                        <img src="https://via.placeholder.com/300x400/E91E63/white?text=まるまーゆ%0Aちいさな勇気編%0A第4話" alt="まるまーゆ ちいさな勇気編 第4話" class="manga-cover">
+                        <div class="manga-info">
+                            <div class="manga-series">まるまーゆ</div>
+                            <div class="manga-episode">ちいさな勇気編 第4話</div>
+                        </div>
+                    </div>
+                    <div class="manga-item" onclick="openManga('https://example.com/manga5')">
+                        <img src="https://via.placeholder.com/300x400/9C27B0/white?text=まるまーゆ%0Aちいさな勇気編%0A第5話" alt="まるまーゆ ちいさな勇気編 第5話" class="manga-cover">
+                        <div class="manga-info">
+                            <div class="manga-series">まるまーゆ</div>
+                            <div class="manga-episode">ちいさな勇気編 第5話</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- メニューセクション -->
         <section class="menu-section" id="goods">
             <div class="menu-grid">
@@ -948,6 +1087,15 @@
 
     <script>
         let currentCharacter = null;
+        let currentSlide = 0;
+        let touchStartX = 0;
+        let touchEndX = 0;
+        let touchStartTime = 0;
+        let touchStartPosition = 0;
+        let isDragging = false;
+        let animationId = null;
+        let currentTranslateX = 0;
+        let velocity = 0;
 
         // キャラクタープロフィールデータ
         const characterData = {
@@ -1135,6 +1283,133 @@
             }
         }
 
+        // マンガスライダー機能（慣性スクロール対応）
+        function getMaxTranslateX() {
+            const slider = document.getElementById('mangaSlider');
+            const container = slider.parentElement;
+            const containerWidth = container.offsetWidth;
+            const sliderWidth = slider.scrollWidth;
+            return Math.min(0, containerWidth - sliderWidth);
+        }
+
+        function updateSliderPosition(translateX = currentTranslateX, animate = true) {
+            const slider = document.getElementById('mangaSlider');
+            const maxTranslateX = getMaxTranslateX();
+            
+            // 境界チェック
+            if (translateX > 0) translateX = 0;
+            if (translateX < maxTranslateX) translateX = maxTranslateX;
+            
+            currentTranslateX = translateX;
+            
+            if (animate) {
+                slider.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            } else {
+                slider.style.transition = 'none';
+            }
+            
+            slider.style.transform = `translateX(${translateX}px)`;
+        }
+
+        // タッチ開始
+        function handleTouchStart(e) {
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+            
+            const slider = document.getElementById('mangaSlider');
+            slider.style.transition = 'none';
+            
+            touchStartX = e.touches[0].clientX;
+            touchStartTime = Date.now();
+            touchStartPosition = currentTranslateX;
+            isDragging = true;
+            velocity = 0;
+        }
+
+        // タッチ移動
+        function handleTouchMove(e) {
+            if (!isDragging) return;
+            
+            e.preventDefault();
+            const currentX = e.touches[0].clientX;
+            const deltaX = currentX - touchStartX;
+            const newTranslateX = touchStartPosition + deltaX;
+            
+            updateSliderPosition(newTranslateX, false);
+        }
+
+        // タッチ終了
+        function handleTouchEnd(e) {
+            if (!isDragging) return;
+            
+            isDragging = false;
+            touchEndX = e.changedTouches[0].clientX;
+            const touchEndTime = Date.now();
+            
+            // 速度計算
+            const deltaX = touchEndX - touchStartX;
+            const deltaTime = touchEndTime - touchStartTime;
+            velocity = deltaX / deltaTime; // px/ms
+            
+            // 慣性スクロール開始
+            if (Math.abs(velocity) > 0.1) {
+                startMomentumScroll();
+            } else {
+                // 速度が小さい場合は適切な位置に戻す
+                snapToPosition();
+            }
+        }
+
+        // 慣性スクロール
+        function startMomentumScroll() {
+            const friction = 0.95; // 摩擦係数
+            const minVelocity = 0.1; // 最小速度
+            
+            function animate() {
+                velocity *= friction;
+                
+                if (Math.abs(velocity) < minVelocity) {
+                    snapToPosition();
+                    return;
+                }
+                
+                currentTranslateX += velocity * 16; // 16ms間隔を想定
+                updateSliderPosition(currentTranslateX, false);
+                
+                animationId = requestAnimationFrame(animate);
+            }
+            
+            animationId = requestAnimationFrame(animate);
+        }
+
+        // 適切な位置にスナップ
+        function snapToPosition() {
+            const slider = document.getElementById('mangaSlider');
+            const containerWidth = slider.parentElement.offsetWidth;
+            const itemWidth = containerWidth / 3; // 3つ表示
+            
+            // 現在位置から最も近いスナップポイントを計算
+            const snapIndex = Math.round(-currentTranslateX / itemWidth);
+            const maxSnaps = Math.floor(slider.children.length - 3);
+            const clampedIndex = Math.max(0, Math.min(snapIndex, maxSnaps));
+            
+            const targetTranslateX = -clampedIndex * itemWidth;
+            updateSliderPosition(targetTranslateX, true);
+            
+            currentSlide = clampedIndex;
+        }
+
+        // マンガを開く
+        function openManga(url) {
+            if (url && url !== 'https://example.com/manga1' && url !== 'https://example.com/manga2' && url !== 'https://example.com/manga3' && url !== 'https://example.com/manga4' && url !== 'https://example.com/manga5') {
+                window.open(url, '_blank');
+            } else {
+                alert('マンガのリンクは準備中です！');
+            }
+        }
+
         // SNSリンクの設定
         document.querySelectorAll('.social-icon').forEach(icon => {
             const platform = icon.dataset.platform;
@@ -1155,6 +1430,13 @@
             }
         });
 
+        // ウィンドウリサイズ時にスライダーをリセット
+        window.addEventListener('resize', function() {
+            currentSlide = 0;
+            currentTranslateX = 0;
+            updateSliderPosition(0, false);
+        });
+
         // 初期化
         document.addEventListener('DOMContentLoaded', function() {
             // ページ読み込み時に最上部を表示
@@ -1164,6 +1446,17 @@
             
             // デフォルトで最初のキャラクターを選択
             selectCharacter('dog');
+
+            // スワイプイベントリスナーを追加
+            const mangaSlider = document.getElementById('mangaSlider');
+            if (mangaSlider) {
+                mangaSlider.addEventListener('touchstart', handleTouchStart, { passive: false });
+                mangaSlider.addEventListener('touchmove', handleTouchMove, { passive: false });
+                mangaSlider.addEventListener('touchend', handleTouchEnd, { passive: true });
+                
+                // 初期位置設定
+                updateSliderPosition(0, false);
+            }
         });
     </script>
 </body>
