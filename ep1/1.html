@@ -338,11 +338,11 @@
             // 選択肢設定
             choice1: {
                 text: "このままで<br>いい",
-                link: "marumayu-ep1-3a.html"
+                link: "pending-A" // 2話目完成まで一時的な値
             },
             choice2: {
                 text: "このままじゃ<br>イヤだ",
-                link: "marumayu-ep1-3b.html"
+                link: "pending-B" // 2話目完成まで一時的な値
             }
         };
         // ============================================
@@ -354,11 +354,11 @@
             document.getElementById('episode-title').textContent = PAGE_CONFIG.title;
             
             // 画像設定
-const imageElement = document.getElementById('manga-image');
-// imageElement.innerHTML = `漫画画像<br>(${PAGE_CONFIG.image})`; // ← これをコメントアウト
+            const imageElement = document.getElementById('manga-image');
+            // imageElement.innerHTML = `漫画画像<br>(${PAGE_CONFIG.image})`; // ← これをコメントアウト
 
-// 実際の画像を使用する場合:
-imageElement.innerHTML = `<img src="${PAGE_CONFIG.image}" alt="${PAGE_CONFIG.title}" style="width:100%; height:100%; object-fit:contain;">`; // ← これのコメントを解除
+            // 実際の画像を使用する場合:
+            imageElement.innerHTML = `<img src="${PAGE_CONFIG.image}" alt="${PAGE_CONFIG.title}" style="width:100%; height:100%; object-fit:contain;">`; // ← これのコメントを解除
             
             // 前のページリンク設定
             document.getElementById('prev-page').href = PAGE_CONFIG.prevPage;
@@ -374,14 +374,14 @@ imageElement.innerHTML = `<img src="${PAGE_CONFIG.image}" alt="${PAGE_CONFIG.tit
                 if (PAGE_CONFIG.choice1.link.endsWith('.html')) {
                     window.location.href = PAGE_CONFIG.choice1.link;
                 } else {
-                    alert('第3話-A「魔法の体験」は準備中です！\n近日公開予定です。');
+                    alert('更新されたら2パターンの続きが読めます！\n\n【Aルート：このままでいい】の続きをお楽しみに♪');
                 }
             } else if (choice === 'choice2') {
                 // 次のページが存在する場合
                 if (PAGE_CONFIG.choice2.link.endsWith('.html')) {
                     window.location.href = PAGE_CONFIG.choice2.link;
                 } else {
-                    alert('第3話-B「バズる投稿」は準備中です！\n近日公開予定です。');
+                    alert('更新されたら2パターンの続きが読めます！\n\n【Bルート：このままじゃイヤだ】の続きをお楽しみに♪');
                 }
             }
         }
