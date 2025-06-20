@@ -172,7 +172,65 @@
             box-shadow: 0 5px 15px rgba(29, 161, 242, 0.4);
         }
 
-        /* PC向けのスタイル */
+        /* カスタムモーダル */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 30px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-message {
+            font-size: 1.1em;
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .modal-close {
+            background: linear-gradient(135deg, #ff9a9e, #fecfef);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .modal-close:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 154, 158, 0.4);
+        }
         @media (min-width: 1024px) {
             .container {
                 max-width: 900px;
@@ -324,6 +382,14 @@
         </div>
     </div>
 
+    <!-- カスタムモーダル -->
+    <div id="customModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-message" id="modalMessage"></div>
+            <button class="modal-close" onclick="closeModal()">OK</button>
+        </div>
+    </div>
+
     <script>
         // ============================================
         // 📝 ページ設定（ここだけ編集すればOK！）
@@ -370,15 +436,34 @@
                 if (PAGE_CONFIG.choice1.link.endsWith('.html')) {
                     window.location.href = PAGE_CONFIG.choice1.link;
                 } else {
-                    alert('更新されたら2パターンの続きが読めます！\n\n【Aルート：このままでいい】の続きをお楽しみに♪');
+                    showModal('更新されたら2パターンの続きが読めます！\n\n【Aルート：このままでいい】の続きをお楽しみに♪');
                 }
             } else if (choice === 'choice2') {
                 // 次のページが存在する場合
                 if (PAGE_CONFIG.choice2.link.endsWith('.html')) {
                     window.location.href = PAGE_CONFIG.choice2.link;
                 } else {
-                    alert('更新されたら2パターンの続きが読めます！\n\n【Bルート：このままじゃイヤだ】の続きをお楽しみに♪');
+                    showModal('更新されたら2パターンの続きが読めます！\n\n【Bルート：このままじゃイヤだ】の続きをお楽しみに♪');
                 }
+            }
+        }
+
+        // カスタムモーダル表示
+        function showModal(message) {
+            document.getElementById('modalMessage').innerHTML = message.replace(/\n/g, '<br>');
+            document.getElementById('customModal').style.display = 'block';
+        }
+
+        // モーダルを閉じる
+        function closeModal() {
+            document.getElementById('customModal').style.display = 'none';
+        }
+
+        // モーダル外をクリックで閉じる
+        window.onclick = function(event) {
+            const modal = document.getElementById('customModal');
+            if (event.target === modal) {
+                closeModal();
             }
         }
 
