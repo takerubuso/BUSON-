@@ -13,9 +13,9 @@
         /* --- Base Styles --- */
         :root {
             --primary-color: #FF758C; /* BUSONピンク：ブランドカラー */
-            --primary-dark: #FF5A75;  /* ボタンホバー用 */
-            --line-green: #06C755;    /* LINE公式グリーン：機能強調用 */
-            --line-bg: #f0fff4;       /* LINE要素の薄い背景色 */
+            --primary-dark: #FF5A75;  /* ピンク箇所のアクセント用 */
+            --line-green: #06C755;    /* LINE公式グリーン：機能・ボタン強調用 */
+            --line-dark: #05b34c;     /* ボタンホバー用（濃い緑） */
             --accent-color: #FFC107;  /* 注意喚起用 */
             --text-color: #4a4a4a;    /* 優しい黒 */
             --bg-pink: #FFF0F3;       /* 背景用薄ピンク */
@@ -42,23 +42,24 @@
         /* --- Text Colors --- */
         .text-line { color: var(--line-green); }
 
-        /* --- Button --- */
+        /* --- Button (LINE Green Version) --- */
         .btn {
             display: inline-block;
-            background-color: var(--primary-color);
+            background-color: var(--line-green); /* 緑に変更 */
             color: var(--white);
             font-size: 1.2rem;
             font-weight: bold;
             padding: 18px 50px;
             border-radius: 50px;
             text-decoration: none;
-            box-shadow: 0 4px 15px rgba(255, 117, 140, 0.4);
+            /* 影も緑色に変更 */
+            box-shadow: 0 4px 15px rgba(6, 199, 85, 0.4);
             transition: all 0.3s ease;
         }
         .btn:hover {
-            background-color: var(--primary-dark);
+            background-color: var(--line-dark); /* ホバー時は濃い緑 */
             transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(255, 117, 140, 0.6);
+            box-shadow: 0 6px 20px rgba(6, 199, 85, 0.6);
         }
 
         /* --- Header --- */
@@ -126,7 +127,7 @@
             background: var(--white); color: var(--primary-color); padding: 12px 25px;
             border-radius: 30px; font-weight: bold; box-shadow: 0 3px 10px rgba(0,0,0,0.1);
         }
-        /* LINE強調用スタイル（ハイブリッドデザイン） */
+        /* LINE強調用スタイル */
         .package-item.line-special {
             color: var(--line-green);
             border: 2px solid var(--line-green);
