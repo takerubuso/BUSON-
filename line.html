@@ -100,7 +100,15 @@
             border-radius: 20px; transition: transform 0.3s;
         }
         .solution-card:hover { border-color: var(--primary-color); transform: translateY(-5px); }
-        .solution-icon { font-size: 3.5rem; margin-bottom: 15px; display: block; }
+        
+        /* 修正：絵文字ではなく画像用のクラスに変更 */
+        .solution-icon-img { 
+            width: 100px; /* アイコン画像の幅 */
+            height: auto; 
+            margin-bottom: 20px; 
+            display: inline-block; 
+        }
+        
         .solution-card h3 { font-size: 1.3rem; margin-bottom: 15px; color: var(--primary-dark); }
 
         /* --- Package Details --- */
@@ -225,17 +233,17 @@
             <h2 class="section-title"><span>Solution</span>BUSON STUDIOブランドという<br>圧倒的な付加価値</h2>
             <div class="solution-grid">
                 <div class="solution-card">
-                    <span class="solution-icon">👑</span>
+                    <img src="https://placehold.jp/200x200.png?text=王冠アイコン" alt="ブランド価値" class="solution-icon-img">
                     <h3>BUSON名義の<br>ブランド価値</h3>
                     <p>ただ作るだけなら誰でもできます。100万人に愛される作家の「センス・世界観」を注入し、御社のキャラを「作品」として仕上げます。</p>
                 </div>
                 <div class="solution-card">
-                    <span class="solution-icon">🚀</span>
+                    <img src="https://placehold.jp/200x200.png?text=ロケットアイコン" alt="クオリティ＆速度" class="solution-icon-img">
                     <h3>圧倒的な<br>クオリティ＆速度</h3>
                     <p>最新技術で制作工程を効率化。浮いた時間を「作家による仕上げ・監修」に集中させることで、短納期かつ高品質を実現しました。</p>
                 </div>
                 <div class="solution-card">
-                    <span class="solution-icon">📦</span>
+                    <img src="https://placehold.jp/200x200.png?text=箱アイコン" alt="全部入り" class="solution-icon-img">
                     <h3>スタンプ・PRまで<br>全部入り</h3>
                     <p>キャラ制作だけでなくLINEスタンプ化、SNSでのPRまでワンストップ。納品されたその日から広報担当として活躍します。</p>
                 </div>
