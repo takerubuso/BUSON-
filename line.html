@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BUSON監修 企業キャラクター制作パッケージ | 月10社限定</title>
+    <title>BUSON監修 企業キャラクター制作パッケージ | 株式会社TAKER</title>
     <meta name="description" content="SNSフォロワー100万人超の作家BUSON監修。中小企業の「認知・採用・広報」を変えるキャラクター制作・LINEスタンプ・PR漫画パッケージ。">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,10 +13,10 @@
         /* --- Base Styles --- */
         :root {
             --primary-color: #FF758C; /* BUSONピンク */
-            --primary-dark: #FF5A75;
-            --accent-color: #FFC107;
-            --text-color: #4a4a4a;
-            --bg-pink: #FFF0F3;
+            --primary-dark: #FF5A75;  /* ボタンホバー用 */
+            --accent-color: #FFC107;  /* 注意喚起用 */
+            --text-color: #4a4a4a;    /* 優しい黒 */
+            --bg-pink: #FFF0F3;       /* 背景用薄ピンク */
             --white: #ffffff;
         }
 
@@ -86,11 +86,11 @@
             box-shadow: 0 5px 15px rgba(255, 117, 140, 0.1);
             text-align: center;
         }
-        /* イラスト配置用のプレースホルダー */
+        /* イラスト配置用の枠 */
         .problem-img-placeholder {
-            width: 60px; height: 60px; background: #eee; border-radius: 50%;
+            width: 80px; height: 80px; background: #f8f8f8; border-radius: 50%;
             margin: 0 auto 15px; display: flex; align-items: center; justify-content: center;
-            font-size: 0.8rem; color: #999;
+            font-size: 0.8rem; color: #aaa; border: 2px dashed #ddd;
         }
 
         /* --- Solution Section --- */
@@ -156,7 +156,7 @@
         }
 
         /* --- Footer --- */
-        footer { background: #333; color: var(--white); text-align: center; padding: 30px 20px; font-size: 0.8rem; }
+        footer { background: #333; color: var(--white); text-align: center; padding: 40px 20px; font-size: 0.9rem; }
 
         /* --- Responsive --- */
         @media (max-width: 768px) {
@@ -181,8 +181,8 @@
         <div class="container">
             <div class="hero-badges">
                 <span class="badge">SNS総フォロワー100万人</span>
-                <span class="badge">TV出演実績多数</span>
-                <span class="badge">LINEスタンプランキング1位</span>
+                <span class="badge">TV・書籍化 実績多数</span>
+                <span class="badge">公的機関(警察・行政)コラボ実績</span>
             </div>
             <h1>御社の「顔」を、<br>100万人が支持するクオリティで。<br>BUSON監修 キャラクター開発</h1>
             <p>最新技術による効率化 × 作家のブランド力 × SNS拡散力。<br>「認知・採用・広報」を変える、戦力となるキャラクターを適正価格で。</p>
@@ -198,19 +198,19 @@
             <h2 class="section-title"><span>Problem</span>自社のキャラクターを作りたいが、<br>こんな失敗はしたくない…</h2>
             <div class="problems-list">
                 <div class="problem-item">
-                    <div class="problem-img-placeholder">イラスト</div>
+                    <div class="problem-img-placeholder">お金の<br>イラスト</div>
                     <strong>デザイン会社は高すぎる</strong><br><small>100万円以上と言われ予算が降りない</small>
                 </div>
                 <div class="problem-item">
-                    <div class="problem-img-placeholder">イラスト</div>
+                    <div class="problem-img-placeholder">書類の<br>イラスト</div>
                     <strong>AIは権利関係が怖い</strong><br><small>商標リスクや類似キャラが心配</small>
                 </div>
                 <div class="problem-item">
-                    <div class="problem-img-placeholder">イラスト</div>
+                    <div class="problem-img-placeholder">NG<br>イラスト</div>
                     <strong>安っぽい素材になる</strong><br><small>企業の「顔」としての品格がない</small>
                 </div>
                 <div class="problem-item">
-                    <div class="problem-img-placeholder">イラスト</div>
+                    <div class="problem-img-placeholder">迷う<br>イラスト</div>
                     <strong>作っても放置される</strong><br><small>活用法が分からずフォルダに眠る</small>
                 </div>
             </div>
@@ -231,8 +231,8 @@
                 </div>
                 <div class="solution-card">
                     <span class="solution-icon">🚀</span>
-                    <h3>圧倒的な<br>ハイクオリティ</h3>
-                    <p>最新技術で制作工程を効率化。浮いたリソースを「作家による仕上げ」に集中させることで、短納期かつ高品質を実現しました。</p>
+                    <h3>圧倒的な<br>クオリティ＆速度</h3>
+                    <p>最新技術で制作工程を効率化。浮いた時間を「作家による仕上げ・監修」に集中させることで、短納期かつ高品質を実現しました。</p>
                 </div>
                 <div class="solution-card">
                     <span class="solution-icon">📦</span>
@@ -295,11 +295,12 @@
                     <div class="price">75<span>万円(税別)</span></div>
                     <p>キャラを事業の柱にしたい企業様</p>
                     <ul class="price-features">
-                        <li><strong>キャラ（全身/横顔/3ポーズ）</strong></li>
+                        <li>キャラ制作（全身+表情）</li>
                         <li><strong>LINEスタンプ 40個(フル)</strong></li>
+                        <li><strong>高解像度・文字なしデータ納品</strong><br><span class="option-note">※チラシやWebで使える素材40点</span></li>
                         <li>PR漫画 1本制作</li>
                         <li>BUSON SNSで拡散</li>
-                        <li><strong>Zoom定例・優先制作対応</strong></li>
+                        <li>Zoom定例・優先制作対応</li>
                     </ul>
                 </div>
             </div>
@@ -341,11 +342,26 @@
         <div class="container">
             <h2 class="section-title"><span>FAQ</span>よくある質問</h2>
             <div style="max-width: 800px; margin: 0 auto;">
-                <p><strong>Q. 著作権はどうなりますか？</strong><br>A. 納品時に譲渡いたします。Web、グッズ、チラシなど自由にご利用いただけます。</p>
+                
+                <p><strong>Q. 支払い方法は何がありますか？</strong><br>
+                A. 原則「銀行振込（請求書払い）」をお願いしております。着手時または納品月末でのお支払いなど、貴社の締め日に合わせて柔軟に対応可能です。</p>
                 <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
-                <p><strong>Q. スタンプの個数は増やせますか？</strong><br>A. はい、可能です。ご予算に合わせて、8個単位で追加オプションをご用意しております。</p>
+                
+                <p><strong>Q. 適格請求書（インボイス）に対応していますか？</strong><br>
+                A. はい、株式会社TAKERは適格請求書発行事業者ですので、安心してご依頼いただけます。</p>
                 <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
-                <p><strong>Q. 打ち合わせは必要ですか？</strong><br>A. 基本的にはフォームとチャットで完結しますが、プレミアムプランではZoomでの定例MTGが可能です。</p>
+
+                <p><strong>Q. 作ったキャラでグッズを作って販売してもいいですか？</strong><br>
+                A. はい、商用利用可能ですので問題ありません。グッズ、チラシ、Webサイトなど自由にご活用ください。</p>
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+
+                <p><strong>Q. 納品された画像（スタンプ画像）をチラシにも使えますか？</strong><br>
+                A. 45万円プラン等の「スタンプ画像」はサイズが小さいため、印刷には不向きです。<br>
+                チラシやポスター等でも使いたい場合は、高解像度の元データをお渡しする<strong>「プレミアムプラン（75万円）」</strong>が圧倒的におすすめです。</p>
+                <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+
+                <p><strong>Q. まだイメージが固まっていないのですが…</strong><br>
+                A. 全く問題ありません！「明るい感じ」「動物がいい」等のざっくりした要望をフォームに入力いただければ、BUSONチームからプロ視点で最適なご提案をいたします。</p>
             </div>
         </div>
     </section>
@@ -368,8 +384,18 @@
 
     <footer>
         <div class="container">
-            <p><strong>株式会社BUSON</strong><br>SNS総フォロワー数：100万人超<br>実績：書籍化多数、TV出演、LINEスタンプランキング1位獲得</p>
-            <p>&copy; 2025 BUSON Character Production. All Rights Reserved.</p>
+            <p style="font-size: 1.1rem; margin-bottom: 20px;"><strong>株式会社TAKER（BUSON STUDIO）</strong></p>
+            
+            <div style="font-size: 0.9rem; opacity: 0.9; line-height: 1.6; margin-bottom: 20px;">
+                <strong>【主な実績】</strong><br>
+                ・SNS総フォロワー数 100万人超<br>
+                ・livedoorブログ OF THE YEAR 年間最優秀賞（グランプリ）受賞<br>
+                ・書籍化『超現代風源氏物語』『ニセ織田信長』他<br>
+                ・公的機関活用：公正取引委員会、各県警察本部 防犯ポスター等にキャラクター採用<br>
+                ・メディア出演：テレビ朝日、TBS、日本経済新聞 他多数
+            </div>
+
+            <p>&copy; 2025 TAKER Inc. All Rights Reserved.</p>
         </div>
     </footer>
 
