@@ -11,14 +11,15 @@
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
-        /* --- Base Styles --- */
+        /* --- Base Styles (BUSON STUDIO Color Theme) --- */
         :root {
-            --primary-color: #0f2350; /* 信頼感のあるネイビー */
-            --accent-color: #e6b422;  /* プレミアム感のあるゴールド */
-            --text-color: #333;
-            --bg-color: #f9f9f9;
+            --primary-color: #ff5e78; /* BUSONピンク */
+            --primary-hover: #ff405e; 
+            --text-color: #333333;
+            --text-gray: #666666;
+            --bg-color: #fffafb; /* ほんのりピンクがかった白 */
             --white: #ffffff;
-            --red: #d9534f;
+            --accent-gold: #d4a017;
         }
 
         body {
@@ -47,88 +48,106 @@
         .text-center { text-align: center; }
         .bg-light { background-color: var(--bg-color); }
 
-        /* --- Button --- */
+        /* --- Button (BUSON Style) --- */
         .btn {
             display: inline-block;
-            background: linear-gradient(45deg, #e6b422, #d4a017);
+            background-color: var(--primary-color);
             color: var(--white);
             font-size: 1.2rem;
             font-weight: bold;
-            padding: 20px 60px;
+            padding: 18px 50px;
             border-radius: 50px;
-            box-shadow: 0 4px 15px rgba(230, 180, 34, 0.4);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 94, 120, 0.4);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s;
             position: relative;
             overflow: hidden;
         }
         .btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(230, 180, 34, 0.6);
-        }
-        /* 光るアニメーション */
-        .btn::after {
-            content: "";
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
-            transform: skewX(-25deg);
-            animation: shine 3s infinite;
-        }
-        @keyframes shine {
-            0% { left: -100%; }
-            20% { left: 100%; }
-            100% { left: 100%; }
+            box-shadow: 0 8px 25px rgba(255, 94, 120, 0.6);
+            background-color: var(--primary-hover);
         }
 
-        /* --- Hero Section (FV) --- */
+        /* --- Hero Section --- */
         .hero {
-            background: var(--primary-color);
-            color: var(--white);
-            padding: 100px 0 80px;
+            background-color: var(--white);
+            /* 背景に薄いラインアートなどを入れたい場合はここに画像指定 */
+            padding: 80px 0 60px;
             text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+        .hero-logo {
+            color: var(--primary-color);
+            font-weight: 900;
+            font-size: 1.5rem;
+            margin-bottom: 40px;
+            display: inline-block;
+            border: 2px solid var(--primary-color);
+            padding: 5px 15px;
+            border-radius: 5px;
         }
         .hero-badges {
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 10px;
             flex-wrap: wrap;
-            margin-bottom: 20px;
+            margin-bottom: 30px;
         }
         .badge {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.3);
+            background: #f0f0f0;
+            color: #444;
+            border: 1px solid #ddd;
             padding: 5px 15px;
             border-radius: 20px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            font-weight: bold;
         }
+        /* 実績を目立たせるゴールドバッジ */
+        .badge.gold {
+            background: #fff8e1;
+            border-color: #ffe082;
+            color: #b78900;
+        }
+
         .hero h1 {
-            font-size: 2.5rem;
+            font-size: 2.4rem;
             margin-bottom: 20px;
-            line-height: 1.4;
+            line-height: 1.5;
+            color: var(--primary-color);
         }
         .hero h1 span {
-            color: var(--accent-color);
+            color: var(--text-color);
+            font-size: 1.8rem;
+            display: block;
+            margin-bottom: 10px;
         }
         .hero p {
             font-size: 1.1rem;
             margin-bottom: 40px;
-            opacity: 0.9;
+            color: var(--text-gray);
         }
 
         /* --- Problems Section --- */
         .section-title {
-            font-size: 2rem;
+            font-size: 2.2rem;
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: 60px;
             color: var(--primary-color);
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
         }
-        .section-title span {
+        .section-title::after {
+            content: "";
             display: block;
-            font-size: 1rem;
-            color: var(--accent-color);
-            margin-bottom: 10px;
+            width: 60px;
+            height: 4px;
+            background-color: var(--primary-color);
+            margin: 15px auto 0;
+            border-radius: 2px;
         }
+        
         .problems-list {
             display: flex;
             flex-wrap: wrap;
@@ -137,12 +156,13 @@
         }
         .problem-item {
             background: var(--white);
-            padding: 20px;
-            border-radius: 10px;
-            width: calc(50% - 20px);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            border-left: 5px solid #ccc;
+            padding: 25px;
+            border-radius: 15px;
+            width: calc(50% - 30px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
         }
+        .problem-item h3 { font-size: 1.1rem; margin-bottom: 5px; }
 
         /* --- Solution Section --- */
         .solution-grid {
@@ -153,25 +173,28 @@
         .solution-card {
             text-align: center;
             padding: 30px 20px;
-            border: 2px solid #eee;
+            border: 1px solid #eee;
             border-radius: 15px;
+            background: var(--white);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
         }
         .solution-icon {
             font-size: 3rem;
             margin-bottom: 20px;
             display: block;
+            color: var(--primary-color);
         }
         .solution-card h3 {
             font-size: 1.3rem;
             margin-bottom: 15px;
-            color: var(--primary-color);
+            color: var(--text-color);
         }
 
         /* --- Package Details --- */
         .package-box {
-            background: var(--primary-color);
+            background: linear-gradient(135deg, #ff5e78 0%, #ff8fa2 100%);
             color: var(--white);
-            padding: 40px;
+            padding: 50px 30px;
             border-radius: 20px;
             text-align: center;
         }
@@ -179,15 +202,16 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            gap: 20px;
+            gap: 15px;
             margin-top: 30px;
         }
         .package-item {
-            background: rgba(255,255,255,0.1);
-            padding: 10px 20px;
+            background: var(--white);
+            color: var(--primary-color);
+            padding: 10px 25px;
             border-radius: 30px;
-            border: 1px solid rgba(255,255,255,0.3);
             font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
         /* --- Pricing Table --- */
@@ -200,16 +224,18 @@
         }
         .price-card {
             background: var(--white);
-            border: 1px solid #ddd;
+            border: 1px solid #eee;
             border-radius: 15px;
             padding: 30px;
             width: 30%;
             text-align: center;
             position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
         }
+        /* スタンダードを目立たせる */
         .price-card.standard {
-            border: 3px solid var(--accent-color);
-            box-shadow: 0 10px 30px rgba(230, 180, 34, 0.2);
+            border: 2px solid var(--primary-color);
+            box-shadow: 0 10px 30px rgba(255, 94, 120, 0.15);
             transform: scale(1.05);
             z-index: 2;
             padding-top: 50px;
@@ -218,7 +244,7 @@
             position: absolute;
             top: -15px; left: 50%;
             transform: translateX(-50%);
-            background: var(--accent-color);
+            background: var(--primary-color);
             color: var(--white);
             padding: 5px 20px;
             border-radius: 20px;
@@ -230,15 +256,23 @@
             color: var(--primary-color);
             margin: 20px 0;
         }
-        .price span { font-size: 1rem; font-weight: normal; }
+        .price span { font-size: 1rem; font-weight: normal; color: var(--text-gray); }
+        
         .price-features { text-align: left; margin-bottom: 20px; }
         .price-features li {
             border-bottom: 1px solid #eee;
-            padding: 10px 0;
+            padding: 12px 0;
             font-size: 0.9rem;
+            line-height: 1.5;
         }
         .price-features li.disabled { color: #ccc; text-decoration: line-through; }
         .price-features li.strong { font-weight: bold; color: var(--primary-color); }
+        
+        /* プレミアム限定の赤文字 */
+        .premium-only {
+            color: #d4a017;
+            font-weight: bold;
+        }
 
         /* --- Flow --- */
         .flow-steps { max-width: 800px; margin: 0 auto; }
@@ -246,9 +280,9 @@
             display: flex; align-items: center;
             margin-bottom: 20px;
             background: var(--white);
-            padding: 20px;
+            padding: 25px;
             border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
         }
         .step-num {
             background: var(--primary-color);
@@ -261,10 +295,10 @@
             flex-shrink: 0;
         }
 
-        /* --- Urgency Box --- */
+        /* --- Urgency & CTA --- */
         .urgency-box {
-            background: #fff3cd;
-            border: 2px solid #ffeeba;
+            background: #fff8e1;
+            border: 2px solid #ffe082;
             padding: 30px;
             text-align: center;
             border-radius: 10px;
@@ -273,7 +307,7 @@
 
         /* --- Footer --- */
         footer {
-            background: var(--primary-color);
+            background: #333;
             color: var(--white);
             text-align: center;
             padding: 30px 0;
@@ -283,6 +317,7 @@
         /* --- Responsive --- */
         @media (max-width: 768px) {
             .hero h1 { font-size: 1.8rem; }
+            .hero h1 span { font-size: 1.4rem; }
             .problem-item { width: 100%; }
             .solution-grid { grid-template-columns: 1fr; }
             .pricing-wrapper { flex-direction: column; align-items: center; }
@@ -295,39 +330,61 @@
 
     <header class="hero">
         <div class="container">
+            <div class="hero-logo">BUSON STUDIO</div>
+            
             <div class="hero-badges">
+                <span class="badge gold">警察・公正取引委員会コラボ実績</span>
                 <span class="badge">SNS総フォロワー100万人</span>
-                <span class="badge">TV出演実績多数</span>
                 <span class="badge">LINEスタンプMVP</span>
             </div>
-            <h1>御社の「顔」を、<br><span>100万人が支持するクオリティ</span>で。<br>BUSON監修 キャラクター開発</h1>
-            <p>AIのスピード × 作家のブランド力 × SNS拡散力。<br>「認知・採用・広報」を変える、戦力となるキャラクターを適正価格で。</p>
             
-            <div style="margin-top: 30px;">
-                <a href="#contact" class="btn">制作枠の空き確認・無料お見積り</a>
-                <p style="font-size: 0.8rem; margin-top: 10px; opacity: 0.8;">※月10社限定のため、お早めにご確認ください</p>
+            <h1>
+                <span>「ニヤッと笑顔に」あなたのビジネスに命を吹き込む</span>
+                BUSON監修 キャラクター制作パッケージ
+            </h1>
+            <p>AIのスピード × 作家のブランド力。<br>「認知・採用・広報」を変える、戦力となるキャラクターを適正価格で。</p>
+            
+            <div style="margin-top: 40px;">
+                <a href="https://forms.gle/p95Sv2dpqv6pnDti9" target="_blank" class="btn">制作枠の空き確認・無料お見積り</a>
+                <p style="font-size: 0.8rem; margin-top: 15px; color: #888;">※月10社限定のため、お早めにご確認ください</p>
             </div>
         </div>
     </header>
 
     <section class="section bg-light">
         <div class="container">
-            <h2 class="section-title"><span>Problem</span>自社のキャラクターを作りたいが、<br>こんな失敗はしたくない…</h2>
+            <h2 class="section-title">Problem</h2>
+            <p class="text-center" style="margin-bottom: 40px; font-weight:bold;">自社のキャラクターを作りたいが、<br>こんな失敗はしたくない…</p>
+            
             <div class="problems-list">
-                <div class="problem-item">😰 <strong>デザイン会社は高すぎる</strong><br><small>100万円以上と言われ予算が降りない</small></div>
-                <div class="problem-item">😰 <strong>AIは権利関係が怖い</strong><br><small>商標リスクや類似キャラが心配</small></div>
-                <div class="problem-item">😰 <strong>安っぽい素材になる</strong><br><small>企業の「顔」としての品格がない</small></div>
-                <div class="problem-item">😰 <strong>作っても放置される</strong><br><small>活用法が分からずフォルダに眠る</small></div>
+                <div class="problem-item">
+                    <h3>😰 デザイン会社は高すぎる</h3>
+                    <p>「1体で100万円以上と言われ、予算が降りなかった」</p>
+                </div>
+                <div class="problem-item">
+                    <h3>😰 AIは権利関係が怖い</h3>
+                    <p>「商標リスクや、他社と似てしまうのが怖い」</p>
+                </div>
+                <div class="problem-item">
+                    <h3>😰 安っぽい素材になる</h3>
+                    <p>「企業の『顔』としての品格がない」</p>
+                </div>
+                <div class="problem-item">
+                    <h3>😰 作っても放置される</h3>
+                    <p>「SNSやスタンプでの活用法が分からない」</p>
+                </div>
             </div>
-            <div class="text-center" style="margin-top: 40px; font-weight: bold; font-size: 1.2rem;">
-                その課題、SNS時代のヒットメーカー<br>「BUSON」がすべて解決します。
+            <div class="text-center" style="margin-top: 40px; font-weight: bold; font-size: 1.1rem; color: var(--primary-color);">
+                その課題、SNS時代のヒットメーカー「BUSON」がすべて解決します。
             </div>
         </div>
     </section>
 
     <section class="section">
         <div class="container">
-            <h2 class="section-title"><span>Solution</span>BUSONブランドという<br>圧倒的な付加価値</h2>
+            <h2 class="section-title">Solution</h2>
+            <p class="text-center" style="margin-bottom: 40px; font-weight:bold;">選ばれる理由は、圧倒的な「ブランド付加価値」</p>
+
             <div class="solution-grid">
                 <div class="solution-card">
                     <span class="solution-icon">👑</span>
@@ -357,7 +414,7 @@
                     <div class="package-item">💬 LINEスタンプ 8〜40個</div>
                     <div class="package-item">📚 業界あるあるPR漫画</div>
                     <div class="package-item">📢 BUSON SNSでPR拡散</div>
-                    <div class="package-item">🗂 商用利用OK・ベクター納品</div>
+                    <div class="package-item">🗂 商用利用権譲渡</div>
                 </div>
             </div>
         </div>
@@ -365,7 +422,8 @@
 
     <section class="section bg-light" id="pricing">
         <div class="container">
-            <h2 class="section-title"><span>Pricing</span>中小企業の決裁スピードに合わせた<br>明確な料金プラン</h2>
+            <h2 class="section-title">Pricing</h2>
+            <p class="text-center" style="margin-bottom: 40px; font-weight:bold;">中小企業の決裁スピードに合わせた<br>明確な料金プラン</p>
             
             <div class="pricing-wrapper">
                 <div class="price-card">
@@ -377,8 +435,7 @@
                         <li>LINEスタンプ 8〜16個</li>
                         <li class="disabled">PR漫画制作</li>
                         <li class="disabled">SNS拡散PR</li>
-                        <li>商用利用OK</li>
-                        <li><strong>納品：PNG + ベクター</strong></li>
+                        <li>納品：PNG画像のみ<br><span style="font-size:0.8rem; color:#999;">(ベクターデータなし)</span></li>
                     </ul>
                 </div>
 
@@ -391,9 +448,9 @@
                         <li class="strong">キャラ制作（全身+表情）</li>
                         <li class="strong">LINEスタンプ 16〜24個</li>
                         <li class="strong">PR漫画 1本制作</li>
+                        <li style="font-size:0.85rem;">(最後の一枚で御社サービスとスタンプを紹介)</li>
                         <li class="strong">BUSON SNSで拡散</li>
-                        <li>商用利用OK</li>
-                        <li><strong>納品：PNG + ベクター</strong></li>
+                        <li>納品：PNG画像のみ<br><span style="font-size:0.8rem; color:#999;">(ベクターデータなし)</span></li>
                     </ul>
                 </div>
 
@@ -402,25 +459,28 @@
                     <div class="price">75<span>万円(税別)</span></div>
                     <p>キャラを事業の柱にしたい企業様</p>
                     <ul class="price-features">
-                        <li>キャラ制作（全身+横顔+多数）</li>
+                        <li class="premium-only">キャラ制作フルセット<br><span style="font-size:0.8rem; color:#555;">(PNG/文字なしイラスト/ベクターAI)</span></li>
                         <li>LINEスタンプ 40個(フル)</li>
-                        <li>PR漫画 2〜3本</li>
+                        <li class="strong">PR漫画 1本制作</li>
+                        <li style="font-size:0.85rem;">(最後の一枚で御社サービスとスタンプを紹介)</li>
                         <li class="strong">BUSON SNS大型PR</li>
-                        <li>優先制作 / Zoomサポート</li>
-                        <li><strong>納品：PNG + ベクター</strong></li>
+                        <li class="premium-only">商用利用OK・ベクター納品</li>
+                        <li>Zoom申請サポート付き</li>
                     </ul>
                 </div>
             </div>
             <p class="text-center" style="margin-top: 30px; font-size: 0.9rem; color: #666;">
                 ※一般的な制作会社の相場（100万円〜）と比較して、圧倒的なコストパフォーマンスを実現しています。<br>
-                ※納品データには、印刷や看板にも使える「ベクターデータ（EPS/SVG）」が含まれます。
+                ※プレミアムプランのみ、印刷・看板にも使える「ベクターデータ（EPS/AI）」が含まれます。
             </p>
         </div>
     </section>
 
     <section class="section">
         <div class="container">
-            <h2 class="section-title"><span>Flow</span>制作の流れ</h2>
+            <h2 class="section-title">Flow</h2>
+            <p class="text-center" style="margin-bottom: 40px; font-weight:bold;">納品までの流れ</p>
+            
             <div class="flow-steps">
                 <div class="step">
                     <div class="step-num">1</div>
@@ -440,7 +500,7 @@
                 </div>
                 <div class="step">
                     <div class="step-num">5</div>
-                    <div><strong>納品 ＆ 申請サポート</strong><br>印刷にも使える完全データ（EPS/SVG等）を納品。LINEスタンプ申請マニュアルも完備。</div>
+                    <div><strong>納品 ＆ 申請サポート</strong><br>完成データを納品。LINEスタンプ申請マニュアルも完備しています。</div>
                 </div>
             </div>
         </div>
@@ -448,9 +508,9 @@
 
     <section class="section bg-light">
         <div class="container">
-            <h2 class="section-title"><span>FAQ</span>よくある質問</h2>
+            <h2 class="section-title">FAQ</h2>
             <div style="max-width: 800px; margin: 0 auto;">
-                <p><strong>Q. 著作権はどうなりますか？</strong><br>A. 納品時に譲渡いたします。Web、グッズ、チラシなど自由にご利用いただけます。</p>
+                <p><strong>Q. 著作権はどうなりますか？</strong><br>A. 納品時に譲渡いたします。商用利用についてはプランにより異なりますが、納品データは自由にご利用いただけます。</p>
                 <hr style="border: 0; border-top: 1px solid #ddd; margin: 20px 0;">
                 <p><strong>Q. AIで作ると他社と似ませんか？</strong><br>A. 生成後に独自の加筆修正を行い、さらにBUSONが類似チェックを行うため、オリジナリティのある作品になります。</p>
                 <hr style="border: 0; border-top: 1px solid #ddd; margin: 20px 0;">
@@ -462,14 +522,14 @@
     <section class="section text-center" id="contact" style="padding-bottom: 100px;">
         <div class="container">
             <div class="urgency-box">
-                <h3 style="color: var(--red);">⚠️ 【毎月10社限定】の理由</h3>
+                <h3 style="color: #d9534f;">⚠️ 【毎月10社限定】の理由</h3>
                 <p style="margin-bottom: 0;">本プランは、最終工程で必ず<strong>BUSON本人がクオリティ監修</strong>を行います。<br>ブランド品質を維持するため、毎月10社様までの受注とさせていただいております。</p>
             </div>
 
             <h2>キャラクターは「企業の人格」です。<br>御社のブランド力を加速させるお手伝いを、<br>私にさせてください。</h2>
             <br>
             
-            <a href="https://forms.google.com/example" target="_blank" class="btn">制作枠の空き確認・無料お見積り</a>
+            <a href="https://forms.gle/p95Sv2dpqv6pnDti9" target="_blank" class="btn">制作枠の空き確認・無料お見積り</a>
             
             <p style="margin-top: 20px; font-size: 0.9rem;">※リンク先フォームよりご要望をお聞かせください（所要時間3分）</p>
         </div>
@@ -477,8 +537,8 @@
 
     <footer>
         <div class="container">
-            <p><strong>株式会社BUSON</strong><br>SNS総フォロワー数：100万人超<br>実績：書籍化多数、TV出演、LINEスタンプMVP受賞</p>
-            <p>&copy; 2025 BUSON Character Production. All Rights Reserved.</p>
+            <p><strong>BUSON STUDIO</strong><br>SNS総フォロワー数：100万人超<br>実績：書籍化多数、TV出演、LINEスタンプMVP受賞、警察・公正取引委員会コラボ</p>
+            <p>&copy; 2025 BUSON STUDIO. All Rights Reserved.</p>
         </div>
     </footer>
 
