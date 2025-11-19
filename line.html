@@ -12,8 +12,10 @@
     <style>
         /* --- Base Styles --- */
         :root {
-            --primary-color: #FF758C; /* BUSONピンク */
+            --primary-color: #FF758C; /* BUSONピンク：ブランドカラー */
             --primary-dark: #FF5A75;  /* ボタンホバー用 */
+            --line-green: #06C755;    /* LINE公式グリーン：機能強調用 */
+            --line-bg: #f0fff4;       /* LINE要素の薄い背景色 */
             --accent-color: #FFC107;  /* 注意喚起用 */
             --text-color: #4a4a4a;    /* 優しい黒 */
             --bg-pink: #FFF0F3;       /* 背景用薄ピンク */
@@ -36,6 +38,9 @@
         .container { max-width: 1000px; margin: 0 auto; padding: 0 20px; }
         .section { padding: 80px 0; }
         .text-center { text-align: center; }
+
+        /* --- Text Colors --- */
+        .text-line { color: var(--line-green); }
 
         /* --- Button --- */
         .btn {
@@ -101,9 +106,9 @@
         }
         .solution-card:hover { border-color: var(--primary-color); transform: translateY(-5px); }
         
-        /* 修正：絵文字ではなく画像用のクラスに変更 */
+        /* 画像用のクラス */
         .solution-icon-img { 
-            width: 100px; /* アイコン画像の幅 */
+            width: 100px; 
             height: auto; 
             margin-bottom: 20px; 
             display: inline-block; 
@@ -120,6 +125,12 @@
         .package-item {
             background: var(--white); color: var(--primary-color); padding: 12px 25px;
             border-radius: 30px; font-weight: bold; box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        /* LINE強調用スタイル（ハイブリッドデザイン） */
+        .package-item.line-special {
+            color: var(--line-green);
+            border: 2px solid var(--line-green);
+            background-color: #fafffc;
         }
 
         /* --- Pricing Table --- */
@@ -257,7 +268,7 @@
                 <h2>必要なものは、すべてパッケージに含まれています。</h2>
                 <div class="package-list">
                     <div class="package-item">🎨 オリジナルキャラ制作</div>
-                    <div class="package-item">💬 LINEスタンプ制作</div>
+                    <div class="package-item line-special">💬 LINEスタンプ制作</div>
                     <div class="package-item">📚 業界あるある漫画内でのPR</div>
                     <div class="package-item">📢 BUSON SNSで拡散</div>
                     <div class="package-item">🗂 商用利用OK データ納品</div>
@@ -277,7 +288,7 @@
                     <p>まずは小さく試したい企業様</p>
                     <ul class="price-features">
                         <li>キャラ制作（1ポーズ）</li>
-                        <li><strong>LINEスタンプ 8個</strong><br><span class="option-note">※16/24/32/40個へ追加可能(別料金)</span></li>
+                        <li><strong class="text-line">LINEスタンプ 8個</strong><br><span class="option-note">※16/24/32/40個へ追加可能(別料金)</span></li>
                         <li class="disabled">PR漫画制作</li>
                         <li class="disabled">SNS拡散PR</li>
                         <li>商用利用OK</li>
@@ -291,8 +302,8 @@
                     <p>認知・採用・広報を<br>強化したい企業様</p>
                     <ul class="price-features">
                         <li><strong>キャラ制作（全身+表情）</strong></li>
-                        <li><strong>LINEスタンプ 16個</strong><br><span class="option-note">※24/32/40個へ追加可能(別料金)</span></li>
-                        <li><strong>あるある漫画内でLINEスタンプと企業(サービスなどでも可)をPR</strong></li>
+                        <li><strong class="text-line">LINEスタンプ 16個</strong><br><span class="option-note">※24/32/40個へ追加可能(別料金)</span></li>
+                        <li><strong>あるある漫画内で<span class="text-line">LINEスタンプ</span>と企業(サービスなどでも可)をPR</strong></li>
                         <li><strong>BUSON SNS(累計80万人)へ拡散</strong><br><span class="option-note">Instagram/X/Threadsで紹介</span></li>
                         <li>商用利用OK</li>
                     </ul>
@@ -304,9 +315,9 @@
                     <p>キャラを事業の柱にしたい企業様</p>
                     <ul class="price-features">
                         <li>キャラ制作（全身+表情）</li>
-                        <li><strong>LINEスタンプ 40個(フル)</strong></li>
+                        <li><strong class="text-line">LINEスタンプ 40個(フル)</strong></li>
                         <li><strong>イラスト40点 生データ(ベクター)納品</strong><br><span class="option-note">※スタンプ画像を大きく使えるよう、文字を取り払ったデータをお渡しします。</span></li>
-                        <li>あるある漫画内でLINEスタンプと企業(サービスなどでも可)をPR</li>
+                        <li>あるある漫画内で<span class="text-line">LINEスタンプ</span>と企業(サービスなどでも可)をPR</li>
                         <li>BUSON SNS(累計80万人)へ拡散</li>
                         <li>優先制作対応</li>
                         <li>商用利用OK</li>
