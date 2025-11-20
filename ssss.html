@@ -1,369 +1,325 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>本格プロファイリング診断</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #2563eb; /* 信頼感のある青 */
-            --accent: #f59e0b;  /* ゴールド（課金用） */
-            --bg: #f8fafc;
-            --text: #334155;
-        }
-        body {
-            font-family: 'Noto Sans JP', sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            min-height: 100vh;
-        }
-        .container {
-            width: 100%;
-            max-width: 600px;
-            background: white;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            min-height: 100vh;
-        }
-        
-        /* 共通パーツ */
-        h1, h2 { text-align: center; color: #1e293b; }
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 16px;
-            margin: 20px 0;
-            font-size: 16px;
-            font-weight: bold;
-            color: white;
-            background: var(--primary);
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .btn:active { transform: scale(0.98); }
-        .btn-option {
-            background: white;
-            color: var(--text);
-            border: 1px solid #cbd5e1;
-            margin: 10px 0;
-            text-align: left;
-            padding: 15px 20px;
-        }
-        .btn-option:hover { background: #eff6ff; border-color: var(--primary); }
-        
-        /* 画面制御 */
-        .screen { display: none; }
-        .active { display: block; animation: fadeIn 0.5s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* プログレスバー */
-        .progress-container { width: 100%; background: #e2e8f0; height: 6px; border-radius: 3px; margin-bottom: 20px; }
-        .progress-bar { height: 100%; background: var(--primary); width: 0%; transition: 0.3s; border-radius: 3px; }
-
-        /* 結果画面：無料エリア */
-        .result-header { text-align: center; padding: 20px 0; border-bottom: 2px solid #f1f5f9; }
-        .type-code { font-size: 48px; font-weight: 900; color: var(--primary); margin: 0; letter-spacing: 2px; }
-        .type-title { font-size: 20px; font-weight: bold; margin-bottom: 10px; }
-        .chart-box { position: relative; height: 280px; margin: 20px 0; }
-
-        /* 結果画面：有料エリア（ロック状態） */
-        .premium-section {
-            margin-top: 30px;
-            border: 2px solid var(--accent);
-            border-radius: 16px;
-            overflow: hidden;
-            position: relative;
-        }
-        .premium-header {
-            background: var(--accent);
-            color: white;
-            padding: 10px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 18px;
-        }
-        .premium-content {
-            padding: 20px;
-            background: #fffbeb;
-        }
-        
-        /* ロックの演出 */
-        .locked .premium-content {
-            filter: blur(8px); /* コンテンツをぼかす */
-            user-select: none;
-            height: 200px; /* 高さを固定 */
-            overflow: hidden;
-        }
-        .lock-overlay {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            width: 80%;
-            z-index: 10;
-            display: none; /* 初期は非表示、lockedの時だけ表示 */
-        }
-        .locked .lock-overlay { display: block; }
-        
-        .btn-unlock {
-            background: linear-gradient(45deg, #f59e0b, #d97706);
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
-            font-size: 18px;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
-
-        /* コンテンツ詳細 */
-        .detail-box { margin-bottom: 20px; }
-        .detail-title { font-weight: bold; color: #d97706; border-bottom: 1px solid #fde68a; margin-bottom: 5px; display: inline-block;}
-    </style>
+  <meta charset="UTF-8">
+  <title>ネタ帳＆お題ガチャ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Meiryo", sans-serif;
+      background: #f5f7fb;
+      margin: 0;
+      padding: 20px;
+    }
+    .app {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 20px 20px 30px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    }
+    h1 {
+      font-size: 22px;
+      margin-top: 0;
+      text-align: center;
+    }
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    textarea {
+      width: 100%;
+      min-height: 70px;
+      box-sizing: border-box;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      resize: vertical;
+      font-size: 14px;
+    }
+    select, button, input[type="text"] {
+      padding: 6px 10px;
+      font-size: 14px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    button {
+      cursor: pointer;
+      border: none;
+      background: #ff9ecb;
+      font-weight: 600;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    .list {
+      margin-top: 15px;
+      max-height: 260px;
+      overflow-y: auto;
+      border-top: 1px solid #eee;
+      padding-top: 10px;
+    }
+    .item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 0;
+      border-bottom: 1px dashed #eee;
+      font-size: 13px;
+    }
+    .item-main {
+      flex: 1;
+      white-space: pre-wrap;
+    }
+    .badge {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: #f0f0f0;
+      margin-right: 4px;
+    }
+    .small-btn {
+      font-size: 11px;
+      padding: 3px 8px;
+      background: #ffd5eb;
+    }
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .random-box {
+      margin-top: 18px;
+      padding: 12px;
+      border-radius: 12px;
+      background: #fff6fb;
+      border: 1px solid #ffd5eb;
+    }
+    .random-title {
+      font-size: 14px;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    .random-text {
+      white-space: pre-wrap;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+    .hint {
+      font-size: 11px;
+      color: #777;
+      margin-top: 4px;
+    }
+    @media (max-width: 600px) {
+      .top-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="app">
+    <h1>ネタ帳＆お題ガチャ（ローカル専用）</h1>
 
-<div class="container">
-
-    <div id="screen-start" class="screen active">
-        <h1>🧠 本格プロファイリング診断</h1>
-        <p style="text-align:center; color:#64748b;">30問の質問から、あなたの深層心理と才能を徹底分析します。</p>
-        <div style="text-align:center; margin:30px 0;">
-            <img src="https://placehold.co/200x200/e2e8f0/2563eb?text=Analysis" alt="イメージ" style="border-radius:50%; width:150px;">
-        </div>
-        <button class="btn" onclick="startQuiz()">診断を始める</button>
+    <div class="top-bar">
+      <div>
+        <span style="font-size:12px;">カテゴリで整理して、アイデアを貯めていくツール</span>
+      </div>
+      <button id="clearAllBtn" class="small-btn">全部削除</button>
     </div>
 
-    <div id="screen-quiz" class="screen">
-        <div class="progress-container"><div class="progress-bar" id="progress-bar"></div></div>
-        <p style="text-align:center; color:#64748b;">Q <span id="q-current">1</span> / <span id="q-total">30</span></p>
-        <h2 id="q-text" style="min-height: 3em;">質問文</h2>
-        <div id="options-area"></div>
+    <div class="row">
+      <input type="text" id="categoryInput" placeholder="カテゴリ例：一人暮らし 夫婦 仕事 あるある など" style="flex:1;">
+      <select id="categorySelect" style="flex:0.8; min-width:140px;">
+        <option value="">既存カテゴリを選択</option>
+      </select>
     </div>
 
-    <div id="screen-result" class="screen">
-        <div class="result-header">
-            <p>あなたの診断結果</p>
-            <div class="type-code" id="res-code">ESTJ</div>
-            <div class="type-title" id="res-name">厳格な管理者</div>
-            <div class="chart-box">
-                <canvas id="radarChart"></canvas>
-            </div>
-            <p id="res-summary" style="text-align:left; line-height:1.6;">ここに無料版の概要が表示されます。</p>
-        </div>
+    <textarea id="ideaInput" placeholder="ここにネタを書いてください。例：コンビニで買うつもりなかったスイーツをついカゴに入れがち"></textarea>
 
-        <div class="premium-section locked" id="premium-section">
-            <div class="premium-header">👑 プレミアム詳細分析</div>
-            
-            <div class="lock-overlay">
-                <div style="font-size:40px; margin-bottom:10px;">🔒</div>
-                <p style="font-weight:bold; color:#333;">ここから先は有料レポートです</p>
-                <p style="font-size:14px; color:#666;">適職、恋愛傾向、隠された才能など<br>3,000文字以上の詳細な分析を解除</p>
-                <button class="btn btn-unlock" onclick="unlockPremium()">完全版を解除する (¥500)</button>
-            </div>
-
-            <div class="premium-content">
-                <div class="detail-box">
-                    <div class="detail-title">💼 才能と適職</div>
-                    <p id="res-work">ここに仕事に関する詳細な分析が表示されます。</p>
-                </div>
-                <div class="detail-box">
-                    <div class="detail-title">💘 恋愛とパートナーシップ</div>
-                    <p id="res-love">ここに恋愛に関する詳細な分析が表示されます。</p>
-                </div>
-                <div class="detail-box">
-                    <div class="detail-title">⚠️ 陥りやすい罠（弱点）</div>
-                    <p id="res-weak">ここに弱点に関する詳細な分析が表示されます。</p>
-                </div>
-                <div class="detail-box">
-                    <div class="detail-title">🚀 成長へのアドバイス</div>
-                    <p id="res-advice">ここにアドバイスが表示されます。</p>
-                </div>
-            </div>
-        </div>
-
-        <button class="btn btn-option" onclick="location.reload()" style="margin-top:30px; border:none; background:#f1f5f9;">最初に戻る</button>
+    <div class="row">
+      <button id="addBtn">ネタを追加</button>
+      <button id="randomBtn">お題ガチャ</button>
+      <select id="filterSelect" style="margin-left:auto; min-width:140px;">
+        <option value="">全カテゴリ表示</option>
+      </select>
     </div>
 
-</div>
+    <div class="random-box" id="randomBox" style="display:none;">
+      <div class="random-title">今日のお題</div>
+      <div class="random-text" id="randomText"></div>
+      <div class="hint">このまま漫画やアニメのネタにしてOKです</div>
+    </div>
 
-<script>
-    // ▼▼ 設定：30問作成のヒント ▼▼
-    // 軸: E/I (外向/内向), S/N (感覚/直感), T/F (思考/感情), J/P (判断/知覚)
-    // questions配列にコピー＆ペーストして問題を増やしてください。
-    
-    const questions = [
-        // EI軸 (Energy)
-        { text: "初対面の人と話すのは得意？", axis: "EI", options: [{t:"得意、楽しい", v:1}, {t:"苦手、疲れる", v:-1}] },
-        { text: "週末はどちらかというと？", axis: "EI", options: [{t:"みんなでワイワイ", v:1}, {t:"一人でゆっくり", v:-1}] },
-        { text: "考え事は？", axis: "EI", options: [{t:"話しながらまとめる", v:1}, {t:"頭の中で完結させる", v:-1}] },
-        
-        // SN軸 (Mind)
-        { text: "夢や理想よりも現実を見る？", axis: "SN", options: [{t:"現実重視", v:1}, {t:"理想重視", v:-1}] },
-        { text: "説明書は？", axis: "SN", options: [{t:"しっかり読む", v:1}, {t:"雰囲気で触る", v:-1}] },
-        { text: "細かい作業は？", axis: "SN", options: [{t:"得意", v:1}, {t:"全体像を見たい", v:-1}] },
+    <div class="list" id="list"></div>
+  </div>
 
-        // TF軸 (Nature)
-        { text: "判断基準は？", axis: "TF", options: [{t:"論理・正しさ", v:1}, {t:"感情・思いやり", v:-1}] },
-        { text: "友人の悩みには？", axis: "TF", options: [{t:"解決策を出す", v:1}, {t:"共感する", v:-1}] },
-        { text: "競争は？", axis: "TF", options: [{t:"勝つことが大事", v:1}, {t:"協力が大事", v:-1}] },
+  <script>
+    const STORAGE_KEY = "buson_idea_tool_v1";
 
-        // JP軸 (Tactics)
-        { text: "旅行の計画は？", axis: "JP", options: [{t:"綿密に立てる", v:1}, {t:"行き当たりばったり", v:-1}] },
-        { text: "部屋の状態は？", axis: "JP", options: [{t:"整理されている", v:1}, {t:"散らかっている", v:-1}] },
-        { text: "決断は？", axis: "JP", options: [{t:"早めに決める", v:1}, {t:"ギリギリまで迷う", v:-1}] },
-        
-        // ★ここに追記して30問に増やしてください★
-        // 同じパターンで { text: "...", axis: "...", options: [...] }, を追加するだけです。
-    ];
+    const categoryInput = document.getElementById("categoryInput");
+    const categorySelect = document.getElementById("categorySelect");
+    const ideaInput = document.getElementById("ideaInput");
+    const addBtn = document.getElementById("addBtn");
+    const listEl = document.getElementById("list");
+    const randomBtn = document.getElementById("randomBtn");
+    const randomBox = document.getElementById("randomBox");
+    const randomText = document.getElementById("randomText");
+    const filterSelect = document.getElementById("filterSelect");
+    const clearAllBtn = document.getElementById("clearAllBtn");
 
-    // ▼▼ 結果データ（無料文＋有料文） ▼▼
-    // 本来は16通りすべて書く必要がありますが、サンプルとして「ESTJ」と「INFP」の2つだけ詳しく書いています。
-    // 他のタイプが出たときのエラー避けのため、ダミーデータを入れています。
-    const resultsData = {
-        "ESTJ": {
-            name: "厳格な管理者",
-            summary: "【無料結果】あなたは責任感が強く、ルールを重んじるリーダータイプ。組織をまとめる力があります。",
-            work: "【有料】経営者、プロジェクトマネージャー、裁判官などが適職。明確なゴールがある環境で最も輝きます。",
-            love: "【有料】恋愛でも真面目で誠実。デートの計画もしっかり立てるタイプですが、相手にも完璧を求めすぎてしまうかも。",
-            weak: "【有料】融通が利かない頑固な一面があります。他人の感情を無視して論理だけで詰めると孤立します。",
-            advice: "【有料】たまには「無駄」を楽しんでみましょう。部下やパートナーの話を「解決」せずにただ「聞く」時間を作ると信頼が増します。"
-        },
-        "INFP": {
-            name: "夢見る仲介者",
-            summary: "【無料結果】あなたは豊かな想像力と優しい心を持つ理想主義者。自分だけの世界観を大切にしています。",
-            work: "【有料】クリエイター、カウンセラー、作家。自分の価値観を表現できる仕事でないと心が死んでしまいます。",
-            love: "【有料】ロマンチストで、深い精神的な繋がりを求めます。一度好きになると一途ですが、理想が高すぎて現実とのギャップに苦しむことも。",
-            weak: "【有料】批判に弱く、傷つきやすいです。嫌なことから逃避してしまう癖があるので注意。",
-            advice: "【有料】あなたの優しさは武器ですが、時には「No」と言う勇気を持ちましょう。現実的な目標を小さく立てて達成する練習が吉。"
-        },
-        // ダミー（実際は全16タイプ分作成してください）
-        "default": {
-            name: "その他のタイプ",
-            summary: "サンプルコードのため詳細データ未入力です。",
-            work: "有料エリアのテキストサンプルです。",
-            love: "有料エリアのテキストサンプルです。",
-            weak: "有料エリアのテキストサンプルです。",
-            advice: "有料エリアのテキストサンプルです。"
+    let ideas = [];
+
+    function loadData() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          ideas = JSON.parse(saved);
         }
+      } catch (e) {
+        ideas = [];
+      }
+    }
+
+    function saveData() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(ideas));
+    }
+
+    function renderCategories() {
+      const categories = Array.from(new Set(ideas.map(i => i.category).filter(Boolean)));
+
+      categorySelect.innerHTML = '<option value="">既存カテゴリを選択</option>';
+      filterSelect.innerHTML = '<option value="">全カテゴリ表示</option>';
+
+      categories.forEach(cat => {
+        const opt1 = document.createElement("option");
+        opt1.value = cat;
+        opt1.textContent = cat;
+        categorySelect.appendChild(opt1);
+
+        const opt2 = document.createElement("option");
+        opt2.value = cat;
+        opt2.textContent = cat;
+        filterSelect.appendChild(opt2);
+      });
+    }
+
+    function renderList() {
+      const filter = filterSelect.value;
+      listEl.innerHTML = "";
+
+      const filtered = filter ? ideas.filter(i => i.category === filter) : ideas;
+
+      filtered.forEach((idea, index) => {
+        const div = document.createElement("div");
+        div.className = "item";
+
+        const main = document.createElement("div");
+        main.className = "item-main";
+        const catSpan = document.createElement("span");
+        catSpan.className = "badge";
+        catSpan.textContent = idea.category || "未分類";
+        const textSpan = document.createElement("span");
+        textSpan.textContent = idea.text;
+
+        main.appendChild(catSpan);
+        main.appendChild(textSpan);
+
+        const delBtn = document.createElement("button");
+        delBtn.className = "small-btn";
+        delBtn.textContent = "削除";
+        delBtn.onclick = () => {
+          const realIndex = ideas.indexOf(idea);
+          if (realIndex > -1) {
+            ideas.splice(realIndex, 1);
+            saveData();
+            renderCategories();
+            renderList();
+          }
+        };
+
+        div.appendChild(main);
+        div.appendChild(delBtn);
+        listEl.appendChild(div);
+      });
+    }
+
+    addBtn.onclick = () => {
+      const text = ideaInput.value.trim();
+      const catFromInput = categoryInput.value.trim();
+      const catFromSelect = categorySelect.value;
+
+      if (!text) {
+        alert("ネタを入力してください");
+        return;
+      }
+
+      const category = catFromInput || catFromSelect || "未分類";
+
+      ideas.unshift({
+        text,
+        category,
+        createdAt: Date.now()
+      });
+
+      ideaInput.value = "";
+      if (catFromInput) {
+        categoryInput.value = "";
+      }
+
+      saveData();
+      renderCategories();
+      renderList();
     };
 
-    // --- ロジック部分 ---
-    let currentQ = 0;
-    let scores = { "EI": 0, "SN": 0, "TF": 0, "JP": 0 };
+    categorySelect.onchange = () => {
+      if (categorySelect.value && !categoryInput.value) {
+        // 既存カテゴリ選んでも入力欄はそのまま
+      }
+    };
 
-    // クイズ開始
-    function startQuiz() {
-        document.getElementById('screen-start').classList.remove('active');
-        document.getElementById('screen-quiz').classList.add('active');
-        document.getElementById('q-total').innerText = questions.length;
-        renderQuestion();
-    }
+    randomBtn.onclick = () => {
+      const filter = filterSelect.value;
+      const pool = filter ? ideas.filter(i => i.category === filter) : ideas;
 
-    // 質問描画
-    function renderQuestion() {
-        const q = questions[currentQ];
-        document.getElementById('q-current').innerText = currentQ + 1;
-        document.getElementById('q-text').innerText = q.text;
-        
-        // プログレスバー
-        const pct = ((currentQ) / questions.length) * 100;
-        document.getElementById('progress-bar').style.width = pct + "%";
+      if (!pool.length) {
+        alert("お題にできるネタがまだありません");
+        return;
+      }
 
-        const area = document.getElementById('options-area');
-        area.innerHTML = "";
+      const picked = pool[Math.floor(Math.random() * pool.length)];
+      randomText.textContent = "[" + (picked.category || "未分類") + "]\n" + picked.text;
+      randomBox.style.display = "block";
+    };
 
-        q.options.forEach(opt => {
-            const btn = document.createElement('button');
-            btn.className = 'btn btn-option';
-            btn.innerText = opt.t;
-            btn.onclick = () => {
-                scores[q.axis] += opt.v;
-                currentQ++;
-                if (currentQ < questions.length) {
-                    renderQuestion();
-                } else {
-                    showResult();
-                }
-            };
-            area.appendChild(btn);
-        });
-    }
+    filterSelect.onchange = () => {
+      renderList();
+    };
 
-    // 結果表示
-    function showResult() {
-        document.getElementById('screen-quiz').classList.remove('active');
-        document.getElementById('screen-result').classList.add('active');
+    clearAllBtn.onclick = () => {
+      if (confirm("保存されている全てのネタを削除しますか？")) {
+        ideas = [];
+        saveData();
+        renderCategories();
+        renderList();
+        randomBox.style.display = "none";
+      }
+    };
 
-        // タイプ判定
-        const type = (
-            (scores.EI >= 0 ? "E" : "I") +
-            (scores.SN >= 0 ? "S" : "N") +
-            (scores.TF >= 0 ? "T" : "F") +
-            (scores.JP >= 0 ? "J" : "P")
-        );
-
-        // データ取得（なければdefault）
-        const data = resultsData[type] || resultsData["default"];
-
-        // テキスト埋め込み
-        document.getElementById('res-code').innerText = type;
-        document.getElementById('res-name').innerText = data.name;
-        document.getElementById('res-summary').innerText = data.summary;
-        
-        // 有料部分のテキストも裏でセットしておく
-        document.getElementById('res-work').innerText = data.work;
-        document.getElementById('res-love').innerText = data.love;
-        document.getElementById('res-weak').innerText = data.weak;
-        document.getElementById('res-advice').innerText = data.advice;
-
-        // チャート描画
-        drawChart();
-    }
-
-    // 有料解除（モック）
-    function unlockPremium() {
-        if(confirm("【開発者モード】\n実際のアプリではここで決済画面（Stripeなど）へ飛びます。\n\n「OK」を押すと決済完了としてロックを解除します。")) {
-            const section = document.getElementById('premium-section');
-            section.classList.remove('locked');
-            // ロックオーバーレイを消す
-            section.querySelector('.lock-overlay').style.display = 'none';
-        }
-    }
-
-    // レーダーチャート
-    function drawChart() {
-        const ctx = document.getElementById('radarChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'radar',
-            data: {
-                labels: ['外向性', '現実性', '論理性', '計画性'],
-                datasets: [{
-                    label: 'バランス',
-                    data: [scores.EI+5, scores.SN+5, scores.TF+5, scores.JP+5], // 見栄え調整
-                    backgroundColor: 'rgba(37, 99, 235, 0.2)',
-                    borderColor: '#2563eb',
-                    pointBackgroundColor: '#f59e0b',
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                scales: {
-                    r: {
-                        beginAtZero: true,
-                        ticks: { display: false },
-                        suggestedMax: 10
-                    }
-                }
-            }
-        });
-    }
-</script>
-
+    // 初期化
+    loadData();
+    renderCategories();
+    renderList();
+  </script>
 </body>
 </html>
