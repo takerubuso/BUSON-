@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>あなたの性格診断</title>
+    <title>オリジナル性格タイプ診断</title>
     <style>
-        /* デザインの設定 */
         body {
-            font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", sans-serif;
-            background-color: #fdf2f8; /* 背景色：薄いピンク */
+            font-family: "Helvetica Neue", Arial, sans-serif;
+            background-color: #eef2f3;
             color: #333;
             display: flex;
             justify-content: center;
@@ -19,114 +18,178 @@
         .container {
             background-color: white;
             width: 90%;
-            max-width: 500px;
-            padding: 30px;
-            border-radius: 20px;
+            max-width: 600px;
+            padding: 40px;
+            border-radius: 15px;
             box-shadow: 0 10px 25px rgba(0,0,0,0.1);
             text-align: center;
         }
-        h1 { color: #db2777; margin-bottom: 20px; }
+        h1 { color: #4a90e2; margin-bottom: 10px; }
+        .subtitle { color: #666; margin-bottom: 30px; font-size: 0.9em; }
+        
         .btn {
             display: block;
             width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            font-size: 18px;
-            border: none;
-            border-radius: 10px;
-            background-color: #fbcfe8;
-            color: #831843;
+            padding: 16px;
+            margin: 12px 0;
+            font-size: 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background-color: white;
             cursor: pointer;
-            transition: 0.3s;
+            transition: 0.2s;
         }
-        .btn:hover { background-color: #db2777; color: white; }
+        .btn:hover {
+            background-color: #4a90e2;
+            color: white;
+            border-color: #4a90e2;
+        }
+        
+        /* 結果画面のデザイン */
         #result-area { display: none; }
-        .result-title { font-size: 24px; font-weight: bold; color: #db2777; margin: 20px 0; }
-        .result-desc { font-size: 16px; line-height: 1.6; text-align: left; }
+        .type-badge {
+            display: inline-block;
+            background-color: #4a90e2;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .result-name { font-size: 32px; font-weight: bold; color: #333; margin: 10px 0 20px; }
+        .result-desc { text-align: left; line-height: 1.8; font-size: 16px; background: #f9f9f9; padding: 20px; border-radius: 10px; }
+        
+        /* 進行バー */
+        #progress-bar { width: 100%; background-color: #eee; height: 5px; margin-bottom: 20px; display: none;}
+        #progress-fill { height: 100%; background-color: #4a90e2; width: 0%; transition: 0.3s; }
     </style>
 </head>
 <body>
 
     <div class="container">
         <div id="start-screen">
-            <h1>🔮 あなたの隠れた性格診断</h1>
-            <p>3つの質問に答えるだけで、<br>あなたの「本当のタイプ」がわかります。</p>
-            <button class="btn" onclick="startDiagnosis()">診断を始める</button>
+            <h1>🧭 オリジナル気質診断</h1>
+            <p class="subtitle">2つの軸からあなたの本質を分析します</p>
+            <p>直感で答えてください。</p>
+            <button class="btn" onclick="startDiagnosis()" style="background-color: #4a90e2; color: white; border: none;">診断スタート</button>
         </div>
 
         <div id="question-screen" style="display:none;">
-            <h2 id="question-text">質問文がここに入ります</h2>
-            <div id="options">
-                </div>
+            <div id="progress-bar"><div id="progress-fill"></div></div>
+            <h2 id="question-text" style="min-height: 60px;">質問</h2>
+            <div id="options"></div>
         </div>
 
         <div id="result-area">
-            <h1>診断結果</h1>
-            <div class="result-title" id="result-type">タイプ名</div>
-            <div class="result-desc" id="result-description">説明文</div>
-            <button class="btn" onclick="location.reload()">もう一度やる</button>
+            <span class="type-badge">あなたのタイプ</span>
+            <div class="result-name" id="result-name">タイプ名</div>
+            <div class="result-desc" id="result-desc">説明</div>
+            <br>
+            <button class="btn" onclick="location.reload()">トップに戻る</button>
         </div>
     </div>
 
     <script>
-        // ▼ ここを書き換えると自分の診断が作れます ▼
+        // ▼ 設定エリア：ここを変えてオリジナルにする ▼
         
-        // 質問リスト（text:質問文, score: その選択肢の点数）
+        // 軸の設定（axisX = マイナスなら「感情」プラスなら「論理」）
+        // 軸の設定（axisY = マイナスなら「慎重」プラスなら「行動」）
+
         const questions = [
+            // --- 軸X（論理 vs 感情）に関わる質問 ---
             {
-                text: "Q1. 休日の過ごし方は？",
+                text: "Q1. 悩み事があるときは？",
+                axis: "x", // X軸に影響
                 options: [
-                    { text: "家でのんびり動画を見る", score: 1 },
-                    { text: "外に出かけて友達と遊ぶ", score: 3 }
+                    { text: "自分の気持ちを優先する", value: -1 }, // 感情寄り
+                    { text: "メリット・デメリットを考える", value: 1 }   // 論理寄り
                 ]
             },
             {
-                text: "Q2. 何かトラブルが起きたとき、どうする？",
+                text: "Q2. 映画を見るなら？",
+                axis: "x",
                 options: [
-                    { text: "まずは自分でじっくり考える", score: 1 },
-                    { text: "すぐに誰かに相談する", score: 3 }
+                    { text: "感動して泣ける人間ドラマ", value: -1 },
+                    { text: "伏線回収がすごいミステリー", value: 1 }
+                ]
+            },
+            // --- 軸Y（行動 vs 慎重）に関わる質問 ---
+            {
+                text: "Q3. 旅行の計画は？",
+                axis: "y", // Y軸に影響
+                options: [
+                    { text: "行き当たりばったりで楽しむ", value: 1 }, // 行動寄り
+                    { text: "事前にしっかりリサーチする", value: -1 }  // 慎重寄り
                 ]
             },
             {
-                text: "Q3. 新しいお店には行く？",
+                text: "Q4. 新しいスマホが出たら？",
+                axis: "y",
                 options: [
-                    { text: "いつもの店に行く方が安心", score: 1 },
-                    { text: "気になるからすぐ入ってみる", score: 3 }
+                    { text: "すぐに買い替える", value: 1 },
+                    { text: "口コミを見て様子を見る", value: -1 }
                 ]
             }
         ];
 
-        // 診断ロジック用変数
-        let currentQuestionIndex = 0;
-        let totalScore = 0;
+        // 診断結果のデータ（4パターン）
+        const results = {
+            // xがプラス(論理)、yがプラス(行動)
+            "pos_pos": {
+                name: "🦁 司令官タイプ",
+                desc: "あなたは「論理的」かつ「行動的」なリーダー気質。目標を決めたら最短距離で突き進む力強さがあります。迷っている人を引っ張るのが得意です。"
+            },
+            // xがプラス(論理)、yがマイナス(慎重)
+            "pos_neg": {
+                name: "🦉 分析家タイプ",
+                desc: "あなたは「論理的」かつ「慎重」な参謀タイプ。リスクを計算し、確実な手を打つのが得意です。チームの知恵袋として重宝されます。"
+            },
+            // xがマイナス(感情)、yがプラス(行動)
+            "neg_pos": {
+                name: "🐬 エンターテイナータイプ",
+                desc: "あなたは「感情豊か」で「行動的」なムードメーカー。楽しいことが大好きで、周りの人を笑顔にする才能があります。直感で動くと吉。"
+            },
+            // xがマイナス(感情)、yがマイナス(慎重)
+            "neg_neg": {
+                name: "🦌 カウンセラータイプ",
+                desc: "あなたは「感情豊か」で「慎重」な平和主義者。人の気持ちに寄り添う優しさがあり、争いごとを好みません。聞き上手な癒やし系です。"
+            }
+        };
 
-        // 診断開始
+        // ▲ 設定エリア終了 ▲
+
+        let currentQuestionIndex = 0;
+        let scores = { x: 0, y: 0 }; // スコア管理用
+
         function startDiagnosis() {
             document.getElementById('start-screen').style.display = 'none';
             document.getElementById('question-screen').style.display = 'block';
+            document.getElementById('progress-bar').style.display = 'block';
             showQuestion();
         }
 
-        // 質問を表示
         function showQuestion() {
             const q = questions[currentQuestionIndex];
             document.getElementById('question-text').innerText = q.text;
-            
             const optionsDiv = document.getElementById('options');
-            optionsDiv.innerHTML = ""; // 前のボタンを消す
+            optionsDiv.innerHTML = "";
+
+            // プログレスバー更新
+            const progress = ((currentQuestionIndex) / questions.length) * 100;
+            document.getElementById('progress-fill').style.width = progress + "%";
 
             q.options.forEach(option => {
                 const button = document.createElement('button');
-                button.innerText = option.text;
                 button.className = 'btn';
-                button.onclick = () => nextQuestion(option.score);
+                button.innerText = option.text;
+                button.onclick = () => nextQuestion(q.axis, option.value);
                 optionsDiv.appendChild(button);
             });
         }
 
-        // 次の質問へ（または結果へ）
-        function nextQuestion(score) {
-            totalScore += score;
+        function nextQuestion(axis, value) {
+            // スコアを加算（x または y に値を足す）
+            scores[axis] += value;
             currentQuestionIndex++;
 
             if (currentQuestionIndex < questions.length) {
@@ -136,28 +199,22 @@
             }
         }
 
-        // 結果を表示（点数で分岐）
         function showResult() {
             document.getElementById('question-screen').style.display = 'none';
             document.getElementById('result-area').style.display = 'block';
+            document.getElementById('progress-bar').style.display = 'none';
 
-            let typeName = "";
-            let description = "";
+            // 結果の判定ロジック（座標で判定）
+            // xが0以上のときは "pos"、未満なら "neg"
+            const xType = scores.x >= 0 ? "pos" : "neg";
+            const yType = scores.y >= 0 ? "pos" : "neg";
+            
+            // キーを作成（例: "pos_neg"）
+            const resultKey = xType + "_" + yType;
+            const resultData = results[resultKey];
 
-            // 点数に応じた結果の判定（3問×最大3点＝9点満点）
-            if (totalScore <= 4) {
-                typeName = "🏠 冷静沈着な「研究者タイプ」";
-                description = "あなたは自分の世界を大切にするタイプ。物事を深く考えるのが得意で、周りに流されません。一人の時間を充実させることがエネルギー源になります。";
-            } else if (totalScore <= 7) {
-                typeName = "⚖️ バランス感覚に優れた「調整役タイプ」";
-                description = "あなたは状況に合わせて柔軟に対応できる人。行動力と思考力のバランスが良く、誰とでもうまく付き合えます。";
-            } else {
-                typeName = "🚀 好奇心旺盛な「冒険家タイプ」";
-                description = "あなたは新しいことが大好き！じっとしているよりも動いている方が落ち着くはず。その行動力で周りを引っ張っていくリーダー素質があります。";
-            }
-
-            document.getElementById('result-type').innerText = typeName;
-            document.getElementById('result-description').innerText = description;
+            document.getElementById('result-name').innerText = resultData.name;
+            document.getElementById('result-desc').innerText = resultData.desc;
         }
     </script>
 </body>
