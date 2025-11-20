@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>聖徳太子AR（録画機能付き）</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #000;
+            font-family: sans-serif;
+        }
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0; left: 0;
+            transform: scaleX(-1); /* 鏡面表示 */
+        }
+        video { display: none; }
+
+        /* UIエリア（下部にまとめる） */
+        #ui-container {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px; /* ボタン同士の間隔 */
+            z-index: 100;
+            pointer-events: none; /* エリア自体はクリック透過 */
+        }
+
+        /* 共通のボタンスタイル */
+        .interactive-area {
+            pointer-events: auto;
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 2px solid #333;
+            border-radius: 15px;
+            padding: 10px 20px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            transition: all 0.2s;
+        }
+        .interactive-area:active { transform: scale(0.95); }
+
+        /* 画像ドロップゾーン */
+        #drop-zone {
+            width: 200px;
+        }
+        #drop-zone p { margin: 0; font-size: 12px; font-weight: bold; color: #333; }
+        #file-input { display: none; }
+
+        /* 録画ボタン */
+        #record-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%; /* 丸くする */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
+            border: 3px solid #fff;
+            background-color: #f00; /* 赤色 */
+            color: white;
+        }
+        #record-btn.recording {
+            background-color: #fff;
+            color: #f00;
+            border-color: #f00;
+            animation: pulse 1s infinite; /* 録画中は点滅 */
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* 状態表示 */
+        #status {
+            position: absolute;
+            top: 10px; left: 10px;
+            color: #0f0;
+            background: rgba(0,0,0,0.6);
+            padding: 5px 10px;
+            border-radius: 4px;
+            pointer-events: none;
+            z-index: 101;
+        }
+    </style>
+</head>
+<body>
+    <div id="status">起動中...</div>
+    
+    <div id="ui-container">
+        <div id="drop-zone" class="interactive-area">
+            <p>画像をドロップ<br>またはクリックで変更</p>
+            <input type="file" id="file-input" accept="image/*">
+        </div>
+
+        <div id="record-btn" class="interactive-area" title="録画開始/停止">
+            ●
+        </div>
+    </div>
+
+    <video id="input_video" autoplay playsinline></video>
+    <canvas id="output_canvas"></canvas>
+
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://pixijs.download/v7.x/pixi.min.js"></script>
+
+    <script>
+        // =========== 設定エリア ===========
+        const DEFAULT_IMAGE = 'face.png'; 
+        const FACE_SCALE = 1.0;           
+        const MOUTH_SENSITIVITY = 3.0;    
+        // =================================
+
+        const videoElement = document.getElementById('input_video');
+        const statusElement = document.getElementById('status');
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const recordBtn = document.getElementById('record-btn');
+        const canvasElement = document.getElementById('output_canvas');
+        
+        let faceMesh, camera;
+        let pixiApp, faceSprite, videoSprite;
+        
+        // 録画用変数
+        let mediaRecorder;
+        let recordedChunks = [];
+        let isRecording = false;
+
+        function log(msg) { statusElement.textContent = msg; }
+
+        // --- 録画機能 ---
+        recordBtn.addEventListener('click', async () => {
+            if (!isRecording) {
+                startRecording();
+            } else {
+                stopRecording();
+            }
+        });
+
+        async function startRecording() {
+            try {
+                // 1. キャンバスの映像ストリームを取得 (30fps)
+                const canvasStream = canvasElement.captureStream(30);
+                
+                // 2. マイクの音声ストリームを取得
+                const audioStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                
+                // 3. 映像と音声を結合
+                const combinedStream = new MediaStream([
+                    ...canvasStream.getVideoTracks(),
+                    ...audioStream.getAudioTracks()
+                ]);
+
+                // 4. レコーダー作成
+                mediaRecorder = new MediaRecorder(combinedStream, { mimeType: 'video/webm' });
+
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                    }
+                };
+
+                mediaRecorder.onstop = () => {
+                    // 録画終了後の保存処理
+                    const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = `ar_recording_${new Date().getTime()}.webm`; // ファイル名
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    log("録画を保存しました");
+                };
+
+                // 録画開始
+                recordedChunks = [];
+                mediaRecorder.start();
+                isRecording = true;
+                recordBtn.classList.add('recording');
+                recordBtn.textContent = "■"; // 停止マーク
+                log("🔴 録画中...");
+
+            } catch (err) {
+                console.error("録画エラー:", err);
+                alert("マイクの使用を許可してください（録画に必要です）");
+            }
+        }
+
+        function stopRecording() {
+            if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+                mediaRecorder.stop();
+                // マイクのストリームも停止（赤いアイコンを消すため）
+                mediaRecorder.stream.getTracks().forEach(track => track.stop());
+            }
+            isRecording = false;
+            recordBtn.classList.remove('recording');
+            recordBtn.textContent = "●"; // 録画マーク
+        }
+
+        // --- 画像アップロード機能 ---
+        dropZone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) processFile(file);
+        });
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.backgroundColor = '#eef';
+        });
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+        });
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+            const file = e.dataTransfer.files[0];
+            if (file) processFile(file);
+        });
+
+        function processFile(file) {
+            if (!file.type.match('image.*')) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                updateFaceTexture(e.target.result);
+                log("画像を変更しました");
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function updateFaceTexture(url) {
+            const newTexture = PIXI.Texture.from(url);
+            if (faceSprite) {
+                faceSprite.texture = newTexture;
+            } else {
+                faceSprite = new PIXI.Sprite(newTexture);
+                faceSprite.anchor.set(0.5);
+                faceSprite.visible = false;
+                pixiApp.stage.addChild(faceSprite);
+            }
+        }
+
+        // --- メイン処理 ---
+        function initPixi() {
+            pixiApp = new PIXI.Application({
+                view: canvasElement,
+                width: window.innerWidth, height: window.innerHeight,
+                resizeTo: window, autoDensity: true, backgroundColor: 0x000000
+            });
+
+            const videoTexture = PIXI.Texture.from(videoElement);
+            videoSprite = new PIXI.Sprite(videoTexture);
+            videoSprite.width = pixiApp.screen.width;
+            videoSprite.height = pixiApp.screen.height;
+            pixiApp.stage.addChild(videoSprite);
+
+            try { updateFaceTexture(DEFAULT_IMAGE); } catch(e) {}
+
+            window.addEventListener('resize', () => {
+                pixiApp.resize();
+                if(videoSprite) { videoSprite.width = pixiApp.screen.width; videoSprite.height = pixiApp.screen.height; }
+            });
+        }
+
+        function onFaceMeshResults(results) {
+            videoSprite.texture.update();
+            if (results.multiFaceLandmarks && results.multiFaceLandmarks.length > 0) {
+                if(!isRecording) log("稼働中: 準備OK");
+                if(faceSprite) faceSprite.visible = true;
+                
+                const landmarks = results.multiFaceLandmarks[0];
+                const nose = landmarks[1];
+                faceSprite.position.set(nose.x * pixiApp.screen.width, nose.y * pixiApp.screen.height);
+
+                const leftCheek = landmarks[234]; const rightCheek = landmarks[454];
+                const faceWidthPx = Math.hypot((rightCheek.x - leftCheek.x) * pixiApp.screen.width, (rightCheek.y - leftCheek.y) * pixiApp.screen.height);
+                const baseScale = (faceWidthPx / 512) * FACE_SCALE;
+
+                const upperLip = landmarks[13]; const lowerLip = landmarks[14];
+                const mouthDist = Math.hypot((upperLip.x - lowerLip.x) * pixiApp.screen.width, (upperLip.y - lowerLip.y) * pixiApp.screen.height);
+                let mouthRatio = Math.max(0, (mouthDist / faceWidthPx) - 0.02);
+                faceSprite.scale.set(baseScale, baseScale * (1 + mouthRatio * MOUTH_SENSITIVITY));
+
+                const leftEye = landmarks[33]; const rightEye = landmarks[263];
+                faceSprite.rotation = Math.atan2(rightEye.y - leftEye.y, rightEye.x - leftEye.x);
+            } else {
+                if(faceSprite) faceSprite.visible = false;
+            }
+        }
+
+        async function start() {
+            log("初期化中...");
+            initPixi();
+            
+            faceMesh = new FaceMesh({locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/${file}`});
+            faceMesh.setOptions({ maxNumFaces: 1, refineLandmarks: true, minDetectionConfidence: 0.5, minTrackingConfidence: 0.5 });
+            faceMesh.onResults(onFaceMeshResults);
+
+            log("カメラ起動...");
+            camera = new Camera(videoElement, {
+                onFrame: async () => { await faceMesh.send({image: videoElement}); },
+                width: 1280, height: 720
+            });
+            await camera.start();
+        }
+
+        start();
+    </script>
+</body>
+</html>
