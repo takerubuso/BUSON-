@@ -3,316 +3,367 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>16タイプ性格診断 - Advanced</title>
+    <title>本格プロファイリング診断</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary: #6366f1;
-            --secondary: #a855f7;
-            --bg: #f3f4f6;
-            --card: #ffffff;
-            --text: #1f2937;
+            --primary: #2563eb; /* 信頼感のある青 */
+            --accent: #f59e0b;  /* ゴールド（課金用） */
+            --bg: #f8fafc;
+            --text: #334155;
         }
         body {
             font-family: 'Noto Sans JP', sans-serif;
-            background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%);
+            background-color: var(--bg);
             color: var(--text);
             margin: 0;
-            min-height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: center;
+            min-height: 100vh;
         }
         .container {
-            background: var(--card);
-            width: 90%;
-            max-width: 600px;
-            padding: 40px;
-            border-radius: 24px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            text-align: center;
-            transition: transform 0.3s;
-        }
-        h1 {
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-        .btn {
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            color: white;
-            border: none;
-            padding: 16px 32px;
-            font-size: 18px;
-            border-radius: 50px;
-            cursor: pointer;
             width: 100%;
-            max-width: 300px;
-            margin: 10px auto;
+            max-width: 600px;
+            background: white;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            min-height: 100vh;
+        }
+        
+        /* 共通パーツ */
+        h1, h2 { text-align: center; color: #1e293b; }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            margin: 20px 0;
+            font-size: 16px;
             font-weight: bold;
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
-            transition: transform 0.2s;
+            color: white;
+            background: var(--primary);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.2s;
         }
         .btn:active { transform: scale(0.98); }
         .btn-option {
             background: white;
             color: var(--text);
-            border: 2px solid #e5e7eb;
-            box-shadow: none;
+            border: 1px solid #cbd5e1;
+            margin: 10px 0;
+            text-align: left;
+            padding: 15px 20px;
         }
-        .btn-option:hover {
-            border-color: var(--primary);
-            background: #f5f3ff;
-        }
+        .btn-option:hover { background: #eff6ff; border-color: var(--primary); }
+        
+        /* 画面制御 */
+        .screen { display: none; }
+        .active { display: block; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* 画面切り替え用 */
-        .screen { display: none; animation: fadeIn 0.5s ease; }
-        .active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* プログレスバー */
+        .progress-container { width: 100%; background: #e2e8f0; height: 6px; border-radius: 3px; margin-bottom: 20px; }
+        .progress-bar { height: 100%; background: var(--primary); width: 0%; transition: 0.3s; border-radius: 3px; }
 
-        /* 結果画面 */
-        .type-code {
-            font-size: 3rem;
-            font-weight: 900;
-            color: var(--primary);
-            letter-spacing: 2px;
-            margin: 0;
-        }
-        .type-name {
-            font-size: 1.5rem;
-            font-weight: bold;
-            margin-bottom: 20px;
-            color: #4b5563;
-        }
-        .chart-container {
+        /* 結果画面：無料エリア */
+        .result-header { text-align: center; padding: 20px 0; border-bottom: 2px solid #f1f5f9; }
+        .type-code { font-size: 48px; font-weight: 900; color: var(--primary); margin: 0; letter-spacing: 2px; }
+        .type-title { font-size: 20px; font-weight: bold; margin-bottom: 10px; }
+        .chart-box { position: relative; height: 280px; margin: 20px 0; }
+
+        /* 結果画面：有料エリア（ロック状態） */
+        .premium-section {
+            margin-top: 30px;
+            border: 2px solid var(--accent);
+            border-radius: 16px;
+            overflow: hidden;
             position: relative;
-            height: 300px;
-            width: 100%;
-            margin: 20px 0;
+        }
+        .premium-header {
+            background: var(--accent);
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .premium-content {
+            padding: 20px;
+            background: #fffbeb;
         }
         
-        /* シェアボタン */
-        .share-btn {
-            background-color: #000;
-            margin-top: 20px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
+        /* ロックの演出 */
+        .locked .premium-content {
+            filter: blur(8px); /* コンテンツをぼかす */
+            user-select: none;
+            height: 200px; /* 高さを固定 */
+            overflow: hidden;
         }
+        .lock-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            width: 80%;
+            z-index: 10;
+            display: none; /* 初期は非表示、lockedの時だけ表示 */
+        }
+        .locked .lock-overlay { display: block; }
+        
+        .btn-unlock {
+            background: linear-gradient(45deg, #f59e0b, #d97706);
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+            font-size: 18px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
+
+        /* コンテンツ詳細 */
+        .detail-box { margin-bottom: 20px; }
+        .detail-title { font-weight: bold; color: #d97706; border-bottom: 1px solid #fde68a; margin-bottom: 5px; display: inline-block;}
     </style>
 </head>
 <body>
 
-    <div class="container">
-        
-        <div id="screen-start" class="screen active">
-            <h1>🌐 16タイプ性格診断</h1>
-            <p>4つの指標からあなたの本質を分析し、<br>レーダーチャートで可視化します。</p>
-            <button class="btn" onclick="startQuiz()">診断を始める</button>
+<div class="container">
+
+    <div id="screen-start" class="screen active">
+        <h1>🧠 本格プロファイリング診断</h1>
+        <p style="text-align:center; color:#64748b;">30問の質問から、あなたの深層心理と才能を徹底分析します。</p>
+        <div style="text-align:center; margin:30px 0;">
+            <img src="https://placehold.co/200x200/e2e8f0/2563eb?text=Analysis" alt="イメージ" style="border-radius:50%; width:150px;">
         </div>
-
-        <div id="screen-question" class="screen">
-            <p style="color:#888; font-size:0.9rem;">Q <span id="q-number">1</span> / 8</p>
-            <h2 id="q-text" style="min-height: 3em;">質問文</h2>
-            <div id="options-area"></div>
-        </div>
-
-        <div id="screen-loading" class="screen">
-            <h2>分析中...</h2>
-            <p>AIロジックが結果を算出しています</p>
-            <div style="font-size: 3rem;">🧠✨</div>
-        </div>
-
-        <div id="screen-result" class="screen">
-            <p>あなたのタイプは...</p>
-            <div class="type-code" id="result-code">ESTJ</div>
-            <div class="type-name" id="result-name">幹部タイプ</div>
-            
-            <div class="chart-container">
-                <canvas id="radarChart"></canvas>
-            </div>
-
-            <p id="result-desc" style="text-align:left; line-height:1.6; padding:10px;">解説文</p>
-            
-            <button class="btn share-btn" onclick="shareTwitter()">
-                𝕏 で結果をシェア
-            </button>
-            <br><br>
-            <button class="btn btn-option" onclick="location.reload()">もう一度診断する</button>
-        </div>
-
+        <button class="btn" onclick="startQuiz()">診断を始める</button>
     </div>
 
-    <script>
-        // ▼▼▼ 設定エリア：ここを編集してオリジナルに！ ▼▼▼
+    <div id="screen-quiz" class="screen">
+        <div class="progress-container"><div class="progress-bar" id="progress-bar"></div></div>
+        <p style="text-align:center; color:#64748b;">Q <span id="q-current">1</span> / <span id="q-total">30</span></p>
+        <h2 id="q-text" style="min-height: 3em;">質問文</h2>
+        <div id="options-area"></div>
+    </div>
 
-        // 4つの軸の定義（例：MBTI風）
-        // E=外向, I=内向 | S=感覚, N=直感 | T=思考, F=感情 | J=判断, P=知覚
-        // スコアがプラスなら左側(E,S,T,J)、マイナスなら右側(I,N,F,P)とします
+    <div id="screen-result" class="screen">
+        <div class="result-header">
+            <p>あなたの診断結果</p>
+            <div class="type-code" id="res-code">ESTJ</div>
+            <div class="type-title" id="res-name">厳格な管理者</div>
+            <div class="chart-box">
+                <canvas id="radarChart"></canvas>
+            </div>
+            <p id="res-summary" style="text-align:left; line-height:1.6;">ここに無料版の概要が表示されます。</p>
+        </div>
 
-        const questions = [
-            // 軸1: Energy (E vs I)
-            { text: "大勢の人がいるパーティは？", axis: "EI", options: [{t:"楽しい！エネルギーをもらえる", v:1}, {t:"疲れる…早く帰りたい", v:-1}] },
-            { text: "休日の過ごし方は？", axis: "EI", options: [{t:"誰かを誘って遊びに行く", v:1}, {t:"家で一人でゆっくりする", v:-1}] },
+        <div class="premium-section locked" id="premium-section">
+            <div class="premium-header">👑 プレミアム詳細分析</div>
             
-            // 軸2: Mind (S vs N)
-            { text: "物事を考えるときは？", axis: "SN", options: [{t:"現実的で具体的なデータ重視", v:1}, {t:"未来の可能性や理想を重視", v:-1}] },
-            { text: "説明書を読むのは？", axis: "SN", options: [{t:"しっかり読んでから始める", v:1}, {t:"とりあえず触りながら覚える", v:-1}] },
+            <div class="lock-overlay">
+                <div style="font-size:40px; margin-bottom:10px;">🔒</div>
+                <p style="font-weight:bold; color:#333;">ここから先は有料レポートです</p>
+                <p style="font-size:14px; color:#666;">適職、恋愛傾向、隠された才能など<br>3,000文字以上の詳細な分析を解除</p>
+                <button class="btn btn-unlock" onclick="unlockPremium()">完全版を解除する (¥500)</button>
+            </div>
 
-            // 軸3: Nature (T vs F)
-            { text: "友人が悩んでいたら？", axis: "TF", options: [{t:"解決策をアドバイスする", v:1}, {t:"まずは気持ちに共感する", v:-1}] },
-            { text: "判断の基準は？", axis: "TF", options: [{t:"論理や公平さを優先", v:1}, {t:"人の感情や調和を優先", v:-1}] },
+            <div class="premium-content">
+                <div class="detail-box">
+                    <div class="detail-title">💼 才能と適職</div>
+                    <p id="res-work">ここに仕事に関する詳細な分析が表示されます。</p>
+                </div>
+                <div class="detail-box">
+                    <div class="detail-title">💘 恋愛とパートナーシップ</div>
+                    <p id="res-love">ここに恋愛に関する詳細な分析が表示されます。</p>
+                </div>
+                <div class="detail-box">
+                    <div class="detail-title">⚠️ 陥りやすい罠（弱点）</div>
+                    <p id="res-weak">ここに弱点に関する詳細な分析が表示されます。</p>
+                </div>
+                <div class="detail-box">
+                    <div class="detail-title">🚀 成長へのアドバイス</div>
+                    <p id="res-advice">ここにアドバイスが表示されます。</p>
+                </div>
+            </div>
+        </div>
 
-            // 軸4: Tactics (J vs P)
-            { text: "旅行の計画は？", axis: "JP", options: [{t:"分刻みでしっかり決める", v:1}, {t:"その場の気分で自由に動く", v:-1}] },
-            { text: "机の上は？", axis: "JP", options: [{t:"いつも整理整頓されている", v:1}, {t:"必要なものが散らばっている", v:-1}] }
-        ];
+        <button class="btn btn-option" onclick="location.reload()" style="margin-top:30px; border:none; background:#f1f5f9;">最初に戻る</button>
+    </div>
 
-        // 16タイプの結果データ
-        // キーは4つの文字の組み合わせ（E/I, S/N, T/F, J/P）
-        const resultsData = {
-            "ESTJ": { name: "厳格な管理者", desc: "真面目で責任感が強く、秩序を大切にするリーダータイプ。ルールを守り、効率的に物事を進めます。" },
-            "ESTP": { name: "活動的な冒険家", desc: "スリルを楽しみ、その場で問題を解決する行動派。じっとしているのが苦手で、常に刺激を求めます。" },
-            "ESFJ": { name: "心優しい支援者", desc: "協調性が高く、周りの人への気配りを忘れない人気者。チームの調和を何より大切にします。" },
-            "ESFP": { name: "自由なエンターテイナー", desc: "人生を楽しむ天才。明るく社交的で、周りの人を笑顔にするのが得意です。" },
-            "ENTJ": { name: "大胆な指揮官", desc: "長期的なビジョンを持ち、論理的に人々を率いるカリスマリーダー。困難な課題ほど燃えます。" },
-            "ENTP": { name: "賢い討論者", desc: "頭の回転が速く、新しいアイデアを次々と生み出す発明家気質。議論を楽しむタイプです。" },
-            "ENFJ": { name: "情熱的な主人公", desc: "人々の成長を心から願い、励ますカリスマ。言葉に力があり、周りをポジティブに巻き込みます。" },
-            "ENFP": { name: "広報運動家", desc: "自由奔放で創造力豊か。新しい可能性にワクワクし、直感に従って生きる情熱家です。" },
-            "ISTJ": { name: "実直な論理主義者", desc: "事実に基づき、コツコツと責務を果たす信頼のおける人。伝統や秩序を重んじます。" },
-            "ISTP": { name: "冷静な巨匠", desc: "観察眼が鋭く、道具を使いこなす職人気質。口数は少ないが、好奇心旺盛で解析好きです。" },
-            "ISFJ": { name: "献身的な擁護者", desc: "勤勉で思いやりがあり、大切な人を守るために尽力します。縁の下の力持ちタイプ。" },
-            "ISFP": { name: "繊細な芸術家", desc: "温厚で感受性豊か。型にはまらず、自分らしい美学や感性を大切にして生きています。" },
-            "INTJ": { name: "建築家", desc: "想像力が豊かで、戦略的に物事を考える完璧主義者。独創的なアイデアを現実に変える力を持ちます。" },
-            "INTP": { name: "論理的な学者", desc: "知識欲が強く、宇宙の真理や仕組みを解き明かすのが好き。独自の世界観を持つ思想家。" },
-            "INFJ": { name: "提唱者", desc: "強い信念と理想を持ち、世界を良くしようとする静かな情熱家。洞察力が非常に鋭いです。" },
-            "INFP": { name: "仲介者", desc: "詩的で親切な理想主義者。自分の価値観を大切にし、他者の良いところを見つけるのが得意です。" }
-        };
+</div>
 
-        // ▲▲▲ 設定エリア終了 ▲▲▲
+<script>
+    // ▼▼ 設定：30問作成のヒント ▼▼
+    // 軸: E/I (外向/内向), S/N (感覚/直感), T/F (思考/感情), J/P (判断/知覚)
+    // questions配列にコピー＆ペーストして問題を増やしてください。
+    
+    const questions = [
+        // EI軸 (Energy)
+        { text: "初対面の人と話すのは得意？", axis: "EI", options: [{t:"得意、楽しい", v:1}, {t:"苦手、疲れる", v:-1}] },
+        { text: "週末はどちらかというと？", axis: "EI", options: [{t:"みんなでワイワイ", v:1}, {t:"一人でゆっくり", v:-1}] },
+        { text: "考え事は？", axis: "EI", options: [{t:"話しながらまとめる", v:1}, {t:"頭の中で完結させる", v:-1}] },
+        
+        // SN軸 (Mind)
+        { text: "夢や理想よりも現実を見る？", axis: "SN", options: [{t:"現実重視", v:1}, {t:"理想重視", v:-1}] },
+        { text: "説明書は？", axis: "SN", options: [{t:"しっかり読む", v:1}, {t:"雰囲気で触る", v:-1}] },
+        { text: "細かい作業は？", axis: "SN", options: [{t:"得意", v:1}, {t:"全体像を見たい", v:-1}] },
 
-        let currentQ = 0;
-        let scores = { "EI": 0, "SN": 0, "TF": 0, "JP": 0 };
+        // TF軸 (Nature)
+        { text: "判断基準は？", axis: "TF", options: [{t:"論理・正しさ", v:1}, {t:"感情・思いやり", v:-1}] },
+        { text: "友人の悩みには？", axis: "TF", options: [{t:"解決策を出す", v:1}, {t:"共感する", v:-1}] },
+        { text: "競争は？", axis: "TF", options: [{t:"勝つことが大事", v:1}, {t:"協力が大事", v:-1}] },
 
-        // 画面遷移関数
-        function showScreen(id) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
+        // JP軸 (Tactics)
+        { text: "旅行の計画は？", axis: "JP", options: [{t:"綿密に立てる", v:1}, {t:"行き当たりばったり", v:-1}] },
+        { text: "部屋の状態は？", axis: "JP", options: [{t:"整理されている", v:1}, {t:"散らかっている", v:-1}] },
+        { text: "決断は？", axis: "JP", options: [{t:"早めに決める", v:1}, {t:"ギリギリまで迷う", v:-1}] },
+        
+        // ★ここに追記して30問に増やしてください★
+        // 同じパターンで { text: "...", axis: "...", options: [...] }, を追加するだけです。
+    ];
+
+    // ▼▼ 結果データ（無料文＋有料文） ▼▼
+    // 本来は16通りすべて書く必要がありますが、サンプルとして「ESTJ」と「INFP」の2つだけ詳しく書いています。
+    // 他のタイプが出たときのエラー避けのため、ダミーデータを入れています。
+    const resultsData = {
+        "ESTJ": {
+            name: "厳格な管理者",
+            summary: "【無料結果】あなたは責任感が強く、ルールを重んじるリーダータイプ。組織をまとめる力があります。",
+            work: "【有料】経営者、プロジェクトマネージャー、裁判官などが適職。明確なゴールがある環境で最も輝きます。",
+            love: "【有料】恋愛でも真面目で誠実。デートの計画もしっかり立てるタイプですが、相手にも完璧を求めすぎてしまうかも。",
+            weak: "【有料】融通が利かない頑固な一面があります。他人の感情を無視して論理だけで詰めると孤立します。",
+            advice: "【有料】たまには「無駄」を楽しんでみましょう。部下やパートナーの話を「解決」せずにただ「聞く」時間を作ると信頼が増します。"
+        },
+        "INFP": {
+            name: "夢見る仲介者",
+            summary: "【無料結果】あなたは豊かな想像力と優しい心を持つ理想主義者。自分だけの世界観を大切にしています。",
+            work: "【有料】クリエイター、カウンセラー、作家。自分の価値観を表現できる仕事でないと心が死んでしまいます。",
+            love: "【有料】ロマンチストで、深い精神的な繋がりを求めます。一度好きになると一途ですが、理想が高すぎて現実とのギャップに苦しむことも。",
+            weak: "【有料】批判に弱く、傷つきやすいです。嫌なことから逃避してしまう癖があるので注意。",
+            advice: "【有料】あなたの優しさは武器ですが、時には「No」と言う勇気を持ちましょう。現実的な目標を小さく立てて達成する練習が吉。"
+        },
+        // ダミー（実際は全16タイプ分作成してください）
+        "default": {
+            name: "その他のタイプ",
+            summary: "サンプルコードのため詳細データ未入力です。",
+            work: "有料エリアのテキストサンプルです。",
+            love: "有料エリアのテキストサンプルです。",
+            weak: "有料エリアのテキストサンプルです。",
+            advice: "有料エリアのテキストサンプルです。"
         }
+    };
 
-        // 診断開始
-        function startQuiz() {
-            showScreen('screen-question');
-            renderQuestion();
+    // --- ロジック部分 ---
+    let currentQ = 0;
+    let scores = { "EI": 0, "SN": 0, "TF": 0, "JP": 0 };
+
+    // クイズ開始
+    function startQuiz() {
+        document.getElementById('screen-start').classList.remove('active');
+        document.getElementById('screen-quiz').classList.add('active');
+        document.getElementById('q-total').innerText = questions.length;
+        renderQuestion();
+    }
+
+    // 質問描画
+    function renderQuestion() {
+        const q = questions[currentQ];
+        document.getElementById('q-current').innerText = currentQ + 1;
+        document.getElementById('q-text').innerText = q.text;
+        
+        // プログレスバー
+        const pct = ((currentQ) / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = pct + "%";
+
+        const area = document.getElementById('options-area');
+        area.innerHTML = "";
+
+        q.options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'btn btn-option';
+            btn.innerText = opt.t;
+            btn.onclick = () => {
+                scores[q.axis] += opt.v;
+                currentQ++;
+                if (currentQ < questions.length) {
+                    renderQuestion();
+                } else {
+                    showResult();
+                }
+            };
+            area.appendChild(btn);
+        });
+    }
+
+    // 結果表示
+    function showResult() {
+        document.getElementById('screen-quiz').classList.remove('active');
+        document.getElementById('screen-result').classList.add('active');
+
+        // タイプ判定
+        const type = (
+            (scores.EI >= 0 ? "E" : "I") +
+            (scores.SN >= 0 ? "S" : "N") +
+            (scores.TF >= 0 ? "T" : "F") +
+            (scores.JP >= 0 ? "J" : "P")
+        );
+
+        // データ取得（なければdefault）
+        const data = resultsData[type] || resultsData["default"];
+
+        // テキスト埋め込み
+        document.getElementById('res-code').innerText = type;
+        document.getElementById('res-name').innerText = data.name;
+        document.getElementById('res-summary').innerText = data.summary;
+        
+        // 有料部分のテキストも裏でセットしておく
+        document.getElementById('res-work').innerText = data.work;
+        document.getElementById('res-love').innerText = data.love;
+        document.getElementById('res-weak').innerText = data.weak;
+        document.getElementById('res-advice').innerText = data.advice;
+
+        // チャート描画
+        drawChart();
+    }
+
+    // 有料解除（モック）
+    function unlockPremium() {
+        if(confirm("【開発者モード】\n実際のアプリではここで決済画面（Stripeなど）へ飛びます。\n\n「OK」を押すと決済完了としてロックを解除します。")) {
+            const section = document.getElementById('premium-section');
+            section.classList.remove('locked');
+            // ロックオーバーレイを消す
+            section.querySelector('.lock-overlay').style.display = 'none';
         }
+    }
 
-        // 質問表示
-        function renderQuestion() {
-            const q = questions[currentQ];
-            document.getElementById('q-number').innerText = currentQ + 1;
-            document.getElementById('q-text').innerText = q.text;
-            const area = document.getElementById('options-area');
-            area.innerHTML = "";
-
-            q.options.forEach(opt => {
-                const btn = document.createElement('button');
-                btn.className = 'btn btn-option';
-                btn.innerText = opt.t;
-                btn.onclick = () => next(q.axis, opt.v);
-                area.appendChild(btn);
-            });
-        }
-
-        // 次へ
-        function next(axis, value) {
-            scores[axis] += value;
-            currentQ++;
-            if (currentQ < questions.length) {
-                renderQuestion();
-            } else {
-                showLoading();
-            }
-        }
-
-        // ローディング演出
-        function showLoading() {
-            showScreen('screen-loading');
-            setTimeout(() => {
-                calcResult();
-            }, 1500); // 1.5秒待つ
-        }
-
-        // 結果計算・表示
-        function calcResult() {
-            // 4文字のタイプコード生成
-            const type = (
-                (scores.EI >= 0 ? "E" : "I") +
-                (scores.SN >= 0 ? "S" : "N") +
-                (scores.TF >= 0 ? "T" : "F") +
-                (scores.JP >= 0 ? "J" : "P")
-            );
-
-            const data = resultsData[type];
-            document.getElementById('result-code').innerText = type;
-            document.getElementById('result-name').innerText = data.name;
-            document.getElementById('result-desc').innerText = data.desc;
-
-            showScreen('screen-result');
-            drawChart();
-        }
-
-        // レーダーチャート描画
-        function drawChart() {
-            const ctx = document.getElementById('radarChart').getContext('2d');
-            
-            // スコアを0-100のスケール等に見せるための加工（絶対値を使用など）
-            // ここでは単純に各軸の「傾向」を表示します
-            // E寄りなら左、I寄りなら右に伸びる...ではなく、
-            // レーダーチャート用に「外向性」「直観性」「論理性」「計画性」の強さとして変換
-            const rawData = [
-                scores.EI + 2, // 補正してプラスの値にする(簡易的)
-                scores.SN + 2,
-                scores.TF + 2,
-                scores.JP + 2
-            ];
-
-            new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: ['外向性(E)', '感覚(S)', '思考(T)', '判断(J)'],
-                    datasets: [{
-                        label: 'あなたの性格バランス',
-                        data: rawData,
-                        backgroundColor: 'rgba(99, 102, 241, 0.2)',
-                        borderColor: '#6366f1',
-                        pointBackgroundColor: '#a855f7',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    scales: {
-                        r: {
-                            beginAtZero: true,
-                            suggestedMax: 5, // 質問数に応じて調整
-                            ticks: { display: false } // 目盛り数字を消す
-                        }
+    // レーダーチャート
+    function drawChart() {
+        const ctx = document.getElementById('radarChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['外向性', '現実性', '論理性', '計画性'],
+                datasets: [{
+                    label: 'バランス',
+                    data: [scores.EI+5, scores.SN+5, scores.TF+5, scores.JP+5], // 見栄え調整
+                    backgroundColor: 'rgba(37, 99, 235, 0.2)',
+                    borderColor: '#2563eb',
+                    pointBackgroundColor: '#f59e0b',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                scales: {
+                    r: {
+                        beginAtZero: true,
+                        ticks: { display: false },
+                        suggestedMax: 10
                     }
                 }
-            });
-        }
+            }
+        });
+    }
+</script>
 
-        // X(Twitter)シェア
-        function shareTwitter() {
-            const code = document.getElementById('result-code').innerText;
-            const name = document.getElementById('result-name').innerText;
-            const text = `私の性格タイプは【${code}：${name}】でした！%0aみんなも診断してみてね！%0a#16タイプ診断`;
-            const url = window.location.href;
-            window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
-        }
-    </script>
 </body>
 </html>
