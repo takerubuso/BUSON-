@@ -1462,6 +1462,73 @@
                 margin-bottom: 8px;
             }
         }
+    /* ▼▼▼ ここから追加コード（CSS） ▼▼▼ */
+        .special-plan-container {
+            margin-top: 40px;
+            width: 100%;
+        }
+        .special-plan-link {
+            text-decoration: none;
+            display: block;
+            color: inherit;
+        }
+        .special-plan-card {
+            background-color: #ffffff;
+            border: 3px solid var(--primary-color);
+            border-radius: var(--border-radius-md);
+            padding: 40px 30px;
+            text-align: center;
+            position: relative;
+            transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+        }
+        .special-plan-link:hover .special-plan-card {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+            background-color: #fffbfb;
+        }
+        .special-plan-badge {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 8px 25px;
+            font-weight: bold;
+            border-bottom-right-radius: 20px;
+            font-size: 1rem;
+            z-index: 2;
+        }
+        .special-plan-content h3 {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            line-height: 1.4;
+            margin-top: 10px;
+        }
+        .special-plan-icons {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            opacity: 0.8;
+        }
+        .special-plan-content p {
+            font-size: 1.1rem;
+            color: var(--text-color);
+            margin-bottom: 30px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        @media (max-width: 768px) {
+            .special-plan-content h3 { font-size: 1.4rem; }
+            .special-plan-icons { font-size: 2rem; }
+        }
+        /* ▲▲▲ 追加コードここまで ▲▲▲ */
     </style>
 </head>
 <body>
@@ -1573,7 +1640,32 @@
                     <a href="#contact" class="service-link">詳細を問い合わせる <i class="fas fa-arrow-right"></i></a>
                 </div>
             </div>
-        </div>
+            
+       <div class="special-plan-container fade-in">
+                <a href="https://buson2025.com/line.html" class="special-plan-link" target="_blank">
+                    <div class="special-plan-card">
+                        <div class="special-plan-badge">NEW! おすすめプラン</div>
+                        <div class="special-plan-content">
+                            <div class="special-plan-icons">
+                                <i class="fas fa-paint-brush"></i>
+                                <span style="font-size: 1.5rem; display:flex; align-items:center;">+</span>
+                                <i class="fab fa-line"></i>
+                                <span style="font-size: 1.5rem; display:flex; align-items:center;">+</span>
+                                <i class="fas fa-hashtag"></i>
+                            </div>
+                            <h3>キャラクター制作 × LINEスタンプ × SNS PR<br>オールインワンパック</h3>
+                            <p>
+                                「認知・採用・広報」を変える、戦力となるキャラクターを適正価格で。<br>
+                                制作からLINEスタンプ申請、SNS拡散まで丸ごとお任せできる新プランが登場しました。
+                            </p>
+                            <span class="btn" style="padding: 15px 50px; font-size: 1.1rem;">
+                                プラン詳細を見る <i class="fas fa-arrow-right"></i>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            </div>
     </section>
 
     <!-- 事例セクション -->
