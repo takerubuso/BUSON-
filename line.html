@@ -61,14 +61,13 @@
         .site-header { padding: 20px 0; text-align: center; border-bottom: 1px solid #eee; }
         .site-logo { font-size: 1.5rem; font-weight: 900; color: var(--primary-color); letter-spacing: 0.05em; }
 
-        /* --- Hero Section (UPDATED with Image) --- */
+        /* --- Hero Section --- */
         .hero {
             background: linear-gradient(135deg, #FFF5F7 0%, #FFFFFF 100%);
-            padding: 60px 0 80px; /* 上の余白を少し調整 */
+            padding: 60px 0 80px;
             text-align: center;
         }
 
-        /* 新しいトップ画像のスタイル */
         .hero-image-wrapper {
             margin-bottom: 40px;
             width: 100%;
@@ -77,20 +76,19 @@
         }
         .main-hero-img {
             width: 100%;
-            max-width: 900px; /* PCで見やすくなる最大幅 */
+            max-width: 900px;
             height: auto;
             border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); /* ふんわりした影 */
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
 
         .hero p { font-size: 1.1rem; margin-bottom: 40px; opacity: 0.9; }
 
-        /* Hero Features */
         .hero-features {
             display: flex;
             justify-content: center;
             gap: 20px;
-            margin: 0 0 50px; /* 画像の下のマージンを調整 */
+            margin: 0 0 50px;
             flex-wrap: wrap;
         }
         .hero-feature-card {
@@ -108,7 +106,7 @@
         .feature-desc { font-size: 0.8rem; color: #777; line-height: 1.5; }
 
 
-        /* --- Problems Section --- */
+        /* --- Problems Section (Updated for Bear Images) --- */
         .problems { background-color: var(--bg-pink); }
         .section-title { font-size: 2rem; text-align: center; margin-bottom: 50px; color: var(--text-color); }
         .section-title span { display: block; font-size: 1rem; color: var(--primary-color); margin-bottom: 10px; font-weight: bold; letter-spacing: 0.1em; }
@@ -120,10 +118,23 @@
             box-shadow: 0 5px 15px rgba(255, 117, 140, 0.1);
             text-align: center;
         }
+
+        /* イラスト用の丸い枠の設定 */
         .problem-img-placeholder {
-            width: 80px; height: 80px; background: #f8f8f8; border-radius: 50%;
-            margin: 0 auto 15px; display: flex; align-items: center; justify-content: center;
-            font-size: 0.8rem; color: #aaa; border: 2px dashed #ddd;
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; /* 画像がはみ出さないように */
+            background: transparent;
+        }
+        
+        /* イラスト自体の設定 */
+        .problem-img-placeholder img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 枠に合わせてトリミング */
+            object-position: center;
         }
 
         /* --- Solution Section --- */
@@ -196,7 +207,7 @@
 
         /* --- Responsive --- */
         @media (max-width: 768px) {
-            .hero { padding-top: 40px; } /* スマホでの上部余白 */
+            .hero { padding-top: 40px; }
             .hero-feature-card { width: 100%; max-width: 300px; margin-bottom: 10px; }
             .problem-item { width: 100%; }
             .solution-grid { grid-template-columns: 1fr; }
@@ -251,19 +262,30 @@
             <h2 class="section-title"><span>Problem</span>自社のキャラクターを作りたいが、<br>こんな失敗はしたくない…</h2>
             <div class="problems-list">
                 <div class="problem-item">
-                    <div class="problem-img-placeholder">お金の<br>イラスト</div>
+                    <div class="problem-img-placeholder">
+                        <img src="images/bear-money.jpg" alt="デザイン会社は高すぎる">
+                    </div>
                     <strong>デザイン会社は高すぎる</strong><br><small>100万円以上と言われ予算が降りない</small>
                 </div>
+
                 <div class="problem-item">
-                    <div class="problem-img-placeholder">書類の<br>イラスト</div>
+                    <div class="problem-img-placeholder">
+                        <img src="images/bear-rights.jpg" alt="権利関係が怖い">
+                    </div>
                     <strong>AIは権利関係が怖い</strong><br><small>商標リスクや類似キャラが心配</small>
                 </div>
+
                 <div class="problem-item">
-                    <div class="problem-img-placeholder">NG<br>イラスト</div>
+                    <div class="problem-img-placeholder">
+                        <img src="images/bear-ng.jpg" alt="安っぽい素材になる">
+                    </div>
                     <strong>安っぽい素材になる</strong><br><small>企業の「顔」としての品格がない</small>
                 </div>
+
                 <div class="problem-item">
-                    <div class="problem-img-placeholder">迷う<br>イラスト</div>
+                    <div class="problem-img-placeholder">
+                        <img src="images/bear-maze.jpg" alt="作っても放置される">
+                    </div>
                     <strong>作っても放置される</strong><br><small>活用法が分からずフォルダに眠る</small>
                 </div>
             </div>
