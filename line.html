@@ -61,34 +61,43 @@
         .site-header { padding: 20px 0; text-align: center; border-bottom: 1px solid #eee; }
         .site-logo { font-size: 1.5rem; font-weight: 900; color: var(--primary-color); letter-spacing: 0.05em; }
 
-        /* --- Hero Section (IMPROVED) --- */
+        /* --- Hero Section (UPDATED with Image) --- */
         .hero {
             background: linear-gradient(135deg, #FFF5F7 0%, #FFFFFF 100%);
-            padding: 80px 0;
+            padding: 60px 0 80px; /* 上の余白を少し調整 */
             text-align: center;
         }
-        .hero-badges { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 25px; }
-        .badge {
-            background: var(--white); color: var(--primary-color); border: 1px solid var(--primary-color);
-            padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; font-weight: bold;
+
+        /* 新しいトップ画像のスタイル */
+        .hero-image-wrapper {
+            margin-bottom: 40px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
         }
-        .hero h1 { font-size: 2.4rem; margin-bottom: 20px; line-height: 1.4; color: var(--text-color); }
-        .hero h1 span.highlight { color: var(--primary-color); }
+        .main-hero-img {
+            width: 100%;
+            max-width: 900px; /* PCで見やすくなる最大幅 */
+            height: auto;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); /* ふんわりした影 */
+        }
+
         .hero p { font-size: 1.1rem; margin-bottom: 40px; opacity: 0.9; }
 
-        /* Hero Features (New Addition) */
+        /* Hero Features */
         .hero-features {
             display: flex;
             justify-content: center;
             gap: 20px;
-            margin: 40px 0 50px;
+            margin: 0 0 50px; /* 画像の下のマージンを調整 */
             flex-wrap: wrap;
         }
         .hero-feature-card {
             background: var(--white);
             padding: 20px 15px;
             border-radius: 15px;
-            width: 200px; /* カードの幅 */
+            width: 200px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.05);
             border: 1px solid #f5f5f5;
             transition: transform 0.3s;
@@ -187,8 +196,8 @@
 
         /* --- Responsive --- */
         @media (max-width: 768px) {
-            .hero h1 { font-size: 1.8rem; }
-            .hero-feature-card { width: 100%; max-width: 300px; margin-bottom: 10px; } /* スマホでカードを見やすく */
+            .hero { padding-top: 40px; } /* スマホでの上部余白 */
+            .hero-feature-card { width: 100%; max-width: 300px; margin-bottom: 10px; }
             .problem-item { width: 100%; }
             .solution-grid { grid-template-columns: 1fr; }
             .pricing-wrapper { flex-direction: column; align-items: center; }
@@ -207,16 +216,10 @@
 
     <section class="hero">
         <div class="container">
-            <div class="hero-badges">
-                <span class="badge">SNS総フォロワー100万人</span>
-                <span class="badge">作って終わりじゃない</span>
-                <span class="badge">LINEスタンプ＋PR漫画付き</span>
-            </div>
             
-            <h1>御社の「顔」を作り、<br>LINEスタンプと漫画で広める。<br>
-                <span class="highlight">BUSON監修 オールインワンPRパック</span>
-            </h1>
-
+            <div class="hero-image-wrapper">
+                <img src="top-banner.jpg" alt="御社の「顔」を作り、LINEスタンプと漫画で広める。BUSON監修 オールインワンPRパック" class="main-hero-img">
+            </div>
             <div class="hero-features">
                 <div class="hero-feature-card">
                     <span class="feature-icon">🎨</span>
