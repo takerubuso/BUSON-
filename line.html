@@ -106,7 +106,7 @@
         .feature-desc { font-size: 0.8rem; color: #777; line-height: 1.5; }
 
 
-        /* --- Problems Section (Updated for Larger Bear Images) --- */
+        /* --- Problems Section --- */
         .problems { background-color: var(--bg-pink); }
         .section-title { font-size: 2rem; text-align: center; margin-bottom: 50px; color: var(--text-color); }
         .section-title span { display: block; font-size: 1rem; color: var(--primary-color); margin-bottom: 10px; font-weight: bold; letter-spacing: 0.1em; }
@@ -119,23 +119,22 @@
             text-align: center;
         }
 
-        /* ▼▼▼ 画像表示の修正箇所 ▼▼▼ */
+        /* 悩み部分のイラスト設定（大きく表示） */
         .problem-img-placeholder {
             width: 100%;
-            max-width: 220px; /* イラストが大きすぎない程度の良いサイズ */
+            max-width: 220px;
             height: auto;
-            margin: 0 auto 20px; /* 下に少し余白 */
+            margin: 0 auto 20px;
             display: block;
             background: transparent;
-            border-radius: 0; /* 丸くしない */
+            border-radius: 0;
         }
-        
         .problem-img-placeholder img {
             width: 100%;
             height: auto;
-            object-fit: contain; /* イラスト全体を表示 */
+            object-fit: contain;
         }
-        /* ▲▲▲ 修正ここまで ▲▲▲ */
+
 
         /* --- Solution Section --- */
         .solution-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
@@ -145,10 +144,20 @@
         }
         .solution-card:hover { border-color: var(--primary-color); transform: translateY(-5px); }
         
+        /* ▼▼▼ 解決策アイコンのCSS（今回変更） ▼▼▼ */
         .solution-icon-img { 
-            width: 100px; height: auto; margin-bottom: 20px; display: inline-block; 
+            width: 160px;       /* 大きく見やすく */
+            height: 160px;      /* 正方形に */
+            object-fit: cover;  /* 枠いっぱいに表示 */
+            border-radius: 50%; /* 丸く切り抜く */
+            margin-bottom: 20px; 
+            display: inline-block; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1); /* 少し影をつける */
         }
+        /* ▲▲▲ ここまで ▲▲▲ */
+
         .solution-card h3 { font-size: 1.3rem; margin-bottom: 15px; color: var(--primary-dark); }
+
 
         /* --- Package Details --- */
         .package-box {
@@ -299,21 +308,25 @@
         <div class="container">
             <h2 class="section-title"><span>Solution</span>BUSON STUDIOブランドという<br>圧倒的な付加価値</h2>
             <div class="solution-grid">
+                
                 <div class="solution-card">
-                    <img src="https://placehold.jp/200x200.png?text=王冠アイコン" alt="ブランド価値" class="solution-icon-img">
+                    <img src="images/solution-buson.png" alt="BUSON名義のブランド価値" class="solution-icon-img">
                     <h3>BUSON名義の<br>ブランド価値</h3>
                     <p>ただ作るだけなら誰でもできます。100万人に愛される作家の「センス・世界観」を注入し、御社のキャラを「作品」として仕上げます。</p>
                 </div>
+
                 <div class="solution-card">
-                    <img src="https://placehold.jp/200x200.png?text=ロケットアイコン" alt="クオリティ＆速度" class="solution-icon-img">
+                    <img src="images/solution-rocket.jpg" alt="圧倒的なクオリティ＆速度" class="solution-icon-img">
                     <h3>圧倒的な<br>クオリティ＆速度</h3>
                     <p>最新技術で制作工程を効率化。浮いた時間を「作家による仕上げ・監修」に集中させることで、短納期かつ高品質を実現しました。</p>
                 </div>
+
                 <div class="solution-card">
-                    <img src="https://placehold.jp/200x200.png?text=箱アイコン" alt="全部入り" class="solution-icon-img">
+                    <img src="images/solution-box.jpg" alt="スタンプ・PRまで全部入り" class="solution-icon-img">
                     <h3>スタンプ・PRまで<br>全部入り</h3>
                     <p>キャラ制作だけでなくLINEスタンプ化、SNSでのPRまでワンストップ。納品されたその日から広報担当として活躍します。</p>
                 </div>
+
             </div>
         </div>
     </section>
