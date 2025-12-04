@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>クリエイティブ・ポリシー | BUSON STUDIO</title>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/common.js" defer></script>
+    <style>
+        /* ポリシーページのスタイル（privacy.htmlより継承・調整） */
+        .policy-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ff6b88;
+            margin-bottom: 10px; /* サブタイトル用に間隔を調整 */
+            text-align: center;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: #ffd1dc;
+            border-radius: 2px;
+        }
+
+        /* サブタイトル用のスタイル追加 */
+        .page-subtitle {
+            text-align: center;
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+        
+        .policy-content {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .policy-section {
+            margin-bottom: 30px;
+        }
+        
+        .policy-section h2 {
+            font-size: 20px;
+            color: #ff6b88;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 1px dotted #ffd1dc;
+            text-align: left;
+        }
+        
+        .policy-section p {
+            margin-bottom: 15px;
+            line-height: 1.8;
+            color: #333;
+        }
+        
+        /* 強調部分のスタイル */
+        .policy-section strong {
+            background: linear-gradient(transparent 70%, #ffd1dc 70%); /* ピンクのマーカー風 */
+            font-weight: 700;
+        }
+        
+        .policy-update {
+            text-align: right;
+            font-size: 14px;
+            color: #888;
+            margin-top: 15px;
+        }
+        
+        .return-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #ffd1dc;
+            color: #4a4a4a;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: background-color 0.3s, color 0.3s;
+            text-align: center;
+        }
+        
+        .return-button:hover {
+            background-color: #ff6b88;
+            color: white;
+        }
+        
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <a href="#main-content" class="skip-link">メインコンテンツにスキップ</a>
+
+    <div id="header-placeholder"></div>
+    
+    <main id="main-content" tabindex="-1">
+        <div class="policy-container">
+            <h1 class="page-title">クリエイティブ・ポリシー</h1>
+            <p class="page-subtitle">〜 AIとともに作品を生み出すための指針 〜</p>
+            
+            <div class="policy-content">
+                <div class="policy-section">
+                    <p>BUSON STUDIOでは、新しい技術を積極的に取り入れつつ、変わらない情熱で作品をお届けするために、以下の指針を定めています。</p>
+                </div>
+
+                <div class="policy-section">
+                    <h2>0. すべては「楽しんでいただく」ために</h2>
+                    <p>手描きでもAIでも、使う道具が何であれ本質は変わりません。<br>
+                    「この作品で誰かを笑わせられるか」「心を動かせるか」。<br>
+                    創作の原点はいつもそこにあります。<br>
+                    技術ではなく<strong>“面白さ”を最優先</strong>に追求します。</p>
+                </div>
+                
+                <div class="policy-section">
+                    <h2>1. 私は「総監督」であり、現場で磨くクリエイターでもある</h2>
+                    <p>AIは頼れるスタッフであり、私はその指揮をとる“総監督”です。<br>
+                    方向性を決め、構図を選び、表情や世界の温度感を決めるのは私。<br>
+                    そして、生成された素材に手を入れ、仕上げる“現場の職人”でもあり続けます。<br>
+                    効率化しても、作品に向き合う汗は惜しみません。</p>
+                </div>
+                
+                <div class="policy-section">
+                    <h2>2. AI生成の核（ベース）にするのは、私の世界観</h2>
+                    <p>AIに参照させているのは、他人の絵ではなく、自分がこれまで描き続けてきたイラスト・キャラクター・世界設定です。<br>
+                    第三者の模倣ではなく、私自身が築いてきた創作のアーカイブを指針としています。</p>
+                    <p>だからこそ、AIが生み出すのは「知らない誰かの絵」ではなく、<strong>“私の世界観を深めるための素材”</strong> となります。</p>
+                </div>
+                
+                <div class="policy-section">
+                    <h2>3. AIの出力は「完成品」ではなく、創作のスタート地点</h2>
+                    <p>生成された画像は原石です。<br>
+                    そこから、形を整え、色を調整し、質感を足し、不要な違和感を削り、最終的な作品として成立させるまで細部を整えます。<br>
+                    AIは土台を作り、最後の表現を決めるのは人間の感性です。</p>
+                </div>
+                
+                <div class="policy-section">
+                    <h2>4. 多く試し、選び抜き、ひとつに仕上げる</h2>
+                    <p>AIは“楽をする道具”ではありません。<br>
+                    より良い構図や表現を探すためのブレーンです。<br>
+                    無数の案を生成し、その中から最高の1枚だけを選び抜く。</p>
+                    <p>そして、作品として仕上げる工程にこそ、クリエイターとしての責任と技術があります。</p>
+                </div>
+                
+                <div class="policy-section">
+                    <h2>5. キャラクターと世界観こそ、創作の核</h2>
+                    <p>AIの性能がどれだけ上がっても、キャラクターの個性や、ストーリーの温度感や、世界の空気感は、私自身が長い時間をかけて育ててきたものです。<br>
+                    AIはそれを“広げる道具”であって、置き換える存在ではありません。<br>
+                    IP（キャラクター）は唯一無二の財産であり、創作の中心です。</p>
+                </div>
+                
+                <div class="policy-section">
+                    <h2>6. 数字を見るが、数字に支配されない</h2>
+                    <p>再生数や反応は大切な指標ですが、ただ数字のために自分の色を捨てることはしません。<br>
+                    「自分が面白い」と「皆さんが見たい」が重なるところで勝負する。<br>
+                    媚びず、意地を張らず、冷静にバランスを取ります。</p>
+                </div>
+                
+                <div class="policy-section">
+                    <h2>7. AIと共に作る。そして作品の責任は自分にある</h2>
+                    <p>AIはあくまで創作のパートナーです。<br>
+                    構図の意図、世界観の方向性、仕上げの判断——<br>
+                    最終的な“決定”は必ず人間である私が行います。</p>
+                    <p>だから、世に出した作品には責任と誇りを持ちます。<br>
+                    AIだからと言い訳せず、ひとりのクリエイターとして胸を張って送り出します。</p>
+                </div>
+                
+                <div class="policy-update">
+                    制定日: 2025年X月X日<br>
+                    最終更新日: 2025年X月X日
+                </div>
+            </div>
+            
+            <div class="button-container">
+                <a href="index.html" class="return-button">トップページに戻る</a>
+            </div>
+        </div>
+    </main>
+    
+    <div id="footer-placeholder"></div>
+</body>
+</html>
