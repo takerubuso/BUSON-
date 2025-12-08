@@ -214,6 +214,12 @@
 
         /* --- Footer --- */
         footer { background: #333; color: var(--white); text-align: center; padding: 40px 20px; font-size: 0.9rem; }
+        
+        /* 修正箇所：フッター内のリンクを白くする設定 */
+        footer a { color: var(--white) !important; text-decoration: none; transition: opacity 0.3s; }
+        footer a:hover { opacity: 0.7; text-decoration: underline; }
+        footer .footer-links { margin: 30px 0; line-height: 2; }
+        footer .footer-links a { margin: 0 10px; display: inline-block; }
 
         /* --- Responsive --- */
         @media (max-width: 768px) {
@@ -224,6 +230,9 @@
             .pricing-wrapper { flex-direction: column; align-items: center; }
             .price-card { width: 100%; max-width: 400px; margin-bottom: 30px; }
             .price-card.standard { transform: scale(1); order: -1; }
+            
+            /* フッターリンクのスマホ表示調整 */
+            footer .footer-links a { display: block; margin: 5px 0; }
         }
     </style>
 </head>
@@ -507,33 +516,25 @@
                 ・メディア出演・イラスト提供：マツコ会議 / クイズ！国民一斉調査 など
             </div>
 
-               </div>
-
-                <div class="footer-links-row">
-                <a href="company.html" class="external-link">会社情報</a>
-                <a href="important.html" class="external-link">重要なお知らせ</a>
-                <a href="buson-studio-business.html" class="external-link">PR案件・ライセンスビジネス事例</a>
-                <a href="faq.html" class="external-link">よくあるご質問</a>
+            <div class="footer-links">
+                <a href="#">会社情報</a>
+                <a href="#">重要なお知らせ</a>
+                <a href="#">PR案件・ライセンスビジネス事例</a>
+                <a href="#">よくあるご質問</a>
+                <br class="pc-only">
+                <a href="#">このサイトについて</a>
+                <a href="#">ソーシャルメディアポリシー</a>
+                <a href="#">プライバシーポリシー</a>
+                <a href="#">クリエイティブポリシー</a>
+                <a href="#">サイトマップ</a>
             </div>
-            </div>
-
-            <div class="links-divider"></div>
-
-            <div class="links-container second-links-row">
-                <a href="about-site.html" class="small-link">このサイトについて</a>
-                <a href="social-policy.html" class="small-link">ソーシャルメディアポリシー</a>
-                <a href="privacy.html" class="small-link">プライバシーポリシー</a>
-                <a href="creative-policy.html" class="small-link">クリエイティブポリシー</a>
-                <a href="sitemap.html" class="small-link">サイトマップ</a>
-            </div>
-
-            <div class="links-divider"></div>
-
-            <div class="copyright-section">
-                <p>このサイトに掲載のイラスト・写真・文章の無断転載を禁じます。すべての著作権はBUSON STUDIOに帰属します。</p>
-                <p>© 2025 BUSON STUDIO All Rights Reserved.</p>
-            </div>
+            
+            <p style="font-size: 0.8rem; margin-bottom: 20px; opacity: 0.8;">
+                このサイトに掲載のイラスト・写真・文章の無断転載を禁じます。すべての著作権はBUSON STUDIOに帰属します。
+            </p>
+            <p>&copy; 2025 TAKER Inc. All Rights Reserved.</p>
         </div>
     </footer>
+
 </body>
 </html>
