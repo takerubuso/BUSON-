@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>マイキャラ・セリフメーカー</title>
+    <style>
+        body {
+            font-family: "M PLUS Rounded 1c", "Hiragino Kaku Gothic ProN", sans-serif;
+            background-color: #ffeef5; /* キャラに合わせて変更可 */
+            color: #444;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 { margin-bottom: 5px; color: #ff6699; }
+        p.desc { font-size: 0.8rem; color: #666; margin-bottom: 20px; }
+
+        /* Canvas Preview Area */
+        .canvas-container {
+            position: relative;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            background: white;
+            border: 4px solid white;
+        }
+        canvas { display: block; max-width: 100%; height: auto; }
+
+        /* Controls */
+        .controls {
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .control-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 0.9rem; }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        input[type="text"]:focus { border-color: #ff6699; outline: none; }
+
+        /* Image Selector */
+        .image-selector {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+        .img-option {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            cursor: pointer;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+        .img-option.selected { border-color: #ff6699; background: #fff0f5; }
+
+        /* Generate Button */
+        .btn-download {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            background: #ff6699;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 5px 0 #cc4466;
+            transition: 0.1s;
+        }
+        .btn-download:active { transform: translateY(5px); box-shadow: none; }
+
+        /* Upload Button (For your testing) */
+        .upload-wrapper {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>公式セリフメーカー</h1>
+    <p class="desc">好きなセリフを入れて、SNSでシェアしよう！</p>
+
+    <div class="upload-wrapper">
+        <label style="cursor:pointer;">
+            📂 イラストを読み込む (透過PNG推奨)
+            <input type="file" id="file-input" multiple accept="image/*" style="display:none;">
+        </label>
+    </div>
+
+    <div class="canvas-container">
+        <canvas id="memeCanvas" width="600" height="600"></canvas>
+    </div>
+
+    <div class="controls">
+        <div class="control-group">
+            <label>イラストを選択</label>
+            <div class="image-selector" id="img-selector">
+                </div>
+        </div>
+
+        <div class="control-group">
+            <label>セリフを入力 (最大2行)</label>
+            <input type="text" id="text-input" placeholder="例：明日から本気出す" maxlength="20">
+        </div>
+
+        <button class="btn-download" onclick="downloadImage()">画像を保存してツイート！</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('memeCanvas');
+        const ctx = canvas.getContext('2d');
+        const textInput = document.getElementById('text-input');
+        const imgSelector = document.getElementById('img-selector');
+        const fileInput = document.getElementById('file-input');
+
+        let currentImage = new Image();
+        let loadedImages = [];
+
+        // 初期設定：透かし文字（あなたのIP名を入れてください）
+        const COPYRIGHT_TEXT = "© Your Character Name / YourName";
+
+        // 画像アップロード処理（実際はサーバーにある画像を使うように改造可）
+        fileInput.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            imgSelector.innerHTML = '';
+            loadedImages = [];
+
+            files.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target.result;
+                    img.onload = () => {
+                        loadedImages.push(img);
+                        
+                        // Create thumbnail
+                        const thumb = document.createElement('img');
+                        thumb.src = img.src;
+                        thumb.className = 'img-option';
+                        thumb.onclick = () => selectImage(index, thumb);
+                        imgSelector.appendChild(thumb);
+
+                        if (index === 0) selectImage(0, thumb);
+                    };
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        function selectImage(index, thumbElement) {
+            currentImage = loadedImages[index];
+            document.querySelectorAll('.img-option').forEach(el => el.classList.remove('selected'));
+            thumbElement.classList.add('selected');
+            draw();
+        }
+
+        // 描画処理
+        function draw() {
+            // 背景（白）
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // キャラクター画像を描画（中央配置）
+            if (currentImage.src) {
+                // 画像のアスペクト比を維持して最大化
+                const scale = Math.min(canvas.width / currentImage.width, canvas.height / currentImage.height) * 0.8;
+                const x = (canvas.width - currentImage.width * scale) / 2;
+                const y = (canvas.height - currentImage.height * scale) / 2 + 50; // 少し下げる
+                ctx.drawImage(currentImage, x, y, currentImage.width * scale, currentImage.height * scale);
+            }
+
+            // フキダシっぽいテキスト描画
+            const text = textInput.value;
+            if (text) {
+                ctx.fillStyle = '#333';
+                ctx.font = 'bold 50px sans-serif'; // フォントは適宜変更
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'top';
+                
+                // 縁取り
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 10;
+                ctx.strokeText(text, canvas.width / 2, 50);
+                
+                // 文字本体
+                ctx.fillText(text, canvas.width / 2, 50);
+            }
+
+            // 著作権表記（重要：IPビジネスの肝）
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+            ctx.font = '20px Arial';
+            ctx.textAlign = 'right';
+            ctx.textBaseline = 'bottom';
+            ctx.fillText(COPYRIGHT_TEXT, canvas.width - 20, canvas.height - 20);
+        }
+
+        // 入力時にリアルタイム更新
+        textInput.addEventListener('input', draw);
+
+        // ダウンロード処理
+        function downloadImage() {
+            const link = document.createElement('a');
+            link.download = 'my-character-meme.png';
+            link.href = canvas.toDataURL();
+            link.click();
+            alert("画像が保存されました！\nSNSに添付して投稿してください。");
+        }
+
+        // 初期描画
+        ctx.fillStyle = '#eee';
+        ctx.fillRect(0,0,600,600);
+        ctx.fillStyle = '#aaa';
+        ctx.font = '30px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('ここに画像が表示されます', 300, 300);
+
+    </script>
+</body>
+</html>
