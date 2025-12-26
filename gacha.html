@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>マイキャラ・無限ガチャメーカー</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #222;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 { margin-bottom: 10px; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+        .description { color: #aaa; margin-bottom: 30px; font-size: 0.9rem; }
+        
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed #555;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 30px;
+            width: 80%;
+            max-width: 500px;
+            background: #333;
+            transition: 0.3s;
+        }
+        .upload-area:hover { border-color: #00d2ff; background: #3a3a3a; }
+        input[type="file"] { display: none; }
+        .custom-file-upload {
+            display: inline-block;
+            padding: 10px 20px;
+            cursor: pointer;
+            background: linear-gradient(45deg, #ff0099, #493240);
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        /* Gacha Machine */
+        .gacha-machine {
+            position: relative;
+            width: 300px;
+            height: 400px;
+            background: #444;
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            overflow: hidden;
+            border: 4px solid #666;
+        }
+        
+        /* Result Display */
+        #result-display {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.5s;
+            background: radial-gradient(circle, #333, #000);
+            z-index: 10;
+        }
+        #result-img {
+            max-width: 80%;
+            max-height: 60%;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+            object-fit: contain;
+        }
+        #rarity-text {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+            font-style: italic;
+            text-shadow: 2px 2px 0px #000;
+        }
+
+        /* Rarity Styles */
+        .ssr { color: #ff00de; text-shadow: 0 0 10px #ff00de, 0 0 20px #00d2ff !important; animation: rainbow 2s infinite; }
+        .sr { color: #ffd700; text-shadow: 0 0 10px #ffd700 !important; }
+        .r { color: #00d2ff; text-shadow: 0 0 10px #00d2ff !important; }
+
+        @keyframes rainbow { 
+            0%{filter: hue-rotate(0deg);} 100%{filter: hue-rotate(360deg);} 
+        }
+
+        /* Button */
+        .gacha-btn {
+            margin-top: 30px;
+            padding: 15px 50px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(to bottom, #ff9900, #ff5500);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #cc4400, 0 10px 10px rgba(0,0,0,0.3);
+            transition: 0.1s;
+        }
+        .gacha-btn:active {
+            transform: translateY(5px);
+            box-shadow: 0 0 0 #cc4400, 0 5px 5px rgba(0,0,0,0.3);
+        }
+        .gacha-btn:disabled { background: #555; box-shadow: none; cursor: not-allowed; }
+
+        /* Animation Classes */
+        .shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0) rotate(-1deg); }
+            20%, 80% { transform: translate3d(2px, 0, 0) rotate(2deg); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0) rotate(-4deg); }
+            40%, 60% { transform: translate3d(4px, 0, 0) rotate(4deg); }
+        }
+        
+        .flash { animation: flash 0.5s; }
+        @keyframes flash {
+            0% { background-color: white; }
+            100% { background-color: #444; }
+        }
+
+        #image-count { font-weight: bold; color: #00d2ff; }
+    </style>
+</head>
+<body>
+
+    <h1>マイキャラ・無限ガチャ</h1>
+    <div class="description">あなたの画像をアップロードして、オリジナルガチャを作成！<br>現在登録数: <span id="image-count">0</span>枚</div>
+
+    <div class="upload-area">
+        <label for="file-upload" class="custom-file-upload">
+            📂 画像を一括アップロード
+        </label>
+        <input id="file-upload" type="file" accept="image/*" multiple />
+        <p style="font-size:0.8rem; margin-top:10px; color:#888;">※画像はサーバーには送信されません。ブラウザ内だけで完結します。</p>
+    </div>
+
+    <div class="gacha-machine" id="machine">
+        <div id="result-display">
+            <div id="rarity-text">?</div>
+            <img id="result-img" src="" alt="Result">
+        </div>
+        <div id="overlay-text" style="position:absolute; font-size:1.2rem; color:#666;">PUSH BUTTON</div>
+    </div>
+
+    <button class="gacha-btn" id="play-btn" onclick="playGacha()" disabled>ガチャを回す！</button>
+
+    <script>
+        let loadedImages = [];
+        const fileInput = document.getElementById('file-upload');
+        const playBtn = document.getElementById('play-btn');
+        const machine = document.getElementById('machine');
+        const resultDisplay = document.getElementById('result-display');
+        const resultImg = document.getElementById('result-img');
+        const rarityText = document.getElementById('rarity-text');
+        const overlayText = document.getElementById('overlay-text');
+        const countDisplay = document.getElementById('image-count');
+
+        // 画像アップロード処理
+        fileInput.addEventListener('change', function(e) {
+            if (this.files && this.files.length > 0) {
+                loadedImages = []; // リセット
+                Array.from(this.files).forEach(file => {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        loadedImages.push(e.target.result);
+                        countDisplay.textContent = loadedImages.length;
+                        if (loadedImages.length > 0) playBtn.disabled = false;
+                        overlayText.style.display = 'none';
+                    };
+                    reader.readAsDataURL(file);
+                });
+                resultDisplay.style.opacity = 0;
+            }
+        });
+
+        function playGacha() {
+            if (loadedImages.length === 0) return;
+
+            // 演出リセット
+            playBtn.disabled = true;
+            resultDisplay.style.opacity = 0;
+            machine.classList.remove('shake', 'flash');
+            
+            // 1. ガチャを揺らす
+            void machine.offsetWidth; // リフロー
+            machine.classList.add('shake');
+
+            setTimeout(() => {
+                // 2. 結果決定（ランダム）
+                const randomIndex = Math.floor(Math.random() * loadedImages.length);
+                const selectedImage = loadedImages[randomIndex];
+                
+                // レアリティ判定（擬似的な確率）
+                const rand = Math.random();
+                let rarity = "R";
+                let rarityClass = "r";
+                
+                if (rand < 0.1) { // 10%
+                    rarity = "SSR!!";
+                    rarityClass = "ssr";
+                    machine.style.boxShadow = "0 0 50px #ff00de"; // SSR Glow
+                } else if (rand < 0.4) { // 30%
+                    rarity = "SR!";
+                    rarityClass = "sr";
+                    machine.style.boxShadow = "0 0 30px #ffd700"; // SR Glow
+                } else {
+                    rarity = "R";
+                    rarityClass = "r";
+                    machine.style.boxShadow = "0 10px 30px rgba(0,0,0,0.5)";
+                }
+
+                // 画像とテキストセット
+                resultImg.src = selectedImage;
+                rarityText.textContent = rarity;
+                rarityText.className = ""; // クラスリセット
+                rarityText.classList.add(rarityClass);
+
+                // 3. フラッシュして表示
+                machine.classList.add('flash');
+                resultDisplay.style.opacity = 1;
+                playBtn.disabled = false;
+
+            }, 600); // 揺れ終わるタイミング
+        }
+    </script>
+</body>
+</html>
