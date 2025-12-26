@@ -3,323 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Char-Motion | 公式アニメーション生成ツール</title>
+    <title>Studio O.C. | キャラクター完全再現マンガ生成</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body {
-            font-family: "Helvetica Neue", Arial, sans-serif;
-            background-color: #f4f7f6;
-            color: #333;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-            margin: 0;
-        }
-
-        h1 { margin-bottom: 5px; color: #2c3e50; }
-        p.desc { font-size: 0.9rem; color: #7f8c8d; margin-bottom: 30px; }
-
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            justify-content: center;
-            max-width: 900px;
-            width: 100%;
-        }
-
-        /* Canvas Area */
-        .canvas-wrapper {
-            position: relative;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            border-radius: 15px;
-            overflow: hidden;
-            background: url('https://www.transparenttextures.com/patterns/cubes.png'), #e0e0e0;
-            border: 4px solid white;
-            width: 400px;
-            height: 400px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        canvas {
-            max-width: 100%;
-            max-height: 100%;
-        }
-
-        .recording-indicator {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(255, 0, 0, 0.8);
-            color: white;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-size: 0.8rem;
-            font-weight: bold;
-            display: none;
-            animation: blink 1s infinite;
-        }
-        @keyframes blink { 50% { opacity: 0.5; } }
-
-        /* Controls */
-        .controls {
-            flex: 1;
-            background: white;
-            padding: 25px;
-            border-radius: 15px;
-            min-width: 300px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .btn-upload {
-            background: #ecf0f1;
-            color: #2c3e50;
-            padding: 12px;
-            border-radius: 8px;
-            text-align: center;
-            cursor: pointer;
-            border: 2px dashed #bdc3c7;
-            font-weight: bold;
-            transition: 0.2s;
-        }
-        .btn-upload:hover { border-color: #3498db; color: #3498db; }
-
-        .anim-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-        }
-        .btn-anim {
-            padding: 10px;
-            border: 1px solid #ddd;
-            background: #fff;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: 0.2s;
-            font-size: 0.9rem;
-        }
-        .btn-anim:hover { background: #f9f9f9; }
-        .btn-anim.active {
-            background: #3498db;
-            color: white;
-            border-color: #3498db;
-        }
-
-        .btn-download {
-            margin-top: 10px;
-            padding: 15px;
-            background: linear-gradient(to right, #e67e22, #d35400);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 0 #a04000;
-            transition: 0.1s;
-        }
-        .btn-download:active { transform: translateY(4px); box-shadow: none; }
-        .btn-download:disabled { background: #ccc; box-shadow: none; cursor: not-allowed; }
-
-        .status-msg {
-            text-align: center;
-            font-size: 0.8rem;
-            color: #27ae60;
-            min-height: 1.2em;
-            font-weight: bold;
-        }
-
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: white; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .drag-area { border: 2px dashed #475569; transition: 0.3s; }
+        .drag-area:hover { border-color: #3b82f6; background: rgba(59, 130, 246, 0.1); }
     </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col">
 
-    <h1>Char-Motion Generator</h1>
-    <p class="desc">画像をアップロードして、動くスタンプ素材を作成・ダウンロードできます。</p>
-
-    <div class="container">
-        <div class="canvas-wrapper">
-            <div class="recording-indicator" id="rec-indicator">● REC</div>
-            <canvas id="mainCanvas" width="400" height="400"></canvas>
+    <header class="border-b border-slate-700 p-4 flex justify-between items-center bg-slate-900">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center font-bold">OC</div>
+            <h1 class="text-xl font-bold">Studio O.C.</h1>
         </div>
+        <div class="text-sm text-slate-400">Beta v0.1</div>
+    </header>
 
-        <div class="controls">
-            <label class="btn-upload">
-                📂 画像を選択 (透過PNG推奨)
-                <input type="file" id="fileInput" accept="image/*" style="display:none;">
-            </label>
-
-            <div>
-                <label style="font-weight:bold; display:block; margin-bottom:10px;">モーション選択</label>
-                <div class="anim-grid">
-                    <button class="btn-anim active" onclick="setMode('idle')">待機 (Idle)</button>
-                    <button class="btn-anim" onclick="setMode('jump')">喜び (Jump)</button>
-                    <button class="btn-anim" onclick="setMode('shake')">恐怖 (Shake)</button>
-                    <button class="btn-anim" onclick="setMode('zoom')">迫真 (Zoom)</button>
+    <main class="flex-1 flex p-6 gap-6 overflow-hidden">
+        
+        <aside class="w-1/4 flex flex-col gap-4">
+            <h2 class="text-slate-400 font-bold uppercase text-xs tracking-wider">Cast (Characters)</h2>
+            
+            <div class="glass p-4 rounded-xl flex gap-3 items-center cursor-pointer hover:bg-slate-800 transition">
+                <img src="https://via.placeholder.com/100" class="w-16 h-16 rounded-md object-cover bg-slate-700">
+                <div>
+                    <div class="font-bold">主人公 (ヒロ)</div>
+                    <div class="text-xs text-slate-400">Ref: Full Body</div>
                 </div>
             </div>
 
-            <button class="btn-download" id="dlBtn" onclick="startRecording()">動画を生成してダウンロード</button>
-            <div class="status-msg" id="statusMsg"></div>
-        </div>
-    </div>
+            <div class="glass p-4 rounded-xl flex gap-3 items-center cursor-pointer hover:bg-slate-800 transition">
+                <img src="https://via.placeholder.com/100" class="w-16 h-16 rounded-md object-cover bg-slate-700">
+                <div>
+                    <div class="font-bold">ヒロイン (アイ)</div>
+                    <div class="text-xs text-slate-400">Ref: Design Sheet</div>
+                </div>
+            </div>
+
+            <div class="drag-area rounded-xl p-6 flex flex-col items-center justify-center text-slate-500 cursor-pointer h-32">
+                <span class="text-2xl">+</span>
+                <span class="text-xs mt-2">Upload Character Sheet</span>
+            </div>
+        </aside>
+
+        <section class="flex-1 flex flex-col gap-4">
+            <div class="glass p-6 rounded-xl">
+                <h2 class="text-lg font-bold mb-3">Create New Scene</h2>
+                <textarea class="w-full bg-slate-800 border border-slate-600 rounded-lg p-3 text-sm focus:outline-none focus:border-blue-500 h-24" 
+                placeholder="例：ヒロとアイが放課後の教室で喧嘩をしている。夕焼けが差し込んでいる。ヒロは泣きそうな顔で「どうしてわかってくれないんだ」と叫ぶ。アイは冷ややかな目で見ている。"></textarea>
+                <div class="flex justify-end mt-3">
+                    <button class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-lg font-bold transition flex items-center gap-2" onclick="generateManga()">
+                        <span>✨ Generate Manga</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto pr-2">
+                <div id="manga-grid" class="grid grid-cols-2 gap-4 hidden">
+                    <div class="glass p-2 rounded-xl">
+                        <div class="aspect-video bg-slate-800 rounded-lg mb-2 relative overflow-hidden group">
+                            <img src="https://via.placeholder.com/800x450/1e293b/475569?text=Genereting..." class="w-full h-full object-cover opacity-50">
+                            <div class="absolute inset-0 flex items-center justify-center text-slate-400 text-sm">Processing Prompt...</div>
+                        </div>
+                        <p class="text-sm text-slate-300 p-2">Panel 1: "Conflict in the Sunset"</p>
+                    </div>
+                    <div class="glass p-2 rounded-xl">
+                        <div class="aspect-video bg-slate-800 rounded-lg mb-2 relative">
+                             <img src="https://via.placeholder.com/800x450/1e293b/475569?text=Waiting..." class="w-full h-full object-cover opacity-30">
+                        </div>
+                        <p class="text-sm text-slate-300 p-2">Panel 2: "Cold Gaze"</p>
+                    </div>
+                </div>
+                
+                <div id="empty-state" class="h-full flex items-center justify-center text-slate-500 flex-col">
+                    <div class="text-4xl mb-4">🎨</div>
+                    <p>Enter a prompt to start creating.</p>
+                </div>
+            </div>
+        </section>
+    </main>
 
     <script>
-        const canvas = document.getElementById('mainCanvas');
-        const ctx = canvas.getContext('2d');
-        const dlBtn = document.getElementById('dlBtn');
-        const statusMsg = document.getElementById('statusMsg');
-        const recIndicator = document.getElementById('rec-indicator');
-
-        let userImg = new Image();
-        userImg.src = "https://cdn-icons-png.flaticon.com/512/743/743406.png"; // デフォルト画像
-        let imgLoaded = false;
-
-        // アニメーション用変数
-        let currentMode = 'idle';
-        let frameCount = 0;
-        let animationId;
-
-        userImg.onload = () => { imgLoaded = true; };
-
-        // ファイルアップロード処理
-        document.getElementById('fileInput').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (evt) => {
-                userImg = new Image();
-                userImg.onload = () => { imgLoaded = true; };
-                userImg.src = evt.target.result;
-            };
-            reader.readAsDataURL(file);
-        });
-
-        // モード切り替え
-        function setMode(mode) {
-            currentMode = mode;
-            document.querySelectorAll('.btn-anim').forEach(b => b.classList.remove('active'));
-            event.target.classList.add('active');
-        }
-
-        // --- 描画ループ (Core Logic) ---
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        function generateManga() {
+            const grid = document.getElementById('manga-grid');
+            const empty = document.getElementById('empty-state');
             
-            if (!imgLoaded) {
-                animationId = requestAnimationFrame(draw);
-                return;
-            }
+            empty.classList.add('hidden');
+            grid.classList.remove('hidden');
+            grid.classList.add('animate-pulse');
 
-            frameCount++;
-            const t = frameCount * 0.1; // 時間経過
-
-            let scaleX = 1;
-            let scaleY = 1;
-            let offsetX = 0;
-            let offsetY = 0;
-            let rotation = 0;
-
-            // アニメーション計算 (簡易物理演算)
-            switch (currentMode) {
-                case 'idle': // ぷるぷる呼吸
-                    scaleX = 1 + Math.sin(t) * 0.05;
-                    scaleY = 1 - Math.sin(t) * 0.05;
-                    offsetY = (1 - scaleY) * 200; // 底面固定補正
-                    break;
-                case 'jump': // ぴょんぴょん
-                    const jumpY = Math.abs(Math.sin(t * 1.5)) * -40;
-                    offsetY = jumpY;
-                    scaleY = 1 + (jumpY / 100); // 伸び縮み
-                    scaleX = 1 - (jumpY / 200);
-                    break;
-                case 'shake': // ガタガタ
-                    offsetX = (Math.random() - 0.5) * 15;
-                    offsetY = (Math.random() - 0.5) * 15;
-                    break;
-                case 'zoom': // 迫真ズーム
-                    const z = 1 + (Math.sin(t * 0.5) + 1) * 0.2;
-                    scaleX = z;
-                    scaleY = z;
-                    break;
-            }
-
-            // 描画実行
-            ctx.save();
-            ctx.translate(canvas.width / 2 + offsetX, canvas.height / 2 + offsetY + 50); // 中心+少し下
-            ctx.rotate(rotation * Math.PI / 180);
-            ctx.scale(scaleX, scaleY);
-            
-            // 画像のアスペクト比を維持して描画
-            const imgSize = 250;
-            ctx.drawImage(userImg, -imgSize/2, -imgSize/2, imgSize, imgSize);
-            
-            ctx.restore();
-
-            animationId = requestAnimationFrame(draw);
-        }
-        
-        // アニメーション開始
-        draw();
-
-
-        // --- 録画とダウンロード (MediaRecorder API) ---
-        function startRecording() {
-            if (!imgLoaded) return;
-
-            // UI更新
-            dlBtn.disabled = true;
-            statusMsg.innerText = "録画中... (3秒お待ちください)";
-            recIndicator.style.display = 'block';
-
-            // Canvasのストリームを取得
-            const stream = canvas.captureStream(30); // 30 FPS
-            const mediaRecorder = new MediaRecorder(stream, {
-                mimeType: 'video/webm;codecs=vp9'
-            });
-
-            const chunks = [];
-            mediaRecorder.ondataavailable = (e) => {
-                if (e.data.size > 0) chunks.push(e.data);
-            };
-
-            mediaRecorder.onstop = () => {
-                // 録画終了後の処理
-                const blob = new Blob(chunks, { type: 'video/webm' });
-                const url = URL.createObjectURL(blob);
-                
-                // ダウンロードリンクを生成してクリック
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `motion_${currentMode}.webm`;
-                document.body.appendChild(a);
-                a.click();
-                
-                // 後始末
-                setTimeout(() => {
-                    document.body.removeChild(a);
-                    window.URL.revokeObjectURL(url);
-                }, 100);
-
-                // UI戻し
-                dlBtn.disabled = false;
-                statusMsg.innerText = "ダウンロード完了！SNSに投稿しよう";
-                recIndicator.style.display = 'none';
-            };
-
-            // 録画開始
-            mediaRecorder.start();
-
-            // 3秒後に停止 (ループにちょうどいい長さ)
+            // ここでバックエンドAPIを叩く想定
             setTimeout(() => {
-                mediaRecorder.stop();
-            }, 3000); 
+                grid.classList.remove('animate-pulse');
+                alert("【ここがビジネスの肝】\n\nここから先はサーバー側で「IP-Adapter」と「Gemini」が連携して動きます。\nあなたのキャラ設定画を参照し、崩れることなく漫画コマを生成します。");
+            }, 1500);
         }
-
     </script>
 </body>
 </html>
