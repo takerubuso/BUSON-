@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BUSON STUDIO | キャラクター開発スタジオ</title>
+    <link rel="icon" href="images/favicon.png" type="image/png">
+    <link rel="icon" href="images/favicon.ico">
+    <meta name="description" content="見る人にニヤッと元気を届ける BUSON STUDIO の公式サイト。キャラクター・グッズ・漫画">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/style_v2.css">
+    <script src="js/config.js" defer></script>
+    <script src="js/script_v2.js" defer></script>
+</head>
+
+<body>
+
+    <!-- ═══════════ NAV ═══════════ -->
+    <nav id="topnav">
+        <a href="#hero" class="logo"><img src="images/logo.png" alt="BUSON STUDIO"></a>
+        <ul class="links" id="nav-links">
+            <li><a href="#characters">Characters</a></li>
+            <li><a href="#works">Goods</a></li>
+            <li><a href="#stamps">LINE</a></li>
+            <li><a href="#news">News</a></li>
+            <li><a href="#media">YouTube</a></li>
+            <li><a href="buson-studio-business.html">Contact</a></li>
+        </ul>
+        <button class="burger" id="burger" aria-label="メニュー"><span></span><span></span><span></span></button>
+    </nav>
+
+    <!-- ═══════════ HERO — Full-bleed cinematic ═══════════ -->
+    <section class="hero" id="hero">
+        <div class="hero-bg" style="background-image:url('images/top-banner.jpg')"></div>
+        <div class="hero-grad"></div>
+        <div class="shapes">
+            <i class="shape"></i><i class="shape"></i><i class="shape"></i>
+            <i class="shape"></i><i class="shape"></i><i class="shape"></i>
+        </div>
+        <div class="hero-inner">
+            <div class="hero-tag">Character Development Studio</div>
+            <h1 class="hero-title"><em>BUSON</em> STUDIO</h1>
+            <p class="hero-sub">見る人に"ニヤッ"と元気を届ける<br>キャラクターたちの世界へようこそ</p>
+            <div class="hero-btns">
+                <a href="#characters" class="btn-pop">キャラクターを見る</a>
+                <a href="#works" class="btn-outline">グッズを探す</a>
+            </div>
+        </div>
+        <div class="scroll-hint"><span>Scroll</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <main>
+
+        <!-- ═══════════ CHARACTERS — Full-width alternating showcase ═══════════ -->
+        <section class="sec" id="characters">
+            <div class="sec-head rv">
+                <span class="tag">Characters</span>
+                <h2>キャラクター紹介</h2>
+                <div class="line"></div>
+            </div>
+
+            <!-- 3 featured characters: full-width alternating layout -->
+            <div class="char-showcase" id="char-showcase">
+                <!-- Populated by JS — each char gets an alternating full-width row -->
+            </div>
+
+            <!-- Remaining characters: filmstrip -->
+            <div class="char-strip" id="char-strip">
+                <!-- Populated by JS — mini cards for remaining chars -->
+            </div>
+        </section>
+
+        <!-- ═══════════ WORKS — Staggered masonry ═══════════ -->
+        <section class="sec sec-colored" id="works">
+            <div class="sec-head rv">
+                <span class="tag">Works</span>
+                <h2>グッズ・書籍</h2>
+                <div class="line"></div>
+            </div>
+            <div class="works-layout" id="works-layout">
+                <!-- Populated by JS — staggered grid -->
+            </div>
+        </section>
+
+        <!-- ═══════════ LINE STAMPS — Filmstrip ═══════════ -->
+        <section class="sec sec-alt" id="stamps">
+            <div class="sec-head rv">
+                <span class="tag">LINE Stamps</span>
+                <h2>LINEスタンプ</h2>
+                <div class="line"></div>
+            </div>
+            <div class="filmstrip-wrap">
+                <div class="filmstrip" id="stamps-strip">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════ NEWS — Magazine editorial ═══════════ -->
+        <section class="sec sec-colored" id="news">
+            <div class="sec-head rv">
+                <span class="tag">News</span>
+                <h2>最新ニュース</h2>
+                <div class="line"></div>
+            </div>
+            <div class="news-editorial" id="news-editorial">
+                <!-- Populated by JS — big feature + small list -->
+            </div>
+        </section>
+
+        <!-- ═══════════ MEDIA — Cinematic split ═══════════ -->
+        <section class="sec" id="media">
+            <div class="sec-head rv">
+                <span class="tag">Media</span>
+                <h2>YouTube & 漫画ブログ</h2>
+                <div class="line"></div>
+            </div>
+            <div class="media-split">
+                <!-- YouTube side -->
+                <div class="media-yt rv-l">
+                    <h3><i class="fab fa-youtube" style="color:var(--pop);margin-right:8px"></i>YouTube</h3>
+                    <div class="yt-stack" id="yt-stack">
+                        <!-- Populated by JS -->
+                    </div>
+                    <div style="margin-top:24px;text-align:center">
+                        <a href="https://www.youtube.com/channel/UCtRCF2NLRULCmf-oLAF455w" class="cta-btn"
+                            target="_blank" rel="noopener noreferrer">
+                            <i class="fab fa-youtube"></i> チャンネルを見る
+                        </a>
+                    </div>
+                </div>
+                <!-- Manga side -->
+                <a href="https://buson.blog.jp" class="media-manga rv-r" target="_blank" rel="noopener noreferrer">
+                    <img src="images/mangablog/header.PNG" alt="BUSONコンテンツ" loading="lazy">
+                    <div class="manga-over">
+                        <h3>BUSONコンテンツ</h3>
+                        <p>ほぼ毎日漫画更新中！！</p>
+                        <span class="cta-btn">漫画ブログを見る →</span>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ═══════════ MODAL ═══════════ -->
+    <div class="modal-v2" id="modal-v2" role="dialog" aria-hidden="true">
+        <div class="m-content">
+            <button class="m-close" aria-label="閉じる">×</button>
+            <button class="m-nav m-prev" aria-label="前">◀</button>
+            <button class="m-nav m-next" aria-label="次">▶</button>
+            <div class="m-img"><img src="" alt=""></div>
+            <h3 class="m-name"></h3>
+            <p class="m-desc"></p>
+            <div class="m-stats"></div>
+            <div class="m-links"></div>
+        </div>
+    </div>
+
+    <!-- ═══════════ FOOTER ═══════════ -->
+    <footer class="foot">
+        <div class="foot-grid">
+            <div class="foot-brand">
+                <h3>BUSON STUDIO</h3>
+                <p>見る人に"ニヤッ"と元気を届けるキャラクターたちの世界。</p>
+                <div class="foot-social">
+                    <a href="https://x.com/BUSON2025" aria-label="X" target="_blank"><i
+                            class="fab fa-x-twitter"></i></a>
+                    <a href="https://www.youtube.com/channel/UCtRCF2NLRULCmf-oLAF455w" aria-label="YouTube"
+                        target="_blank"><i class="fab fa-youtube"></i></a>
+                    <a href="https://www.instagram.com/buson2025/" aria-label="Instagram" target="_blank"><i
+                            class="fab fa-instagram"></i></a>
+                    <a href="https://www.tiktok.com/@buson2025" aria-label="TikTok" target="_blank"><i
+                            class="fab fa-tiktok"></i></a>
+                    <a href="https://www.threads.com/@buson2025" aria-label="Threads" target="_blank"><i
+                            class="fab fa-threads"></i></a>
+                    <a href="https://lin.ee/oun58J2" aria-label="LINE" target="_blank"><i class="fab fa-line"></i></a>
+                </div>
+            </div>
+            <div class="foot-col">
+                <h4>Menu</h4>
+                <ul>
+                    <li><a href="company.html">会社情報</a></li>
+                    <li><a href="buson-studio-business.html">PR案件・ライセンス</a></li>
+                    <li><a href="faq.html">よくあるご質問</a></li>
+                    <li><a href="important.html">重要なお知らせ</a></li>
+                </ul>
+            </div>
+            <div class="foot-col">
+                <h4>Policy</h4>
+                <ul>
+                    <li><a href="about-site.html">このサイトについて</a></li>
+                    <li><a href="social-policy.html">ソーシャルメディアポリシー</a></li>
+                    <li><a href="privacy.html">プライバシーポリシー</a></li>
+                    <li><a href="creative-policy.html">クリエイティブポリシー</a></li>
+                </ul>
+            </div>
+            <div class="foot-col">
+                <h4>Links</h4>
+                <ul>
+                    <li><a href="https://suzuri.jp/BUSON" target="_blank">SUZURI ショップ</a></li>
+                    <li><a href="https://buson.blog.jp" target="_blank">漫画ブログ</a></li>
+                    <li><a href="sitemap.html">サイトマップ</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="foot-bottom">
+            <span>© 2025 BUSON STUDIO All Rights Reserved.</span>
+            <span>このサイトに掲載のイラスト・写真・文章の無断転載を禁じます。</span>
+        </div>
+    </footer>
+
+</body>
+
+</html>
