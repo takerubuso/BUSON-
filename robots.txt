@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://buson2025.com/sitemap.xml
