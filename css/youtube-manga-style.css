@@ -85,7 +85,10 @@
 
 /* 漫画ブログセクションのスタイル - 画像のみ表示に最適化 */
 .manga-container {
-  max-width: 600px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 10px 0 20px;
 }
@@ -154,24 +157,22 @@
 
 /* レスポンシブ対応 */
 @media (max-width: 992px) {
-  .youtube-container {
+  .youtube-container,
+  .manga-container {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (max-width: 768px) {
-  .youtube-container {
+  .youtube-container,
+  .manga-container {
     grid-template-columns: 1fr; /* タブレットサイズでは1列に */
     padding: 0 15px;
   }
-  
+
   .youtube-button {
     padding: 10px 25px;
     font-size: 14px;
-  }
-  
-  .manga-container {
-    padding: 0 15px;
   }
 }
 
