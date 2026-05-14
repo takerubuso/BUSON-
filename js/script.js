@@ -801,18 +801,35 @@ function initializeEnhancedSlider(data) {
     // 初期表示
     updateSlider(false);
 
-    // 自動スライド（5秒間隔）- 複数スライドがある場合のみ
+    // 自動スライド（初回10秒・以降5秒間隔）- 複数スライドがある場合のみ
+    // 最初のスライド(note)を長めに表示するため初回のみdelayを延長
     let autoSlideInterval;
+    let autoSlideTimeout;
+    let isFirstSlide = true;
 
     function startAutoSlide() {
         if (data.length > 1) {
-            autoSlideInterval = setInterval(() => {
-                nextSlide();
-            }, 5000);
+            if (isFirstSlide) {
+                // 初回(最初のスライド)は10秒表示
+                autoSlideTimeout = setTimeout(() => {
+                    nextSlide();
+                    isFirstSlide = false;
+                    // 2枚目以降は5秒間隔
+                    autoSlideInterval = setInterval(() => {
+                        nextSlide();
+                    }, 5000);
+                }, 10000);
+            } else {
+                // 既に初回を超えている場合は通常の5秒間隔
+                autoSlideInterval = setInterval(() => {
+                    nextSlide();
+                }, 5000);
+            }
         }
     }
 
     function stopAutoSlide() {
+        clearTimeout(autoSlideTimeout);
         clearInterval(autoSlideInterval);
     }
 

@@ -1,5 +1,11 @@
 [
   {
+    "image": "images/note-banner.png",
+    "title": "noteで読み物を更新中",
+    "description": "BUSON STUDIO のエッセイ・お知らせ",
+    "url": "https://note.com/busonstudio"
+  },
+  {
     "image": "images/line/lineofficial.png",
     "title": "BUSONのLINE公式",
     "description": "お友達に追加してね!",
@@ -16,11 +22,5 @@
     "title": "書籍発売中",
     "description": "進路先に迷ってる人に贈りたい一冊",
     "url": "https://amzn.asia/d/f1aNxFW"
-  },
-  {
-    "image": "images/note-banner.png",
-    "title": "noteで読み物を更新中",
-    "description": "BUSON STUDIO のエッセイ・お知らせ",
-    "url": "https://note.com/busonstudio"
   }
 ]
