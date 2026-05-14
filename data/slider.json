@@ -22,5 +22,11 @@
     "title": "BUSONコンテンツ",
     "description": "ほぼ毎日漫画更新中!!",
     "url": "https://buson.blog.jp"
+  },
+  {
+    "image": "images/note-banner.png",
+    "title": "noteで読み物を更新中",
+    "description": "BUSON STUDIO のエッセイ・お知らせ",
+    "url": "https://note.com/busonstudio"
   }
 ]

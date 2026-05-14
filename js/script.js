@@ -1609,18 +1609,44 @@ function initializeMangaBlog() {
     // コンテナをクリア
     mangaContainer.innerHTML = '';
 
-    // 漫画ブログカード（画像とテキスト情報を含む）を直接HTMLで挿入
+    // 読み物カード(漫画ブログ + あるある + note)を直接HTMLで挿入
     mangaContainer.innerHTML = `
         <div class="manga-card">
             <a href="https://buson.blog.jp" class="manga-link" target="_blank" rel="noopener noreferrer">
                 <div class="manga-img">
-                    <img src="images/mangablog/header.PNG" 
-                         alt="BUSONコンテンツ" 
+                    <img src="images/mangablog/header.PNG"
+                         alt="BUSONコンテンツ"
                          onerror="this.onerror=null; this.src='images/placeholder.jpg';">
                 </div>
                 <div class="manga-content">
                     <h4>BUSONコンテンツ</h4>
                     <p>ほぼ毎日漫画更新中!!</p>
+                </div>
+            </a>
+        </div>
+        <div class="manga-card">
+            <a href="/aruaru/" class="manga-link">
+                <div class="manga-img">
+                    <img src="images/character/1.png"
+                         alt="あるある漫画ガイド"
+                         onerror="this.onerror=null; this.src='images/placeholder.jpg';">
+                </div>
+                <div class="manga-content">
+                    <h4>あるある漫画ガイド</h4>
+                    <p>ジャンル別に1,500本超を案内</p>
+                </div>
+            </a>
+        </div>
+        <div class="manga-card">
+            <a href="https://note.com/busonstudio" class="manga-link" target="_blank" rel="noopener noreferrer">
+                <div class="manga-img">
+                    <img src="images/note-banner.png"
+                         alt="BUSON STUDIO の note"
+                         onerror="this.onerror=null; this.src='images/placeholder.jpg';">
+                </div>
+                <div class="manga-content">
+                    <h4>noteを読む</h4>
+                    <p>BUSON が綴る エッセイ・お知らせ</p>
                 </div>
             </a>
         </div>
