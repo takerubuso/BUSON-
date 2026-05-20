@@ -862,6 +862,83 @@
             max-width: 700px;
         }
 
+        /* mailto ボタンブロック (フォーム廃止後の問い合わせUI) */
+        .contact-mail-block {
+            text-align: center;
+            padding: 40px 24px;
+        }
+
+        .contact-mail-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 14px;
+            background-color: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            padding: 18px 44px;
+            border-radius: 100px;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 14px rgba(232, 69, 111, 0.25);
+        }
+
+        .contact-mail-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(232, 69, 111, 0.35);
+        }
+
+        .contact-mail-btn .arr {
+            transition: transform 0.25s;
+        }
+
+        .contact-mail-btn:hover .arr {
+            transform: translateX(5px);
+        }
+
+        .contact-mail-display {
+            display: inline-flex;
+            align-items: center;
+            gap: 14px;
+            margin-top: 28px;
+            padding: 10px 18px;
+            background: #fff5f7;
+            border-radius: 100px;
+            border: 1px solid #ffd1dc;
+        }
+
+        .mail-text {
+            font-size: 0.9rem;
+            color: #555;
+            font-family: monospace;
+            letter-spacing: 0.02em;
+        }
+
+        .mail-copy-btn {
+            background: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 5px 14px;
+            border-radius: 100px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            cursor: pointer;
+            font-family: monospace;
+            transition: all 0.2s;
+        }
+
+        .mail-copy-btn:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .mail-copy-btn.copied {
+            background: var(--primary-color);
+            color: white;
+        }
+
         .form-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -2287,77 +2364,15 @@
             <h2 class="section-title">お問い合わせ</h2>
             <p class="section-description">ご質問やお見積りのご依頼はこちらからお気軽にご連絡ください</p>
 
-            <div class="contact-content">
-                <div class="contact-form">
-                    <form
-                        action="https://script.google.com/macros/s/AKfycbwHRHDlEwm0iG1xKYNnYlCwy1LZwsqD0wuxJ16JgarN32iENsDWiwhYed7tajNKCcnM/exec"
-                        method="POST" id="contact-form">
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label for="company">会社名</label>
-                                <input type="text" id="company" name="company">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="name">お名前<span class="required-mark">*</span></label>
-                                <input type="text" id="name" name="name" required>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="email">メールアドレス<span class="required-mark">*</span></label>
-                                <input type="email" id="email" name="email" required>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="phone">電話番号</label>
-                                <input type="tel" id="phone" name="phone">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="inquiry-type">お問い合わせ種別<span class="required-mark">*</span></label>
-                                <select id="inquiry-type" name="inquiry-type" required>
-                                    <option value="">選択してください</option>
-                                    <option value="サービス依頼">サービス依頼</option>
-                                    <option value="ライセンス利用">ライセンス利用</option>
-                                    <option value="お見積り">お見積り</option>
-                                    <option value="その他">その他</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="service">ご興味のあるサービス<span class="required-mark">*</span></label>
-                                <select id="service" name="service" required>
-                                    <option value="">選択してください</option>
-                                    <option value="広告イラスト制作">広告イラスト制作</option>
-                                    <option value="キャラクターデザイン">キャラクターデザイン</option>
-                                    <option value="パッケージデザイン">パッケージデザイン</option>
-                                    <option value="SNS PR">SNS PR</option>
-                                    <option value="漫画・ストーリー制作">漫画・ストーリー制作</option>
-                                    <option value="イベントコラボ">イベントコラボ</option>
-                                    <option value="キャラクターライセンス">キャラクターライセンス</option>
-                                    <option value="その他">その他</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group full-width">
-                                <label for="message">お問い合わせ内容<span class="required-mark">*</span></label>
-                                <textarea id="message" name="message" placeholder="ご依頼内容の詳細、ご質問など、お気軽にお書きください"
-                                    required></textarea>
-                            </div>
-
-
-                        </div>
-
-                        <div class="form-submit">
-                            <button type="submit" class="btn">送信する</button>
-                            <p class="form-error-note">
-                                ※送信時にエラーが出た場合は、
-                                <a href="mailto:buson@takerbiz.com">buson@takerbiz.com</a>
-                                まで直接ご連絡ください。
-                            </p>
-
-                        </div>
-                    </form>
+            <div class="contact-mail-block">
+                <a class="contact-mail-btn"
+                   href="mailto:buson@takerbiz.com?subject=%E3%81%8A%E5%95%8F%E3%81%84%E5%90%88%E3%82%8F%E3%81%9B%20-%20BUSON%20STUDIO&body=%E3%81%94%E4%BE%9D%E9%A0%BC%E3%83%BB%E3%81%94%E8%B3%AA%E5%95%8F%E5%86%85%E5%AE%B9%E3%82%92%E3%81%94%E8%A8%98%E5%85%A5%E3%81%8F%E3%81%A0%E3%81%95%E3%81%84%E3%80%82%0A%0A%E2%97%8B%E3%81%8A%E5%90%8D%E5%89%8D%EF%BC%9A%0A%E2%97%8B%E4%BC%9A%E7%A4%BE%E5%90%8D%EF%BC%9A%0A%E2%97%8B%E3%81%94%E8%88%88%E5%91%B3%E3%81%AE%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9%EF%BC%9A%0A%E2%97%8B%E3%81%94%E7%94%A8%E4%BB%B6%EF%BC%9A%0A">
+                    <span>メールで問い合わせる</span>
+                    <span class="arr">→</span>
+                </a>
+                <div class="contact-mail-display">
+                    <span class="mail-text" id="mail-text">buson@takerbiz.com</span>
+                    <button class="mail-copy-btn" type="button" onclick="copyMail(this)">COPY</button>
                 </div>
             </div>
         </div>
@@ -2482,51 +2497,22 @@
             observer.observe(element);
         });
 
-        // フォーム送信ハンドリング（Google Apps Script）
-        const contactForm = document.getElementById('contact-form');
-        if (contactForm) {
-            contactForm.addEventListener('submit', function (e) {
-                e.preventDefault();
-                const formSubmit = document.querySelector('.form-submit');
-                const formButton = formSubmit.querySelector('.btn');
-                const originalButtonText = formButton.textContent;
-
-                formButton.disabled = true;
-                formButton.textContent = '送信中...';
-
-                // フォームデータをJSON化
-                const formData = {
-                    company: document.getElementById('company').value,
-                    name: document.getElementById('name').value,
-                    email: document.getElementById('email').value,
-                    phone: document.getElementById('phone').value,
-                    category: document.getElementById('inquiry-type').value,
-                    service: document.getElementById('service').value,
-                    message: document.getElementById('message').value
-                };
-
-                // Google Apps ScriptにJSON送信
-                fetch(contactForm.action, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData)
-                })
-                    .then(() => {
-                        formSubmit.innerHTML = '<div class="success-message"><i class="fas fa-check-circle"></i> お問い合わせありがとうございます。担当者より折り返しご連絡いたします。</div>';
-                        contactForm.reset();
-                        setTimeout(() => {
-                            formSubmit.innerHTML = `<button type="submit" class="btn">${originalButtonText}</button>`;
-                        }, 5000);
-                    })
-                    .catch(error => {
-                        formSubmit.innerHTML = '<div class="error-message"><i class="fas fa-exclamation-circle"></i> 送信に失敗しました。<a href="mailto:buson@takerbiz.com">buson@takerbiz.com</a> まで直接ご連絡ください。</div>';
-                        setTimeout(() => {
-                            formSubmit.innerHTML = `<button type="submit" class="btn">${originalButtonText}</button>`;
-                        }, 5000);
-                    });
+        // メアドコピー機能
+        function copyMail(btn) {
+            const text = document.getElementById('mail-text').textContent.trim();
+            navigator.clipboard.writeText(text).then(() => {
+                btn.classList.add('copied');
+                btn.textContent = 'COPIED';
+                setTimeout(() => {
+                    btn.classList.remove('copied');
+                    btn.textContent = 'COPY';
+                }, 1800);
+            }).catch(() => {
+                btn.textContent = 'FAILED';
+                setTimeout(() => { btn.textContent = 'COPY'; }, 1800);
             });
         }
+        window.copyMail = copyMail;
     </script>
 </body>
 
