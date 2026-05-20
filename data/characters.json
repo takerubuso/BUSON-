@@ -4,7 +4,7 @@
     "name": "しきぶちゃん",
     "image": "images/character/1.png",
     "profile": "見る人に“ニヤッ”と元気を届ける BUSONスタジオの看板キャラクター 紫式部をモデルにしたキャラ",
-    "category": "human",
+    "category": "shikibu",
     "socialLinks": [
       { "name": "X", "url": "https://x.com/positiveshikibu" },
       { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
@@ -30,7 +30,7 @@
     "name": "笑徳太子",
     "image": "images/character/2.jpg",
     "profile": "しきぶちゃんの夫 聖徳太子をモデルにしたキャラ",
-    "category": "human",
+    "category": "shikibu",
     "socialLinks": [
       { "name": "X", "url": "https://x.com/positiveshikibu" },
       { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
@@ -56,7 +56,7 @@
     "name": "清少ナーゴン",
     "image": "images/character/3.jpg",
     "profile": "しきぶちゃんの親友。清少納言をモデルにしたキャラ",
-    "category": "human",
+    "category": "shikibu",
     "socialLinks": [
       { "name": "X", "url": "https://x.com/positiveshikibu" },
       { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
@@ -82,7 +82,7 @@
     "name": "花子さん",
     "image": "images/character/4.jpg",
     "profile": "基本的に機嫌が悪いキャラクターです",
-    "category": "human",
+    "category": "shikibu",
     "socialLinks": [
       { "name": "X", "url": "https://x.com/positiveshikibu" },
       { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
@@ -108,7 +108,7 @@
     "name": "あたりちゃん",
     "image": "images/character/5.jpg",
     "profile": "しきぶちゃんと太子の娘",
-    "category": "human",
+    "category": "shikibu",
     "socialLinks": [
       { "name": "X", "url": "https://x.com/positiveshikibu" },
       { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
@@ -134,7 +134,7 @@
     "name": "のん太",
     "image": "images/character/6.jpg",
     "profile": "しきぶちゃんと太子の息子",
-    "category": "human",
+    "category": "shikibu",
    "socialLinks": [
       { "name": "X", "url": "https://x.com/positiveshikibu" },
       { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
@@ -160,7 +160,7 @@
     "name": "小野コマチ",
     "image": "images/character/7.jpg",
     "profile": "ミニマリストの繊細さん。小野小町をモデルにしたキャラ",
-    "category": "human",
+    "category": "shikibu",
    "socialLinks": [
       { "name": "X", "url": "https://x.com/positiveshikibu" },
       { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
@@ -186,7 +186,7 @@
     "name": "五郎",
     "image": "images/character/8.jpg",
     "profile": "花子さんの夫 頑固者に見れれがちだが優しい",
-    "category": "human",
+    "category": "shikibu",
     "socialLinks": [
       { "name": "X", "url": "https://x.com/positiveshikibu" },
       { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
@@ -212,7 +212,7 @@
     "name": "織田ノブ",
     "image": "images/character/9.jpg",
     "profile": "織田信長をモデルにしたキャラ",
-    "category": "human",
+    "category": "shikibu",
     "socialLinks": [
       { "name": "X", "url": "https://x.com/positiveshikibu" },
       { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
@@ -238,7 +238,7 @@
     "name": "サトシ",
     "image": "images/character/10.jpg",
     "profile": "チャラくてイケメンなキャラ",
-    "category": "human",
+    "category": "shikibu",
    "socialLinks": [
       { "name": "X", "url": "https://x.com/positiveshikibu" },
       { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
@@ -264,7 +264,7 @@
     "name": "クー",
     "image": "images/character/11.jpg",
     "profile": "犬",
-    "category": "animal",
+    "category": "shikibu",
     "socialLinks": [
       { "name": "X", "url": "https://x.com/positiveshikibu" },
       { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
@@ -290,7 +290,7 @@
     "name": "まろ",
     "image": "images/character/12.jpg",
     "profile": "猫",
-    "category": "animal",
+    "category": "shikibu",
    "socialLinks": [
       { "name": "X", "url": "https://x.com/positiveshikibu" },
       { "name": "Instagram", "url": "https://www.instagram.com/buson2025/" },
@@ -302,6 +302,69 @@
     "hobbies": "お昼寝",
     "skills": "鼻歌",
     "favoriteFood": "クッキー",
+    "icons": {
+      "personality": "images/icons/1.png",
+      "birthday": "images/icons/2.png",
+      "debutYear": "images/icons/3.png",
+      "hobbies": "images/icons/4.png",
+      "skills": "images/icons/5.png",
+      "favoriteFood": "images/icons/6.png"
+    }
+  },
+  {
+    "id": 13,
+    "name": "ピー",
+    "image": "images/marumayu/character1.png",
+    "profile": "まるまーゆの仲間。繊細で泣き虫、感受性が豊かで優しい心の持ち主",
+    "category": "marumayu",
+    "personality": "繊細で泣き虫",
+    "birthday": "4月5日",
+    "debutYear": "2025",
+    "hobbies": "—",
+    "skills": "—",
+    "favoriteFood": "—",
+    "icons": {
+      "personality": "images/icons/1.png",
+      "birthday": "images/icons/2.png",
+      "debutYear": "images/icons/3.png",
+      "hobbies": "images/icons/4.png",
+      "skills": "images/icons/5.png",
+      "favoriteFood": "images/icons/6.png"
+    }
+  },
+  {
+    "id": 14,
+    "name": "クー",
+    "image": "images/marumayu/character2.png",
+    "profile": "まるまーゆの仲間。自由で好奇心旺盛、新しいことにチャレンジする積極的な性格",
+    "category": "marumayu",
+    "personality": "自由で好奇心旺盛",
+    "birthday": "1月1日",
+    "debutYear": "2025",
+    "hobbies": "—",
+    "skills": "—",
+    "favoriteFood": "—",
+    "icons": {
+      "personality": "images/icons/1.png",
+      "birthday": "images/icons/2.png",
+      "debutYear": "images/icons/3.png",
+      "hobbies": "images/icons/4.png",
+      "skills": "images/icons/5.png",
+      "favoriteFood": "images/icons/6.png"
+    }
+  },
+  {
+    "id": 15,
+    "name": "ウー",
+    "image": "images/marumayu/character3.png",
+    "profile": "まるまーゆの仲間。正義感が強く、いつでも正しいことをしようとする真面目な性格",
+    "category": "marumayu",
+    "personality": "正義感が強い",
+    "birthday": "8月2日",
+    "debutYear": "2025",
+    "hobbies": "—",
+    "skills": "—",
+    "favoriteFood": "—",
     "icons": {
       "personality": "images/icons/1.png",
       "birthday": "images/icons/2.png",
