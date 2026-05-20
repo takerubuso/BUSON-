@@ -317,6 +317,27 @@ h2::after {
     color: white;
 }
 
+/* もっと見るボタン */
+.show-more-btn {
+    background-color: white;
+    color: #ff6b88;
+    border: 2px solid #ff6b88;
+    border-radius: 30px;
+    padding: 10px 32px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    letter-spacing: 1px;
+}
+
+.show-more-btn:hover {
+    background-color: #ff6b88;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(255, 107, 136, 0.3);
+}
+
 /* キャラクターセクション */
 .character-container {
     display: flex;

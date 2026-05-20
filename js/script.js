@@ -1445,6 +1445,8 @@ function initializeLineStamps() {
  * LINEスタンプの表示
  * @param {Array} data - スタンプデータ
  */
+const STAMPS_INITIAL_LIMIT = 4; // 「すべて」表示時の初期件数
+
 function displayLineStamps(data) {
     const stampsContainer = document.getElementById('stamps-container');
     if (!stampsContainer) {
@@ -1456,10 +1458,11 @@ function displayLineStamps(data) {
     stampsContainer.innerHTML = '';
 
     // スタンプカードを生成
-    data.forEach(stamp => {
+    data.forEach((stamp, idx) => {
         const card = document.createElement('div');
         card.className = 'stamp-card';
         card.setAttribute('data-category', stamp.category || 'all');
+        card.setAttribute('data-index', idx);
         card.setAttribute('role', 'listitem');
 
         // 価格をフォーマット
@@ -1467,7 +1470,7 @@ function displayLineStamps(data) {
 
         card.innerHTML = `
             <div class="stamp-img">
-                <img data-src="${stamp.image}" src="images/placeholder.jpg" alt="${stamp.name}" 
+                <img data-src="${stamp.image}" src="images/placeholder.jpg" alt="${stamp.name}"
                      onerror="this.onerror=null; this.src='images/placeholder.jpg';">
             </div>
             <div class="stamp-info">
@@ -1481,6 +1484,54 @@ function displayLineStamps(data) {
 
     // 遅延読み込みを設定
     setupLazyLoading();
+
+    // 「もっと見る」ボタン生成 + 初期表示制限を適用
+    createStampsShowMoreButton(data.length);
+    applyStampsInitialLimit();
+}
+
+/**
+ * LINEスタンプの「もっと見る」ボタンを生成
+ */
+function createStampsShowMoreButton(totalCount) {
+    const existing = document.getElementById('stamps-show-more');
+    if (existing) existing.remove();
+
+    if (totalCount <= STAMPS_INITIAL_LIMIT) return;
+
+    const container = document.getElementById('stamps-container');
+    if (!container) return;
+
+    const wrapper = document.createElement('div');
+    wrapper.id = 'stamps-show-more-wrapper';
+    wrapper.style.textAlign = 'center';
+    wrapper.style.marginTop = '20px';
+
+    const btn = document.createElement('button');
+    btn.id = 'stamps-show-more';
+    btn.className = 'show-more-btn';
+    btn.textContent = 'もっと見る';
+    btn.setAttribute('type', 'button');
+    btn.addEventListener('click', () => {
+        const cards = document.querySelectorAll('#stamps-container .stamp-card');
+        cards.forEach(card => { card.style.display = 'block'; });
+        wrapper.style.display = 'none';
+    });
+
+    wrapper.appendChild(btn);
+    container.parentNode.insertBefore(wrapper, container.nextSibling);
+}
+
+/**
+ * 「すべて」表示時に初期件数のみ表示する制限を適用
+ */
+function applyStampsInitialLimit() {
+    const cards = document.querySelectorAll('#stamps-container .stamp-card');
+    cards.forEach((card, idx) => {
+        card.style.display = (idx < STAMPS_INITIAL_LIMIT) ? 'block' : 'none';
+    });
+    const wrapper = document.getElementById('stamps-show-more-wrapper');
+    if (wrapper) wrapper.style.display = 'block';
 }
 
 /**
@@ -1525,13 +1576,22 @@ function setupStampsFilter() {
 
             const filterValue = this.getAttribute('data-filter');
 
-            stampCards.forEach(card => {
-                if (filterValue === 'all' || card.getAttribute('data-category') === filterValue) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
+            if (filterValue === 'all') {
+                // 「すべて」選択時は初期件数のみ表示＋「もっと見る」ボタン復活
+                applyStampsInitialLimit();
+            } else {
+                // 個別カテゴリ選択時は該当カードを全件表示
+                stampCards.forEach(card => {
+                    if (card.getAttribute('data-category') === filterValue) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+                // カテゴリ選択時は「もっと見る」非表示
+                const wrapper = document.getElementById('stamps-show-more-wrapper');
+                if (wrapper) wrapper.style.display = 'none';
+            }
 
             // フィルター状態を通知
             const liveRegion = document.getElementById('stamps-filter-live-region');
