@@ -24,13 +24,13 @@ const SITE_CONFIG = {
         name: 'BUSON',
         url: 'https://www.youtube.com/channel/UCtRCF2NLRULCmf-oLAF455w',
         description: 'あるある漫画動画チャンネル',
-        icon: 'images/profile.jpg'
+        icon: 'images/BUSON-icon.jpg?v=20260520'
       },
       {
         name: 'まるまーゆ',
         url: 'https://www.youtube.com/@まるまーゆ',
         description: 'まるい眉をしたやさしい仲間たちの世界',
-        icon: 'images/marumayu/logo.png'
+        icon: 'images/marumayu/marumayu-icon.jpg?v=20260520'
       }
     ],
     updateInterval: 3600000 // データ更新間隔（ミリ秒） - デフォルト1時間
