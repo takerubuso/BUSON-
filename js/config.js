@@ -17,23 +17,20 @@ const SITE_CONFIG = {
   
   // YouTube関連設定
   youtube: {
-    channelId: 'UCtRCF2NLRULCmf-oLAF455w', // チャンネルID
+    channelId: 'UCtRCF2NLRULCmf-oLAF455w', // チャンネルID（BUSONメイン）
     channelUrl: 'https://www.youtube.com/channel/UCtRCF2NLRULCmf-oLAF455w',
-    defaultVideos: [
+    channels: [
       {
-        url: 'https://www.youtube.com/embed/gfKDzxeEcEM',
-        title: '部活動あるある',
-        description: '各種部活動にありがちなことが一気にわかる'
+        name: 'BUSON',
+        url: 'https://www.youtube.com/channel/UCtRCF2NLRULCmf-oLAF455w',
+        description: 'あるある漫画動画チャンネル',
+        icon: 'images/profile.jpg'
       },
       {
-        url: 'https://www.youtube.com/embed/AXITHLfhaO8',
-        title: '妊婦さんあるある',
-        description: '妊娠・出産する前に役立つ漫画動画'
-      },
-      {
-        url: 'https://www.youtube.com/embed/hcthPFLLF0U',
-        title: '47都道府県あるある',
-        description: '漫画動画であるある250連まとめ'
+        name: 'まるまーゆ',
+        url: 'https://www.youtube.com/@まるまーゆ',
+        description: 'まるい眉をしたやさしい仲間たちの世界',
+        icon: 'images/marumayu/logo.png'
       }
     ],
     updateInterval: 3600000 // データ更新間隔（ミリ秒） - デフォルト1時間

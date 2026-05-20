@@ -1561,58 +1561,56 @@ window.addEventListener('resize', function () {
 });
 
 /**
- * YouTube動画を表示する関数
+ * YouTubeチャンネルを表示する関数
  */
 function initializeYouTube() {
     // SITE_CONFIGからYouTube設定を取得
     const youtubeConfig = SITE_CONFIG.youtube || {};
-    const defaultVideos = youtubeConfig.defaultVideos || [];
+    const channels = youtubeConfig.channels || [];
 
-    // 動画表示関数を呼び出し
-    displayYouTubeVideos(defaultVideos);
+    // チャンネル表示関数を呼び出し
+    displayYouTubeChannels(channels);
 }
 
 /**
- * YouTube動画表示
- * @param {Array} videos - 動画データ配列
+ * YouTubeチャンネル表示
+ * @param {Array} channels - チャンネルデータ配列
  */
-function displayYouTubeVideos(videos) {
+function displayYouTubeChannels(channels) {
     const youtubeContainer = document.querySelector('.youtube-container');
     if (!youtubeContainer) return;
 
-    // コンテナをクリア
+    // コンテナをクリア + チャンネル表示モード適用
     youtubeContainer.innerHTML = '';
+    youtubeContainer.classList.add('channels-mode');
 
-    // 動画カードを生成
-    videos.forEach(video => {
-        const card = document.createElement('div');
-        card.className = 'youtube-card';
+    // チャンネルカードを生成
+    channels.forEach(channel => {
+        const card = document.createElement('a');
+        card.className = 'youtube-card channel-card';
+        card.href = channel.url;
+        card.target = '_blank';
+        card.rel = 'noopener noreferrer';
         card.setAttribute('role', 'listitem');
 
         card.innerHTML = `
-            <div class="youtube-embed">
-                <iframe 
-                    src="${video.url}" 
-                    title="${video.title}" 
-                    frameborder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowfullscreen
-                    loading="lazy"
-                ></iframe>
+            <div class="channel-thumbnail">
+                <img src="${channel.icon}" alt="${channel.name}" loading="lazy">
             </div>
             <div class="youtube-info">
-                <h3>${video.title}</h3>
-                <p>${video.description || ''}</p>
+                <h3>${channel.name}</h3>
+                <p>${channel.description || ''}</p>
+                <span class="channel-cta">YouTubeチャンネルへ →</span>
             </div>
         `;
 
         youtubeContainer.appendChild(card);
     });
 
-    // YouTubeボタンのリンクを設定
-    const youtubeButton = document.querySelector('.youtube-button');
-    if (youtubeButton && youtubeConfig.channelUrl) {
-        youtubeButton.href = youtubeConfig.channelUrl;
+    // 下部の「チャンネルはこちら」ボタンは非表示（各カードがチャンネルリンクのため）
+    const youtubeButtonContainer = document.querySelector('.youtube-button-container');
+    if (youtubeButtonContainer) {
+        youtubeButtonContainer.style.display = 'none';
     }
 }
 
