@@ -365,7 +365,7 @@
         }
 
         [data-char="dog"] .character {
-            background: transparent; /* ピーだけ背景を透明に */
+            background: transparent; /* マルだけ背景を透明に */
         }
 
         .character-image {
@@ -907,16 +907,16 @@
             <div class="characters-grid">
                 <div class="character-card" onclick="selectCharacter('dog')">
                     <div class="character" data-char="dog">
-                        <img src="images/marumayu/character1.png" alt="ピー" class="character-image">
+                        <img src="images/marumayu/character1.png" alt="マル" class="character-image">
                     </div>
-                    <div class="character-name">ピー</div>
+                    <div class="character-name">マル</div>
                 </div>
                 
                 <div class="character-card" onclick="selectCharacter('chick')">
                     <div class="character" data-char="chick">
-                        <img src="images/marumayu/character2.png" alt="クー" class="character-image">
+                        <img src="images/marumayu/character2.png" alt="ピィ" class="character-image">
                     </div>
-                    <div class="character-name">クー</div>
+                    <div class="character-name">ピィ</div>
                 </div>
                 
                 <div class="character-card" onclick="selectCharacter('rabbit')">
@@ -1027,13 +1027,13 @@
         // キャラクタープロフィールデータ
         const characterData = {
             dog: {
-                name: "ピー",
+                name: "マル",
                 birthday: "4月5日",
                 personality: "繊細で泣き虫。感受性が豊かで、優しい心の持ち主です。困っている友達を見ると、自分のことのように心配してしまう、とても思いやりのあるキャラクターです。",
                 fullbodyImage: "images/marumayu/character1-2.png"
             },
             chick: {
-                name: "クー",
+                name: "ピィ",
                 birthday: "1月1日",
                 personality: "自由で好奇心旺盛。新しいことにどんどんチャレンジしていく積極的な性格です。いつも楽しいことを探していて、みんなを笑顔にするのが得意です。",
                 fullbodyImage: "images/marumayu/character2-2.png"
@@ -1148,7 +1148,7 @@
                     chick: 'images/marumayu/character2.png', 
                     rabbit: 'images/marumayu/character3.png' 
                 };
-                const names = { dog: 'ピー', chick: 'クー', rabbit: 'ウー' };
+                const names = { dog: 'マル', chick: 'ピィ', rabbit: 'ウー' };
                 charElement.innerHTML = `<img src="${defaultImages[charType]}" alt="${names[charType]}" class="character-image">`;
                 alert(`${charType}の画像をデフォルトに戻しました！`);
             }
