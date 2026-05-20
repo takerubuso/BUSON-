@@ -866,63 +866,6 @@
     <div class="background-layer"></div>
     <div class="background-image" id="backgroundImage"></div>
 
-    <!-- 管理パネル切り替えボタン -->
-    <button class="toggle-admin" onclick="toggleAdmin()">⚙️ 管理</button>
-
-    <!-- 管理パネル -->
-    <div class="admin-panel hidden" id="adminPanel">
-        <h3 class="admin-title">🛠️ サイト管理パネル</h3>
-        <div class="admin-grid">
-            <div class="admin-section">
-                <h4>🏷️ ロゴ画像</h4>
-                <input type="text" class="url-input" id="logoUrl" placeholder="ロゴ画像のURL">
-                <button class="update-btn" onclick="updateLogo()">ロゴを更新</button>
-            </div>
-            
-            <div class="admin-section">
-                <h4>🖼️ 背景画像</h4>
-                <input type="text" class="url-input" id="backgroundUrl" placeholder="背景画像のURL (例: https://example.com/bg.jpg)">
-                <button class="update-btn" onclick="updateBackground()">背景を更新</button>
-            </div>
-            
-            <div class="admin-section">
-                <h4>🎨 メインビジュアル（PC用）</h4>
-                <input type="text" class="url-input" id="thumbnailUrl" placeholder="メインビジュアルのURL">
-                <button class="update-btn" onclick="updateThumbnail()">ビジュアルを更新</button>
-            </div>
-
-            <div class="admin-section">
-                <h4>📱 メインビジュアル（スマホ用）</h4>
-                <input type="text" class="url-input" id="thumbnailMobileUrl" placeholder="スマホ用メインビジュアルのURL">
-                <button class="update-btn" onclick="updateThumbnailMobile()">スマホ用を更新</button>
-            </div>
-            
-            <div class="admin-section">
-                <h4>🐕 ピー画像</h4>
-                <input type="text" class="url-input" id="dogUrl" placeholder="ピーの画像URL">
-                <button class="update-btn" onclick="updateCharacter('dog')">更新</button>
-            </div>
-            
-            <div class="admin-section">
-                <h4>🐤 クー画像</h4>
-                <input type="text" class="url-input" id="chickUrl" placeholder="クーの画像URL">
-                <button class="update-btn" onclick="updateCharacter('chick')">更新</button>
-            </div>
-            
-            <div class="admin-section">
-                <h4>🐰 ウー画像</h4>
-                <input type="text" class="url-input" id="rabbitUrl" placeholder="ウーの画像URL">
-                <button class="update-btn" onclick="updateCharacter('rabbit')">更新</button>
-            </div>
-            
-            <div class="admin-section">
-                <h4>🎭 全身イラスト</h4>
-                <input type="text" class="url-input" id="fullbodyUrl" placeholder="全身イラストのURL">
-                <button class="update-btn" onclick="updateFullbody()">更新</button>
-            </div>
-        </div>
-    </div>
-
     <!-- ヘッダー -->
     <header class="header">
         <nav class="nav">
@@ -1122,7 +1065,7 @@
         const snsLinks = {
             x: "https://x.com/marumayu_kawaii",
             instagram: "https://www.instagram.com/marumayu_kawaii",
-            youtube: "#",
+            youtube: "https://www.youtube.com/@まるまーゆ",
             tiktok: "#",
             threads: "https://www.threads.com/@marumayu_kawaii"
         };
