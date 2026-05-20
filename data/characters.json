@@ -314,7 +314,7 @@
   {
     "id": 13,
     "name": "マル",
-    "image": "images/marumayu/character1.png?v=20260520",
+    "image": "images/marumayu/character1.png?v=20260520b",
     "profile": "まるまーゆの仲間。繊細で泣き虫、感受性が豊かで優しい心の持ち主",
     "category": "marumayu",
     "personality": "繊細で泣き虫",
@@ -335,7 +335,7 @@
   {
     "id": 14,
     "name": "ピィ",
-    "image": "images/marumayu/character2.png?v=20260520",
+    "image": "images/marumayu/character2.png?v=20260520b",
     "profile": "まるまーゆの仲間。自由で好奇心旺盛、新しいことにチャレンジする積極的な性格",
     "category": "marumayu",
     "personality": "自由で好奇心旺盛",
@@ -356,7 +356,7 @@
   {
     "id": 15,
     "name": "ウー",
-    "image": "images/marumayu/character3.png?v=20260520",
+    "image": "images/marumayu/character3.png?v=20260520b",
     "profile": "まるまーゆの仲間。正義感が強く、いつでも正しいことをしようとする真面目な性格",
     "category": "marumayu",
     "personality": "正義感が強い",
