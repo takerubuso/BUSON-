@@ -942,6 +942,56 @@ function initializeCharacters(data) {
 
     // フィルター機能を初期化
     setupCharacterFilter();
+
+    // 左右スクロールボタンを初期化
+    setupCharacterScrollButtons();
+}
+
+/**
+ * キャラクタースライダーの左右ボタン制御
+ */
+function setupCharacterScrollButtons() {
+    const container = document.querySelector('.character-container');
+    const prevBtn = document.querySelector('.character-prev');
+    const nextBtn = document.querySelector('.character-next');
+    if (!container || !prevBtn || !nextBtn) return;
+
+    // 1回のクリックでスクロールする量(カード幅 + gap)× 2枚分
+    const getScrollStep = () => {
+        const card = container.querySelector('.character-card');
+        const cardWidth = card ? card.offsetWidth + 20 : 220;
+        return cardWidth * 2;
+    };
+
+    prevBtn.addEventListener('click', () => {
+        container.scrollBy({ left: -getScrollStep(), behavior: 'smooth' });
+    });
+    nextBtn.addEventListener('click', () => {
+        container.scrollBy({ left: getScrollStep(), behavior: 'smooth' });
+    });
+
+    // 端に到達したらボタンを無効化(視覚的フィードバック)
+    const updateButtonState = () => {
+        // カードがまだ挿入されてない / レイアウト未完了の場合はスキップ
+        if (container.scrollWidth <= container.clientWidth) {
+            prevBtn.disabled = false;
+            nextBtn.disabled = false;
+            return;
+        }
+        const atStart = container.scrollLeft <= 5;
+        const atEnd = container.scrollLeft + container.clientWidth >= container.scrollWidth - 5;
+        prevBtn.disabled = atStart;
+        nextBtn.disabled = atEnd;
+    };
+    container.addEventListener('scroll', updateButtonState);
+    window.addEventListener('resize', updateButtonState);
+    // 画像のロード後にも再評価(画像が読み込まれてはじめて正しい scrollWidth が出る)
+    container.querySelectorAll('img').forEach(img => {
+        if (img.complete) return;
+        img.addEventListener('load', updateButtonState, { once: true });
+    });
+    // 初期評価は十分待ってから(画像レンダリングを待つ)
+    setTimeout(updateButtonState, 500);
 }
 
 /**

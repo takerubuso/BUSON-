@@ -166,9 +166,11 @@
 
         /* ヘッダー */
         header {
-            background-color: rgba(255, 255, 255, 0.98);
+            background-color: #ffffff;
+            backdrop-filter: saturate(180%) blur(12px);
+            -webkit-backdrop-filter: saturate(180%) blur(12px);
             box-shadow: var(--shadow-sm);
-            padding: 15px 0;
+            padding: 12px 0;
             position: fixed;
             width: 100%;
             top: 0;
@@ -177,7 +179,7 @@
         }
 
         header.scrolled {
-            padding: 10px 0;
+            padding: 8px 0;
             box-shadow: var(--shadow-md);
         }
 
@@ -185,6 +187,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 24px;
         }
 
         .logo {
@@ -205,12 +208,12 @@
 
         nav ul {
             display: flex;
+            align-items: center;
             list-style: none;
+            gap: 28px;
         }
 
         nav ul li {
-            margin-left: 20px;
-            /* メニュー項目間の余白を減らしました */
             position: relative;
         }
 
@@ -220,8 +223,7 @@
             transition: color 0.3s;
             position: relative;
             padding: 5px 0;
-            font-size: 0.9rem;
-            /* メニュー項目の文字サイズを小さくしました */
+            font-size: 0.95rem;
         }
 
         nav ul li a::after {
@@ -249,6 +251,43 @@
 
         nav ul li.active a::after {
             width: 100%;
+        }
+
+        /* お問い合わせ CTA ボタン */
+        nav ul li.nav-cta {
+            margin-left: 8px; /* gap に加えてわずかに離す */
+        }
+        nav ul li.nav-cta a {
+            background: #ff6b88;
+            color: #fff;
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 6px rgba(255,107,136,.3);
+            transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+        }
+        nav ul li.nav-cta a::after {
+            content: "›";
+            position: static;
+            background: none;
+            width: auto;
+            height: auto;
+            font-size: 1.2em;
+            line-height: 1;
+            transition: transform 0.2s;
+        }
+        nav ul li.nav-cta a:hover {
+            background: #e85a78;
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255,107,136,.45);
+        }
+        nav ul li.nav-cta a:hover::after {
+            transform: translateX(3px);
+            width: auto;
         }
 
         /* モバイルメニュー */
@@ -384,6 +423,24 @@
             margin-bottom: var(--spacing-md);
         }
 
+        /* 納期目安バッジ */
+        .service-meta {
+            font-size: 0.85rem;
+            color: #777;
+            background: #fff5f7;
+            padding: 6px 12px;
+            border-radius: 999px;
+            margin: 0 auto var(--spacing-md);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+            align-self: center;
+        }
+        .service-meta i {
+            color: var(--primary-color, #ff6b88);
+        }
+
         .service-link {
             font-weight: 500;
             display: inline-flex;
@@ -397,6 +454,48 @@
 
         .service-link:hover i {
             transform: translateX(5px);
+        }
+
+        /* 実績数値バー(ヒーロー直下、社会的証明) */
+        .stats-bar {
+            background: linear-gradient(135deg, #fff5f7 0%, #ffe0e6 100%);
+            padding: 48px 0;
+            border-top: 1px solid rgba(255,107,136,.1);
+            border-bottom: 1px solid rgba(255,107,136,.1);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            text-align: center;
+        }
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px 8px;
+        }
+        .stat-num {
+            font-size: 2.6rem;
+            font-weight: 800;
+            color: var(--primary-color, #ff6b88);
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+        .stat-label {
+            font-size: 0.9rem;
+            color: #555;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+            .stat-num { font-size: 2rem; }
+            .stat-label { font-size: 0.8rem; }
+            .stats-bar { padding: 32px 0; }
         }
 
         /* 事例セクション */
@@ -1660,6 +1759,8 @@
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"BUSON STUDIO","url":"https://buson2025.com/","logo":"https://buson2025.com/images/logo.png","sameAs":["https://x.com/BUSON2025","https://www.youtube.com/channel/UCtRCF2NLRULCmf-oLAF455w","https://www.instagram.com/buson2025/","https://www.tiktok.com/@buson2025","https://www.threads.com/@buson2025","https://buson.blog.jp"],"founder":{"@type":"Person","name":"BUSON","alternateName":"ブソン"}}</script>
     <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"BUSON STUDIO","url":"https://buson2025.com/","inLanguage":"ja-JP","publisher":{"@type":"Organization","name":"BUSON STUDIO"}}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://buson2025.com/"},{"@type":"ListItem","position":2,"name":"企業向けサービス","item":"https://buson2025.com/buson-studio-business.html"}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"BUSON STUDIO 企業向けサービス","url":"https://buson2025.com/buson-studio-business.html","image":"https://buson2025.com/images/logo.png","description":"あるある漫画家BUSONによる、企業向けキャラクター開発・広告イラスト・アニメ制作・SNS PR・ライセンスビジネスのサービス。SNS総フォロワー100万人超のリーチで企業ブランドを支援。","provider":{"@type":"Organization","name":"BUSON STUDIO","url":"https://buson2025.com/"},"areaServed":{"@type":"Country","name":"日本"},"hasOfferCatalog":{"@type":"OfferCatalog","name":"BUSON STUDIO サービスメニュー","itemListElement":[{"@type":"Offer","itemOffered":{"@type":"Service","name":"広告イラスト制作","description":"あるある漫画や動画で広告やSNS投稿用のイラストを制作。BUSONキャラクターで商品の魅力を引き出します。"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"アニメ制作","description":"BUSONキャラクターを動かすショートアニメ・SNS動画制作。TikTok・Instagram・YouTube Shorts向け。大手メーカー様の動画施策で実績あり。"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"キャラクターデザイン","description":"企業や商品に合わせたオリジナルキャラクターをデザイン。LINEスタンプ制作にも対応。"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"パッケージデザイン","description":"商品パッケージへのキャラクター展開。手に取りたくなるデザインで話題性に貢献。"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"SNS PR","description":"累計100万人を超えるフォロワーに向けてあるある漫画や動画コンテンツでPR(Instagram・TikTok・YouTube・X・Threads・漫画ブログ)。"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"漫画・ストーリー制作","description":"商品の使い方や企業理念をストーリー形式で伝える漫画制作。"}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"イベントコラボ","description":"BUSONキャラクターを活用した店舗イベントや展示会のコラボレーション。"}}]}}</script>
 </head>
 
 <body>
@@ -1672,14 +1773,10 @@
             <nav>
                 <ul id="menu">
                     <li><a href="#services">サービス</a></li>
-                    <li><a href="#case-studies">SNS広告事例</a></li>
+                    <li><a href="#case-studies">事例・実績</a></li>
                     <li><a href="#license">ライセンス</a></li>
-                    <li><a href="#portfolio">信頼と実績</a></li>
-                    <li><a href="#team">クリエーター</a></li>
-                    <li><a href="#reasons">選ばれる理由</a></li>
-                    <li><a href="#process">制作の流れ</a></li>
-                    <li><a href="#pricing">料金について</a></li>
-                    <li><a href="#contact">お問い合わせ</a></li>
+                    <li><a href="#pricing">料金</a></li>
+                    <li class="nav-cta"><a href="#contact">お問い合わせ</a></li>
                 </ul>
                 <div class="mobile-menu-btn" id="mobile-menu-btn">
                     <span></span>
@@ -1704,6 +1801,30 @@
         </div>
     </section>
 
+    <!-- 実績数値バー(社会的証明) -->
+    <section class="stats-bar" aria-label="BUSON STUDIO 実績">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-num">100万+</span>
+                    <span class="stat-label">SNS総フォロワー</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-num">1,500+</span>
+                    <span class="stat-label">あるある漫画制作</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-num">859+</span>
+                    <span class="stat-label">超現代風源氏物語 話数</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-num">8年+</span>
+                    <span class="stat-label">キャラクターブランド運営</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- サービスセクション -->
     <section id="services" class="section">
         <div class="container">
@@ -1718,10 +1839,22 @@
                     </div>
                     <h3>広告イラスト制作</h3>
                     <p>あるある漫画や動画で広告やSNS投稿用のイラストを制作。親しみやすいBUSONキャラクターで商品の魅力を最大限に引き出します。</p>
+                    <div class="service-meta"><i class="far fa-clock"></i> 納期目安:1〜2週間</div>
                     <a href="#contact" class="service-link">詳細を問い合わせる <i class="fas fa-arrow-right"></i></a>
                 </div>
 
-                <!-- サービス2 -->
+                <!-- サービス2:アニメ制作(森永乳業案件などSNS動画で実績多数) -->
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-film"></i>
+                    </div>
+                    <h3>アニメ制作</h3>
+                    <p>BUSONキャラクターを動かすショートアニメ・SNS動画制作。あるあるストーリーをアニメーションで表現し、TikTok・Instagram・YouTube Shortsで拡散しやすい動画コンテンツに。大手メーカー様の動画施策で実績あり。</p>
+                    <div class="service-meta"><i class="far fa-clock"></i> 納期目安:2〜4週間</div>
+                    <a href="#contact" class="service-link">詳細を問い合わせる <i class="fas fa-arrow-right"></i></a>
+                </div>
+
+                <!-- サービス3 -->
                 <div class="service-card">
                     <div class="service-icon">
                         <i class="fas fa-user-astronaut"></i>
@@ -1729,6 +1862,7 @@
                     <h3>キャラクターデザイン</h3>
                     <p>企業や商品に合わせたオリジナルキャラクターをデザイン。ブランドの顔となるキャラクターを作成します。また、LINEスタンプ制作にも対応しており、キャラクターを活用したコミュニケーションツールとしてもご提案可能です。
                     </p>
+                    <div class="service-meta"><i class="far fa-clock"></i> 納期目安:2〜4週間</div>
                     <a href="#contact" class="service-link">詳細を問い合わせる <i class="fas fa-arrow-right"></i></a>
                 </div>
 
@@ -1739,6 +1873,7 @@
                     </div>
                     <h3>パッケージデザイン</h3>
                     <p>商品パッケージへのキャラクター展開。手に取りたくなるデザインで話題性に貢献します。</p>
+                    <div class="service-meta"><i class="far fa-clock"></i> 納期目安:2〜3週間</div>
                     <a href="#contact" class="service-link">詳細を問い合わせる <i class="fas fa-arrow-right"></i></a>
                 </div>
 
@@ -1749,6 +1884,7 @@
                     </div>
                     <h3>SNS PR</h3>
                     <p>累計100万人を超えるフォロワーに向けてあるある漫画や動画コンテンツでPRします。(Instagram、TikTok、YouTube、X、Threads、漫画ブログ）</p>
+                    <div class="service-meta"><i class="far fa-clock"></i> 納期目安:即日〜1週間</div>
                     <a href="#contact" class="service-link">詳細を問い合わせる <i class="fas fa-arrow-right"></i></a>
                 </div>
 
@@ -1759,6 +1895,7 @@
                     </div>
                     <h3>漫画・ストーリー制作</h3>
                     <p>商品の使い方や企業理念をストーリー形式で伝える漫画制作。情報を楽しく伝えます。</p>
+                    <div class="service-meta"><i class="far fa-clock"></i> 納期目安:2〜3週間</div>
                     <a href="#contact" class="service-link">詳細を問い合わせる <i class="fas fa-arrow-right"></i></a>
                 </div>
 
@@ -1769,6 +1906,7 @@
                     </div>
                     <h3>イベントコラボ</h3>
                     <p>BUSONキャラクターを活用した店舗イベントや展示会のコラボレーションに対応しております。</p>
+                    <div class="service-meta"><i class="far fa-clock"></i> 納期目安:要相談</div>
                     <a href="#contact" class="service-link">詳細を問い合わせる <i class="fas fa-arrow-right"></i></a>
                 </div>
             </div>
@@ -1807,6 +1945,30 @@
             <p class="section-description">私たちが手がけた事例をご紹介します</p>
 
             <div id="all" class="tab-content active">
+                <!-- 森永乳業 アニメ動画事例 -->
+                <div class="case-study-card">
+                    <div class="case-study-content">
+                        <div class="case-study-image">
+                            <iframe src="https://www.tiktok.com/embed/v2/7576497489692347656"
+                                frameborder="0" scrolling="no"
+                                allow="encrypted-media; clipboard-write; web-share; fullscreen"
+                                allowfullscreen></iframe>
+                        </div>
+                        <div class="case-study-details">
+                            <span class="case-study-tag">森永乳業様</span>
+                            <h3>粉ミルク「エコらくパック」のアニメ動画PR施策</h3>
+                            <p><strong>プロジェクト概要</strong>:粉ミルク「エコらくパック」の認知獲得・利便性訴求を目的に、しきぶちゃんを起点としたショートアニメ動画を制作。育児中の親に共感されやすい「粉ミルクあるある」のストーリーをアニメ化し、TikTokで公開しました。</p>
+
+                            <p><strong>制作内容</strong>:</p>
+                            <ul>
+                                <li>「粉ミルクあるある」アニメシナリオ作成</li>
+                                <li>BUSONキャラクターによるショートアニメ動画制作</li>
+                                <li>TikTok(@buson2025)へ #PR投稿</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- コカ・コーラ事例 -->
                 <div class="case-study-card">
                     <div class="case-study-content">
