@@ -6,6 +6,17 @@
     font-family: 'M PLUS Rounded 1c', sans-serif;
 }
 
+html {
+    scroll-padding-top: 110px;
+    scroll-behavior: smooth;
+}
+
+@media (max-width: 768px) {
+    html {
+        scroll-padding-top: 80px;
+    }
+}
+
 body {
     background-color: #ffffff;
     color: #4a4a4a;
