@@ -452,62 +452,117 @@ async function loadData(url, defaultData = []) {
 
 /**
  * モバイルメニューの制御
+ * - common.js のヘッダー注入後にも再呼び出しされるためベキ等化（多重リスナー防止）
+ * - リンククリック時は「メニューが開いていれば必ず閉じる」方針（PC幅判定を外す）
+ * - 同一ページ内ハッシュリンクは preventDefault + scrollIntoView で確実に閉じてから移動
  */
 function setupMobileMenu() {
     const mobileMenuButton = document.querySelector('.mobile-menu-button');
     const navMenu = document.querySelector('nav ul');
 
-    if (mobileMenuButton && navMenu) {
-        // クリックイベント
-        mobileMenuButton.addEventListener('click', function () {
-            this.classList.toggle('active');
-            navMenu.classList.toggle('active');
+    if (!mobileMenuButton || !navMenu) return;
 
-            // アクセシビリティ対応
-            const isExpanded = navMenu.classList.contains('active');
-            mobileMenuButton.setAttribute('aria-expanded', isExpanded);
-            navMenu.setAttribute('aria-hidden', !isExpanded);
-        });
+    // 二重バインド防止: 既に初期化済みなら何もしない
+    if (mobileMenuButton.dataset.menuInitialized === 'true') return;
+    mobileMenuButton.dataset.menuInitialized = 'true';
 
-        // キーボードイベント
-        mobileMenuButton.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                this.click();
-            }
-        });
-
-        // 初期状態の設定
-        mobileMenuButton.setAttribute('aria-expanded', 'false');
-        mobileMenuButton.setAttribute('aria-controls', 'mobile-menu');
-        navMenu.id = 'mobile-menu';
-        navMenu.setAttribute('aria-hidden', 'true');
-
-        // メニュー内のリンクをクリックしたらメニューを閉じる
-        const menuLinks = navMenu.querySelectorAll('a');
-        menuLinks.forEach(link => {
-            link.addEventListener('click', function () {
-                if (window.innerWidth <= 768) {
-                    mobileMenuButton.classList.remove('active');
-                    navMenu.classList.remove('active');
-                    mobileMenuButton.setAttribute('aria-expanded', 'false');
-                    navMenu.setAttribute('aria-hidden', 'true');
-                }
-            });
-        });
-
-        // 画面サイズ変更時の処理
-        window.addEventListener('resize', function () {
-            if (window.innerWidth > 768 && navMenu.classList.contains('active')) {
-                // 画面サイズが大きくなったらメニューを閉じる
-                mobileMenuButton.classList.remove('active');
-                navMenu.classList.remove('active');
-                mobileMenuButton.setAttribute('aria-expanded', 'false');
-                navMenu.setAttribute('aria-hidden', 'true');
-            }
-        });
+    function openMenu() {
+        mobileMenuButton.classList.add('active');
+        navMenu.classList.add('active');
+        mobileMenuButton.setAttribute('aria-expanded', 'true');
+        navMenu.setAttribute('aria-hidden', 'false');
     }
+    function closeMenu() {
+        mobileMenuButton.classList.remove('active');
+        navMenu.classList.remove('active');
+        mobileMenuButton.setAttribute('aria-expanded', 'false');
+        navMenu.setAttribute('aria-hidden', 'true');
+    }
+    function toggleMenu() {
+        if (navMenu.classList.contains('active')) {
+            closeMenu();
+        } else {
+            openMenu();
+        }
+    }
+
+    // ハンバーガーボタンのクリック（タップ）
+    mobileMenuButton.addEventListener('click', toggleMenu);
+
+    // キーボードアクセシビリティ
+    mobileMenuButton.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggleMenu();
+        }
+    });
+
+    // 初期状態の設定
+    mobileMenuButton.setAttribute('aria-expanded', 'false');
+    mobileMenuButton.setAttribute('aria-controls', 'mobile-menu');
+    navMenu.id = 'mobile-menu';
+    navMenu.setAttribute('aria-hidden', 'true');
+
+    // 現在のページファイル名（'/' のみの場合は 'index.html' とみなす）
+    function currentPageFile() {
+        const last = window.location.pathname.split('/').pop();
+        return last || 'index.html';
+    }
+
+    // メニュー内リンクのクリック処理
+    const menuLinks = navMenu.querySelectorAll('a');
+    menuLinks.forEach(link => {
+        link.addEventListener('click', function (e) {
+            // メニューが開いていない時（PC幅で常時表示など）は通常動作のみ
+            const isOpen = navMenu.classList.contains('active');
+
+            const href = link.getAttribute('href') || '';
+            const hashIndex = href.indexOf('#');
+
+            if (hashIndex !== -1) {
+                const linkPath = href.substring(0, hashIndex);
+                const currentFile = currentPageFile();
+                // 同一ページ内アンカー判定: hrefがハッシュのみ or ファイル名が現在ページと一致
+                const isSamePage = !linkPath
+                    || linkPath === currentFile
+                    || linkPath.endsWith('/' + currentFile);
+
+                if (isSamePage) {
+                    // 同一ページ内アンカー: 自前で閉じてからスクロール（Instagram等の
+                    // in-app browser でハッシュリンク遷移が中途半端になりメニューが
+                    // 開いたままになる問題を回避）
+                    e.preventDefault();
+                    if (isOpen) closeMenu();
+
+                    const targetId = href.substring(hashIndex + 1);
+                    const target = targetId ? document.getElementById(targetId) : null;
+                    if (target) {
+                        requestAnimationFrame(() => {
+                            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        });
+                    }
+                    if (history.pushState) {
+                        history.pushState(null, '', targetId ? '#' + targetId : ' ');
+                    }
+                    return;
+                }
+            }
+
+            // 別ページ遷移: 開いていれば閉じてからデフォルト遷移
+            if (isOpen) closeMenu();
+        });
+    });
+
+    // 画面サイズ変更時: PC幅に戻ったらメニューを閉じる
+    window.addEventListener('resize', function () {
+        if (window.innerWidth > 768 && navMenu.classList.contains('active')) {
+            closeMenu();
+        }
+    });
 }
+
+// グローバル公開（common.js のヘッダー注入完了後に呼び出されるため）
+window.setupMobileMenu = setupMobileMenu;
 
 /**
  * 画像の遅延読み込み

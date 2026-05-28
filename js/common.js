@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (headerPlaceholder) {
         // 現在のページのパスをチェックしてルートからの相対パスを決定
         const pathPrefix = location.pathname.includes('/kiji/') ? '../' : '';
-        
+
         fetch(pathPrefix + 'includes/header.html')
             .then(response => response.text())
             .then(data => {
@@ -13,14 +13,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     data = data.replace('src="images/', 'src="../images/');
                     data = data.replace('href="index.html', 'href="../index.html');
                 }
-                
+
                 headerPlaceholder.innerHTML = data;
-                // モバイルメニューの設定などヘッダー関連のJavaScriptを実行
-                setupMobileMenu();
+                // ヘッダー注入後に script.js 側の完全版 setupMobileMenu を呼び出す
+                // （以前は common.js 内に簡略版が定義されておりリンククリック時の閉じ処理が無かった）
+                if (typeof window.setupMobileMenu === 'function') {
+                    window.setupMobileMenu();
+                }
             })
             .catch(error => console.error('ヘッダーの読み込みに失敗しました:', error));
     }
-    
+
     // フッターの読み込み
     const footerPlaceholder = document.getElementById('footer-placeholder');
     if (footerPlaceholder) {
@@ -60,22 +63,5 @@ document.addEventListener('DOMContentLoaded', function() {
             window.scrollTo({ top: 0, behavior: reducedMotion ? 'auto' : 'smooth' });
         });
         toggleVisibility();
-    }
-    
-    // モバイルメニューの設定
-    function setupMobileMenu() {
-        const mobileMenuButton = document.querySelector('.mobile-menu-button');
-        const navMenu = document.querySelector('nav ul');
-        
-        if (mobileMenuButton && navMenu) {
-            mobileMenuButton.addEventListener('click', function() {
-                this.classList.toggle('active');
-                navMenu.classList.toggle('active');
-                
-                const isExpanded = navMenu.classList.contains('active');
-                mobileMenuButton.setAttribute('aria-expanded', isExpanded);
-                navMenu.setAttribute('aria-hidden', !isExpanded);
-            });
-        }
     }
 });
