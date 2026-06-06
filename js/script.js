@@ -1220,24 +1220,19 @@ function setupCharacterModal(characters) {
             // 画像パスの生成
             const imagePath = character.image || 'images/character/placeholder.png';
 
-            // ソーシャルリンクを生成
-            const socialLinksHTML = character.socialLinks && character.socialLinks.length > 0
-                ? character.socialLinks.map(link =>
-                    `<a href="${link.url}" target="_blank" rel="noopener noreferrer">${link.name}</a>`
-                ).join('')
-                : '';
+            // ※SNSリンクは非表示(データはcharacters.jsonに保持したまま)
 
-            // キャラクター情報アイコンの配置順序を指定
+            // キャラクター情報アイコンの配置順序を指定(アイコンはインラインSVG)
             const topRowIcons = [
-                { key: 'personality', label: '性格', icon: 'images/icons/1.png' },
-                { key: 'birthday', label: '誕生日', icon: 'images/icons/2.png' },
-                { key: 'debutYear', label: 'デビュー年', icon: 'images/icons/3.png' }
+                { key: 'personality', label: '性格', svg: '<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M10 9h28a6 6 0 0 1 6 6v13a6 6 0 0 1-6 6H22l-8 6.2a1 1 0 0 1-1.6-.9l.6-5.3H10a6 6 0 0 1-6-6V15a6 6 0 0 1 6-6z" fill="#74d4c0"/><path d="M24 28.5C18.5 24.8 15.5 22 15.5 18.8 15.5 16.7 17.1 15 19.2 15 20.7 15 22.1 15.9 24 18 25.9 15.9 27.3 15 28.8 15 30.9 15 32.5 16.7 32.5 18.8 32.5 22 29.5 24.8 24 28.5Z" fill="#ff6f97"/></svg>' },
+                { key: 'birthday', label: '誕生日', svg: '<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="6" y="37" width="36" height="3.5" rx="1.75" fill="#74d4c0"/><rect x="10" y="25" width="28" height="13" rx="4" fill="#ff8aab"/><rect x="10" y="22.5" width="28" height="6.5" rx="3.25" fill="#74d4c0"/><circle cx="17" cy="25.5" r="1" fill="#ff6f97"/><circle cx="24" cy="26.2" r="1" fill="#ff6f97"/><circle cx="31" cy="25.5" r="1" fill="#ff6f97"/><rect x="22.7" y="13.5" width="2.6" height="8.5" rx="1.3" fill="#ff6f97"/><ellipse cx="24" cy="11" rx="1.9" ry="2.6" fill="#ff8aab"/></svg>' },
+                { key: 'debutYear', label: 'デビュー年', svg: '<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="12.5" y="7" width="3" height="34" rx="1.5" fill="#74d4c0"/><circle cx="14" cy="6.5" r="2.3" fill="#ff6f97"/><path d="M15.5 8.5h21l-5 5.5 5 5.5h-21z" fill="#ff8aab"/></svg>' }
             ];
 
             const bottomRowIcons = [
-                { key: 'hobbies', label: '趣味', icon: 'images/icons/4.png' },
-                { key: 'skills', label: '特技', icon: 'images/icons/5.png' },
-                { key: 'favoriteFood', label: '好きな食べ物', icon: 'images/icons/6.png' }
+                { key: 'hobbies', label: '趣味', svg: '<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M24 11.5c8.3 0 15 5.2 15 11.8 0 4.1-3.4 6.3-6.4 6.3-2 0-3.3-1-4.9-1-1.7 0-2.7 1.3-2.7 2.9 0 2.3-2.1 4.7-6.3 4.7C12.4 36.2 9 30.2 9 23.6 9 16.5 15.7 11.5 24 11.5z" fill="#ff8aab"/><ellipse cx="17.5" cy="27.5" rx="2.9" ry="3.5" fill="#ffeef4"/><circle cx="19.5" cy="18" r="2.1" fill="#74d4c0"/><circle cx="26.5" cy="16.8" r="2.1" fill="#ff6f97"/><circle cx="32" cy="20.5" r="2.1" fill="#74d4c0"/><circle cx="31.5" cy="26.5" r="1.9" fill="#ff6f97"/></svg>' },
+                { key: 'skills', label: '特技', svg: '<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="15.5" y="27.5" width="19" height="9" rx="4.5" fill="#ff8aab"/><rect x="11.5" y="13" width="8.5" height="18" rx="4.25" fill="#ff8aab"/><circle cx="15.7" cy="13.3" r="5" fill="#ff8aab"/><circle cx="22" cy="23.5" r="6.4" fill="#ff8aab"/><rect x="30" y="26" width="7.5" height="12" rx="3.2" fill="#74d4c0"/></svg>' },
+                { key: 'favoriteFood', label: '好きな食べ物', svg: '<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M24 12.5c1.3 0 2.5.7 3.1 1.8l10.6 18.5c1.3 2.3-.3 4.9-3.1 4.9H13.4c-2.8 0-4.4-2.6-3.1-4.9L20.9 14.3c.6-1.1 1.8-1.8 3.1-1.8z" fill="#ff8aab"/><path d="M18.5 27h11l1.8 7.2H16.7z" fill="#74d4c0"/></svg>' }
             ];
 
             // アイコン生成関数
@@ -1251,7 +1246,7 @@ function setupCharacterModal(characters) {
                 return `
                     <div class="info-item">
                         <div class="info-circle" data-info="${iconInfo.key}" tabindex="0" role="button" aria-label="${iconInfo.label}: ${value}">
-                            <img src="${iconInfo.icon}" alt="${iconInfo.label}" onerror="this.onerror=null; this.style.display='none';">
+                            ${iconInfo.svg}
                             <div class="info-popup" role="tooltip">${value}</div>
                         </div>
                         <p class="info-label-text">${iconInfo.label}</p>
@@ -1271,9 +1266,6 @@ function setupCharacterModal(characters) {
                         <img src="${imagePath}" alt="${character.name}" onerror="this.onerror=null; this.src='images/character/placeholder.png';">
                     </div>
                     <p class="character-description">${character.profile || ''}</p>
-                    <div class="character-social">
-                        ${socialLinksHTML}
-                    </div>
                     <div class="character-other-info-container">
                         ${topRowHTML}
                         ${bottomRowHTML}

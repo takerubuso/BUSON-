@@ -1297,7 +1297,7 @@ footer {
     position: relative;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease;
-    background-color: white;
+    background-color: #ffeef4;
 }
 
 .info-circle:hover {
@@ -1307,6 +1307,11 @@ footer {
 .info-circle img {
     max-width: 60%;
     max-height: 60%;
+}
+
+.info-circle svg {
+    width: 62%;
+    height: 62%;
 }
 
 .info-popup {
