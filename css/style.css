@@ -425,6 +425,35 @@ h2::after {
     color: white;
 }
 
+/* まるまーゆ公式サイトへのCTA(まるまーゆフィルター選択時のみ表示) */
+.marumayu-site-cta {
+    display: none;
+    justify-content: center;
+    margin-top: 24px;
+}
+.marumayu-site-cta.is-visible {
+    display: flex;
+}
+.marumayu-site-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 30px;
+    background: linear-gradient(135deg, #ff8fb6, #b79cf0);
+    color: #fff;
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 4px 14px rgba(167, 139, 240, 0.35);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.marumayu-site-button:hover,
+.marumayu-site-button:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(167, 139, 240, 0.45);
+}
+
 /* もっと見るボタン */
 .show-more-btn {
     background-color: white;

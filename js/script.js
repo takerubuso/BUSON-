@@ -1066,6 +1066,12 @@ function setupCharacterFilter() {
 
             const filterValue = this.getAttribute('data-filter');
 
+            // まるまーゆフィルター選択時のみ公式サイトCTAを表示
+            const marumayuCta = document.querySelector('.marumayu-site-cta');
+            if (marumayuCta) {
+                marumayuCta.classList.toggle('is-visible', filterValue === 'marumayu');
+            }
+
             // アクセシビリティ - フィルター状態を通知
             const liveRegion = document.getElementById('filter-live-region');
             if (!liveRegion) {

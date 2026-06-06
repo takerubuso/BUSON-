@@ -1,5 +1,11 @@
 [
   {
+    "image": "images/marumayu/site-hero.jpg",
+    "title": "まるまーゆ公式サイト",
+    "description": "新キャラクター“まるまーゆ”の世界へ",
+    "url": "https://maruma-yu.com/"
+  },
+  {
     "image": "images/note-banner.png",
     "title": "noteで読み物を更新中",
     "description": "BUSON STUDIO のエッセイ・お知らせ",
