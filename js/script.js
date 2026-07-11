@@ -1823,8 +1823,8 @@ function initializeMangaBlog() {
                          onerror="this.onerror=null; this.src='images/placeholder.jpg';">
                 </div>
                 <div class="manga-content">
-                    <h4>マンガを読む</h4>
-                    <p>しきぶちゃん〜千年桜の約束〜 連載中</p>
+                    <h4>まもなく公開</h4>
+                    <p>連載マンガサイト・近日オープン</p>
                 </div>
             </a>
         </div>
