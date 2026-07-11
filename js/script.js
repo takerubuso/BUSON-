@@ -1816,15 +1816,15 @@ function initializeMangaBlog() {
             </a>
         </div>
         <div class="manga-card">
-            <a href="https://note.com/busonstudio" class="manga-link" target="_blank" rel="noopener noreferrer">
+            <a href="https://manga.buson2025.com/" class="manga-link" target="_blank" rel="noopener noreferrer">
                 <div class="manga-img">
-                    <img src="images/note-banner.png"
-                         alt="BUSON STUDIO の note"
+                    <img src="images/manga-sennenzakura.png"
+                         alt="しきぶちゃん〜千年桜の約束〜 - 毎日更新の連載マンガ（無料で読める）"
                          onerror="this.onerror=null; this.src='images/placeholder.jpg';">
                 </div>
                 <div class="manga-content">
-                    <h4>noteを読む</h4>
-                    <p>BUSON が綴る エッセイ・お知らせ</p>
+                    <h4>マンガを読む</h4>
+                    <p>しきぶちゃん〜千年桜の約束〜 連載中</p>
                 </div>
             </a>
         </div>
