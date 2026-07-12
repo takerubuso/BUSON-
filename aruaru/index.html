@@ -44,6 +44,10 @@
 
     <style>
         body { margin: 0; font-family: 'M PLUS Rounded 1c', sans-serif; }
+        /* 連載「千年桜の約束」への入り口バナー */
+        .senzakura-banner { display: block; max-width: 880px; margin: 18px auto 0; padding: 0 20px; }
+        .senzakura-banner img { width: 100%; height: auto; display: block; border-radius: 14px; box-shadow: 0 4px 14px rgba(232,62,120,.18); transition: transform .15s, box-shadow .15s; }
+        .senzakura-banner img:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(232,62,120,.28); }
         .aruaru-header { position: sticky; top: 0; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,.06); padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 100; }
         .aruaru-header a { color: #ff6b88; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; }
         .aruaru-header img { height: 36px !important; width: auto !important; max-width: 180px; display: block; }
@@ -56,7 +60,9 @@
         .aruaru-cta-outline { background: #fff; color: #ff6b88; border: 2px solid #ff6b88; }
         .aruaru-toc { max-width: 880px; margin: 40px auto; padding: 0 20px; }
         .aruaru-toc h2 { font-size: 22px; color: #333; border-left: 4px solid #ff6b88; padding-left: 12px; margin-bottom: 20px; }
-        .aruaru-toc ul { list-style: none !important; padding: 0 !important; margin: 0 !important; display: grid !important; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+        /* position:static は共通style.cssのモバイル用 nav ul{position:fixed;top:60px}（ハンバーガーメニュー用）を打ち消す。
+           これが効かないとスマホでジャンル一覧がページ上部に覆いかぶさる */
+        .aruaru-toc ul { list-style: none !important; padding: 0 !important; margin: 0 !important; display: grid !important; position: static !important; box-shadow: none !important; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
         .aruaru-toc li { margin: 0 !important; padding: 0 !important; display: block !important; }
         .aruaru-toc a { color: #333 !important; text-decoration: none !important; padding: 14px 16px !important; display: block !important; background: #faf7f7; border-radius: 10px; transition: all .2s; white-space: nowrap; text-align: center; font-weight: 500; }
         .aruaru-toc a:hover { background: #ff6b88; color: #fff !important; transform: translateY(-2px); }
@@ -93,6 +99,12 @@
     </div>
 
     <main>
+        <!-- 連載マンガ「千年桜の約束」への導線（話数一覧ページ → ライブドアブログで読み進められる） -->
+        <a class="senzakura-banner" href="../senzakura/">
+            <img src="../images/senzakura/banner.png"
+                 alt="しきぶちゃん～千年桜の約束～ 連載中・第1話から無料で読める" loading="eager">
+        </a>
+
         <section class="aruaru-hero">
             <h1>BUSON のあるある漫画ガイド</h1>
             <p class="lead">
