@@ -52,9 +52,26 @@
         .aruaru-header img { height: 36px !important; width: auto !important; max-width: 180px; display: block; }
 
         .hero { text-align: center; padding: 34px 16px 10px; }
+        .hero-kicker { font-size: 14px; font-weight: 800; color: var(--pink-dark); letter-spacing: .12em; margin: 0 0 2px; }
         .hero h1 { font-size: 30px; font-weight: 800; margin: 0 0 10px; }
         .hero h1 .accent { color: var(--pink); }
         .hero .lead { font-size: 14.5px; line-height: 1.9; color: #555; margin: 0 auto 14px; max-width: 640px; }
+        .hero .lead b { color: var(--pink-dark); }
+        .progress-wrap { max-width: 480px; margin: 14px auto 0; padding: 0 16px; }
+        .progress-bar { height: 10px; background: #f3e4e8; border-radius: 999px; overflow: hidden; }
+        .progress-bar i { display: block; height: 100%; min-width: 6px; background: linear-gradient(90deg, var(--pink-300), var(--pink)); border-radius: 999px; }
+        .progress-label { display: block; font-size: 12px; color: #999; margin-top: 6px; }
+        .progress-label b { color: var(--pink-dark); }
+
+        /* トップ募集バンド */
+        .cta-top { max-width: 860px; margin: 20px auto 4px; padding: 0 16px; }
+        .cta-top-inner {
+            background: var(--pink-100); border-radius: 16px; padding: 16px 20px; display: flex; align-items: center;
+            gap: 14px; flex-wrap: wrap; justify-content: center; text-align: center;
+        }
+        .cta-top-inner p { margin: 0; font-size: 13.5px; color: #555; line-height: 1.7; }
+        .cta-top-inner p b { color: var(--ink); }
+        .cta-top-inner .btn-x { flex-shrink: 0; }
         .stats { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 6px; }
         .stat-chip { background: var(--pink-100); color: var(--pink-dark); border-radius: 999px; padding: 6px 16px; font-size: 13px; font-weight: 700; }
 
@@ -201,15 +218,21 @@
 
     <main>
         <section class="hero">
+            <p class="hero-kicker">みんなで完成させる</p>
             <h1>日本全国<span class="accent">あるあるマップ</span></h1>
             <p class="lead">
-                地図から探せる、ご当地あるある漫画。<br>
-                県をタップすると市区町村までズームして、その土地の「わかる〜！」がその場で読めます。
+                地図から探せる、ご当地あるある漫画。県をタップすると市区町村までズームします。<br>
+                全国1750市区町村のうち、埋まっているのはまだ<b>10市</b>。<br>
+                あなたの街のあるあるで、この地図を一緒に完成させてください。
             </p>
             <div class="stats">
-                <span class="stat-chip">🗾 44都道府県カバー</span>
+                <span class="stat-chip">🏁 達成率 10/1750市区町村</span>
                 <span class="stat-chip">📚 あるある漫画 52本</span>
                 <span class="stat-chip">✍️ 全市区町村で地元ネタ募集中</span>
+            </div>
+            <div class="progress-wrap" title="市区町村の達成率 0.6%">
+                <div class="progress-bar"><i style="width:0.6%"></i></div>
+                <span class="progress-label">地図の完成度 <b>0.6%</b> — 先は長い！</span>
             </div>
             <div class="searchbox">
                 <input type="search" id="q" placeholder="県名・市名で検索（例: 大阪、せんだい）" autocomplete="off"
@@ -218,6 +241,13 @@
                 <div class="suggest" id="suggest" role="listbox"></div>
             </div>
         </section>
+
+        <div class="cta-top">
+            <div class="cta-top-inner">
+                <p><b>あなたの地元の「あるある」募集中！</b><br>採用されたら BUSON が漫画化して、あなたのポストと一緒にこの地図に掲載します。</p>
+                <a class="btn-x" href="https://www.threads.net/intent/post?text=%E5%9C%B0%E5%85%83%E3%81%AE%E3%81%82%E3%82%8B%E3%81%82%E3%82%8B%3A%0A%EF%BC%88%E3%81%93%E3%81%93%E3%81%AB%E3%81%82%E3%81%AA%E3%81%9F%E3%81%AE%E5%9C%B0%E5%85%83%E3%81%82%E3%82%8B%E3%81%82%E3%82%8B%E3%82%92%E6%9B%B8%E3%81%84%E3%81%A6%E3%81%AD%EF%BC%89%0A%0A%23%E5%85%A8%E5%9B%BD%E3%81%82%E3%82%8B%E3%81%82%E3%82%8B%E3%83%9E%E3%83%83%E3%83%97%20%40buson2025" target="_blank" rel="noopener">Threads で地元あるあるを送る</a>
+            </div>
+        </div>
 
         <section class="map-wrap" aria-label="日本地図">
             <div id="nation-view">
