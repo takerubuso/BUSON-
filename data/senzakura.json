@@ -1,6 +1,6 @@
 {
  "series": "しきぶちゃん～千年桜の約束～",
- "updated": "2026-07-13T12:00",
+ "updated": "2026-07-13T18:00",
  "episodes": [
   {
    "ep": 1,
@@ -60,6 +60,12 @@
    "ep": 10,
    "title": "第10話「あの子の名前」",
    "url": "https://buson.blog.jp/archives/47446531.html",
+   "published": false
+  },
+  {
+   "ep": 11,
+   "title": "第11話「かっぱらい、恋をする」",
+   "url": "https://buson.blog.jp/archives/47456386.html",
    "published": false
   }
  ]
