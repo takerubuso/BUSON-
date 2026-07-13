@@ -6,14 +6,14 @@
     <title>日本全国あるあるマップ | 47都道府県のご当地あるある漫画 | BUSON STUDIO</title>
 
     <link rel="icon" href="../../images/favicon.png" type="image/png">
-    <meta name="description" content="日本地図から探せる「ご当地あるある漫画」マップ。あるある漫画家 BUSON が描いた44都道府県・52本の地域あるあるを、地図をタップしてその場で読める。あなたの地元のあるあるも募集中。">
+    <meta name="description" content="日本地図から探せる「ご当地あるある漫画」マップ。あるある漫画家 BUSON が描いた44都道府県・52本の地域あるあるを、地図をタップしてその場で読める。市区町村までズームして地元のあるあるを探そう。">
     <link rel="canonical" href="https://buson2025.com/aruaru/map/">
 
     <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@300;400;500;700;800&display=swap" rel="stylesheet">
 
     <!-- Open Graph -->
     <meta property="og:title" content="日本全国あるあるマップ | BUSON STUDIO">
-    <meta property="og:description" content="日本地図から探せるご当地あるある漫画マップ。44都道府県・52本を地図からその場で読める。あなたの地元あるあるも募集中。">
+    <meta property="og:description" content="日本地図から探せるご当地あるある漫画マップ。44都道府県・52本を地図からその場で読める。市区町村までズームして地元のあるあるを探そう。">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://buson2025.com/aruaru/map/">
     <meta property="og:image" content="https://buson2025.com/images/character/1.png">
@@ -81,14 +81,20 @@
         .suggest .muted { color: #999; font-size: 12px; margin-left: auto; flex-shrink: 0; }
         .suggest .none { padding: 14px 16px; color: #999; font-size: 13.5px; }
 
-        /* 地図 */
+        /* 地図（全国 / 県ズーム共通の入れ物） */
         .map-wrap { max-width: 860px; margin: 8px auto 0; padding: 0 8px; position: relative; }
         .map-legend { display: flex; gap: 16px; justify-content: center; font-size: 12.5px; color: #666; margin: 8px 0 0; flex-wrap: wrap; }
         .map-legend span { display: inline-flex; align-items: center; gap: 6px; }
         .map-legend i { width: 14px; height: 14px; border-radius: 4px; display: inline-block; border: 1px solid rgba(0,0,0,.15); }
+        .map-note { text-align: center; font-size: 12px; color: #999; margin-top: 4px; }
+        .map-credit { text-align: center; font-size: 10.5px; color: #bbb; margin-top: 10px; }
+        .map-credit a { color: #bbb; }
+
+        #nation-view, #pref-view { transition: opacity .22s ease; }
+        .view-fade { opacity: 0; }
+
         svg.jpmap { width: 100%; height: auto; display: block; }
-        svg.jpmap .prefecture { cursor: pointer; transition: filter .15s, opacity .15s; stroke: #fff !important; stroke-width: 1.6 !important; }
-        svg.jpmap .prefecture path, svg.jpmap .prefecture rect { transition: fill .15s; }
+        svg.jpmap .prefecture { cursor: pointer; transition: filter .15s; stroke: #fff !important; stroke-width: 1.6 !important; }
         svg.jpmap .prefecture:hover { filter: brightness(0.93); }
         svg.jpmap .prefecture:focus { outline: none; filter: brightness(0.88); }
         svg.jpmap .boundary-line { stroke: #ccc; stroke-dasharray: 4 4; }
@@ -97,39 +103,43 @@
             box-shadow: 0 4px 16px rgba(0,0,0,.18); font-size: 13px; font-weight: 700; display: none; z-index: 50; white-space: nowrap;
         }
         .map-tip small { display: block; font-weight: 400; color: var(--pink-dark); font-size: 11.5px; }
-        .map-note { text-align: center; font-size: 12px; color: #999; margin-top: 4px; }
 
-        /* 県パネル */
-        .panel-backdrop { position: fixed; inset: 0; background: rgba(40,20,25,.45); z-index: 200; opacity: 0; pointer-events: none; transition: opacity .2s; }
-        .panel-backdrop.open { opacity: 1; pointer-events: auto; }
-        .panel {
-            position: fixed; z-index: 210; background: #fff; transition: transform .25s ease; display: flex; flex-direction: column;
-            top: 0; right: 0; bottom: 0; width: min(420px, 92vw); transform: translateX(105%);
-            box-shadow: -6px 0 30px rgba(0,0,0,.2); border-radius: 18px 0 0 18px;
+        /* 県ズームビュー */
+        .pv-head { display: flex; align-items: center; gap: 12px; padding: 6px 4px 10px; }
+        .pv-back {
+            border: 2px solid var(--pink-200); background: #fff; color: var(--pink-dark); font-family: inherit;
+            font-weight: 700; font-size: 13.5px; border-radius: 999px; padding: 8px 16px; cursor: pointer; flex-shrink: 0;
         }
-        .panel.open { transform: translateX(0); }
-        .panel-head { padding: 18px 20px 12px; border-bottom: 1px solid #f3dde3; display: flex; align-items: center; gap: 10px; }
-        .panel-head h2 { margin: 0; font-size: 21px; font-weight: 800; }
-        .panel-head .count { font-size: 12.5px; color: var(--pink-dark); font-weight: 700; background: var(--pink-100); border-radius: 999px; padding: 3px 10px; }
-        .panel-close { margin-left: auto; border: 0; background: #f6f6f6; border-radius: 50%; width: 34px; height: 34px; font-size: 17px; cursor: pointer; color: #666; line-height: 1; }
-        .panel-close:hover { background: var(--pink-100); color: var(--pink-dark); }
-        .panel-body { overflow-y: auto; padding: 14px 18px 22px; -webkit-overflow-scrolling: touch; }
+        .pv-back:hover { background: var(--pink-100); border-color: var(--pink); }
+        .pv-head h2 { margin: 0; font-size: 24px; font-weight: 800; }
+        .pv-head .count { font-size: 12.5px; color: var(--pink-dark); font-weight: 700; background: var(--pink-100); border-radius: 999px; padding: 3px 10px; }
+        .pv-map { background: #fff; border: 1px solid #f3e2e7; border-radius: 16px; padding: 10px; }
+        .pv-map svg { width: 100%; height: auto; max-height: 74vh; display: block; }
+        .pv-map .city { fill: #f1f1f1; stroke: #fff; stroke-width: 1.2; cursor: pointer; transition: filter .12s; }
+        .pv-map .city:hover { filter: brightness(0.92); }
+        .pv-map .city.has-art { fill: var(--pink); }
+        .pv-map .city-label { font-family: 'M PLUS Rounded 1c', sans-serif; font-weight: 800; fill: #c73553; pointer-events: none; paint-order: stroke; stroke: #fff; stroke-width: 5px; stroke-linejoin: round; }
+        .pv-hint { text-align: center; font-size: 12px; color: #999; margin: 8px 0 0; }
+
+        .pv-arts { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; margin-top: 14px; }
         .acard {
             display: flex; gap: 12px; align-items: center; width: 100%; border: 1px solid #f1e0e5; background: #fff;
-            border-radius: 14px; padding: 10px; margin-bottom: 10px; cursor: pointer; font-family: inherit; text-align: left;
+            border-radius: 14px; padding: 10px; cursor: pointer; font-family: inherit; text-align: left;
             transition: box-shadow .15s, transform .15s;
         }
         .acard:hover { box-shadow: 0 6px 18px rgba(232,90,120,.18); transform: translateY(-1px); }
+        .acard.flash { box-shadow: 0 0 0 3px var(--pink); }
         .acard img { width: 74px; height: 74px; object-fit: cover; border-radius: 10px; flex-shrink: 0; background: #fafafa; }
-        .acard .t { font-size: 14.5px; font-weight: 700; line-height: 1.45; }
-        .acard .m { font-size: 11.5px; color: #999; margin-top: 3px; }
-        .acard .city-tag { display: inline-block; font-size: 10.5px; font-weight: 700; color: var(--pink-dark); background: var(--pink-100); border-radius: 5px; padding: 1px 6px; margin-right: 6px; }
+        .acard .t { font-size: 14.5px; font-weight: 700; line-height: 1.45; display: block; }
+        .acard .m { font-size: 11.5px; color: #999; margin-top: 3px; display: block; }
+        .acard .scope-tag { display: inline-block; font-size: 10.5px; font-weight: 700; color: var(--pink-dark); background: var(--pink-100); border-radius: 5px; padding: 1px 7px; margin-bottom: 4px; }
         .acard .read { margin-left: auto; flex-shrink: 0; color: var(--pink); font-weight: 700; font-size: 12.5px; white-space: nowrap; }
 
-        .recruit { text-align: center; padding: 26px 8px 10px; }
-        .recruit .face { font-size: 40px; }
-        .recruit h3 { font-size: 16.5px; margin: 10px 0 8px; }
-        .recruit p { font-size: 13.5px; color: #666; line-height: 1.8; margin: 0 0 16px; }
+        .pv-recruit {
+            margin-top: 14px; background: var(--pink-100); border-radius: 16px; text-align: center; padding: 22px 16px;
+        }
+        .pv-recruit h3 { font-size: 16.5px; margin: 0 0 8px; }
+        .pv-recruit p { font-size: 13.5px; color: #666; line-height: 1.8; margin: 0 0 14px; }
         .btn-x {
             display: inline-block; background: var(--ink); color: #fff; text-decoration: none; font-weight: 700;
             font-size: 14px; border-radius: 999px; padding: 11px 22px;
@@ -178,8 +188,8 @@
         @media (max-width: 640px) {
             .hero h1 { font-size: 23px; }
             .hero .lead { font-size: 13px; }
-            .panel { top: auto; left: 0; right: 0; bottom: 0; width: 100%; max-height: 78vh; transform: translateY(105%); border-radius: 20px 20px 0 0; box-shadow: 0 -8px 30px rgba(0,0,0,.25); }
-            .panel.open { transform: translateY(0); }
+            .pv-head h2 { font-size: 19px; }
+            .pv-arts { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -194,7 +204,7 @@
             <h1>日本全国<span class="accent">あるあるマップ</span></h1>
             <p class="lead">
                 地図から探せる、ご当地あるある漫画。<br>
-                県をタップすると、その土地の「わかる〜！」がその場で読めます。
+                県をタップすると市区町村までズームして、その土地の「わかる〜！」がその場で読めます。
             </p>
             <div class="stats">
                 <span class="stat-chip">🗾 44都道府県カバー</span>
@@ -210,7 +220,8 @@
         </section>
 
         <section class="map-wrap" aria-label="日本地図">
-            <svg class="geolonia-svg-map jpmap" aria-hidden="false" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
+            <div id="nation-view">
+                <svg class="geolonia-svg-map jpmap" aria-hidden="false" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
   <desc>Created by Geolonia (https://geolonia.com/).</desc>
   <g class="svg-map" transform="matrix(1.028807, 0, 0, 1.028807, -47.544239, -28.806583)">
     <g class="prefectures" transform="matrix(1, 0, 0, 1, 6, 18)">
@@ -385,12 +396,27 @@
   </g>
 </svg>
 
-            <div class="map-tip" id="tip"></div>
-            <div class="map-legend">
-                <span><i style="background:#ff6b88"></i> あるある掲載中</span>
-                <span><i style="background:#ececec"></i> 募集中（タップで応募方法）</span>
+                <div class="map-legend">
+                    <span><i style="background:#ff6b88"></i> あるある掲載中</span>
+                    <span><i style="background:#ececec"></i> 募集中（タップで応募方法）</span>
+                </div>
+                <p class="map-note">県をタップ / クリックすると市区町村までズームします</p>
             </div>
-            <p class="map-note">地図の県をタップ / クリックすると漫画が読めます</p>
+
+            <div id="pref-view" hidden>
+                <div class="pv-head">
+                    <button class="pv-back" id="pv-back">‹ 全国地図</button>
+                    <h2 id="pv-name"></h2>
+                    <span class="count" id="pv-count"></span>
+                </div>
+                <div class="pv-map"><svg id="pv-svg" role="img"></svg></div>
+                <p class="pv-hint">ピンクの市区町村をタップすると漫画が読めます。グレーの市区町村はあるある募集中！</p>
+                <div class="pv-arts" id="pv-arts"></div>
+                <div class="pv-recruit" id="pv-recruit" hidden></div>
+            </div>
+
+            <div class="map-tip" id="tip"></div>
+            <p class="map-credit">地図データ: <a href="https://nlftp.mlit.go.jp/ksj/" target="_blank" rel="noopener">「国土数値情報（行政区域データ）」（国土交通省）</a>および <a href="https://github.com/geolonia/japanese-prefectures" target="_blank" rel="noopener">Geolonia japanese-prefectures</a> を加工して作成</p>
         </section>
 
         <!-- 県別一覧（検索エンジン・JSオフ環境向け） -->
@@ -411,17 +437,6 @@
             <a class="btn-x" href="https://twitter.com/intent/tweet?text=%40BUSON2025%20%E5%9C%B0%E5%85%83%E3%81%AE%E3%81%82%E3%82%8B%E3%81%82%E3%82%8B%E6%95%99%E3%81%88%E3%81%BE%E3%81%99%EF%BC%81%20%23%E5%85%A8%E5%9B%BD%E3%81%82%E3%82%8B%E3%81%82%E3%82%8B%E3%83%9E%E3%83%83%E3%83%97%0A" target="_blank" rel="noopener">𝕏 で地元あるあるを送る</a>
         </div>
     </main>
-
-    <!-- 県パネル -->
-    <div class="panel-backdrop" id="backdrop"></div>
-    <aside class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="panel-title">
-        <div class="panel-head">
-            <h2 id="panel-title"></h2>
-            <span class="count" id="panel-count"></span>
-            <button class="panel-close" id="panel-close" aria-label="閉じる">✕</button>
-        </div>
-        <div class="panel-body" id="panel-body"></div>
-    </aside>
 
     <!-- 漫画ビューア -->
     <div class="reader" id="reader" role="dialog" aria-modal="true">
@@ -451,13 +466,18 @@
     const DATA = {"prefs":[{"code":1,"name":"北海道","kana":"ほっかいどう","region":"北海道・東北"},{"code":2,"name":"青森県","kana":"あおもり","region":"北海道・東北"},{"code":3,"name":"岩手県","kana":"いわて","region":"北海道・東北"},{"code":4,"name":"宮城県","kana":"みやぎ","region":"北海道・東北"},{"code":5,"name":"秋田県","kana":"あきた","region":"北海道・東北"},{"code":6,"name":"山形県","kana":"やまがた","region":"北海道・東北"},{"code":7,"name":"福島県","kana":"ふくしま","region":"北海道・東北"},{"code":8,"name":"茨城県","kana":"いばらき","region":"関東"},{"code":9,"name":"栃木県","kana":"とちぎ","region":"関東"},{"code":10,"name":"群馬県","kana":"ぐんま","region":"関東"},{"code":11,"name":"埼玉県","kana":"さいたま","region":"関東"},{"code":12,"name":"千葉県","kana":"ちば","region":"関東"},{"code":13,"name":"東京都","kana":"とうきょう","region":"関東"},{"code":14,"name":"神奈川県","kana":"かながわ","region":"関東"},{"code":15,"name":"新潟県","kana":"にいがた","region":"中部"},{"code":16,"name":"富山県","kana":"とやま","region":"中部"},{"code":17,"name":"石川県","kana":"いしかわ","region":"中部"},{"code":18,"name":"福井県","kana":"ふくい","region":"中部"},{"code":19,"name":"山梨県","kana":"やまなし","region":"中部"},{"code":20,"name":"長野県","kana":"ながの","region":"中部"},{"code":21,"name":"岐阜県","kana":"ぎふ","region":"中部"},{"code":22,"name":"静岡県","kana":"しずおか","region":"中部"},{"code":23,"name":"愛知県","kana":"あいち","region":"中部"},{"code":24,"name":"三重県","kana":"みえ","region":"近畿"},{"code":25,"name":"滋賀県","kana":"しが","region":"近畿"},{"code":26,"name":"京都府","kana":"きょうと","region":"近畿"},{"code":27,"name":"大阪府","kana":"おおさか","region":"近畿"},{"code":28,"name":"兵庫県","kana":"ひょうご","region":"近畿"},{"code":29,"name":"奈良県","kana":"なら","region":"近畿"},{"code":30,"name":"和歌山県","kana":"わかやま","region":"近畿"},{"code":31,"name":"鳥取県","kana":"とっとり","region":"中国"},{"code":32,"name":"島根県","kana":"しまね","region":"中国"},{"code":33,"name":"岡山県","kana":"おかやま","region":"中国"},{"code":34,"name":"広島県","kana":"ひろしま","region":"中国"},{"code":35,"name":"山口県","kana":"やまぐち","region":"中国"},{"code":36,"name":"徳島県","kana":"とくしま","region":"四国"},{"code":37,"name":"香川県","kana":"かがわ","region":"四国"},{"code":38,"name":"愛媛県","kana":"えひめ","region":"四国"},{"code":39,"name":"高知県","kana":"こうち","region":"四国"},{"code":40,"name":"福岡県","kana":"ふくおか","region":"九州・沖縄"},{"code":41,"name":"佐賀県","kana":"さが","region":"九州・沖縄"},{"code":42,"name":"長崎県","kana":"ながさき","region":"九州・沖縄"},{"code":43,"name":"熊本県","kana":"くまもと","region":"九州・沖縄"},{"code":44,"name":"大分県","kana":"おおいた","region":"九州・沖縄"},{"code":45,"name":"宮崎県","kana":"みやざき","region":"九州・沖縄"},{"code":46,"name":"鹿児島県","kana":"かごしま","region":"九州・沖縄"},{"code":47,"name":"沖縄県","kana":"おきなわ","region":"九州・沖縄"}],"articles":[{"id":"21345382","pref":1,"city":"札幌","kana":"さっぽろ","title":"札幌あるある","date":"","blog":"https://buson.blog.jp/archives/21345382.html","n":6},{"id":"21345322","pref":2,"city":null,"kana":"あおもり","title":"青森あるある","date":"","blog":"https://buson.blog.jp/archives/21345322.html","n":6},{"id":"21416258","pref":3,"city":null,"kana":"いわて","title":"岩手あるある","date":"","blog":"https://buson.blog.jp/archives/21416258.html","n":6},{"id":"21735840","pref":4,"city":null,"kana":"みやぎ","title":"宮城あるある","date":"","blog":"https://buson.blog.jp/archives/21735840.html","n":6},{"id":"24742185","pref":4,"city":"仙台市","kana":"せんだい","title":"仙台市あるある10選","date":"","blog":"https://buson.blog.jp/archives/24742185.html","n":9},{"id":"21945611","pref":5,"city":null,"kana":"あきた","title":"秋田あるある","date":"","blog":"https://buson.blog.jp/archives/21945611.html","n":6},{"id":"21502303","pref":6,"city":null,"kana":"やまがた","title":"山形あるある","date":"","blog":"https://buson.blog.jp/archives/21502303.html","n":6},{"id":"21699829","pref":7,"city":null,"kana":"ふくしま","title":"福島あるある","date":"","blog":"https://buson.blog.jp/archives/21699829.html","n":6},{"id":"21848496","pref":8,"city":null,"kana":"いばらき","title":"茨城あるある","date":"","blog":"https://buson.blog.jp/archives/21848496.html","n":6},{"id":"22003904","pref":10,"city":null,"kana":"ぐんま","title":"群馬あるある","date":"","blog":"https://buson.blog.jp/archives/22003904.html","n":6},{"id":"21802209","pref":11,"city":null,"kana":"さいたま","title":"埼玉あるある","date":"","blog":"https://buson.blog.jp/archives/21802209.html","n":6},{"id":"25252573","pref":11,"city":"さいたま市","kana":"さいたまし","title":"さいたま市あるある","date":"","blog":"https://buson.blog.jp/archives/25252573.html","n":6},{"id":"22137969","pref":12,"city":null,"kana":"ちば","title":"千葉あるある５選","date":"","blog":"https://buson.blog.jp/archives/22137969.html","n":6},{"id":"22236788","pref":13,"city":null,"kana":"とうきょう","title":"東京あるある","date":"","blog":"https://buson.blog.jp/archives/22236788.html","n":6},{"id":"21682339","pref":14,"city":null,"kana":"かながわ","title":"神奈川あるある","date":"","blog":"https://buson.blog.jp/archives/21682339.html","n":6},{"id":"24715718","pref":14,"city":"藤沢市","kana":"ふじさわ","title":"藤沢市あるある10選","date":"","blog":"https://buson.blog.jp/archives/24715718.html","n":10},{"id":"21541146","pref":15,"city":null,"kana":"にいがた","title":"新潟あるある","date":"","blog":"https://buson.blog.jp/archives/21541146.html","n":6},{"id":"21972404","pref":16,"city":null,"kana":"とやま","title":"富山あるある","date":"","blog":"https://buson.blog.jp/archives/21972404.html","n":6},{"id":"21490277","pref":17,"city":null,"kana":"いしかわ","title":"石川あるある","date":"","blog":"https://buson.blog.jp/archives/21490277.html","n":6},{"id":"22184459","pref":18,"city":null,"kana":"ふくい","title":"福井あるある","date":"","blog":"https://buson.blog.jp/archives/22184459.html","n":6},{"id":"21718008","pref":19,"city":null,"kana":"やまなし","title":"山梨あるある","date":"","blog":"https://buson.blog.jp/archives/21718008.html","n":6},{"id":"22157201","pref":20,"city":null,"kana":"ながの","title":"長野あるある","date":"","blog":"https://buson.blog.jp/archives/22157201.html","n":6},{"id":"22073874","pref":21,"city":null,"kana":"ぎふ","title":"岐阜あるある","date":"","blog":"https://buson.blog.jp/archives/22073874.html","n":6},{"id":"21400115","pref":22,"city":null,"kana":"しずおか","title":"静岡あるある","date":"","blog":"https://buson.blog.jp/archives/21400115.html","n":6},{"id":"21827832","pref":23,"city":null,"kana":"あいち","title":"愛知あるある","date":"","blog":"https://buson.blog.jp/archives/21827832.html","n":6},{"id":"24692187","pref":23,"city":"名古屋市","kana":"なごや","title":"名古屋市あるある10選","date":"","blog":"https://buson.blog.jp/archives/24692187.html","n":9},{"id":"22233345","pref":24,"city":null,"kana":"みえ","title":"三重あるある","date":"","blog":"https://buson.blog.jp/archives/22233345.html","n":6},{"id":"21766877","pref":25,"city":null,"kana":"しが","title":"滋賀あるある","date":"","blog":"https://buson.blog.jp/archives/21766877.html","n":6},{"id":"21471572","pref":26,"city":null,"kana":"きょうと","title":"京都あるある","date":"","blog":"https://buson.blog.jp/archives/21471572.html","n":6},{"id":"22084916","pref":27,"city":null,"kana":"おおさか","title":"大阪あるある","date":"","blog":"https://buson.blog.jp/archives/22084916.html","n":6},{"id":"24679129","pref":27,"city":"堺市","kana":"さかい","title":"堺市あるある10選","date":"","blog":"https://buson.blog.jp/archives/24679129.html","n":10},{"id":"24666883","pref":27,"city":"枚方市","kana":"ひらかた","title":"枚方市あるある10選","date":"","blog":"https://buson.blog.jp/archives/24666883.html","n":10},{"id":"24702198","pref":28,"city":"神戸市","kana":"こうべ","title":"神戸市あるある10選","date":"","blog":"https://buson.blog.jp/archives/24702198.html","n":9},{"id":"21631051","pref":29,"city":null,"kana":"なら","title":"奈良あるある","date":"","blog":"https://buson.blog.jp/archives/21631051.html","n":6},{"id":"22035952","pref":31,"city":null,"kana":"とっとり","title":"鳥取あるある","date":"","blog":"https://buson.blog.jp/archives/22035952.html","n":6},{"id":"21381464","pref":32,"city":null,"kana":"しまね","title":"島根あるある","date":"","blog":"https://buson.blog.jp/archives/21381464.html","n":6},{"id":"21367743","pref":34,"city":null,"kana":"ひろしま","title":"広島あるある","date":"","blog":"https://buson.blog.jp/archives/21367743.html","n":6},{"id":"21593631","pref":35,"city":null,"kana":"やまぐち","title":"山口あるある","date":"","blog":"https://buson.blog.jp/archives/21593631.html","n":6},{"id":"21784026","pref":36,"city":null,"kana":"とくしま","title":"徳島あるある","date":"","blog":"https://buson.blog.jp/archives/21784026.html","n":6},{"id":"21662355","pref":37,"city":null,"kana":"かがわ","title":"香川あるある","date":"","blog":"https://buson.blog.jp/archives/21662355.html","n":6},{"id":"21433948","pref":38,"city":null,"kana":"えひめ","title":"愛媛あるある","date":"","blog":"https://buson.blog.jp/archives/21433948.html","n":6},{"id":"21350009","pref":39,"city":null,"kana":"こうち","title":"高知あるある","date":"","blog":"https://buson.blog.jp/archives/21350009.html","n":6},{"id":"21449741","pref":40,"city":null,"kana":"ふくおか","title":"福岡あるある","date":"","blog":"https://buson.blog.jp/archives/21449741.html","n":6},{"id":"24687014","pref":40,"city":"福岡市","kana":"ふくおかし","title":"福岡市あるある10選","date":"","blog":"https://buson.blog.jp/archives/24687014.html","n":9},{"id":"21647209","pref":41,"city":null,"kana":"さが","title":"佐賀あるある","date":"","blog":"https://buson.blog.jp/archives/21647209.html","n":6},{"id":"22171680","pref":42,"city":null,"kana":"ながさき","title":"長崎あるある","date":"","blog":"https://buson.blog.jp/archives/22171680.html","n":8},{"id":"24687012","pref":42,"city":"五島市","kana":"ごとう","title":"五島市あるある","date":"","blog":"https://buson.blog.jp/archives/24687012.html","n":8},{"id":"21520087","pref":43,"city":null,"kana":"くまもと","title":"熊本あるある","date":"","blog":"https://buson.blog.jp/archives/21520087.html","n":6},{"id":"21894597","pref":44,"city":null,"kana":"おおいた","title":"大分あるある","date":"","blog":"https://buson.blog.jp/archives/21894597.html","n":6},{"id":"21575877","pref":45,"city":null,"kana":"みやざき","title":"宮崎あるある","date":"","blog":"https://buson.blog.jp/archives/21575877.html","n":6},{"id":"21345359","pref":46,"city":null,"kana":"かごしま","title":"鹿児島あるある","date":"","blog":"https://buson.blog.jp/archives/21345359.html","n":6},{"id":"21609899","pref":47,"city":null,"kana":"おきなわ","title":"沖縄あるある５選","date":"","blog":"https://buson.blog.jp/archives/21609899.html","n":6}]};
     const RECRUIT_URL = "https://twitter.com/intent/tweet?text=%40BUSON2025%20%E5%9C%B0%E5%85%83%E3%81%AE%E3%81%82%E3%82%8B%E3%81%82%E3%82%8B%E6%95%99%E3%81%88%E3%81%BE%E3%81%99%EF%BC%81%20%23%E5%85%A8%E5%9B%BD%E3%81%82%E3%82%8B%E3%81%82%E3%82%8B%E3%83%9E%E3%83%83%E3%83%97%0A";
     const PAGE_URL = "https://buson2025.com/aruaru/map/";
+    const SVGNS = "http://www.w3.org/2000/svg";
 
     const byPref = {};
     DATA.articles.forEach(a => { (byPref[a.pref] = byPref[a.pref] || []).push(a); });
     const prefOf = {};
     DATA.prefs.forEach(p => prefOf[p.code] = p);
 
-    /* ---- 地図の塗り分け ---- */
+    const normCity = s => (s || "").replace(/[市区町村]$/, "");
+    function esc(s) { return s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+    function tweetUrl(text) { return "https://twitter.com/intent/tweet?text=" + encodeURIComponent(text); }
+
+    /* ---- 全国地図の塗り分け ---- */
     const FILL = { 0: "#ececec", 1: "#ff9db2", 2: "#ff7f99", 3: "#ff6b88" };
     document.querySelectorAll("svg.jpmap .prefecture").forEach(g => {
         const code = +g.dataset.code;
@@ -468,77 +488,163 @@
         g.setAttribute("tabindex", "0");
         g.setAttribute("role", "button");
         g.setAttribute("aria-label", prefOf[code].name + (n ? `のあるある漫画 ${n}本` : "は募集中"));
-        g.addEventListener("click", () => openPanel(code));
-        g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openPanel(code); } });
+        g.addEventListener("click", () => openPref(code));
+        g.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openPref(code); } });
     });
 
-    /* ---- ツールチップ ---- */
+    /* ---- ツールチップ（全国・県共通） ---- */
     const tip = document.getElementById("tip");
     const mapWrap = document.querySelector(".map-wrap");
+    function showTip(e, main, sub) {
+        const r = mapWrap.getBoundingClientRect();
+        tip.innerHTML = `${esc(main)}<small>${esc(sub)}</small>`;
+        tip.style.display = "block";
+        tip.style.left = Math.min(e.clientX - r.left + 14, r.width - 160) + "px";
+        tip.style.top = (e.clientY - r.top + 14) + "px";
+    }
     mapWrap.addEventListener("mousemove", e => {
         const g = e.target.closest(".prefecture");
-        if (!g) { tip.style.display = "none"; return; }
-        const code = +g.dataset.code;
-        const n = (byPref[code] || []).length;
-        tip.innerHTML = `${prefOf[code].name}<small>${n ? `あるある漫画 ${n}本` : "募集中！タップで応募"}</small>`;
-        const r = mapWrap.getBoundingClientRect();
-        tip.style.display = "block";
-        tip.style.left = Math.min(e.clientX - r.left + 14, r.width - 150) + "px";
-        tip.style.top = (e.clientY - r.top + 14) + "px";
+        const c = e.target.closest(".city");
+        if (g) {
+            const code = +g.dataset.code;
+            const n = (byPref[code] || []).length;
+            showTip(e, prefOf[code].name, n ? `あるある漫画 ${n}本` : "募集中！タップで応募");
+        } else if (c) {
+            const arts = cityArts(c.dataset.city);
+            showTip(e, c.dataset.city, arts.length ? `あるある漫画 ${arts.length}本` : "募集中！タップで応募");
+        } else {
+            tip.style.display = "none";
+        }
     });
     mapWrap.addEventListener("mouseleave", () => tip.style.display = "none");
 
-    /* ---- 県パネル ---- */
-    const panel = document.getElementById("panel");
-    const backdrop = document.getElementById("backdrop");
+    /* ---- 県ズームビュー ---- */
+    const nationView = document.getElementById("nation-view");
+    const prefView = document.getElementById("pref-view");
+    const pvSvg = document.getElementById("pv-svg");
+    const pvArts = document.getElementById("pv-arts");
+    const pvRecruit = document.getElementById("pv-recruit");
+    const prefCache = {};
     let currentPref = null;
 
-    function esc(s) { return s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+    function cityArts(cityName) {
+        if (currentPref == null) return [];
+        return (byPref[currentPref] || []).filter(a => a.city && normCity(a.city) === normCity(cityName));
+    }
 
-    function openPanel(code) {
+    function swapView(hideEl, showEl) {
+        hideEl.classList.add("view-fade");
+        setTimeout(() => {
+            hideEl.hidden = true;
+            hideEl.classList.remove("view-fade");
+            showEl.hidden = false;
+            showEl.classList.add("view-fade");
+            requestAnimationFrame(() => requestAnimationFrame(() => showEl.classList.remove("view-fade")));
+        }, 200);
+    }
+
+    async function openPref(code) {
         currentPref = code;
         const p = prefOf[code];
         const arts = byPref[code] || [];
-        document.getElementById("panel-title").textContent = p.name;
-        document.getElementById("panel-count").textContent = arts.length ? `${arts.length}本` : "募集中";
-        const body = document.getElementById("panel-body");
-        if (arts.length) {
-            body.innerHTML = arts.map(a => `
-                <button class="acard" data-id="${a.id}">
-                    <img src="images/${a.id}/cover.webp" alt="${esc(a.title)}の表紙" loading="lazy">
-                    <span>
-                        <span class="t">${esc(a.title)}</span>
-                        <span class="m">全${a.n}ページ</span>
-                    </span>
-                    <span class="read">読む ›</span>
-                </button>`).join("");
-            body.querySelectorAll(".acard").forEach(b => b.addEventListener("click", () => openReader(b.dataset.id)));
-        } else {
-            body.innerHTML = `
-                <div class="recruit">
-                    <div class="face">🙏</div>
-                    <h3>${p.name}のあるあるは、まだありません</h3>
-                    <p>${p.name}の「これ、あるあるでしょ！」を X で教えてください。<br>採用されたら BUSON が漫画にして、ここに掲載します。</p>
-                    <a class="btn-x" href="${recruitUrl(p.name)}" target="_blank" rel="noopener">𝕏 で${p.name}あるあるを送る</a>
-                </div>`;
-        }
-        panel.classList.add("open");
-        backdrop.classList.add("open");
+        document.getElementById("pv-name").textContent = p.name;
+        document.getElementById("pv-count").textContent = arts.length ? `あるある ${arts.length}本` : "募集中";
+        pvSvg.innerHTML = "";
+        renderArts(arts, p);
+        pvRecruit.hidden = true;
+        if (!arts.length) showRecruit(p.name, "");
+        if (nationView.hidden === false) swapView(nationView, prefView);
         history.replaceState(null, "", "#p" + code);
+        gtag("event", "view_pref", { pref: p.name });
+
+        let geo = prefCache[code];
+        if (!geo) {
+            try {
+                geo = await (await fetch(`pref/${code}.json`)).json();
+                prefCache[code] = geo;
+            } catch (err) {
+                return; // 地図の取得に失敗しても記事カードは表示されている
+            }
+        }
+        if (currentPref !== code) return; // 読み込み中に別の県へ移動した場合
+        renderPrefMap(geo);
     }
-    function closePanel() {
-        panel.classList.remove("open");
-        backdrop.classList.remove("open");
+
+    function renderPrefMap(geo) {
+        pvSvg.setAttribute("viewBox", `0 0 ${geo.w} ${geo.h}`);
+        pvSvg.innerHTML = "";
+        const labelSize = Math.max(geo.w, geo.h) * 0.032;
+        const labels = [];
+        geo.cities.forEach(c => {
+            const path = document.createElementNS(SVGNS, "path");
+            path.setAttribute("d", c.d);
+            path.setAttribute("class", "city");
+            path.dataset.city = c.n;
+            const arts = cityArts(c.n);
+            if (arts.length) {
+                path.classList.add("has-art");
+                labels.push(c);
+            }
+            path.setAttribute("tabindex", "0");
+            path.setAttribute("role", "button");
+            path.setAttribute("aria-label", c.n + (arts.length ? `のあるある漫画` : "はあるある募集中"));
+            path.addEventListener("click", () => onCityClick(c.n));
+            path.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onCityClick(c.n); } });
+            pvSvg.appendChild(path);
+        });
+        labels.forEach(c => {
+            const t = document.createElementNS(SVGNS, "text");
+            t.setAttribute("x", c.c[0]);
+            t.setAttribute("y", c.c[1] - labelSize * 0.6);
+            t.setAttribute("text-anchor", "middle");
+            t.setAttribute("font-size", labelSize);
+            t.setAttribute("class", "city-label");
+            t.textContent = c.n;
+            pvSvg.appendChild(t);
+        });
+    }
+
+    function renderArts(arts, p) {
+        pvArts.innerHTML = arts.map(a => `
+            <button class="acard" data-id="${a.id}" data-city="${esc(a.city || "")}">
+                <img src="images/${a.id}/cover.webp" alt="${esc(a.title)}の表紙" loading="lazy">
+                <span>
+                    <span class="scope-tag">${esc(a.city || p.name + "全体")}</span>
+                    <span class="t">${esc(a.title)}</span>
+                    <span class="m">全${a.n}ページ</span>
+                </span>
+                <span class="read">読む ›</span>
+            </button>`).join("");
+        pvArts.querySelectorAll(".acard").forEach(b => b.addEventListener("click", () => openReader(b.dataset.id)));
+    }
+
+    function onCityClick(cityName) {
+        const arts = cityArts(cityName);
+        if (arts.length === 1) { openReader(arts[0].id); return; }
+        if (arts.length > 1) {
+            const card = pvArts.querySelector(`.acard[data-city="${CSS.escape(arts[0].city)}"]`);
+            if (card) { card.scrollIntoView({ behavior: "smooth", block: "center" }); card.classList.add("flash"); setTimeout(() => card.classList.remove("flash"), 1200); }
+            return;
+        }
+        showRecruit(prefOf[currentPref].name, cityName);
+    }
+
+    function showRecruit(prefName, cityName) {
+        const place = cityName || prefName;
+        pvRecruit.innerHTML = `
+            <h3>${esc(place)}のあるあるは、まだありません</h3>
+            <p>${esc(place)}の「これ、あるあるでしょ！」を X で教えてください。<br>採用されたら BUSON が漫画にして、この地図に掲載します。</p>
+            <a class="btn-x" href="${tweetUrl(`@BUSON2025 ${prefName}${cityName && cityName !== prefName ? cityName : ""}のあるある教えます！ #全国あるあるマップ\n`)}" target="_blank" rel="noopener">𝕏 で${esc(place)}あるあるを送る</a>`;
+        pvRecruit.hidden = false;
+        pvRecruit.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    function closePref() {
         currentPref = null;
+        swapView(prefView, nationView);
         history.replaceState(null, "", location.pathname);
     }
-    document.getElementById("panel-close").addEventListener("click", closePanel);
-    backdrop.addEventListener("click", closePanel);
-
-    function recruitUrl(prefName) {
-        const text = `@BUSON2025 ${prefName}のあるある教えます！ #全国あるあるマップ\n`;
-        return "https://twitter.com/intent/tweet?text=" + encodeURIComponent(text);
-    }
+    document.getElementById("pv-back").addEventListener("click", closePref);
 
     /* ---- 漫画ビューア ---- */
     const reader = document.getElementById("reader");
@@ -555,8 +661,7 @@
         rscroll.scrollTop = 0;
         document.getElementById("reader-blog").href = a.blog;
         document.getElementById("reader-share").href =
-            "https://twitter.com/intent/tweet?text=" + encodeURIComponent(`${a.title}｜日本全国あるあるマップ\n`) +
-            "&url=" + encodeURIComponent(PAGE_URL + "#a" + a.id);
+            tweetUrl(`${a.title}｜日本全国あるあるマップ\n`) + "&url=" + encodeURIComponent(PAGE_URL + "#a" + a.id);
         reader.classList.add("open");
         document.body.style.overflow = "hidden";
         history.replaceState(null, "", "#a" + a.id);
@@ -571,7 +676,7 @@
     document.addEventListener("keydown", e => {
         if (e.key !== "Escape") return;
         if (reader.classList.contains("open")) closeReader();
-        else if (panel.classList.contains("open")) closePanel();
+        else if (!prefView.hidden) closePref();
     });
 
     /* ---- 検索 ---- */
@@ -599,13 +704,15 @@
             suggest.innerHTML = `<div class="none">見つかりませんでした。「東京」「おおさか」のように入力してみてください</div>`;
         } else {
             suggest.innerHTML = items.map(it => it.type === "pref"
-                ? `<button data-type="pref" data-code="${it.code}"><span class="tag${it.n ? "" : " empty"}">${it.n ? it.n + "本" : "募集中"}</span>${esc(it.label)}<span class="muted">県を開く</span></button>`
+                ? `<button data-type="pref" data-code="${it.code}"><span class="tag${it.n ? "" : " empty"}">${it.n ? it.n + "本" : "募集中"}</span>${esc(it.label)}<span class="muted">地図を開く</span></button>`
                 : `<button data-type="art" data-id="${it.id}"><span class="tag">漫画</span>${esc(it.label)}<span class="muted">${esc(it.sub)}</span></button>`
             ).join("");
             suggest.querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
                 suggest.classList.remove("open");
-                if (b.dataset.type === "pref") openPanel(+b.dataset.code);
-                else openReader(b.dataset.id);
+                if (b.dataset.type === "pref") {
+                    openPref(+b.dataset.code);
+                    document.querySelector(".map-wrap").scrollIntoView({ behavior: "smooth" });
+                } else openReader(b.dataset.id);
             }));
         }
         suggest.classList.add("open");
@@ -642,7 +749,7 @@
     (function () {
         const h = location.hash;
         let m;
-        if ((m = h.match(/^#p(\d{1,2})$/)) && prefOf[+m[1]]) openPanel(+m[1]);
+        if ((m = h.match(/^#p(\d{1,2})$/)) && prefOf[+m[1]]) openPref(+m[1]);
         else if ((m = h.match(/^#a(\d+)$/)) && DATA.articles.some(a => a.id === m[1])) openReader(m[1]);
     })();
     </script>
