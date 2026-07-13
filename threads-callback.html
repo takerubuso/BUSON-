@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Threads 連携の確認 | BUSON STUDIO</title>
+    <meta name="robots" content="noindex">
+    <style>
+        body { font-family: sans-serif; background: #fffdfc; color: #333; display: grid; place-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+        .card { max-width: 520px; background: #fff; border: 1px solid #f1e0e5; border-radius: 16px; padding: 30px; text-align: center; }
+        h1 { font-size: 20px; }
+        p { font-size: 14px; line-height: 1.9; color: #555; }
+        code { background: #ffe3ea; border-radius: 6px; padding: 2px 8px; font-size: 12px; word-break: break-all; }
+        button { background: #ff6b88; color: #fff; border: 0; border-radius: 999px; padding: 12px 24px; font-size: 14px; font-weight: 700; cursor: pointer; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Threads 連携の受け付けページ</h1>
+        <p>このページは BUSON STUDIO の内部ツールが Threads と連携するための確認用ページです。<br>
+           一般の方向けのコンテンツはありません。</p>
+        <p id="msg"></p>
+        <button id="copy" style="display:none">このページのURLをコピー</button>
+    </div>
+    <script>
+        const hasCode = new URLSearchParams(location.search).has("code");
+        if (hasCode) {
+            document.getElementById("msg").innerHTML = "連携コードを受け取りました。<br>下のボタンでこのページのURLをコピーして、設定画面（Claude）に貼り付けてください。";
+            const btn = document.getElementById("copy");
+            btn.style.display = "inline-block";
+            btn.addEventListener("click", async () => {
+                await navigator.clipboard.writeText(location.href);
+                btn.textContent = "コピーしました";
+            });
+        } else {
+            document.getElementById("msg").textContent = "連携コードは付いていません。連携手続きの途中でこのページに来た場合は、最初からやり直してください。";
+        }
+    </script>
+</body>
+</html>
