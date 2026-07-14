@@ -163,6 +163,15 @@
         .acard .m { font-size: 11.5px; color: #999; margin-top: 3px; display: block; }
         .acard .scope-tag { display: inline-block; font-size: 10.5px; font-weight: 700; color: var(--pink-dark); background: var(--pink-100); border-radius: 5px; padding: 1px 7px; margin-bottom: 4px; }
         .acard .read { margin-left: auto; flex-shrink: 0; color: var(--pink); font-weight: 700; font-size: 12.5px; white-space: nowrap; }
+        .recent { max-width: 860px; margin: 22px auto 6px; padding: 0 16px; }
+        .recent h2 { font-size: 15.5px; font-weight: 800; text-align: center; margin: 0 0 12px; letter-spacing: .02em; }
+        .recent h2 .accent { color: var(--pink); }
+        .recent-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .rcard { display: flex; flex-direction: column; text-align: left; background: #fff; border: 1px solid #f1e0e5; border-radius: 14px; overflow: hidden; padding: 0; cursor: pointer; font-family: inherit; transition: box-shadow .15s, transform .15s; }
+        .rcard:hover { box-shadow: 0 6px 18px rgba(232,90,120,.18); transform: translateY(-1px); }
+        .rcard img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; display: block; background: #fafafa; }
+        .rcard .rc-place { font-size: 10.5px; font-weight: 700; color: var(--pink-dark); background: var(--pink-100); border-radius: 5px; padding: 1px 7px; margin: 8px 8px 0; align-self: flex-start; }
+        .rcard .rc-title { font-size: 12.5px; font-weight: 700; line-height: 1.4; margin: 4px 8px 10px; }
 
         .pv-recruit {
             margin-top: 14px; background: var(--pink-100); border-radius: 16px; text-align: center; padding: 22px 16px;
@@ -207,10 +216,6 @@
         .pref-cell a:hover { text-decoration: underline; }
         .pref-cell .empty { color: #aaa; }
 
-        .cta-band { text-align: center; background: var(--pink-100); margin-top: 46px; padding: 30px 18px 34px; }
-        .cta-band h2 { font-size: 19px; margin: 0 0 8px; }
-        .cta-band p { font-size: 13.5px; color: #666; margin: 0 0 16px; line-height: 1.8; }
-
         .aruaru-footer { background: #333; color: #ddd; text-align: center; padding: 30px 20px; font-size: 13px; }
         .aruaru-footer a { color: #fff; text-decoration: none; margin: 0 8px; }
 
@@ -234,17 +239,17 @@
             <h1>日本全国<span class="accent">あるあるマップ</span></h1>
             <p class="lead">
                 地図から探せる、ご当地あるある漫画。県をタップすると市区町村までズームします。<br>
-                全国1750市区町村のうち、埋まっているのはまだ<b>10市</b>。<br>
+                全国1750市区町村のうち、埋まっているのはまだ<b id="lead-cities">11市</b>。<br>
                 あなたの街のあるあるで、この地図を一緒に完成させてください。
             </p>
             <div class="stats">
-                <span class="stat-chip">🏁 達成率 10/1750市区町村</span>
-                <span class="stat-chip">📚 あるある漫画 55本</span>
+                <span class="stat-chip">🏁 達成率 <span id="stat-ach">11/1750</span>市区町村</span>
+                <span class="stat-chip">📚 あるある漫画 <span id="stat-count">56</span>本</span>
                 <span class="stat-chip">✍️ 全市区町村で地元ネタ募集中</span>
             </div>
             <div class="progress-wrap" title="市区町村の達成率 0.6%">
-                <div class="progress-bar"><i style="width:0.6%"></i></div>
-                <span class="progress-label">地図の完成度 <b>0.6%</b> — 先は長い！</span>
+                <div class="progress-bar"><i id="prog-bar" style="width:0.6%"></i></div>
+                <span class="progress-label">地図の完成度 <b id="prog-pct">0.6%</b> — 先は長い！</span>
             </div>
             <div class="searchbox">
                 <input type="search" id="q" placeholder="県名・市名で検索（例: 大阪、せんだい）" autocomplete="off"
@@ -254,17 +259,10 @@
             </div>
         </section>
 
-        <div class="cta-top">
-            <div class="cta-top-inner">
-                <p><b>あなたの地元の「あるある」募集中！</b><br>BUSON の Threads のお題ポストにコメントで教えてください。採用されたら漫画にして、あなたのThreadsユーザー名と一緒にこの地図に載ります。</p>
-                <a class="btn-x" href="https://www.threads.net/@buson2025" target="_blank" rel="noopener">BUSON の Threads を見る</a>
-                <ol class="cta-steps">
-                    <li><span class="num">1</span>Threads のお題ポストを開く</li>
-                    <li><span class="num">2</span>コメントで地元あるあるを書く</li>
-                    <li><span class="num">3</span>採用されたら地図に掲載！</li>
-                </ol>
-            </div>
-        </div>
+        <section class="recent" aria-label="最近追加されたあるある">
+            <h2>🆕 <span class="accent">最近ふえたあるある</span></h2>
+            <div class="recent-grid" id="recent-grid"></div>
+        </section>
 
         <section class="map-wrap" aria-label="日本地図">
             <div id="nation-view">
@@ -467,6 +465,18 @@
             <p class="map-credit">地図データ: <a href="https://nlftp.mlit.go.jp/ksj/" target="_blank" rel="noopener">「国土数値情報（行政区域データ）」（国土交通省）</a>および <a href="https://github.com/geolonia/japanese-prefectures" target="_blank" rel="noopener">Geolonia japanese-prefectures</a> を加工して作成</p>
         </section>
 
+        <div class="cta-top">
+            <div class="cta-top-inner">
+                <p><b>あなたの地元の「あるある」募集中！</b><br>BUSON の Threads のお題ポストにコメントで教えてください。採用されたら漫画にして、あなたのThreadsユーザー名と一緒にこの地図に載ります。</p>
+                <a class="btn-x" href="https://www.threads.net/@buson2025" target="_blank" rel="noopener">BUSON の Threads を見る</a>
+                <ol class="cta-steps">
+                    <li><span class="num">1</span>Threads のお題ポストを開く</li>
+                    <li><span class="num">2</span>コメントで地元あるあるを書く</li>
+                    <li><span class="num">3</span>採用されたら地図に掲載！</li>
+                </ol>
+            </div>
+        </div>
+
         <!-- 県別一覧（検索エンジン・JSオフ環境向け） -->
         <section class="listing">
             <h2>県別 <span class="accent">あるある一覧</span></h2>
@@ -478,17 +488,6 @@
             <div class="region-block"><h3>四国</h3><div class="pref-grid"><div class="pref-cell"><b>徳島県</b><a href="https://buson.blog.jp/archives/21784026.html" data-art="21784026">徳島あるある（全6P）</a></div><div class="pref-cell"><b>香川県</b><a href="https://buson.blog.jp/archives/21662355.html" data-art="21662355">香川あるある（全6P）</a></div><div class="pref-cell"><b>愛媛県</b><a href="https://buson.blog.jp/archives/21433948.html" data-art="21433948">愛媛あるある（全6P）</a></div><div class="pref-cell"><b>高知県</b><a href="https://buson.blog.jp/archives/21350009.html" data-art="21350009">高知あるある（全6P）</a></div></div></div>
             <div class="region-block"><h3>九州・沖縄</h3><div class="pref-grid"><div class="pref-cell"><b>福岡県</b><a href="https://buson.blog.jp/archives/21449741.html" data-art="21449741">福岡あるある（全6P）</a><a href="https://buson.blog.jp/archives/24687014.html" data-art="24687014">福岡市あるある10選（全9P）</a></div><div class="pref-cell"><b>佐賀県</b><a href="https://buson.blog.jp/archives/21647209.html" data-art="21647209">佐賀あるある（全6P）</a></div><div class="pref-cell"><b>長崎県</b><a href="https://buson.blog.jp/archives/22171680.html" data-art="22171680">長崎あるある（全8P）</a><a href="https://buson.blog.jp/archives/24687012.html" data-art="24687012">五島市あるある（全8P）</a></div><div class="pref-cell"><b>熊本県</b><a href="https://buson.blog.jp/archives/21520087.html" data-art="21520087">熊本あるある（全6P）</a></div><div class="pref-cell"><b>大分県</b><a href="https://buson.blog.jp/archives/21894597.html" data-art="21894597">大分あるある（全6P）</a></div><div class="pref-cell"><b>宮崎県</b><a href="https://buson.blog.jp/archives/21575877.html" data-art="21575877">宮崎あるある（全6P）</a></div><div class="pref-cell"><b>鹿児島県</b><a href="https://buson.blog.jp/archives/21345359.html" data-art="21345359">鹿児島あるある（全6P）</a></div><div class="pref-cell"><b>沖縄県</b><a href="https://buson.blog.jp/archives/21609899.html" data-art="21609899">沖縄あるある５選（全6P）</a></div></div></div>
         </section>
-
-        <div class="cta-band">
-            <h2>あなたの地元の「あるある」募集中！</h2>
-            <p>「うちの県のこれ、あるあるでしょ！」というネタは、BUSON の Threads のお題ポストにコメントで教えてください。<br>採用されたら BUSON が漫画化して、あなたのThreadsユーザー名と一緒にこの地図に掲載します。</p>
-            <a class="btn-x" href="https://www.threads.net/@buson2025" target="_blank" rel="noopener">BUSON の Threads を見る</a>
-            <ol class="cta-steps">
-                <li><span class="num">1</span>Threads のお題ポストを開く</li>
-                <li><span class="num">2</span>コメントで地元あるあるを書く</li>
-                <li><span class="num">3</span>採用されたら地図に掲載！</li>
-            </ol>
-        </div>
     </main>
 
     <!-- 漫画ビューア -->
@@ -867,6 +866,35 @@
     document.querySelectorAll(".listing a[data-art]").forEach(a => {
         a.addEventListener("click", e => { e.preventDefault(); openReader(a.dataset.art); });
     });
+
+    /* ---- 新着あるある（最近ふえた3つ）＋ヘッダの達成数を自動計算 ---- */
+    (function () {
+        const arts = DATA.articles;
+        const cityCount = new Set(arts.filter(a => a.city).map(a => a.pref + ":" + a.city)).size;
+        const pct = cityCount / 1750 * 100;
+        const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+        set("lead-cities", cityCount + "市");
+        set("stat-ach", cityCount + "/1750");
+        set("stat-count", arts.length);
+        set("prog-pct", pct.toFixed(1) + "%");
+        const bar = document.getElementById("prog-bar");
+        if (bar) bar.style.width = pct.toFixed(1) + "%";
+        const wrap = document.querySelector(".progress-wrap");
+        if (wrap) wrap.title = "市区町村の達成率 " + pct.toFixed(1) + "%";
+        const grid = document.getElementById("recent-grid");
+        if (grid) {
+            const recent = [...arts]
+                .sort((a, b) => (b.date || "").localeCompare(a.date || "") || (Number(b.id) - Number(a.id)))
+                .slice(0, 3);
+            grid.innerHTML = recent.map(a => `
+                <button class="rcard" data-id="${a.id}">
+                    <img src="images/${a.id}/cover.webp" alt="${esc(a.title)}の表紙" loading="lazy">
+                    <span class="rc-place">${esc(prefOf[a.pref].name)}</span>
+                    <span class="rc-title">${esc(a.title)}</span>
+                </button>`).join("");
+            grid.querySelectorAll(".rcard").forEach(b => b.addEventListener("click", () => openReader(b.dataset.id)));
+        }
+    })();
 
     /* ---- ディープリンク (#p13 / #a12345678) ---- */
     (function () {
