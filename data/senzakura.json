@@ -1,6 +1,6 @@
 {
  "series": "しきぶちゃん～千年桜の約束～",
- "updated": "2026-07-15T12:00",
+ "updated": "2026-07-15T18:00",
  "episodes": [
   {
    "ep": 1,
@@ -72,6 +72,12 @@
    "ep": 12,
    "title": "第12話「宝物がない朝」",
    "url": "https://buson.blog.jp/archives/47461486.html",
+   "published": false
+  },
+  {
+   "ep": 13,
+   "title": "第13話「また、夜道で」",
+   "url": "https://buson.blog.jp/archives/47467073.html",
    "published": false
   }
  ]
