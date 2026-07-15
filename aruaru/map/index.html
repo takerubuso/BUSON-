@@ -527,6 +527,7 @@
     .reader-credits .rc-note{font-size:.85rem;color:#888;text-align:center;margin:0 0 16px;}
     .reader-credits .rc-item{margin:0 auto 18px;max-width:520px;}
     .reader-credits .rc-embed{width:100%;max-width:520px;height:220px;border:1px solid #eee;border-radius:12px;display:block;background:#fff;}
+    .reader-credits .rc-more{display:block;width:fit-content;max-width:100%;margin:10px auto 4px;text-align:center;}
     @media (max-width:560px){.reader-credits .rc-embed{height:300px;}}
     @media (prefers-color-scheme:dark){.reader-credits .rc-embed{background:#111;border-color:#333;}}
     </style>
@@ -756,7 +757,7 @@
     const rscroll = document.getElementById("reader-scroll");
 
     // 元ネタをくれた人のThreadsコメントを埋め込む（クレジット）。credits=[{aruaru,username,url}]
-    function renderCredits(credits) {
+    function renderCredits(credits, city) {
         if (!Array.isArray(credits) || !credits.length) return "";
         const items = credits.map(c => {
             const url = (c.url || "").replace(/\/+$/, "");
@@ -765,9 +766,11 @@
                 <iframe class="rc-embed" src="${url}/embed/" title="@${esc(c.username || "")}さんのコメント" loading="lazy" scrolling="no"></iframe>
             </div>`;
         }).join("");
+        const topic = city ? topicFor(city) : null;
+        const more = topic ? `<a class="rc-more btn-x" href="${topic}" target="_blank" rel="noopener">💬 他の${esc(city)}あるあるもThreadsで見る</a>` : "";
         return `<div class="reader-credits">
             <h4 class="rc-title">このあるあるをくれた人たち 🙏</h4>
-            <p class="rc-note">みんなのコメントから生まれました。ありがとう！</p>${items}</div>`;
+            <p class="rc-note">みんなのコメントから生まれました。ありがとう！</p>${items}${more}</div>`;
     }
 
     function openReader(id) {
@@ -777,7 +780,7 @@
         document.getElementById("reader-pages").textContent = `全${a.n}P`;
         rscroll.innerHTML = Array.from({ length: a.n }, (_, i) =>
             `<img src="images/${a.id}/${String(i + 1).padStart(2, "0")}.webp" alt="${esc(a.title)} ${i + 1}ページ目" ${i < 2 ? "" : 'loading="lazy"'}>`
-        ).join("") + renderCredits(a.credits);
+        ).join("") + renderCredits(a.credits, a.city);
         rscroll.scrollTop = 0;
         document.getElementById("reader-blog").href = a.blog;
         document.getElementById("reader-share").href =
