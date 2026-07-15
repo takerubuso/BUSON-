@@ -770,7 +770,7 @@
             </div>`;
         }).join("");
         const topic = city ? topicFor(city) : null;
-        const more = topic ? `<a class="rc-more btn-x" href="${topic}" target="_blank" rel="noopener">💬 他の${esc(city)}あるあるもThreadsで見る</a>` : "";
+        const more = topic ? `<a class="rc-more btn-x" href="${topic}" target="_blank" rel="noopener">💬 あなたの${esc(city)}あるあるも教えて（Threads）</a>` : "";
         return `<div class="reader-credits">
             <h4 class="rc-title">このあるあるをくれた人たち 🙏</h4>
             <p class="rc-note">みんなのコメントから生まれました。ありがとう！</p>${items}${more}</div>`;
