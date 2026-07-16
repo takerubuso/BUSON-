@@ -83,18 +83,24 @@
         .suggest .none { padding: 14px 16px; color: #999; font-size: 13.5px; }
 
         /* 地図（全国 / 県ズーム共通の入れ物） */
-        .map-wrap { max-width: 860px; margin: 8px auto 0; padding: 0 8px; position: relative; }
+        .map-wrap { max-width: 1080px; margin: 8px auto 0; padding: 0 8px; position: relative; }
         .map-note { text-align: center; font-size: 12px; color: #999; margin-top: 4px; }
         .map-credit { text-align: center; font-size: 10.5px; color: #bbb; margin-top: 10px; }
         .map-credit a { color: #bbb; }
 
-        #nation-view, #pref-view { transition: opacity .22s ease; }
-        .view-fade { opacity: 0; }
+        /* 地図（左）とあるあるパネル（右）。狭い画面では縦積み */
+        .map-stage { display: flex; flex-direction: column; gap: 14px; }
+        @media (min-width: 880px) {
+            .map-stage { flex-direction: row; align-items: flex-start; justify-content: center; gap: 22px; }
+            #nation-view { flex: 0 1 720px; min-width: 0; }
+            #pref-view { flex: 0 0 320px; position: sticky; top: 72px; max-height: calc(100vh - 92px); overflow-y: auto; }
+        }
 
         svg.jpmap { width: 100%; height: auto; display: block; }
         svg.jpmap .prefecture { cursor: pointer; transition: filter .15s; stroke: #fff !important; stroke-width: 1.6 !important; }
         svg.jpmap .prefecture:hover { filter: brightness(0.93); }
         svg.jpmap .prefecture:focus { outline: none; filter: brightness(0.88); }
+        svg.jpmap .prefecture.selected { filter: brightness(0.72); }
         svg.jpmap .boundary-line { stroke: #ccc; stroke-dasharray: 4 4; }
         .map-tip {
             position: absolute; pointer-events: none; background: #fff; border-radius: 10px; padding: 8px 12px;
@@ -102,14 +108,14 @@
         }
         .map-tip small { display: block; font-weight: 400; color: var(--pink-dark); font-size: 11.5px; }
 
-        /* 県ズームビュー */
-        .pv-head { display: flex; align-items: center; gap: 12px; padding: 6px 4px 10px; }
-        .pv-back {
-            border: 2px solid var(--pink-200); background: #fff; color: var(--pink-dark); font-family: inherit;
-            font-weight: 700; font-size: 13.5px; border-radius: 999px; padding: 8px 16px; cursor: pointer; flex-shrink: 0;
+        /* 県ビュー（あるあるパネル） */
+        .pv-head { display: flex; align-items: center; gap: 10px; padding: 6px 4px 10px; }
+        .pv-close {
+            margin-left: auto; flex-shrink: 0; border: 0; background: var(--pink-100); color: var(--pink-dark);
+            width: 30px; height: 30px; border-radius: 50%; font-size: 15px; line-height: 1; cursor: pointer; font-family: inherit;
         }
-        .pv-back:hover { background: var(--pink-100); border-color: var(--pink); }
-        .pv-head h2 { margin: 0; font-size: 24px; font-weight: 800; }
+        .pv-close:hover { background: var(--pink-200); }
+        .pv-head h2 { margin: 0; font-size: 22px; font-weight: 800; }
         .pv-head .count { font-size: 12.5px; color: var(--pink-dark); font-weight: 700; background: var(--pink-100); border-radius: 999px; padding: 3px 10px; }
         .pv-arts { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; margin-top: 14px; }
         .acard {
@@ -192,6 +198,7 @@
         </section>
 
         <section class="map-wrap" aria-label="日本地図">
+            <div class="map-stage">
             <div id="nation-view">
                 <svg class="geolonia-svg-map jpmap" aria-hidden="false" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
   <desc>Created by Geolonia (https://geolonia.com/).</desc>
@@ -373,12 +380,13 @@
 
             <div id="pref-view" hidden>
                 <div class="pv-head">
-                    <button class="pv-back" id="pv-back">‹ 全国地図</button>
                     <h2 id="pv-name"></h2>
                     <span class="count" id="pv-count"></span>
+                    <button class="pv-close" id="pv-close" aria-label="閉じる">✕</button>
                 </div>
                 <div class="pv-arts" id="pv-arts"></div>
             </div>
+            </div><!-- /.map-stage -->
 
             <div class="map-tip" id="tip"></div>
             <p class="map-credit">地図データ: <a href="https://nlftp.mlit.go.jp/ksj/" target="_blank" rel="noopener">「国土数値情報（行政区域データ）」（国土交通省）</a>および <a href="https://github.com/geolonia/japanese-prefectures" target="_blank" rel="noopener">Geolonia japanese-prefectures</a> を加工して作成</p>
@@ -485,15 +493,10 @@
     const pvArts = document.getElementById("pv-arts");
     let currentPref = null;
 
-    function swapView(hideEl, showEl) {
-        hideEl.classList.add("view-fade");
-        setTimeout(() => {
-            hideEl.hidden = true;
-            hideEl.classList.remove("view-fade");
-            showEl.hidden = false;
-            showEl.classList.add("view-fade");
-            requestAnimationFrame(() => requestAnimationFrame(() => showEl.classList.remove("view-fade")));
-        }, 200);
+    function setSelected(code) {
+        document.querySelectorAll("svg.jpmap .prefecture.selected").forEach(g => g.classList.remove("selected"));
+        const g = document.querySelector(`svg.jpmap .prefecture[data-code="${code}"]`);
+        if (g) g.classList.add("selected");
     }
 
     function openPref(code) {
@@ -503,7 +506,12 @@
         document.getElementById("pv-name").textContent = p.name;
         document.getElementById("pv-count").textContent = arts.length ? `あるある ${arts.length}本` : "";
         renderArts(arts, p);
-        if (nationView.hidden === false) swapView(nationView, prefView);
+        prefView.hidden = false;
+        setSelected(code);
+        // スマホ（縦積み）では下のあるあるパネルへ寄せる。PC（横並び）は地図を動かさない
+        if (window.matchMedia("(max-width: 879px)").matches) {
+            prefView.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
         history.replaceState(null, "", "#p" + code);
         gtag("event", "view_pref", { pref: p.name });
     }
@@ -524,10 +532,11 @@
 
     function closePref() {
         currentPref = null;
-        swapView(prefView, nationView);
+        prefView.hidden = true;
+        document.querySelectorAll("svg.jpmap .prefecture.selected").forEach(g => g.classList.remove("selected"));
         history.replaceState(null, "", location.pathname);
     }
-    document.getElementById("pv-back").addEventListener("click", closePref);
+    document.getElementById("pv-close").addEventListener("click", closePref);
 
     /* ---- 漫画ビューア ---- */
     const reader = document.getElementById("reader");
@@ -609,7 +618,9 @@
                 suggest.classList.remove("open");
                 if (b.dataset.type === "pref") {
                     openPref(+b.dataset.code);
-                    document.querySelector(".map-wrap").scrollIntoView({ behavior: "smooth" });
+                    if (window.matchMedia("(min-width: 880px)").matches) {
+                        document.querySelector(".map-wrap").scrollIntoView({ behavior: "smooth" });
+                    }
                 } else openReader(b.dataset.id);
             }));
         }
