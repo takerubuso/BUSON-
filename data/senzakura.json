@@ -1,6 +1,6 @@
 {
  "series": "しきぶちゃん～千年桜の約束～",
- "updated": "2026-07-22T12:00",
+ "updated": "2026-07-23T20:00",
  "episodes": [
   {
    "ep": 1,
@@ -84,6 +84,12 @@
    "ep": 14,
    "title": "第14話「泥棒と手を組む夜」",
    "url": "https://buson.blog.jp/archives/47482675.html",
+   "published": false
+  },
+  {
+   "ep": 15,
+   "title": "第15話「黒い石が、光った夜」",
+   "url": "https://buson.blog.jp/archives/47508658.html",
    "published": false
   }
  ]
