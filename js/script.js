@@ -21,48 +21,64 @@ document.addEventListener('DOMContentLoaded', function () {
     // モバイルメニューの制御
     setupMobileMenu();
 
-    // スライダーデータを読み込み
-    loadData('data/slider.json', SITE_CONFIG.defaultSlider || [
-        {
-            "image": "images/placeholder.jpg",
-            "title": "新キャラクター「ピンキー」登場！",
-            "description": "宇宙からやってきた不思議な猫型キャラクター",
-            "url": "#characters"
-        }
-    ]).then(data => {
-        initializeEnhancedSlider(data);
-    });
+    // スライダーデータを読み込み（スライダーがあるページのみ）
+    if (document.querySelector('.slider-container')) {
+        loadData('data/slider.json', SITE_CONFIG.defaultSlider || [
+            {
+                "image": "images/placeholder.jpg",
+                "title": "新キャラクター「ピンキー」登場！",
+                "description": "宇宙からやってきた不思議な猫型キャラクター",
+                "url": "#characters"
+            }
+        ]).then(data => {
+            initializeEnhancedSlider(data);
+        });
+    }
 
-    // キャラクターデータを読み込み
-    loadData('data/characters.json', []).then(data => {
-        if (data && data.length > 0) {
-            initializeCharacters(data);
-            setupCharacterModal(data);
-        }
-    });
+    // キャラクターデータを読み込み（キャラクター欄があるページのみ）
+    if (document.querySelector('.character-container')) {
+        loadData('data/characters.json', []).then(data => {
+            if (data && data.length > 0) {
+                initializeCharacters(data);
+                setupCharacterModal(data);
+            }
+        });
+    }
 
-    // グッズデータを読み込み
-    loadData('data/goods.json', []).then(data => {
-        // カテゴリーを新しい設定に更新
-        updateGoodsCategories(data);
-        initializeGoods(data);
-        setupGoodsFilter();
-    });
+    // グッズデータを読み込み（グッズ欄があるページのみ）
+    if (document.querySelector('#goods .goods-container')) {
+        loadData('data/goods.json', []).then(data => {
+            // カテゴリーを新しい設定に更新
+            updateGoodsCategories(data);
+            initializeGoods(data);
+            setupGoodsFilter();
+        });
+    }
 
     // 書籍セクションの初期化
-    initializeBooks();
+    if (document.getElementById('books-container')) {
+        initializeBooks();
+    }
 
     // LINEスタンプセクションの初期化
-    initializeLineStamps();
+    if (document.getElementById('stamps-container')) {
+        initializeLineStamps();
+    }
 
     // ニューススライダーを初期化
-    initializeNewsSlider();
+    if (document.querySelector('.news-slider')) {
+        initializeNewsSlider();
+    }
 
     // YouTubeセクションの初期化
-    initializeYouTube();
+    if (document.querySelector('.youtube-container')) {
+        initializeYouTube();
+    }
 
     // 漫画ブログセクションの初期化
-    initializeMangaBlog();
+    if (document.querySelector('.manga-container')) {
+        initializeMangaBlog();
+    }
 
     // モバイルタッチイベントを設定
     setupMobileTouchEvents();
