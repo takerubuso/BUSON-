@@ -109,13 +109,18 @@
       /* お仕事・ライセンス */
       #services{padding:48px 16px;background:#fff7fb;border-radius:24px}
       .services-inner{max-width:1080px;margin:0 auto}
-      .services-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-top:8px}
       .service-card{display:block;background:#fff;border:1px solid #ffd1e1;border-radius:20px;padding:28px;text-decoration:none;color:inherit;transition:transform .15s,box-shadow .15s}
       .service-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(255,107,136,.12)}
       .service-card h3{font-size:1.2rem;margin:0 0 8px;color:#333}
       .service-card p{font-size:.9rem;color:#666;line-height:1.8;margin:0 0 12px}
-      .service-card .ip-link{font-size:.85rem;font-weight:700;color:#ff6fa1}
-      @media (max-width:800px){.services-grid{grid-template-columns:1fr}}
+      .service-featured{border:2px solid #ffb8cf;padding:36px;box-shadow:0 6px 24px rgba(255,107,136,.10)}
+      .service-featured h3{font-size:1.5rem}
+      .service-featured p{font-size:1rem;max-width:760px}
+      .service-mini{display:flex;align-items:center;justify-content:space-between;gap:16px;background:#fff;border:1px solid #ffd1e1;border-radius:16px;padding:16px 24px;margin-top:14px;text-decoration:none;color:inherit;transition:box-shadow .15s}
+      .service-mini:hover{box-shadow:0 6px 18px rgba(255,107,136,.12)}
+      .service-mini-text{font-size:.9rem;color:#555;line-height:1.7}
+      .service-mini .ip-link{flex-shrink:0;font-size:.85rem;font-weight:700;color:#ff6fa1}
+      @media (max-width:800px){.service-mini{flex-direction:column;align-items:flex-start;gap:8px}}
 
       /* About */
       .about-section{padding:48px 16px;background:#fff7fb;border-radius:24px;box-shadow:0 4px 16px rgba(255,107,136,.06)}
@@ -221,18 +226,15 @@
         <section id="services">
             <div class="services-inner">
                 <h2>お仕事・ライセンス</h2>
-                <div class="services-grid">
-                    <a href="buson-studio-business.html" class="service-card">
-                        <h3>企業向けサービス</h3>
-                        <p>キャラクターを起用したPR漫画・SNSプロモーション・キャラクターライセンス。SONY・Calbee・JRA・Visaなどの企業や、公正取引委員会・長崎県警察などの行政との実績があります。</p>
-                        <span class="ip-link">サービス内容・実績を見る →</span>
-                    </a>
-                    <a href="https://shikibuworld.com/license/" target="_blank" rel="noopener noreferrer" class="service-card">
-                        <h3>二次創作・商用利用ハブ</h3>
-                        <p>ファン・クリエイターの皆様がキャラクターを二次創作で商用利用するための公式ガイドライン・利用規約をご案内しています。</p>
-                        <span class="ip-link">ハブを見る →</span>
-                    </a>
-                </div>
+                <a href="buson-studio-business.html" class="service-card service-featured">
+                    <h3>企業向けサービス</h3>
+                    <p>キャラクターを起用したPR漫画・SNSプロモーション・キャラクターライセンス。SONY・Calbee・JRA・Visaなどの企業や、公正取引委員会・長崎県警察などの行政との実績があります。</p>
+                    <span class="ip-btn">サービス内容・実績を見る →</span>
+                </a>
+                <a href="https://shikibuworld.com/license/" target="_blank" rel="noopener noreferrer" class="service-mini">
+                    <span class="service-mini-text"><strong>二次創作・商用利用ハブ</strong> — ファン・クリエイター向けの公式ガイドライン・利用規約はこちら</span>
+                    <span class="ip-link">ハブを見る →</span>
+                </a>
             </div>
         </section>
 
