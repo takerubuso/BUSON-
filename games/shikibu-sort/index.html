@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<title>Shikibu's Stock Sort</title>
+<!-- YouTube Playables SDK。ゲームのコードより前に読み込む決まり。YouTube の外（ローカル）では ytgame が無いか IN_PLAYABLES_ENV=false になり、下の Platform が同じ形のスタブに切り替える -->
+<script src="https://www.youtube.com/game_api/v1"></script>
+<style>
+  @font-face { font-family: 'UIRound'; src: url('assets/ui.ttf') format('truetype'); font-weight: 900; font-display: block; }
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #5FA9FF; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+  canvas { display: block; position: fixed; inset: 0; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<script src="assets/face_data.js"></script>
+<script src="assets/pose_data.js"></script>
+<script src="assets/sfx.js"></script>
+<script src="assets/sfx_data.js"></script>
+<script src="assets/bgm.js"></script>
+<script src="assets/bgm_data.js" defer></script>
+<script>
+'use strict';
+/* =====================================================================
+   しきぶの在庫仕分け（仮）— v5c（表示の「面」を「ステージ」に・HUD に目安手数・クリアで星 1〜3・セーブ v4 に星）
+  v5b: 音は A=木・紙で確定し A だけ同梱・効果音の ON/OFF ボタンと m キーを無効化・100 面で全クリア→101 面からエンドレス
+   v5（音の刷新: 効果音ラボの録音を加工した素材＋Web Audio の揺れ・パン・残響。効果音の ON/OFF ボタン）
+   v4: YouTube Playables SDK 組み込み・saveData 保存・日英
+   素の HTML/JS/Canvas。外部通信なし（SDK だけは YouTube が配る）。ブラウザ保存・ページ可視性・ブラウザの言語設定は使わない（tools/build_dist.py が検査）。
+   配色・文字の型・演出は docs/アートディレクション_v2.md の値。
+   ===================================================================== */
+
+// ---------- SDK のスタブ（YouTube の外で使う。本物の ytgame と同じ形・同じ戻り値の型） ----------
+// window.__ytStubInit = { data, lang, audio } で初期状態を渡せる（テスト用）。言語は ?lang= でも変えられる。
+// YouTube 側の出来事（一時停止・ミュート）は sdk.__stub.pause()/resume()/setAudio(bool) で起こす。
+function makeStubSdk(init) {
+  init = init || {};
+  const subs = { pause: [], resume: [], audio: [] };
+  const on = (list, cb) => { list.push(cb); return () => { const i = list.indexOf(cb); if (i >= 0) list.splice(i, 1); }; };
+  const emit = (list, v) => list.slice().forEach(f => { try { f(v); } catch (e) { /* 呼び出し先の例外で止めない */ } });
+  const st = { data: typeof init.data === 'string' ? init.data : '', audio: init.audio !== false, lang: init.lang || new URLSearchParams(location.search).get('lang') || 'ja', score: null };
+  const fail = type => { const e = new Error(type); e.errorType = type; return Promise.reject(e); };
+  const sdk = {
+    IN_PLAYABLES_ENV: false, SDK_VERSION: 'stub',
+    game: {
+      firstFrameReady() {}, gameReady() {},
+      loadData() { return Promise.resolve(st.data); },
+      saveData(s) { if (typeof s !== 'string') return fail('INVALID_PARAMS'); if (s.length * 2 > 3 * 1024 * 1024) return fail('SIZE_LIMIT_EXCEEDED'); st.data = s; return Promise.resolve(); },
+    },
+    system: {
+      getLanguage() { return Promise.resolve(st.lang); },
+      isAudioEnabled() { return st.audio; },
+      onAudioEnabledChange(cb) { return on(subs.audio, cb); },
+      onPause(cb) { return on(subs.pause, cb); },
+      onResume(cb) { return on(subs.resume, cb); },
+    },
+    engagement: {
+      sendScore(o) { if (!o || !Number.isFinite(o.value)) return fail('INVALID_PARAMS'); st.score = Math.max(st.score || 0, o.value); return Promise.resolve(); },
+      openYTContent() { return Promise.resolve(); },
+    },
+    health: { logError() {}, logWarning() {} },
+  };
+  sdk.__stub = { state: st, pause: () => emit(subs.pause), resume: () => emit(subs.resume), setAudio: v => { st.audio = !!v; emit(subs.audio, st.audio); } };
+  return sdk;
+}
+
+// ---------- Platform: ゲームから SDK を呼ぶ唯一の窓口 ----------
+// YouTube の中（ytgame があり IN_PLAYABLES_ENV が false でない）なら本物、それ以外はスタブ。どちらでも同じ呼び方・同じ順序になる。
+// calls は呼んだ順の記録（テストで順序を確かめる）。SDK の例外や reject でゲームは止めない。
+const Platform = (() => {
+  const real = (typeof ytgame !== 'undefined' && ytgame && ytgame.game && ytgame.IN_PLAYABLES_ENV !== false) ? ytgame : null;
+  const sdk = real || makeStubSdk(window.__ytStubInit);
+  const calls = [];
+  const call = (name, f, def) => { calls.push(name); try { return f(); } catch (e) { return def; } };
+  const P = {
+    env: real ? 'youtube' : 'stub', sdk, calls,
+    firstFrameReady() { call('firstFrameReady', () => sdk.game.firstFrameReady()); },
+    gameReady() { call('gameReady', () => sdk.game.gameReady()); },
+    async getLanguage() { try { return String((await call('getLanguage', () => sdk.system.getLanguage(), '')) || ''); } catch (e) { return ''; } },
+    async loadData() { try { const s = await call('loadData', () => sdk.game.loadData(), ''); return typeof s === 'string' ? s : ''; } catch (e) { P.logWarning(); return ''; } },
+    saveData(str) { return Promise.resolve(call('saveData', () => sdk.game.saveData(str))).catch(() => P.logWarning()); },
+    isAudioEnabled() { return call('isAudioEnabled', () => sdk.system.isAudioEnabled() !== false, true); },
+    onAudioEnabledChange(cb) { call('onAudioEnabledChange', () => sdk.system.onAudioEnabledChange(v => cb(!!v))); },
+    onPause(cb) { call('onPause', () => sdk.system.onPause(cb)); },
+    onResume(cb) { call('onResume', () => sdk.system.onResume(cb)); },
+    sendScore(n) { Promise.resolve(call('sendScore', () => sdk.engagement.sendScore({ value: n | 0 }))).catch(() => {}); },
+    logError() { call('logError', () => sdk.health.logError()); },
+    logWarning() { call('logWarning', () => sdk.health.logWarning()); },
+  };
+  return P;
+})();
+window.addEventListener('error', () => Platform.logError());
+
+// ---------- Save: saveData/loadData に JSON 文字列 1 つで保存（面番号・ベスト手数・星・設定） ----------
+// 形式 v4: { v: 4, level, best: { "面": 手数 }, stars: { "面": 1〜3 }, settings: { sfx, bgm }, allClear }（bgm は v6 で追加。無ければ ON）。v3（stars なし）・v2（allClear なし）・v3b までの { level, best } も読める。
+// allClear = 最終面（FINAL_LEVEL）をクリア済みか。v2 以前のセーブで面が FINAL_LEVEL を超えていれば済みとみなす。
+// stars = その面で取った星の最高（v5c）。星はその面のいちばん少ない手数だけで決まるので、v3 以前のセーブは load で best と目安から埋める。
+// 壊れた・型違いのセーブは項目ごとに既定値へ落とす（落ちない）。loadData が済むまで saveData は呼ばない。
+const SAVE_VER = 4;
+const FINAL_LEVEL = 100;   // この面をクリアすると「全クリア」（設計要件「内容の完了を伝える」）。その後は「エンドレス 101〜」として続く
+const KEY_RE = /^[1-9]\d{0,4}$/;
+// 星の評価（v5c）: 手数 ≤ 目安 → 3、≤ 目安×1.5 → 2、それ以上 → 1（目安 = 生成した解の手数 par）
+function starsFor(moves, par) { return moves <= par ? 3 : moves <= par * 1.5 ? 2 : 1; }
+const Save = {
+  data: null, loaded: false,
+  parse(raw) {
+    let o = null;
+    try { o = raw ? JSON.parse(raw) : null; } catch (e) { o = null; }
+    if (!o || typeof o !== 'object' || Array.isArray(o)) o = {};
+    const level = Number.isInteger(o.level) && o.level >= 1 ? Math.min(o.level, 99999) : 1;
+    const best = {}, stars = {};
+    if (o.best && typeof o.best === 'object' && !Array.isArray(o.best)) for (const k in o.best) { const v = o.best[k]; if (KEY_RE.test(k) && Number.isInteger(v) && v > 0) best[k] = v; }
+    if (o.stars && typeof o.stars === 'object' && !Array.isArray(o.stars)) for (const k in o.stars) { const v = o.stars[k]; if (KEY_RE.test(k) && (v === 1 || v === 2 || v === 3)) stars[k] = v; }
+    const sfx = !(o.settings && o.settings.sfx === false);
+    const bgm = !(o.settings && o.settings.bgm === false);
+    const allClear = o.allClear === true || level > FINAL_LEVEL;
+    return { v: SAVE_VER, level, best, stars, settings: { sfx, bgm }, allClear };
+  },
+  // best があって stars が無い面を、ベスト手数と目安から埋める（盤面生成は面番号だけで決まる。多すぎるセーブでも 300 面で打ち切る）
+  fillStars(d) { let n = 0; for (const k in d.best) { if (d.stars[k]) continue; if (++n > 300) break; d.stars[k] = starsFor(d.best[k], generateLevel(Number(k)).par); } return d; },
+  starTotals() { const s = (this.data && this.data.stars) || {}; let total = 0, n = 0; for (const k in s) { total += s[k]; n++; } return { total, max: n * 3 }; },
+  async load() { this.data = Save.fillStars(Save.parse(await Platform.loadData())); this.loaded = true; },
+  get(key, def) { return (this.data && key in this.data) ? this.data[key] : def; },
+  set(key, val) { if (!this.data) return; this.data[key] = val; this.flush(); },
+  flush() { if (this.loaded) Platform.saveData(JSON.stringify(this.data)); },
+};
+Save.data = Save.parse('');
+
+// ---------- I18n（日英。言語は Platform.getLanguage() だけで決める。ja で始まれば日本語、それ以外は英語） ----------
+const STR = {
+  ja: { title1: 'しきぶの', title2: '在庫仕分け', start: 'タップでスタート', level: 'ステージ', moves: '手', clear: 'クリア!', next: 'つぎへ', best: 'ベスト', stuck: 'もう動かせない…', cont: 'つづきから',
+        allClear: '全部そろえた!', allSub: '{n} ステージぜんぶクリア', endless: 'エンドレス', keep: 'つづける', movesPar: '手 {m}／目安 {p}', starsTotal: '星 {n}/{m}',
+        undo: 'もどす', retry: 'やりなおす', sfx: '効果音', bgm: 'BGM' },
+  en: { title1: "Shikibu's", title2: 'Stock Sort', start: 'Tap to start', level: 'Stage', moves: 'Moves', clear: 'CLEAR!', next: 'Next', best: 'Best', stuck: 'No moves left', cont: 'Continue',
+        allClear: 'All sorted!', allSub: 'All {n} stages cleared', endless: 'Endless', keep: 'Keep going', movesPar: 'Moves {m} / Par {p}', starsTotal: 'Stars {n}/{m}',
+        undo: 'Undo', retry: 'Restart', sfx: 'SFX', bgm: 'Music' },
+};
+let LANG = 'en';
+function langOf(tag) { return String(tag || '').toLowerCase().startsWith('ja') ? 'ja' : 'en'; }
+function T(k) { return (STR[LANG] || STR.en)[k] || STR.en[k] || k; }
+// 面の表示名: 100 面までは「ステージ 12」、101 面からは「エンドレス 101」
+function levelLabel(L) { return `${T(L > FINAL_LEVEL ? 'endless' : 'level')} ${L}`; }
+// HUD の手数と目安: 「手 3／目安 12」
+function movesLabel(m, p) { return T('movesPar').replace('{m}', m).replace('{p}', p); }
+
+// ---------- 配色（アートディレクション v2） ----------
+const PAL = {
+  bgTop: '#4FD1FF', bgBot: '#7A5CFF', board: '#FFF6E0', boardEdge: '#FFFFFF', boardShadow: 'rgba(20,16,80,.35)',
+  slot: '#FFE3A6', slotFrame: '#C97A3A', shelf: '#8B4E23', shelfTop: '#C08050', line: '#2B2620',
+  doneSlot: '#D9F7E0', doneFrame: '#2E9E5B', doneGlow: '#9EF0B8', ok: '#2E9E5B', bad: '#FF3B3B',
+  navy: '#0B1B3D', blue: '#2F6FD6', blueTop: '#4E8BEC', orange: '#FF8A3D', orangeTop: '#FFB157', orangeDeep: '#C25A14',
+  green: '#2E9E5B', greenTop: '#4FC978', greenDeep: '#1E6E3F', gold: '#FFD23F', yellowTop: '#FFE28A', yellowBot: '#F5A400',
+  confetti: ['#FF5C8A', '#FFD23F', '#4FD1FF', '#7CF29A', '#FFFFFF'],
+};
+// 文字の型（テロップ規約 v2 の流用。strokes は外→内、幅は字高比・片側）
+const ST = {
+  hud: { fill: [PAL.blueTop, PAL.blue], strokes: [[PAL.navy, 0.125], ['#fff', 0.10]], shadow: { color: 'rgba(11,27,61,.82)', dx: 0.05, dy: 0.07, blur: 0.04 } },
+  title: { fill: [PAL.yellowTop, PAL.yellowBot], strokes: [[PAL.navy, 0.12], ['#fff', 0.08]], shadow: { color: 'rgba(11,27,61,.82)', dx: 0.05, dy: 0.07, blur: 0.04 } },
+  btn: { fill: '#fff', strokes: [[PAL.navy, 0.08]] },
+  plain: { fill: PAL.navy, strokes: [] },
+  sub: { fill: '#fff', strokes: [[PAL.navy, 0.10]], shadow: { color: 'rgba(11,27,61,.6)', dx: 0.04, dy: 0.06, blur: 0.04 } },
+  gold: { fill: [PAL.yellowTop, PAL.yellowBot], strokes: [[PAL.navy, 0.12]], shadow: { color: 'rgba(11,27,61,.6)', dx: 0.04, dy: 0.06, blur: 0.04 } },
+  // v5d: 丸ボタンの下の小さい文字（字幕の型: 青塗り・白フチ・外に濃紺の細線。小さいのでフチを太めに）
+  btnLabel: { fill: PAL.blue, strokes: [[PAL.navy, 0.24], ['#fff', 0.17]] },
+};
+
+// ---------- 乱数（面番号から決まる。同じ面は毎回同じ盤面） ----------
+function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+// ---------- 盤面生成（逆手順で解ける保証。v1 と同じ） ----------
+const CAP = 4;
+function levelParams(L) {
+  let kinds, empty = 2, mult;
+  if (L <= 2) { kinds = 2; empty = 1; mult = 1.5; }
+  else if (L <= 4) { kinds = 3; mult = 1.5; }
+  else if (L <= 7) { kinds = 4; mult = 2; }
+  else if (L <= 10) { kinds = 5; mult = 2; }
+  else if (L <= 15) { kinds = 5; mult = 3; }
+  else if (L <= 25) { kinds = 6; mult = 3; }
+  else if (L <= 40) { kinds = 7; mult = 3.5; }
+  else { kinds = Math.min(9, 7 + Math.floor((L - 41) / 20)); mult = 4; }
+  return { kinds, empty, cap: CAP, shuffle: Math.round(kinds * CAP * mult) };
+}
+function isMono(c) { return c.every(v => v === c[0]); }
+function isDone(c, cap) { return c.length === cap && isMono(c); }
+function isSolved(cols, cap) { return cols.every(c => c.length === 0 || isDone(c, cap)); }
+function canPlace(cols, cap, from, to) {
+  if (from === to) return false;
+  const src = cols[from], dst = cols[to];
+  if (!src.length || isDone(src, cap)) return false;
+  if (dst.length >= cap) return false;
+  return dst.length === 0 || dst[dst.length - 1] === src[src.length - 1];
+}
+function productiveMoves(cols, cap) {
+  let n = 0;
+  for (let f = 0; f < cols.length; f++) {
+    const src = cols[f];
+    if (!src.length || isDone(src, cap)) continue;
+    for (let t = 0; t < cols.length; t++) {
+      if (!canPlace(cols, cap, f, t)) continue;
+      if (cols[t].length === 0 && isMono(src)) continue;
+      n++;
+    }
+  }
+  return n;
+}
+function generateLevel(L) {
+  const p = levelParams(L);
+  for (let attempt = 0; attempt < 60; attempt++) {
+    const rng = mulberry32((L * 2654435761 + attempt * 97 + 12345) >>> 0);
+    const cols = [];
+    for (let k = 0; k < p.kinds; k++) cols.push(new Array(p.cap).fill(k));
+    for (let e = 0; e < p.empty; e++) cols.push([]);
+    for (let i = cols.length - 1; i > 0; i--) { const j = Math.floor(rng() * (i + 1)); [cols[i], cols[j]] = [cols[j], cols[i]]; }
+    const unmoves = [];
+    let last = null;
+    for (let i = 0; i < p.shuffle; i++) {
+      const S = [];
+      cols.forEach((c, ci) => { if (c.length > 0 && (c.length === 1 || c[c.length - 2] === c[c.length - 1])) S.push(ci); });
+      if (!S.length) break;
+      let done = false;
+      for (let tries = 0; tries < 20 && !done; tries++) {
+        const s = S[Math.floor(rng() * S.length)];
+        const x = cols[s][cols[s].length - 1];
+        const D = [];
+        cols.forEach((c, ci) => {
+          if (ci === s || c.length >= p.cap) return;
+          if (c.length === p.cap - 1 && c.every(v => v === x)) return;
+          if (last && last[1] === s && last[0] === ci) return;
+          D.push(ci);
+        });
+        if (!D.length) continue;
+        const d = D[Math.floor(rng() * D.length)];
+        cols[s].pop(); cols[d].push(x); unmoves.push([s, d]); last = [s, d]; done = true;
+      }
+      if (!done) break;
+    }
+    if (isSolved(cols, p.cap)) continue;
+    if (cols.some(c => isDone(c, p.cap))) continue;
+    if (unmoves.length < Math.max(3, p.shuffle * 0.6)) continue;
+    const solution = unmoves.slice().reverse().map(([s, d]) => [d, s]);
+    return { cols, cap: p.cap, kinds: p.kinds, solution, par: solution.length };
+  }
+  const cols = []; for (let k = 0; k < p.kinds; k++) cols.push(new Array(p.cap).fill(k)); cols.push([]);
+  cols[0].pop(); cols[cols.length - 1].push(0);
+  return { cols, cap: p.cap, kinds: p.kinds, solution: [[cols.length - 1, 0]], par: 1 };
+}
+
+// ---------- 音（v5: 素材＋加工。assets/sfx.js のエンジン＋ assets/sfx_data.js の MP3） ----------
+// enabled = YouTube 側の音声（isAudioEnabled）、userMuted = 効果音の設定（HUD の「効果音」ボタン。セーブの settings.sfx）、
+// bgmOn = BGM の設定（HUD の「BGM」ボタン。セーブの settings.bgm）。
+// v5b: 音ボタンと m キーを外した（本作は効果音しか無く、効果音の ON/OFF は実質「全体のミュート」に見えたため）。
+// v6: BGM（assets/bgm.js ＋ assets/bgm_data.js）を入れたので、「効果音」「BGM」それぞれの ON/OFF を戻す（SFX_TOGGLE = true）。
+//     全体のミュートボタンは置かない（公式: ゲーム内に全体のミュートを置かない（SHOULD NOT）・効果音と BGM それぞれの切替は置いてよい）。m キーは使わないまま。
+// 一時停止中・YouTube ミュート中は AudioContext ごと止める（効果音も BGM も、鳴りかけの音も止まる。BGM は再開で続きから）。
+// AudioContext は起動時に作って復号だけ先に済ませ、最初のタップ（unlock）で動かす。v6: タイトルを描いた後にも一度 resume を試す
+// （自動再生が許される環境ならタイトルの曲が聞こえる。許されなければ最初のタップまで止まったまま）。
+// 案は A（木・紙）で確定（v5b）。assets/sfx_data.js には A だけが入っている（B は docs/sfx_data_AB.js の聞き比べ用だけ）。
+const SFX_TOGGLE = true;
+// 取る・置く・揃う・失敗は列の位置で左右にパン。置くは列ごとに音程をわずかに変える（30 セント刻み）。
+// 揃うは面の中で連続するほど +1 半音ずつ上がる（上限 +5。失敗か面の入れ替えで 0 に戻る）。失敗は小さく。
+// v5e: 置くのコンボ placeCombo = 失敗なしで続けて置けた回数（tryPlace が数える。失敗・その置きで列が揃った直後・面の入れ替えで 0）。
+//      置く音を +min(n-1, 5) 半音、3 回目からコルクを -8dB で重ねる（assets/sfx.js の playPlace）。HUD には出さない。5 回目から光の粒 3 個
+// v6 の BGM: タイトル = title・遊んでいる間（クリア画面も）= main（ステージが替わっても続けて流す）・全クリア = jingle を main に重ねる（main は -6dB）。
+//      タイトル → 本編は 400ms のクロスフェード。ただし最初のタップまで AudioContext が止まっていた（タイトルの曲が聞こえていない）ときは、すぐ本編に替える
+const Sound = {
+  ctx: null, enabled: true, userMuted: false, bgmOn: true, tones: 0, combo: 0, placeCombo: 0, loaded: false, loading: null, bgmLoaded: false, bgmLoading: null,
+  setup() {
+    if (this.ctx) return;
+    try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { this.ctx = null; return; }
+    SFX.init(this.ctx);
+    SFX.setBank('A');
+    BGM.init(this.ctx);   // 設定（bgmOn）を読むまでは out = 0
+    this.loading = SFX.load(typeof SFX_DATA !== 'undefined' ? SFX_DATA : null).then(() => { this.loaded = true; }).catch(() => {});
+    // BGM の MP3（2.5MB）は defer で読むので、読み終わり（DOMContentLoaded）と効果音の復号を待ってから復号する（最初の 1 枚と効果音を先に）
+    const parsed = new Promise(res => { if (document.readyState !== 'loading') res(); else document.addEventListener('DOMContentLoaded', res, { once: true }); });
+    this.bgmLoading = Promise.all([this.loading, parsed]).then(() => BGM.load(typeof BGM_DATA !== 'undefined' ? BGM_DATA : null)).then(() => { this.bgmLoaded = true; }).catch(() => {});
+  },
+  // 曲を替える（同じ曲なら何もしない）。復号前なら「鳴らしたい曲」だけ覚えて、復号が済んだら鳴る
+  // タイトルの曲が実際に聞こえていた（AudioContext の時計が進んでいた）時だけクロスフェードする。
+  // 自動再生が止められて最初のタップまで時計が 0 のままだった時はすぐ替える（聞こえていない曲の 0.4 秒のフェードを出さない）
+  music(name) {
+    if (!this.ctx) return null;
+    const heard = this.ctx.state === 'running' && this.ctx.currentTime > 0.05;
+    return BGM.play(name, BGM.cur ? { fade: heard ? BGM.XFADE : 0 } : undefined);
+  },
+  setBgm(on, instant) { this.bgmOn = !!on; BGM.setOn(this.bgmOn, instant); return this.bgmOn; },
+  // 全クリアのジングル（BGM の ON/OFF に従う。効果音の OFF には関係しない）。YouTube ミュート中・一時停止中は鳴らさない（解除した時に遅れて鳴らないように）
+  jingle() { if (!this.ctx || !this.enabled || G.paused) return null; return BGM.jingle(); },
+  unlock() { this.setup(); this.sync(); },
+  sync() { const c = this.ctx; if (!c) return; if (G.paused || !this.enabled) { if (c.state === 'running') c.suspend().catch(() => {}); } else if (c.state === 'suspended') c.resume().catch(() => {}); },
+  on() { return this.enabled && !this.userMuted && !G.paused && this.ctx; },
+  // 列の中心の画面上の位置 → パン（-0.7〜+0.7。端でも完全に片側には寄せない）
+  panFor(ci) { const L = G.layout; if (ci == null || ci < 0 || !L || !L.cells[ci]) return 0; const c = L.cells[ci]; return clamp(((c.x + c.w / 2) / L.W - 0.5) * 2 * 0.7, -0.7, 0.7); },
+  colCents(ci) { const n = G.cols.length || 1; return (ci == null || ci < 0) ? 0 : (ci - (n - 1) / 2) * 30; },
+  play(name, ci) {
+    if (!this.on()) return null;
+    let o;
+    switch (name) {
+      case 'pick': case 'back': o = { pan: this.panFor(ci) }; break;
+      case 'place': { const v = SFX.playPlace(this.placeCombo, { pan: this.panFor(ci), cents: this.colCents(ci) }); if (v) this.tones++; return v; }
+      case 'done': o = { pan: this.panFor(ci), cents: Math.min(this.combo, 5) * 100 }; this.combo++; break;
+      case 'bad': o = { pan: this.panFor(ci), gain: 0.8 }; this.combo = 0; break;
+      case 'clear': o = { jitter: false }; break;
+      case 'allclear': { const v = SFX.playAllClear(); if (v) this.tones++; return v; }   // クリアの音＋揃うのチャイム 3 回（assets/sfx.js）
+      case 'undo': case 'start': case 'tap': o = {}; break;
+      default: return null;
+    }
+    const v = SFX.play(name, o);
+    if (v) this.tones++;
+    return v;
+  },
+};
+
+// ---------- 品物（Flare 生成の 12 種。色相が隣り合わない順） ----------
+const ITEM_FILES = ['water', 'milk', 'can', 'box', 'detergent', 'tissue', 'snack', 'juice', 'bread', 'egg', 'noodle', 'banana'];
+const ITEM_COLOR = ['#3B9EFF', '#F03E3E', '#2C4E9C', '#C58A4A', '#38B24A', '#FF6BAE', '#8E5CF6', '#FF8A1F', '#E8B86D', '#E6E9EE', '#F03E3E', '#FFC400'];
+const ORDER = [0, 10, 11, 4, 6, 7, 1, 3, 5];        // 水・カップ麺・バナナ・洗剤・お菓子・ジュース・牛乳・段ボール・トイレットペーパー
+const SWAPS = { 3: 8, 1: 9, 0: 2 };                 // 段ボール↔食パン、牛乳↔卵、水↔缶（同系色どうしを入れ替えて面ごとに変化を出す）
+function levelSkin(L) {
+  const rng = mulberry32((L * 7919 + 4242) >>> 0);
+  return ORDER.map(f => (f in SWAPS && rng() < 0.45) ? SWAPS[f] : f);
+}
+const ITEM_FIT = 232 / 256, ITEM_BOTTOM_PAD = 12 / 256;
+
+// ---------- 画像 ----------
+const IMG = {};
+function loadImages() {
+  const names = Object.keys((typeof POSE_DATA !== 'undefined') ? POSE_DATA.poses : {}).map(k => 'pose_' + k).concat(['head_normal', 'head_laugh', 'head_anxious', 'head_smug', 'head_grumpy', 'sweat', 'backyard']).concat(ITEM_FILES.map((n, i) => 'item_' + String(i).padStart(2, '0')));
+  return Promise.all(names.map(n => new Promise(res => { const im = new Image(); im.onload = () => res(); im.onerror = () => res(); im.src = 'assets/' + n + (n === 'backyard' ? '.jpg' : '.png'); IMG[n] = im; })));
+}
+function ready(im) { return im && im.complete && im.naturalWidth > 0; }
+
+// ---------- ゲーム本体 ----------
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const view = { w: 0, h: 0, dpr: 1 };
+// ゲームの時計。一時停止中は止まり、再開後は止まっていた時間を差し引く（演出・反応・放置の判定・クリア待ちが全部これで止まる）
+const CLOCK = { off: 0, at: 0, stopped: false };
+const now = () => (CLOCK.stopped ? CLOCK.at : performance.now()) - CLOCK.off;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const easeOut = t => 1 - Math.pow(1 - t, 3);
+const easeOutBack = t => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); };
+const easeInOut = t => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+
+const G = {
+  scene: 'title', level: 1, cols: [], cap: CAP, solution: [], par: 0, moves: 0, skin: ORDER.slice(),
+  held: null, drag: null, undo: null,
+  anims: [], effects: [], particles: [], comboSparkN: 0,   // comboSparkN: v5e のコンボの粒を出した累計（テスト用）
+  squash: {},           // 着地の「ぷるん」 {col:slot → t0}
+  shake: 0, shakeCol: -1, shakeHead: 0, flashCol: -1, flashT: 0,
+  clearAt: 0, clearShownAt: 0, levelIn: 0, titleT0: 0, allClearShow: false,   // allClearShow: 最終面のクリア画面（全クリア）を出している間 true
+  clearStars: 0, starFx: [false, false, false],   // v5c: クリアの星の数・星ごとに火花を出したか
+  face: { base: 'normal', over: null, until: 0 }, lastFace: 'normal', facePop: 0,
+  blink: { next: 0, t0: 0 },
+  sweat: [], sweatNext: 0, sweatSide: false,
+  worry: 0, worryTarget: 0, worryHold: null, fails: 0,   // 困り度 0〜3（v3b）・直近の連続失敗回数
+  btnPress: null, layout: null, paused: false, ready: false, readySent: false, frames: 0, lastMoveCol: -1, stuck: false,
+};
+const PERF = { samples: [], stateSamples: [], pendingT: 0 };
+window.__perf = PERF;
+
+function currentFace() { return (G.face.over && now() < G.face.until) ? G.face.over : G.face.base; }
+
+function startLevel(L) {
+  const lv = generateLevel(L);
+  G.level = L; G.cols = lv.cols; G.cap = lv.cap; G.solution = lv.solution; G.par = lv.par; G.skin = levelSkin(L);
+  G.moves = 0; G.held = null; G.drag = null; G.undo = null; G.anims = []; G.effects = []; G.particles = []; G.squash = {};
+  G.shake = 0; G.shakeHead = 0; G.flashT = 0; G.clearAt = 0; G.lastMoveCol = -1; G.levelIn = now();
+  G.face.base = 'normal'; G.face.over = null; G.sweat = []; G.worry = 0; G.worryTarget = 0; G.worryHold = null; G.fails = 0;
+  G.scene = 'play'; G.allClearShow = false; poseReset(); Sound.combo = 0; Sound.placeCombo = 0;
+  Sound.music('main');   // v6: タイトルからなら本編の曲へ。遊んでいる間は同じ曲が続く
+  Save.set('level', L);
+  G.layout = null;
+  updateMood();
+}
+
+// ---------- 困り度（v3b）: 0 余裕 / 1 少し / 2 かなり / 3 詰まり ----------
+// (a) 面の目安手数に対する超過率 (b) 直近の連続失敗回数 (c) 有効手数 を合成する。
+// 序盤（手数が目安の 60% 未満・失敗 0）は必ず 0。上がるときは 1 段ずつ（置く・失敗・戻すの「出来事」ごと）、下がるときは即時。
+// 例外: 有効手 0（詰まり）は即 3。
+function worryParts(cols, n) {
+  const r = G.par > 0 ? G.moves / G.par : 0;
+  const empties = cols.filter(c => !c.length).length;
+  const a = r >= 1.4 ? 2 : r >= 0.9 ? 1 : 0;                      // 超過: 目安の 90% で 1・140% で 2（超過だけでは 2 まで）
+  const b = G.fails >= 6 ? 3 : G.fails >= 3 ? 2 : G.fails >= 1 ? 1 : 0;  // 連続失敗: 1 回で 1・3 回で 2・6 回で 3
+  const c = empties ? 0 : (n <= 1 ? 2 : n <= 2 ? 1 : 0);          // 有効手: 空列がなく 2 手以下で 1・1 手で 2
+  return { r, a, b, c, n, empties, fails: G.fails };
+}
+function worryTargetOf(cols, n) {
+  if (isSolved(cols, G.cap)) return 0;
+  if (n === 0) return 3;
+  const p = worryParts(cols, n);
+  if (p.r < 0.6 && G.fails === 0) return 0;
+  let v = Math.max(p.a, p.b, p.c);
+  if ((p.a > 0) + (p.b > 0) + (p.c > 0) >= 2) v++;               // 要因が 2 つ以上重なったら 1 段上げる
+  return Math.min(3, v);
+}
+function updateMood(event) {
+  const cols = G.held ? G.cols.map((c, i) => i === G.held.from ? c.concat([G.held.kind]) : c) : G.cols;
+  const n = productiveMoves(cols, G.cap);
+  G.stuck = n === 0 && !isSolved(cols, G.cap);
+  const tgt = G.worryTarget = worryTargetOf(cols, n);
+  if (G.worryHold != null) G.worry = G.worryHold;                // テスト用の固定
+  else if (tgt < G.worry) G.worry = tgt;                          // 下がるときは即時
+  else if (tgt > G.worry) { if (G.stuck) G.worry = 3; else if (event) G.worry = Math.min(3, G.worry + 1); }
+  G.face.base = G.worry >= 1 ? 'anxious' : 'normal';
+}
+
+function pickUp(ci) {
+  const c = G.cols[ci];
+  if (!c.length) return false;
+  if (isDone(c, G.cap)) { G.shake = now() + 160; G.shakeCol = ci; return false; }
+  G.held = { kind: c.pop(), from: ci, t0: now() };
+  Sound.play('pick', ci);
+  return true;
+}
+function putBack(animateFrom) {
+  if (!G.held) return;
+  const ci = G.held.from; G.cols[ci].push(G.held.kind);
+  if (animateFrom) flyTo(G.held.kind, animateFrom.x, animateFrom.y, ci, G.cols[ci].length - 1, 160);
+  G.held = null; Sound.play('back', ci);
+  updateMood();
+}
+function tryPlace(ci, fromPos) {
+  if (!G.held) return false;
+  const dst = G.cols[ci];
+  const ok = dst.length < G.cap && (dst.length === 0 || dst[dst.length - 1] === G.held.kind);
+  if (!ok) {
+    // 失敗: 品が首を振る＋棚が赤く 1 回光る。しきぶは「んも〜」＋汗。持ったまま
+    G.shakeHead = now() + 260; G.flashCol = ci; G.flashT = now() + 260; Sound.play('bad', ci); setReact('fail'); Sound.placeCombo = 0;
+    G.fails++; G.sweatNext = spawnSweat(1, ['M'], [(G.sweatSide = !G.sweatSide) ? 'tl' : 'tr']) + 300; updateMood(true);  // 失敗の一瞬の汗 1 粒（困り度の汗はその後）
+    return false;
+  }
+  G.undo = { cols: G.cols.map((c, i) => i === G.held.from ? c.concat([G.held.kind]) : c.slice()), moves: G.moves };
+  const kind = G.held.kind;
+  dst.push(kind);
+  G.moves++; G.fails = 0;
+  const p = fromPos || heldPos();
+  flyTo(kind, p.x, p.y, ci, dst.length - 1, 140);
+  G.held = null; G.lastMoveCol = ci;
+  Sound.placeCombo++;
+  Sound.play('place', ci);
+  if (Sound.placeCombo >= SFX.COMBO.SPARK_AT) comboSparks(ci, dst.length - 1);
+  if (isDone(dst, G.cap)) {
+    G.effects.push({ type: 'done', col: ci, t0: now() + 130, dur: 450 });
+    setReact('done'); Sound.play('done', ci);
+    Sound.placeCombo = 0;   // 揃った置きまではコンボに数え、その直後に 0（揃う音の上昇は Sound.combo のまま）
+  }
+  updateMood(true);
+  if (isSolved(G.cols, G.cap)) G.clearAt = now() + 320;
+  return true;
+}
+// v5e: 置くのコンボ 5 回目から、品が着地する頃に小さな光の粒 3 個（揃うの粒より少なく短い。棚の明るい地でも見えるよう金色・加算なし）
+function comboSparks(ci, slot) {
+  const p = slotPos(ci, slot), s = G.layout.itemH, t0 = now() + 120;
+  for (let i = 0; i < 3; i++) {
+    const a = -Math.PI / 2 + (i - 1) * 0.8;
+    G.particles.push({ type: 'spark', combo: true, color: PAL.gold, x: p.x + (i - 1) * s * 0.22, y: p.y - s * 0.3, vx: Math.cos(a) * 60, vy: Math.sin(a) * 60 - 15, t0, dur: 400, r: 2.4 + (i % 2) * 0.8 });
+  }
+  G.comboSparkN += 3;
+}
+function doUndo() {
+  if (G.scene !== 'play') return;
+  if (G.held) { putBack(heldPos()); return; }
+  if (!G.undo) return;
+  G.cols = G.undo.cols.map(c => c.slice()); G.moves = G.undo.moves; G.undo = null; G.anims = [];
+  Sound.play('undo'); updateMood(true);
+}
+function doRetry() { if (G.scene !== 'play' || !btnActive('retry')) return; startLevel(G.level); Sound.play('undo'); }
+// v5d: 押せるか。もどす = 戻す手がある（または品を持っている）、やりなおす = 1 手でも打った。押せない時は薄く出して何も起きない
+function btnActive(k) {
+  if (G.scene !== 'play') return false;
+  if (k === 'undo') return !!(G.undo || G.held);
+  if (k === 'retry') return G.moves > 0;
+  return true;
+}
+function finishLevel() {
+  G.scene = 'clear'; G.clearAt = 0; G.clearShownAt = now();
+  G.allClearShow = G.level === FINAL_LEVEL;   // 最終面: 全クリア（クリアの強化版）。セーブに allClear を立てる
+  const key = String(G.level); const best = Save.data.best;
+  if (!best[key] || G.moves < best[key]) best[key] = G.moves;
+  G.clearStars = starsFor(G.moves, G.par); G.starFx = [false, false, false];   // v5c: 今回の星（クリアの板に出す）とその面の最高（セーブ）
+  if (!(Save.data.stars[key] >= G.clearStars)) Save.data.stars[key] = G.clearStars;
+  if (G.allClearShow) Save.data.allClear = true;
+  Save.set('best', best);
+  Platform.sendScore(G.level);
+  G.face.base = 'normal'; G.face.over = null; G.sweat = []; G.worry = 0; G.worryTarget = 0; POSE.react = null; POSE.fidget.until = 0;
+  Sound.play(G.allClearShow ? 'allclear' : 'clear');
+  if (G.allClearShow) Sound.jingle();   // v6: 全クリアのジングル（本編の曲を -6dB に下げて重ね、終わったら戻す）
+  const L = G.layout; const W = L ? L.W : view.w, H = L ? L.H : view.h;
+  const confetti = (n, delay, x0, x1, y, spread, up) => {
+    for (let i = 0; i < n; i++) {
+      G.particles.push({ type: 'confetti', x: W * (x0 + Math.random() * (x1 - x0)), y: y + Math.random() * 40, vx: (Math.random() - 0.5) * spread, vy: -Math.random() * up - 120,
+        t0: now() + delay + Math.random() * 150, dur: 1800, color: PAL.confetti[i % PAL.confetti.length], w: 6 + Math.random() * 6, h: 4 + Math.random() * 4, rot: Math.random() * 6, rs: (Math.random() - 0.5) * 14, sway: Math.random() * 6 });
+    }
+  };
+  const stars = (n, delay, big) => {
+    for (let i = 0; i < n; i++) G.particles.push({ type: 'star', x: W / 2 + (Math.random() - 0.5) * W * 0.6, y: H * 0.4, vx: (Math.random() - 0.5) * 420 * big, vy: -Math.random() * 380 * big - 100, t0: now() + delay, dur: 1200 * big, r: (8 + Math.random() * 8) * big, color: i % 2 ? PAL.gold : '#fff', rot: Math.random() * 6 });
+  };
+  confetti(120, 0, 0.15, 0.85, H * 0.25, 520, 560);
+  stars(14, 0, 1);
+  if (G.allClearShow) {
+    // 強化版: 左右の下から吹き上げる紙吹雪 2 波＋中央からもう 1 波・大きい星を 3 回
+    confetti(90, 450, 0.0, 0.12, H * 0.9, 300, 900);
+    confetti(90, 450, 0.88, 1.0, H * 0.9, 300, 900);
+    confetti(140, 1000, 0.1, 0.9, H * 0.2, 640, 620);
+    stars(16, 350, 1.4);
+    stars(16, 900, 1.4);
+    stars(20, 1500, 1.2);
+  }
+}
+function nextLevel() { startLevel(G.level + 1); Sound.play('start'); }
+
+// ---------- レイアウト ----------
+function computeLayout() {
+  const W = view.w, H = view.h, portrait = H >= W;
+  const hudBase = clamp(Math.min(W, H) * 0.13, 50, 84), m = 8;
+  // v5d: 丸ボタンの下に文字（もどす・やりなおす）。HUD の高さに入らなければボタンを少し小さくし（下限 38）、それでも足りない分は HUD を下へ広げる
+  const lf = clamp(hudBase * 0.2, 11, 15), labH = lf * 1.4 + 10;
+  const bs = Math.max(38, Math.min(clamp(hudBase * 0.74, 42, 54), hudBase - labH));
+  const hudH0 = Math.max(hudBase, bs + labH);
+  const by = bs / 2 + 3, ly = by + bs / 2 + 5 + lf * 0.6;
+  ctx.font = font(lf);
+  // 右から: やりなおす・もどす・BGM・効果音（効果音と BGM の ON/OFF は SFX_TOGGLE のとき。v6 で戻した。YouTube のミュート（isAudioEnabled）には常に従う）
+  // v6: 効果音と BGM は切替なので丸を 0.8 倍に小さくし、もどすとの間を 6 空ける。文字の段は 4 つとも同じ高さ
+  // 1 つぶんの幅 = ボタンと文字（フチ込み）の広い方。文字が画面の右端からはみ出さないように右から詰める
+  const btns = {};
+  let xr = W - m;
+  for (const k of SFX_TOGGLE ? ['retry', 'undo', 'bgm', 'sfx'] : ['retry', 'undo']) {
+    const toggle = k === 'sfx' || k === 'bgm', r = toggle ? bs * 0.4 : bs / 2;
+    if (k === 'bgm') xr -= 6;
+    const w = Math.max(r * 2, ctx.measureText(T(k)).width + lf * 0.5);
+    btns[k] = { x: xr - w / 2, y: by, r, w, ly, lf, name: k, toggle };
+    xr -= w + 8;
+  }
+  let btnLeft = Infinity; for (const k in btns) btnLeft = Math.min(btnLeft, btns[k].x - btns[k].w / 2 - 6);
+  const hud = hudPlan(W, hudH0, btnLeft, by, hudBase), hudH = hud.hudH;
+  let board, chr;
+  if (portrait) { const ch = clamp(H * 0.19, 110, 220); chr = { x: 0, y: H - ch, w: W, h: ch }; board = { x: m, y: hudH + 6, w: W - 2 * m, h: H - ch - hudH - 6 - 4 }; }
+  else { const cw = clamp(W * 0.24, 150, 340); chr = { x: W - cw, y: hudH, w: cw, h: H - hudH }; board = { x: m, y: hudH + 6, w: W - cw - 2 * m, h: H - hudH - 6 - m }; }
+  const n = G.cols.length || 3, cap = G.cap, gap = 6, inner = 9;
+  const maxW = (n <= 4 ? 136 : 116) * clamp(Math.min(W, H) / 700, 1, 1.5);  // タブレット・PC では列を大きく
+  const areaW = board.w - inner * 2, areaH = board.h - inner * 2;
+  let rows = 1, perRow = n, colW = Math.min(maxW, (areaW - gap * (n - 1)) / n);
+  if (colW < 52 && n > 4) { rows = 2; perRow = Math.ceil(n / 2); colW = Math.min(maxW, (areaW - gap * (perRow - 1)) / perRow); }
+  const liftK = [1.12, 0.5];  // 「浮く」余白（品の高さ比）。2 段目は 1 段目の下に重ねてよいので小さく
+  let itemS = colW * 0.94, itemH = itemS * 0.9, pad = 8, colH = cap * itemH + pad * 2;
+  const need = () => { let s = 0; for (let r = 0; r < rows; r++) s += colH + itemH * liftK[r]; return s + (rows - 1) * gap; };
+  let needH = need();
+  if (needH > areaH) { const k = areaH / needH; colW *= k; itemS *= k; itemH *= k; colH = cap * itemH + pad * 2; needH = need(); }
+  // 余りが大きいときは板を中身に合わせて縮め、空いた領域の中央に置く（PC・タブレットで板だけが巨大にならないように）
+  const needW = perRow * colW + (perRow - 1) * gap;
+  if (areaW - needW > 48) { const nw = needW + inner * 2 + 24; board.x += (board.w - nw) / 2; board.w = nw; }
+  if (areaH - needH > 24) { const nh = needH + inner * 2 + 24; board.y += (board.h - nh) / 2; board.h = nh; }
+  const cells = [];
+  const y0 = board.y + inner + (board.h - inner * 2 - needH) / 2;
+  let yy = y0;
+  for (let r = 0; r < rows; r++) {
+    const cnt = r === rows - 1 ? n - perRow * (rows - 1) : perRow;
+    const rowW = cnt * colW + (cnt - 1) * gap, x0 = board.x + (board.w - rowW) / 2;
+    const liftH = itemH * liftK[r];
+    const y = yy + liftH;
+    for (let i = 0; i < cnt; i++) {
+      const x = x0 + i * (colW + gap);
+      cells.push({ x, y, w: colW, h: colH, liftY: y - itemH * 0.6, row: r, hitX0: x - gap / 2, hitX1: x + colW + gap / 2, hitY0: y - liftH, hitY1: y + colH + gap / 2 });
+    }
+    yy += liftH + colH + gap;
+  }
+  return { W, H, portrait, hudH, hud, board, chr, cells, colW, itemS, itemH, pad, cap, rows, btns, gap, inner };
+}
+// HUD の札（v5c）: 「ステージ 12」と「手 3／目安 12」を横に並べる。入らなければ字を 86% まで縮め、それでも入らなければ
+// 2 段（1 段目にステージ・2 段目に手数）にして HUD を下へ広げる。数字は 3 桁ぶんの幅で決める
+// （遊んでいる間やステージ 9→10 で段が変わらないように。100 まで・エンドレスの中ではそれぞれ同じ段）
+// v5d: 札の字の大きさは文字ラベルで広げる前の高さ（base）で決め、1 段目は丸ボタンと同じ高さ（yc）に置く
+function hudPlan(W, h0, btnLeft, yc, base) {
+  const fs0 = clamp((base || h0) * 0.37, 16, 24); ctx.font = font(fs0);
+  if (yc == null) yc = h0 / 2 + 2;
+  const d = n => '8'.repeat(Math.max(3, String(n).length));
+  const t1 = ctx.measureText(`${T(G.level > FINAL_LEVEL ? 'endless' : 'level')} ${d(G.level)}`).width / fs0, t2 = ctx.measureText(movesLabel(d(G.moves), d(G.par))).width / fs0;
+  const avail = btnLeft - 10 - 8;                       // 左余白 10・札の間 8
+  const fs1 = Math.min(fs0, avail / (t1 + t2 + 2.4));    // 札の幅 = 文字 + 字高 1.2 ぶん
+  if (fs1 >= fs0 * 0.86) return { rows: 1, fs: fs1, hudH: h0, y1: yc, btnLeft };
+  const fs2 = Math.min(fs0, (btnLeft - 10) / (t1 + 1.2), (W - 20) / (t2 + 1.2)), h = fs2 * 1.7;
+  return { rows: 2, fs: fs2, hudH: h0 + h + 6, y1: yc, y2: h0 + h / 2 + 4, btnLeft };
+}
+function slotPos(ci, slot) { const c = G.layout.cells[ci]; return { x: c.x + c.w / 2, y: c.y + c.h - G.layout.pad - G.layout.itemH * (slot + 0.5) }; }
+function heldPos() {
+  const L = G.layout; if (!G.held) return { x: 0, y: 0 };
+  if (G.drag && G.drag.moved) return { x: G.drag.x, y: G.drag.y - L.itemH * 0.9 };
+  const c = L.cells[G.held.from]; return { x: c.x + c.w / 2, y: c.liftY + Math.sin(now() / 160) * 2 };
+}
+function flyTo(kind, x0, y0, col, slot, dur) { const p = slotPos(col, slot); G.anims.push({ kind, x0, y0, x1: p.x, y1: p.y, t0: now(), dur, col, slot }); }
+function hitColumn(x, y) { const L = G.layout; if (!L) return -1; for (let i = 0; i < L.cells.length; i++) { const c = L.cells[i]; if (x >= c.hitX0 && x < c.hitX1 && y >= c.hitY0 && y < c.hitY1) return i; } return -1; }
+// 丸の中か、その下の文字の上なら押したことにする
+function hitButton(x, y) {
+  const L = G.layout; if (!L) return null;
+  for (const k in L.btns) {
+    const b = L.btns[k];
+    if (Math.hypot(x - b.x, y - b.y) <= Math.max(22, b.r + 4)) return k;
+    if (b.ly && Math.abs(x - b.x) <= b.w / 2 + 2 && y >= b.y && y <= b.ly + b.lf * 0.8) return k;
+  }
+  return null;
+}
+
+// ---------- 入力 ----------
+function onDown(x, y) {
+  PERF.pendingT = now();
+  Sound.unlock(); poseInput();
+  if (G.scene === 'title') { Sound.play('start'); startLevel(Save.get('level', 1)); return; }
+  if (G.scene === 'clear') { if (now() - G.clearShownAt > (G.allClearShow ? 1000 : 400)) nextLevel(); return; }   // 全クリアは演出を誤タップで飛ばさないよう長めに待つ
+  const b = hitButton(x, y);
+  if (b && !btnActive(b)) return;   // v5d: 押せない時は何も起きない（音も沈みも無し）
+  if (b) { G.btnPress = { key: b, t0: now() }; if (b !== 'sfx' && b !== 'bgm') Sound.play('tap'); }
+  if (b === 'sfx') { toggleSfx(); Sound.play('tap'); return; }   // 切り替えた後に鳴らす（ON にしたときの手応え）
+  if (b === 'bgm') { toggleBgm(); Sound.play('tap'); return; }
+  if (b === 'undo') { doUndo(); return; }
+  if (b === 'retry') { doRetry(); return; }
+  const ci = hitColumn(x, y);
+  if (G.held) {
+    if (ci < 0) return;
+    if (ci === G.held.from) { putBack(heldPos()); return; }
+    tryPlace(ci, heldPos());
+    return;
+  }
+  if (ci >= 0 && pickUp(ci)) { G.drag = { x0: x, y0: y, x, y, moved: false }; updateMood(); }
+}
+function onMove(x, y) {
+  if (!G.drag) return;
+  G.drag.x = x; G.drag.y = y;
+  if (!G.drag.moved && Math.hypot(x - G.drag.x0, y - G.drag.y0) > 10) G.drag.moved = true;
+}
+function onUp(x, y) {
+  if (!G.drag) return;
+  const d = G.drag; G.drag = null;
+  if (!G.held) return;
+  if (!d.moved) return;
+  const from = { x, y: y - G.layout.itemH * 0.9 };
+  const ci = hitColumn(x, y);
+  if (ci < 0 || ci === G.held.from) { putBack(from); return; }
+  if (!tryPlace(ci, from)) putBack(from);
+}
+// 一時停止中と、遊べる状態になる前（gameReady 前）は入力を受け付けない
+const acceptInput = () => G.ready && !G.paused;
+canvas.addEventListener('pointerdown', e => { e.preventDefault(); if (!acceptInput()) return; canvas.setPointerCapture(e.pointerId); onDown(e.clientX, e.clientY); });
+canvas.addEventListener('pointermove', e => { if (acceptInput() && (e.buttons || e.pointerType === 'touch')) onMove(e.clientX, e.clientY); });
+canvas.addEventListener('pointerup', e => { if (acceptInput()) onUp(e.clientX, e.clientY); });
+canvas.addEventListener('pointercancel', () => { if (!acceptInput()) return; if (G.drag && G.held) putBack(heldPos()); G.drag = null; });
+function toggleSfx() { if (!SFX_TOGGLE) return; Sound.userMuted = !Sound.userMuted; Save.data.settings.sfx = !Sound.userMuted; Save.flush(); }
+function toggleBgm() { if (!SFX_TOGGLE) return; Sound.setBgm(!Sound.bgmOn); Save.data.settings.bgm = Sound.bgmOn; Save.flush(); }
+window.addEventListener('keydown', e => {
+  if (!acceptInput()) return;
+  poseInput();
+  if ((e.key === 'Enter' || e.key === ' ') && G.scene !== 'play') { onDown(view.w / 2, view.h / 2); return; }  // タイトル・クリアを進める
+  if (e.key === 'z' || e.key === 'Backspace') doUndo();
+  if (e.key === 'r') doRetry();
+  // m キー（v5 までの効果音の切替）は v5b から使わない（v6 でボタンを戻しても、キー 1 つで音が消えるのは全体のミュートに近いため）
+  if (e.key === 'Escape' && G.held) putBack(heldPos());
+});
+
+// ---------- 描画の部品 ----------
+function rr(c, x, y, w, h, r) { r = Math.min(r, w / 2, h / 2); c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
+function font(px, w) { return `${w || 900} ${Math.round(px)}px UIRound, "M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", "Yu Gothic", system-ui, sans-serif`; }
+function fxText(str, x, y, px, st, align) {
+  ctx.save(); ctx.font = font(px); ctx.textAlign = align || 'center'; ctx.textBaseline = 'middle'; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+  const outer = st.strokes.length ? st.strokes[0][1] : 0;
+  if (TEXT_LOG) logTextBox(str, x, y, px, outer, align || 'center');
+  if (st.shadow) {
+    ctx.save(); ctx.shadowColor = st.shadow.color; ctx.shadowBlur = px * st.shadow.blur; ctx.shadowOffsetX = px * st.shadow.dx; ctx.shadowOffsetY = px * st.shadow.dy;
+    ctx.strokeStyle = st.shadow.color; ctx.lineWidth = Math.max(1, px * outer * 2); ctx.strokeText(str, x, y); ctx.fillStyle = st.shadow.color; ctx.fillText(str, x, y); ctx.restore();
+  }
+  for (const [color, w] of st.strokes) { ctx.strokeStyle = color; ctx.lineWidth = px * w * 2; ctx.strokeText(str, x, y); }
+  if (Array.isArray(st.fill)) { const g = ctx.createLinearGradient(0, y - px * 0.5, 0, y + px * 0.5); g.addColorStop(0, st.fill[0]); g.addColorStop(1, st.fill[1]); ctx.fillStyle = g; }
+  else ctx.fillStyle = st.fill;
+  ctx.fillText(str, x, y);
+  ctx.restore();
+}
+// 文字の外接矩形の記録（テスト用。英語の幅で画面や部品からはみ出していないかを確かめる）。変換（回転・拡大）込みの CSS px
+let TEXT_LOG = null;
+function logTextBox(str, x, y, px, outer, align) {
+  const w = ctx.measureText(str).width, pad = px * outer;
+  const x0 = (align === 'center' ? x - w / 2 : align === 'right' ? x - w : x) - pad, x1 = x0 + w + pad * 2, y0 = y - px * 0.5 - pad, y1 = y + px * 0.5 + pad;
+  const m = ctx.getTransform(), pts = [[x0, y0], [x1, y0], [x0, y1], [x1, y1]].map(([a, b]) => [(m.a * a + m.c * b + m.e) / view.dpr, (m.b * a + m.d * b + m.f) / view.dpr]);
+  TEXT_LOG.push({ s: str, x0: Math.min(...pts.map(p => p[0])), x1: Math.max(...pts.map(p => p[0])), y0: Math.min(...pts.map(p => p[1])), y1: Math.max(...pts.map(p => p[1])) });
+}
+function star(c, cx, cy, r, rot) { c.beginPath(); for (let i = 0; i < 10; i++) { const a = rot + i * Math.PI / 5 - Math.PI / 2, rr2 = i % 2 ? r * 0.45 : r; c.lineTo(cx + Math.cos(a) * rr2, cy + Math.sin(a) * rr2); } c.closePath(); }
+const ICON_PATHS = {
+  undo: ['M3.5 6.5v6.5h6.5', 'M20.5 17.5a8.5 8.5 0 0 0-8.5-8.5a8.8 8.8 0 0 0-6 2.4L3.5 13'],
+  retry: ['M20.5 12a8.5 8.5 0 1 1-8.5-8.5c2.4 0 4.7 1 6.4 2.6L20.5 8', 'M20.5 3v5h-5'],
+  // v6: 効果音 = 長さの違う縦線の並び（Lucide の audio-lines）、BGM = 8 分音符 2 つ（Lucide の music）。
+  // スピーカーの形は YouTube のミュートと同じ記号に見えるので使わない（設計要件: プラットフォームの操作と同じアイコンを近くに置かない）
+  sfx: ['M2 10v3', 'M6 6v11', 'M10 3v18', 'M14 8v7', 'M18 5v13', 'M22 10v3'],
+  bgm: ['M9 18V5l12-2v13', 'M9 18a3 3 0 1 1-6 0a3 3 0 1 1 6 0', 'M21 16a3 3 0 1 1-6 0a3 3 0 1 1 6 0'],
+};
+const ICON_OFF = 'M3 3l18 18';   // OFF の斜線
+function icon(name, cx, cy, r, color) {
+  ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = Math.max(2.5, r * 0.26); ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.fillStyle = color;
+  const off = name.endsWith('-off'), key = off ? name.slice(0, -4) : name;
+  if (ICON_PATHS[key]) {
+    // v5d: SVG の線（24 の枠）で描き分ける。もどす = 左へ戻る矢印（↶: 右下から上を回って左下へ）、やりなおす = 一周する矢印（↻）
+    // v6: 効果音・BGM の OFF は白フチの斜線を重ねる
+    const s = r * 2 / 24;
+    ctx.translate(cx - 12 * s, cy - 12 * s); ctx.scale(s, s); ctx.lineWidth = 3.4;
+    for (const d of ICON_PATHS[key]) ctx.stroke(new Path2D(d));
+    if (off) { ctx.strokeStyle = '#fff'; ctx.lineWidth = 7; ctx.stroke(new Path2D(ICON_OFF)); ctx.strokeStyle = color; ctx.lineWidth = 3.4; ctx.stroke(new Path2D(ICON_OFF)); }
+  } else if (name === 'check') {
+    ctx.beginPath(); ctx.moveTo(cx - r * 0.55, cy); ctx.lineTo(cx - r * 0.15, cy + r * 0.45); ctx.lineTo(cx + r * 0.6, cy - r * 0.45); ctx.stroke();
+  } else if (name === 'play') {
+    ctx.beginPath(); ctx.moveTo(cx - r * 0.5, cy - r * 0.7); ctx.lineTo(cx + r * 0.7, cy); ctx.lineTo(cx - r * 0.5, cy + r * 0.7); ctx.closePath(); ctx.fill();
+  }
+  ctx.restore();
+}
+// 厚みのある丸ボタン（押すと沈む）
+function roundButton(b, active, pressed) {
+  const r = b.r - 2, depth = 4, dy = pressed ? 2 : 0;
+  ctx.save();
+  ctx.fillStyle = 'rgba(11,27,61,.28)'; ctx.beginPath(); ctx.arc(b.x, b.y + depth + 3, r, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = active ? PAL.orangeDeep : '#8a8f9a'; ctx.beginPath(); ctx.arc(b.x, b.y + depth, r, 0, Math.PI * 2); ctx.fill();
+  const g = ctx.createLinearGradient(0, b.y - r + dy, 0, b.y + r + dy); g.addColorStop(0, active ? PAL.orangeTop : '#d6d9df'); g.addColorStop(1, active ? PAL.orange : '#b3b7bf');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(b.x, b.y + dy, r, 0, Math.PI * 2); ctx.fill();
+  ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.stroke();
+  ctx.strokeStyle = PAL.navy; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.arc(b.x, b.y + dy, r + 2, 0, Math.PI * 2); ctx.stroke();
+  ctx.restore();
+  return dy;
+}
+// 横長の決定ボタン（つぎへ・スタート）
+function pillButton(x, y, w, h, label, color, colorTop, deep, scale, iconName) {
+  ctx.save(); ctx.translate(x, y); ctx.scale(scale, scale); ctx.translate(-x, -y);
+  const depth = 5;
+  ctx.fillStyle = 'rgba(11,27,61,.3)'; rr(ctx, x - w / 2, y - h / 2 + depth + 4, w, h, h / 2); ctx.fill();
+  ctx.fillStyle = deep; rr(ctx, x - w / 2, y - h / 2 + depth, w, h, h / 2); ctx.fill();
+  const g = ctx.createLinearGradient(0, y - h / 2, 0, y + h / 2); g.addColorStop(0, colorTop); g.addColorStop(1, color);
+  ctx.fillStyle = g; rr(ctx, x - w / 2, y - h / 2, w, h, h / 2); ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 3; ctx.stroke();
+  ctx.strokeStyle = PAL.navy; ctx.lineWidth = 1.5; rr(ctx, x - w / 2 - 2, y - h / 2 - 2, w + 4, h + 4, h / 2 + 2); ctx.stroke();
+  ctx.fillStyle = 'rgba(255,255,255,.35)'; rr(ctx, x - w / 2 + 8, y - h / 2 + 4, w - 16, h * 0.32, h * 0.16); ctx.fill();
+  const fs = h * 0.46; ctx.font = font(fs);
+  const tw = ctx.measureText(label).width, off = iconName ? fs * 0.45 : 0;
+  fxText(label, x - off, y + 1, fs, ST.btn);
+  if (iconName) icon(iconName, x - off + tw / 2 + fs * 0.7, y + 1, fs * 0.42, '#fff');
+  ctx.restore();
+}
+function pillWidth(label, h, iconName) { const fs = h * 0.46; ctx.font = font(fs); return ctx.measureText(label).width + fs * (iconName ? 3.2 : 2.2); }
+function plate(x, y, w, h) {
+  ctx.save(); ctx.fillStyle = 'rgba(11,27,61,.25)'; rr(ctx, x, y + 4, w, h, h / 2); ctx.fill();
+  ctx.fillStyle = '#fff'; rr(ctx, x, y, w, h, h / 2); ctx.fill(); ctx.strokeStyle = PAL.navy; ctx.lineWidth = 2; ctx.stroke(); ctx.restore();
+}
+
+// ---------- 品物の描画（画像。中心 (cx,cy)・箱の幅 s。品の底が箱の底に揃う） ----------
+function drawItem(kind, cx, cy, s, o) {
+  const im = IMG['item_' + String(G.skin[kind % G.skin.length]).padStart(2, '0')];
+  const yb = cy + G.layout.itemH / 2 - 1;  // 品の底
+  ctx.save();
+  if (o && o.shadow) { ctx.fillStyle = `rgba(11,27,61,${0.22 * (o.shadowA == null ? 1 : o.shadowA)})`; ctx.beginPath(); ctx.ellipse(cx, yb + (o.shadowDy || 2), s * 0.36 * (o.shadowK || 1), s * 0.09 * (o.shadowK || 1), 0, 0, Math.PI * 2); ctx.fill(); }
+  ctx.translate(cx, yb);
+  if (o && o.rot) ctx.rotate(o.rot);
+  if (o && (o.sx || o.sy)) ctx.scale(o.sx || 1, o.sy || 1);
+  if (ready(im)) ctx.drawImage(im, -s / 2, ITEM_BOTTOM_PAD * s - s, s, s);
+  else { ctx.fillStyle = ITEM_COLOR[G.skin[kind % G.skin.length]]; rr(ctx, -s * 0.4, -s * 0.85, s * 0.8, s * 0.82, s * 0.1); ctx.fill(); ctx.strokeStyle = PAL.line; ctx.lineWidth = 3; ctx.stroke(); }
+  ctx.restore();
+}
+
+// ---------- 見守り（しきぶ）: ポーズの状態機械 ----------
+// 割り当て（v3b）: 待機 01（表情差分あり。ときどき 33/03）／揃った 09・11／失敗 17・19／
+// 困り度 1: 01＋ふあん顔＋汗 1 粒・2: 03 首を傾げる＋汗 2〜3 粒・3: 25 肩を落とす＋汗 3〜4 粒（有効手 0 なら吹き出し）／
+// クリア 10（10 面ごとに 29）／20 秒放置 28・21。切替は「ぽよん」250ms（待機のゆらぎと放置は 300ms のクロスフェード）。
+// 連打で暴れないよう最短表示 600ms。足元の接地点は pose_data.js の ax,ay で全ポーズ共通。
+const POSE = {
+  cur: '01', since: 0, pop: 0, fade: null, react: null, log: [],
+  doneAlt: 0, failAlt: 0, idleAlt: 0, fidgetAlt: 0,
+  fidget: { next: 0, until: 0, pose: '33' }, longIdle: { next: 0, until: 0, pose: '28' }, lastInput: 0,
+  MIN_SHOW: 600, POP_MS: 250, FADE_MS: 300, IDLE_MS: 20000,
+};
+const PD = (typeof POSE_DATA !== 'undefined') ? POSE_DATA : { cut: 369, body_h: 639, poses: {} };
+// 全ポーズを接地点で重ねたときの外接枠（接地点が原点。上が負）。この枠で領域を取るので、どのポーズでも盤面と重ならない
+const ENV = (() => { let x0 = 0, x1 = 0, y0 = 0, y1 = 0; for (const k in PD.poses) { const p = PD.poses[k]; x0 = Math.min(x0, -p.ax); x1 = Math.max(x1, p.w - p.ax); y0 = Math.min(y0, -p.ay); y1 = Math.max(y1, p.h - p.ay); } return { x0, x1, y0, y1, w: x1 - x0, h: y1 - y0 }; })();
+function poseMeta(k) { return PD.poses[k] || PD.poses['01']; }
+function poseInput() { POSE.lastInput = now(); POSE.longIdle.until = 0; POSE.longIdle.next = 0; }
+function poseReset() { POSE.react = null; POSE.fade = null; POSE.fidget.next = 0; POSE.fidget.until = 0; poseInput(); }
+// 反応（揃った・失敗）。表示は最短表示を守って遅れることがあるので、長さは実際に見えてからの時間で数える
+function setReact(kind) {
+  const t = now(); let pose, dur;
+  if (kind === 'done') { pose = (POSE.doneAlt++ % 2) ? '11' : '09'; dur = 900; }
+  else { pose = (POSE.failAlt++ % 2) ? '19' : '17'; dur = 800; }
+  POSE.react = { pose, dur, at: t, shownAt: 0, kind };
+  POSE.fidget.until = 0;
+  POSE.log.push({ t, req: pose });
+  if (POSE.cur === pose) { POSE.react.shownAt = t; POSE.pop = t; }
+}
+function desiredPose(t) {
+  if (G.scene === 'clear') return { pose: (G.allClearShow || G.level % 10 === 0) ? '29' : '10', how: 'pop' };   // 全クリアは 29（胸を張ってドヤ顔）
+  if (G.scene !== 'play') return { pose: '01', how: 'pop' };
+  const r = POSE.react;
+  if (r) { const end = r.shownAt ? r.shownAt + r.dur : r.at + 1500; if (t < end) return { pose: r.pose, how: 'pop' }; POSE.react = null; }
+  // 困り度: 3 は肩を落とす（25）・2 は首を傾げる（03）・0〜1 は 01（表情差分で 1 はふあん寄り）
+  if (G.stuck || G.worry >= 3) return { pose: '25', how: 'pop' };
+  if (G.worry === 2) return { pose: '03', how: 'pop' };
+  // 20 秒無操作: あくび → （さらに 20 秒）腕組み → … を 3 秒ずつ
+  const li = POSE.longIdle;
+  if (t - POSE.lastInput >= POSE.IDLE_MS) {
+    if (!li.next) li.next = t;
+    if (t >= li.next && !li.until) { li.pose = (POSE.idleAlt++ % 2) ? '21' : '28'; li.until = t + 3000; li.next = t + POSE.IDLE_MS; }
+    if (li.until && t < li.until) return { pose: li.pose, how: 'fade' };
+    if (li.until && t >= li.until) li.until = 0;
+  }
+  // 待機のゆらぎ: 15〜30 秒に 1 回、スマホを見る／首を傾ける（4 秒）
+  const fg = POSE.fidget;
+  if (!fg.next) fg.next = t + 15000 + Math.random() * 15000;
+  if (t >= fg.next && !fg.until) { fg.pose = (POSE.fidgetAlt++ % 2) ? '03' : '33'; fg.until = t + 4000; fg.next = fg.until + 15000 + Math.random() * 15000; }
+  if (fg.until && t < fg.until) return { pose: fg.pose, how: 'fade' };
+  if (fg.until && t >= fg.until) fg.until = 0;
+  return { pose: '01', how: 'pop' };
+}
+function updatePose(t) {
+  const d = desiredPose(t);
+  if (d.pose === POSE.cur) return;
+  if (t - POSE.since < POSE.MIN_SHOW) return;  // 最短表示（連打で暴れない）
+  const prev = POSE.cur;
+  POSE.cur = d.pose; POSE.since = t;
+  if (d.how === 'fade') POSE.fade = { from: prev, t0: t }; else { POSE.pop = t; POSE.fade = null; }
+  if (POSE.react && POSE.react.pose === d.pose && !POSE.react.shownAt) POSE.react.shownAt = t;
+  POSE.log.push({ t, pose: d.pose, how: d.how });
+  if (POSE.log.length > 200) POSE.log.shift();
+}
+// ---------- 汗（v3b）: 顔の矩形からの相対位置に出し、輪郭に沿って少し流れて消える（試作 B009 の動画と同じ動き） ----------
+// 出現点: こめかみ 2・額 1・頬 2。fy は顔の高さの割合（出現 → 流れ終わり）、inset は輪郭から内側へ（顔の幅比）。
+const SWEAT_PTS = {
+  tl: { side: 'L', fy: [0.22, 0.46], inset: 0.02 }, tr: { side: 'R', fy: [0.22, 0.46], inset: 0.02 },
+  fh: { side: 'C', fy: [0.05, 0.26], inset: 0 },
+  cl: { side: 'L', fy: [0.56, 0.78], inset: 0.06 }, cr: { side: 'R', fy: [0.56, 0.78], inset: 0.06 },
+};
+const SWEAT_SIZE = { S: 0.14, M: 0.17, L: 0.20 };   // 粒の高さ（顔の高さ比）。平均でおよそ 1/6
+const SWEAT_APPEAR = 100, SWEAT_FADE = 150;         // 出現（0.6→1 に拡大）・消える（不透明度 1→0）の ms
+// 困り度ごとの 1 回の粒数・大きさ・消えてから次が出るまでの間（ms）。前の粒が消えてから次を出すので、同時に見える粒は n 以下
+const WORRY_SWEAT = { 1: { n: [1, 1], gap: 1300, sizes: ['S'] }, 2: { n: [2, 3], gap: 500, sizes: ['S', 'M'] }, 3: { n: [3, 4], gap: 150, sizes: ['S', 'M', 'L'] } };
+// 顔の輪郭の x（fy: 顔の高さの割合）。pose_data.js の contour を線形補間
+function faceEdge(p, fy, side) {
+  const c = p.contour; if (!c || !c.length) return side === 'L' ? p.face[0] : p.face[2];
+  const idx = side === 'L' ? 1 : 2;
+  if (fy <= c[0][0]) return c[0][idx];
+  for (let i = 1; i < c.length; i++) if (fy <= c[i][0]) { const u = (fy - c[i - 1][0]) / (c[i][0] - c[i - 1][0]); return c[i - 1][idx] + (c[i][idx] - c[i - 1][idx]) * u; }
+  return c[c.length - 1][idx];
+}
+// 粒の矩形（ポーズ画像の座標）。k: 流れの進み 0→1。矩形は必ず顔の矩形の中に収める
+function sweatGeom(p, id, k, size) {
+  const d = SWEAT_PTS[id], F = p.face || p.head, fw = F[2] - F[0], fh = F[3] - F[1];
+  const h = fh * (SWEAT_SIZE[size] || SWEAT_SIZE.S), w = h * (IMG.sweat && ready(IMG.sweat) ? IMG.sweat.naturalWidth / IMG.sweat.naturalHeight : 40 / 137);
+  const fy = d.fy[0] + (d.fy[1] - d.fy[0]) * k;
+  let cx;
+  if (d.side === 'L') cx = faceEdge(p, fy, 'L') + fw * d.inset + w / 2;
+  else if (d.side === 'R') cx = faceEdge(p, fy, 'R') - fw * d.inset - w / 2;
+  else cx = (faceEdge(p, fy, 'L') + faceEdge(p, fy, 'R')) / 2;
+  const x = clamp(cx - w / 2, F[0], F[2] - w), y = clamp(F[1] + fh * fy, F[1], F[3] - h);
+  return { x, y, w, h, side: d.side };
+}
+function spawnSweat(n, sizes, ids, flow) {
+  sizes = sizes || ['S'];
+  let pool = ids ? ids.slice() : Object.keys(SWEAT_PTS);
+  if (!ids && n === 1) pool = ['tl', 'tr', 'fh'];
+  for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
+  const t = now(); let end = t;
+  for (let i = 0; i < n && i < pool.length; i++) {
+    const q = { id: pool[i], size: sizes[Math.floor(Math.random() * sizes.length)], t0: t + i * 120, flow: flow || 420 + Math.random() * 180 };
+    G.sweat.push(q); end = Math.max(end, q.t0 + SWEAT_APPEAR + q.flow + SWEAT_FADE);
+  }
+  return end;
+}
+function drawSweat(p, f, t) {
+  if (G.scene === 'play' && G.worry > 0 && t >= G.sweatNext) {
+    const W = WORRY_SWEAT[G.worry]; G.sweatNext = spawnSweat(W.n[0] + Math.floor(Math.random() * (W.n[1] - W.n[0] + 1)), W.sizes) + W.gap;
+  }
+  G.sweat = G.sweat.filter(q => t < q.t0 + SWEAT_APPEAR + q.flow + SWEAT_FADE);
+  if (!ready(IMG.sweat)) return;
+  for (const q of G.sweat) {
+    if (t < q.t0) continue;
+    const e = t - q.t0; let k = 0, sc = 1, alpha = 1;
+    if (e < SWEAT_APPEAR) sc = 0.6 + 0.4 * (e / SWEAT_APPEAR);
+    else if (e < SWEAT_APPEAR + q.flow) { const u = (e - SWEAT_APPEAR) / q.flow; k = u * u; }
+    else { k = 1; alpha = 1 - (e - SWEAT_APPEAR - q.flow) / SWEAT_FADE; }
+    const g = sweatGeom(p, q.id, k, q.size);
+    const px = f.gx + (g.x - p.ax) * f.s, py = f.gy + (g.y - p.ay) * f.s, sw = g.w * f.s, sh = g.h * f.s;
+    ctx.save(); ctx.globalAlpha = alpha;
+    ctx.translate(px + sw / 2, py); ctx.scale(g.side === 'L' ? -sc : sc, sc);   // 上端中央を軸に拡大。左側は左右反転
+    ctx.drawImage(IMG.sweat, -sw / 2, 0, sw, sh);
+    ctx.restore();
+  }
+}
+// しきぶの置き方: 接地点 (gx,gy) と倍率 s。縦長は腰から上（接地線から cut 分上が画面下端）、横長・タイトルは全身
+function characterFrame(L) {
+  const a = L.chr;
+  if (L.titleMode) {
+    const s = Math.min(a.w / ENV.w, a.h * 0.94 / ENV.h);
+    return { s, gx: clamp(a.x + a.w / 2, a.x - ENV.x0 * s, a.x + a.w - ENV.x1 * s), gy: a.y + a.h - a.h * 0.05 };
+  }
+  if (L.portrait) {
+    const visH = -ENV.y0 - PD.cut;  // 腰から一番高い手の先まで
+    const s = Math.min(a.w * 0.6 / ENV.w, a.h / visH);
+    return { s, gx: a.x + 6 - ENV.x0 * s, gy: a.y + a.h + PD.cut * s };
+  }
+  const s = Math.min(a.w * 0.94 / ENV.w, (a.h - 10) / ENV.h);
+  return { s, gx: clamp(a.x + a.w / 2, a.x - ENV.x0 * s, a.x + a.w - ENV.x1 * s), gy: a.y + a.h - 6 };
+}
+function poseRect(L, key) {
+  const f = characterFrame(L), p = poseMeta(key || POSE.cur);
+  const x = f.gx - p.ax * f.s, y = f.gy - p.ay * f.s, w = p.w * f.s, h = p.h * f.s;
+  const bottom = L.titleMode || !L.portrait ? y + h : L.chr.y + L.chr.h;
+  return { x, y, w, h: bottom - y, gx: f.gx, gy: f.gy, s: f.s };
+}
+function drawPoseImage(key, f, t, alpha) {
+  const p = poseMeta(key), im = IMG['pose_' + key];
+  if (!ready(im)) return;
+  const x = f.gx - p.ax * f.s, y = f.gy - p.ay * f.s;
+  ctx.save(); if (alpha < 1) ctx.globalAlpha = alpha;
+  ctx.drawImage(im, x, y, p.w * f.s, p.h * f.s);
+  if (key === '01') {
+    // 表情の差し替えは基本ポーズ 01 だけ（頭の差分は 01 の原画に合わせて作ってある）
+    const face = currentFace(), hp = FACE_DATA.head_place, hs = FACE_DATA.head_size;
+    const head = IMG['head_' + face] || IMG.head_normal;
+    if (ready(head)) ctx.drawImage(head, x + hp[0] * f.s, y + hp[1] * f.s, hs[0] * f.s, hs[1] * f.s);
+    if (face === 'normal') {
+      if (!G.blink.next) G.blink.next = t + 1500 + Math.random() * 3000;
+      if (t >= G.blink.next && !G.blink.t0) { G.blink.t0 = t; }
+      if (G.blink.t0) {
+        const e = t - G.blink.t0; let open = 1;
+        if (e < 70) open = 1 - e / 70; else if (e < 110) open = 0; else if (e < 200) open = (e - 110) / 90; else { G.blink.t0 = 0; G.blink.next = t + 2000 + Math.random() * 3500; }
+        if (open < 1) drawLids(x + hp[0] * f.s, y + hp[1] * f.s, f.s, open);
+      }
+    } else { G.blink.t0 = 0; }
+  }
+  ctx.restore();
+}
+function drawCharacter(L) {
+  const a = L.chr, t = now();
+  if (!L.titleMode) updatePose(t);
+  const key = L.titleMode ? '01' : POSE.cur;
+  const f = characterFrame(L), p = poseMeta(key);
+  const face = currentFace();
+  if (key === '01' && face !== G.lastFace) { G.lastFace = face; if (!L.titleMode) POSE.pop = t; }
+  ctx.save();
+  // 切替の「ぽよん」（足元を軸に縦につぶれて伸びる）
+  let sx = 1, sy = 1;
+  const pk = (t - POSE.pop) / POSE.POP_MS;
+  if (pk < 1 && !L.titleMode) { sy = pk < 0.35 ? 1 - 0.09 * (pk / 0.35) : 1 + 0.08 * Math.sin((pk - 0.35) / 0.65 * Math.PI); sx = 2 - sy; }
+  const r = POSE.react;
+  const hop = (!L.titleMode && r && r.kind === 'done' && r.shownAt && key === r.pose) ? Math.abs(Math.sin((t - r.shownAt) / r.dur * Math.PI * 2)) * 5 : 0;
+  const idle = L.titleMode ? Math.sin(t / 900) * 3 : 0;
+  const cheer = (!L.titleMode && G.scene === 'clear' && G.allClearShow) ? Math.abs(Math.sin((t - G.clearShownAt) / 700 * Math.PI)) * 8 : 0;   // 全クリア: 小さく跳ね続ける
+  ctx.translate(f.gx, f.gy - hop - idle - cheer); ctx.scale(sx, sy); ctx.translate(-f.gx, -f.gy);
+  // 縦長は腰から下を画面外に出す（領域の外に描かない）
+  if (L.portrait && !L.titleMode) { ctx.beginPath(); ctx.rect(-4000, -4000, 8000, 4000 + a.y + a.h); ctx.clip(); }
+  const fd = POSE.fade, fk = fd ? (t - fd.t0) / POSE.FADE_MS : 1;
+  if (fd && fk < 1) { drawPoseImage(fd.from, f, t, 1 - fk); drawPoseImage(key, f, t, fk); }
+  else { if (fd) POSE.fade = null; drawPoseImage(key, f, t, 1); }
+  // 汗（困り度 1〜3・失敗）。位置は今のポーズの顔の矩形からの相対（drawSweat）
+  if (!L.titleMode) drawSweat(p, f, t);
+  ctx.restore();
+  // 詰まりの一言（吹き出し）。今のポーズの右肩の外・頭の高さに
+  if (G.scene === 'play' && G.stuck) {
+    const msg = T('stuck'), fs = clamp(L.W * 0.042, 14, 20);
+    ctx.font = font(fs);
+    const tw = ctx.measureText(msg).width + 28, bh = fs * 2.1;
+    const right = f.gx + (p.w - p.ax) * f.s, headTop = f.gy - (p.ay - p.head[1]) * f.s;
+    const bx = L.portrait ? Math.min(right + 4, L.W - tw - 8) : a.x + (a.w - tw) / 2, by = L.portrait ? headTop + 4 : Math.max(a.y + 4, headTop - bh - 6);
+    ctx.save(); ctx.fillStyle = 'rgba(11,27,61,.25)'; rr(ctx, bx, by + 4, tw, bh, 14); ctx.fill();
+    ctx.fillStyle = '#fff'; ctx.strokeStyle = PAL.navy; ctx.lineWidth = 2.5; rr(ctx, bx, by, tw, bh, 14); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(bx + 6, by + bh * 0.6); ctx.lineTo(bx - 8, by + bh * 0.8); ctx.lineTo(bx + 6, by + bh * 0.85); ctx.closePath(); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#fff'; ctx.fillRect(bx + 1, by + bh * 0.55, 4, bh * 0.3);
+    fxText(msg, bx + tw / 2, by + bh / 2 + 1, fs, ST.plain); ctx.restore();
+  }
+}
+function drawLids(hx, hy, s, open) {
+  const skin = `rgb(${FACE_DATA.skin.join(',')})`;
+  ctx.save(); ctx.translate(hx, hy); ctx.scale(s, s);
+  for (const eye of FACE_DATA.eyes) {
+    const ed = eye.edges; if (!ed.length) continue;
+    const curve = ed.map(([x, top, bottom]) => [x + 0.5, top + (bottom - top) * (1 - open)]);
+    const y0 = eye.rect[1] - 1;
+    ctx.fillStyle = skin; ctx.beginPath(); ctx.moveTo(curve[0][0] - 1, y0); ctx.lineTo(curve[curve.length - 1][0] + 1, y0);
+    for (let i = curve.length - 1; i >= 0; i--) ctx.lineTo(curve[i][0], curve[i][1]);
+    ctx.closePath(); ctx.fill();
+    ctx.strokeStyle = '#080808'; ctx.lineWidth = 1.4; ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.beginPath();
+    curve.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y)); ctx.stroke();
+  }
+  ctx.restore();
+}
+
+// ---------- 背景・HUD・盤面 ----------
+const BG = { grad: null, key: '' };
+function drawBackground(L) {
+  const key = L.W + 'x' + L.H;
+  if (BG.key !== key) { const g = ctx.createLinearGradient(0, 0, 0, L.H); g.addColorStop(0, PAL.bgTop); g.addColorStop(1, PAL.bgBot); BG.grad = g; BG.key = key; }
+  ctx.fillStyle = BG.grad; ctx.fillRect(0, 0, L.W, L.H);
+  // 盤面の後ろの放射光
+  const cx = L.W / 2, cy = L.H * 0.42, r = Math.max(L.W, L.H) * 0.6;
+  const rg = ctx.createRadialGradient(cx, cy, 0, cx, cy, r); rg.addColorStop(0, 'rgba(255,255,255,.34)'); rg.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = rg; ctx.fillRect(0, 0, L.W, L.H);
+  // ゆっくり流れる斜めの帯（止まって見えない程度）
+  const t = now() / 1000, sp = 90, off = (t * 14) % sp;
+  ctx.save(); ctx.globalAlpha = 0.07; ctx.strokeStyle = '#fff'; ctx.lineWidth = 26;
+  for (let x = -L.H - sp; x < L.W + sp; x += sp) { ctx.beginPath(); ctx.moveTo(x + off, 0); ctx.lineTo(x + off + L.H, L.H); ctx.stroke(); }
+  ctx.restore();
+  // 浮かぶ光の粒
+  ctx.save();
+  for (let i = 0; i < 14; i++) {
+    const ph = (t * 0.06 + i * 0.137) % 1, x = ((i * 0.618) % 1) * L.W + Math.sin(t * 0.7 + i) * 12, y = L.H * (1.1 - ph * 1.2), rad = 3 + (i % 4) * 2;
+    ctx.globalAlpha = 0.35 * Math.sin(ph * Math.PI); ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(x, y, rad, 0, Math.PI * 2); ctx.fill();
+  }
+  ctx.restore();
+}
+function drawHud(L) {
+  const P = L.hud, s1 = levelLabel(G.level), s2 = movesLabel(G.moves, G.par);
+  let fs = P.fs; ctx.font = font(fs);
+  let t1 = ctx.measureText(s1).width, t2 = ctx.measureText(s2).width;
+  // 4 桁の手数など、段を決めたときより長くなったら字を縮めて収める
+  const room = P.rows === 1 ? P.btnLeft - 18 : P.btnLeft - 10;
+  const need = P.rows === 1 ? t1 + t2 + fs * 2.4 : t1 + fs * 1.2;
+  if (need > room) { const k = room / need; fs *= k; t1 *= k; t2 *= k; }
+  const w1 = t1 + fs * 1.2, w2 = t2 + fs * 1.2, h = fs * 1.7;
+  plate(10, P.y1 - h / 2, w1, h); fxText(s1, 10 + w1 / 2, P.y1 + 1, fs, ST.hud);
+  const x2 = P.rows === 1 ? 10 + w1 + 8 : 10, y2 = P.rows === 1 ? P.y1 : P.y2;
+  plate(x2, y2 - h / 2, w2, h); fxText(s2, x2 + w2 / 2, y2 + 1, fs * 0.92, ST.hud);
+  for (const k in L.btns) {
+    // v5d: 押せない時は灰色にせず、同じ橙のまま 40% の薄さ（灰と橙で別の意味に見えないように）。文字も一緒に薄く
+    const b = L.btns[k], can = btnActive(k);
+    const pressed = can && G.btnPress && G.btnPress.key === k && now() - G.btnPress.t0 < 140;
+    ctx.save(); if (!can) ctx.globalAlpha = 0.4;
+    // v6: 効果音・BGM は ON = 橙に白い記号、OFF = 灰に濃い灰の記号＋斜線（押せない時の 40% の薄さとは別の見た目）
+    const on = k === 'sfx' ? !Sound.userMuted : k === 'bgm' ? Sound.bgmOn : true;
+    const dy = roundButton(b, on, pressed);
+    if (b.toggle) icon(on ? k : k + '-off', b.x, b.y + dy, b.r * 0.62, on ? '#fff' : '#4b5467');
+    else icon(k, b.x, b.y + dy, b.r * 0.6, '#fff');
+    fxText(T(k), b.x, b.ly, b.lf, ST.btnLabel);
+    ctx.restore();
+    if (k === 'retry' && G.stuck) { ctx.save(); ctx.strokeStyle = PAL.bad; ctx.lineWidth = 4; ctx.globalAlpha = 0.5 + 0.5 * Math.sin(now() / 150); ctx.beginPath(); ctx.arc(b.x, b.y, b.r + 3, 0, Math.PI * 2); ctx.stroke(); ctx.restore(); }
+  }
+}
+function drawBoardPlate(L) {
+  const b = L.board;
+  ctx.save();
+  ctx.shadowColor = PAL.boardShadow; ctx.shadowBlur = 16; ctx.shadowOffsetY = 8;
+  ctx.fillStyle = PAL.board; rr(ctx, b.x, b.y, b.w, b.h, 22); ctx.fill();
+  ctx.shadowColor = 'transparent';
+  ctx.strokeStyle = PAL.boardEdge; ctx.lineWidth = 3; ctx.stroke();
+  ctx.strokeStyle = 'rgba(11,27,61,.35)'; ctx.lineWidth = 1.5; rr(ctx, b.x - 2, b.y - 2, b.w + 4, b.h + 4, 24); ctx.stroke();
+  // 板の上辺の光沢
+  ctx.fillStyle = 'rgba(255,255,255,.5)'; rr(ctx, b.x + 10, b.y + 5, b.w - 20, 6, 3); ctx.fill();
+  ctx.restore();
+}
+function drawColumn(L, i, t) {
+  const c = L.cells[i], col = G.cols[i], done = isDone(col, G.cap);
+  let dx = 0; if (t < G.shake && G.shakeCol === i) dx = Math.sin((G.shake - t) / 18) * 4;
+  ctx.save(); ctx.translate(dx, 0);
+  // 棚の箱: 影 → 枠（木）→ 穴
+  ctx.fillStyle = 'rgba(11,27,61,.18)'; rr(ctx, c.x, c.y + 4, c.w, c.h, 10); ctx.fill();
+  ctx.fillStyle = done ? PAL.doneFrame : PAL.slotFrame; rr(ctx, c.x, c.y, c.w, c.h, 10); ctx.fill();
+  ctx.strokeStyle = PAL.line; ctx.lineWidth = 2; ctx.stroke();
+  const fw = 4;
+  ctx.fillStyle = done ? PAL.doneSlot : PAL.slot; rr(ctx, c.x + fw, c.y + fw, c.w - fw * 2, c.h - fw * 2, 6); ctx.fill();
+  // 内側の奥行き（上を少し暗く）
+  const g = ctx.createLinearGradient(0, c.y, 0, c.y + c.h); g.addColorStop(0, 'rgba(90,50,10,.16)'); g.addColorStop(0.25, 'rgba(90,50,10,0)');
+  ctx.fillStyle = g; rr(ctx, c.x + fw, c.y + fw, c.w - fw * 2, c.h - fw * 2, 6); ctx.fill();
+  // 置ける列 / 置けない列のフラッシュ
+  if (G.held && i !== G.held.from) {
+    const ok = col.length < G.cap && (col.length === 0 || col[col.length - 1] === G.held.kind);
+    if (ok) { ctx.save(); ctx.shadowColor = 'rgba(46,158,91,.8)'; ctx.shadowBlur = 14; ctx.strokeStyle = PAL.ok; ctx.lineWidth = 3.5; rr(ctx, c.x - 1, c.y - 1, c.w + 2, c.h + 2, 11); ctx.stroke(); ctx.restore(); }
+  }
+  if (t < G.flashT && G.flashCol === i) { ctx.fillStyle = `rgba(255,59,59,${0.45 * (G.flashT - t) / 260})`; rr(ctx, c.x, c.y, c.w, c.h, 10); ctx.fill(); }
+  ctx.restore();
+  return dx;
+}
+function drawShelfBoard(L, c, slot, dx) {
+  const y = c.y + c.h - L.pad - L.itemH * slot, x0 = c.x + 4 + dx, w = c.w - 8, h = Math.max(4, L.itemH * 0.07);
+  ctx.fillStyle = 'rgba(11,27,61,.12)'; ctx.fillRect(x0, y, w, h + 3);
+  ctx.fillStyle = PAL.shelf; ctx.fillRect(x0, y - h, w, h);
+  ctx.fillStyle = PAL.shelfTop; ctx.fillRect(x0, y - h, w, Math.max(1.5, h * 0.35));
+}
+function drawBoard(L) {
+  const t = now();
+  const flying = new Set(G.anims.map(a => a.col + ':' + a.slot));
+  const dxs = [];
+  for (let i = 0; i < L.cells.length; i++) dxs.push(drawColumn(L, i, t));
+  // 棚板と品物（下の段から。棚板 → 品 の順で、上の棚板が下の品の頭を少し隠す）
+  for (let i = 0; i < L.cells.length; i++) {
+    const c = L.cells[i], col = G.cols[i], done = isDone(col, G.cap), dx = dxs[i];
+    for (let s = 0; s < G.cap; s++) {
+      drawShelfBoard(L, c, s, dx);
+      if (s < col.length && !flying.has(i + ':' + s)) {
+        const p = slotPos(i, s); const sq = G.squash[i + ':' + s];
+        let o = null;
+        if (sq != null) { const k = (t - sq) / 180; if (k < 1) { const e = Math.sin(k * Math.PI); o = { sx: 1 + 0.14 * e * (1 - k), sy: 1 - 0.14 * e * (1 - k) }; } else delete G.squash[i + ':' + s]; }
+        if (G.held && G.held.from === i && s === col.length - 1 && t < G.shakeHead) { o = o || {}; o.rot = Math.sin((G.shakeHead - t) / 260 * Math.PI * 6) * 0.14; }
+        drawItem(col[s], p.x + dx, p.y, L.itemS, o);
+      }
+    }
+    if (done) {
+      const bx = c.x + c.w / 2, by = c.y, br = Math.max(11, c.w * 0.19);
+      ctx.save(); ctx.fillStyle = 'rgba(11,27,61,.25)'; ctx.beginPath(); ctx.arc(bx, by + 3, br, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = PAL.ok; ctx.beginPath(); ctx.arc(bx, by, br, 0, Math.PI * 2); ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 2.5; ctx.stroke();
+      icon('check', bx, by, br * 0.8, '#fff'); ctx.restore();
+    }
+  }
+  // 飛んでいく品物（着地で「ぷるん」）
+  G.anims = G.anims.filter(a => { if (t < a.t0 + a.dur) return true; G.squash[a.col + ':' + a.slot] = a.t0 + a.dur; return false; });
+  for (const a of G.anims) {
+    const k = easeOut(clamp((t - a.t0) / a.dur, 0, 1)); const x = a.x0 + (a.x1 - a.x0) * k, y = a.y0 + (a.y1 - a.y0) * k - Math.sin(k * Math.PI) * L.itemH * 0.35;
+    drawItem(a.kind, x, y, L.itemS * (1 + 0.12 * (1 - k)), { shadow: true, shadowA: 0.6, shadowDy: (a.y1 - y) + 4, shadowK: 1 - 0.3 * Math.sin(k * Math.PI) });
+  }
+  // 手に持っている品物（持ち上がる 120ms・影が伸びる・失敗で首を振る）
+  if (G.held) {
+    const p = heldPos(); const lk = clamp((t - G.held.t0) / 120, 0, 1);
+    const c = L.cells[G.held.from]; const base = { x: c.x + c.w / 2, y: c.y + c.h - L.pad - L.itemH * (G.cols[G.held.from].length + 0.5) };
+    const x = base.x + (p.x - base.x) * easeOut(lk), y = base.y + (p.y - base.y) * easeOut(lk);
+    const o = { shadow: false, sx: 1, sy: 1 };
+    if (t < G.shakeHead) o.rot = Math.sin((G.shakeHead - t) / 260 * Math.PI * 6) * 0.14;
+    ctx.save();
+    // 足元の影（持ち上げた高さぶん薄く・広く）
+    const yb = base.y + L.itemH / 2;
+    ctx.fillStyle = 'rgba(11,27,61,.18)'; ctx.beginPath(); ctx.ellipse(x, yb + 2, L.itemS * 0.34 * (1 + 0.25 * lk), L.itemS * 0.085 * (1 + 0.25 * lk), 0, 0, Math.PI * 2); ctx.fill();
+    ctx.shadowColor = 'rgba(11,27,61,.3)'; ctx.shadowBlur = 10; ctx.shadowOffsetY = 6;
+    drawItem(G.held.kind, x, y, L.itemS * (1 + 0.12 * easeOut(lk)), o); ctx.restore();
+  }
+  // 揃った演出（棚が光る＋星＋粒）
+  G.effects = G.effects.filter(e => t < e.t0 + e.dur);
+  for (const e of G.effects) {
+    if (t < e.t0) continue;
+    const k = (t - e.t0) / e.dur;
+    if (e.type === 'done') {
+      const c = L.cells[e.col];
+      if (!e.spawned) {
+        e.spawned = true;
+        for (let i = 0; i < 8; i++) G.particles.push({ type: 'star', x: c.x + c.w / 2, y: c.y + c.h * 0.4, vx: (Math.random() - 0.5) * 360, vy: -Math.random() * 300 - 120, t0: t, dur: 800, r: 6 + Math.random() * 6, color: i % 2 ? PAL.gold : '#fff', rot: Math.random() * 6 });
+        for (let i = 0; i < 12; i++) G.particles.push({ type: 'spark', x: c.x + Math.random() * c.w, y: c.y + Math.random() * c.h, vx: (Math.random() - 0.5) * 80, vy: -40 - Math.random() * 120, t0: t + Math.random() * 150, dur: 600, r: 2 + Math.random() * 3 });
+      }
+      ctx.save(); ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = 0.85 * (1 - k);
+      ctx.fillStyle = PAL.doneGlow; rr(ctx, c.x, c.y, c.w, c.h, 10); ctx.fill();
+      ctx.globalAlpha = 1 - k; ctx.strokeStyle = '#fff'; ctx.lineWidth = 5; const gk = 4 + k * 18; rr(ctx, c.x - gk, c.y - gk, c.w + gk * 2, c.h + gk * 2, 14); ctx.stroke();
+      ctx.restore();
+    }
+  }
+}
+function drawParticles(L) {
+  const t = now();
+  G.particles = G.particles.filter(p => t < p.t0 + p.dur);
+  for (const p of G.particles) {
+    if (t < p.t0) continue;
+    const dt = (t - p.t0) / 1000, k = (t - p.t0) / p.dur;
+    if (p.type === 'confetti') {
+      const x = p.x + p.vx * dt + Math.sin(dt * 5 + p.sway) * 14, y = p.y + p.vy * dt + 700 * dt * dt;
+      ctx.save(); ctx.globalAlpha = k < 0.8 ? 1 : 1 - (k - 0.8) / 0.2; ctx.translate(x, y); ctx.rotate(p.rot + dt * p.rs); ctx.scale(1, Math.cos(dt * 9 + p.sway)); ctx.fillStyle = p.color; ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); ctx.restore();
+    } else if (p.type === 'star') {
+      const x = p.x + p.vx * dt, y = p.y + p.vy * dt + 640 * dt * dt;
+      ctx.save(); ctx.globalAlpha = 1 - k * k; ctx.fillStyle = p.color; ctx.strokeStyle = PAL.navy; ctx.lineWidth = 1.5; star(ctx, x, y, p.r * (1 - 0.3 * k), p.rot + dt * 4); ctx.fill(); ctx.stroke(); ctx.restore();
+    } else if (p.type === 'spark') {
+      const x = p.x + p.vx * dt, y = p.y + p.vy * dt;
+      ctx.save(); if (!p.color) ctx.globalCompositeOperation = 'lighter'; ctx.globalAlpha = Math.sin(k * Math.PI); ctx.fillStyle = p.color || '#fff'; ctx.beginPath(); ctx.arc(x, y, p.r, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+    }
+  }
+}
+function drawTitle(L) {
+  drawBackground(L);
+  const t = now();
+  // 生成した棚（バックヤード）を縦長画面だけ敷く（横長では棚が引き伸ばされるので使わない）
+  if (L.portrait && ready(IMG.backyard)) {
+    // 棚全体が見える倍率（幅か高さ 72% の大きい方）で下に敷き、上端は背景色にとかす
+    const im = IMG.backyard, k = Math.max(L.W / im.naturalWidth, L.H * 0.72 / im.naturalHeight), dw = im.naturalWidth * k, dh = im.naturalHeight * k;
+    const y0 = L.H - dh;
+    ctx.drawImage(im, (L.W - dw) / 2, y0, dw, dh);
+    const g = ctx.createLinearGradient(0, y0, 0, y0 + dh * 0.22); g.addColorStop(0, PAL.bgTop); g.addColorStop(1, 'rgba(79,209,255,0)'); ctx.fillStyle = g; ctx.fillRect(0, y0 - 1, L.W, dh * 0.22 + 1);
+  }
+  // 縦長: タイトル 16%・ボタン 30%・しきぶ 34%〜。横長: 13%・33%・42%〜（重ならない配分）
+  const P = L.portrait ? { title: 0.16, btn: 0.30, chr: 0.34, fk: 1 } : { title: 0.13, btn: 0.33, chr: 0.42, fk: 0.8 };
+  const big = { x: 0, y: L.H * P.chr, w: L.W, h: L.H * (1 - P.chr) };
+  drawCharacter({ ...L, chr: big, portrait: true, titleMode: true });
+  // ロゴ風タイトル（呼吸・わずかな傾き・文字ごとのガタつき）
+  const fs = clamp(Math.min(L.W, L.H) * 0.13, 30, 76) * P.fk, br = 1 + 0.02 * Math.sin(t / 600);
+  ctx.save(); ctx.translate(L.W / 2, L.H * P.title); ctx.rotate(-0.05); ctx.scale(br, br);
+  fxText(T('title1'), 0, -fs * 0.72, fs * 0.55, ST.title);
+  const s2 = T('title2'); ctx.font = font(fs); const chars = [...s2]; const widths = chars.map(c => ctx.measureText(c).width); const total = widths.reduce((a, b) => a + b, 0);
+  let x = -total / 2;
+  chars.forEach((c, i) => { fxText(c, x + widths[i] / 2, fs * 0.2 + (i % 2 ? 3 : -3), fs, ST.title); x += widths[i]; });
+  ctx.restore();
+  // スタートボタン（呼吸）
+  const bh = clamp(Math.min(L.W, L.H) * 0.14, 46, 64) * P.fk, bw = Math.min(L.W - 40, Math.max(190, pillWidth(T('start'), bh, 'play'))), sc = 1 + 0.03 * Math.sin(t / 400);
+  pillButton(L.W / 2, L.H * P.btn, bw, bh, T('start'), PAL.green, PAL.greenTop, PAL.greenDeep, sc, 'play');
+  // つづきから（v5c: 横に星の合計/最大を小さく。最大 = クリアしたステージ数 × 3）
+  const lv = Save.get('level', 1);
+  if (lv > 1) {
+    const a = `${T('cont')} ${levelLabel(lv)}`, st = Save.starTotals(), b = st.max ? T('starsTotal').replace('{n}', st.total).replace('{m}', st.max) : '';
+    const f1 = clamp(fs * 0.3, 13, 18), f2 = f1 * 0.84, gap = b ? f1 * 0.8 : 0, y = L.H * P.btn + bh * 0.95;
+    ctx.font = font(f1); const wa = ctx.measureText(a).width; ctx.font = font(f2); const wb = b ? ctx.measureText(b).width : 0;
+    const x0 = L.W / 2 - (wa + gap + wb) / 2;
+    fxText(a, x0 + wa / 2, y, f1, ST.sub);
+    if (b) fxText(b, x0 + wa + gap + wb / 2, y + 1, f2, ST.gold);
+  }
+}
+// クリアの星 3 つ（v5c）: 左から順にポンと出る。獲得分は金・未獲得は灰。金の星は出た瞬間に火花
+function drawClearStars(cx, cy, r, got, t) {
+  for (let i = 0; i < 3; i++) {
+    const k = clamp((t - 330 - i * 170) / 280, 0, 1); if (k <= 0) continue;
+    const on = i < got, x = cx + (i - 1) * r * 2.6, y = cy - (i === 1 ? r * 0.28 : 0), rr2 = r * (i === 1 ? 1.15 : 1);
+    if (on && !G.starFx[i]) {
+      G.starFx[i] = true;
+      for (let j = 0; j < 10; j++) G.particles.push({ type: 'spark', x, y, vx: Math.cos(j * 0.63) * (90 + Math.random() * 90), vy: Math.sin(j * 0.63) * (90 + Math.random() * 90), t0: now(), dur: 420, r: 2 + Math.random() * 2.5 });
+    }
+    ctx.save(); ctx.translate(x, y); ctx.scale(easeOutBack(k), easeOutBack(k));
+    ctx.fillStyle = 'rgba(11,27,61,.25)'; star(ctx, 0, 3, rr2, 0); ctx.fill();
+    ctx.fillStyle = on ? PAL.gold : '#C9CDD6'; ctx.strokeStyle = on ? PAL.navy : 'rgba(11,27,61,.45)'; ctx.lineWidth = Math.max(2, r * 0.09); ctx.lineJoin = 'round';
+    star(ctx, 0, 0, rr2, 0); ctx.fill(); ctx.stroke();
+    if (on) { ctx.fillStyle = 'rgba(255,255,255,.55)'; star(ctx, -rr2 * 0.12, -rr2 * 0.14, rr2 * 0.42, 0); ctx.fill(); }
+    ctx.restore();
+  }
+}
+function drawClearDim(L) { const k = clamp((now() - G.clearShownAt) / 450, 0, 1); ctx.fillStyle = `rgba(11,27,61,${0.45 * k})`; ctx.fillRect(0, 0, L.W, L.H); }
+// 文字が幅 maxW に収まる字高（最大 px）
+function fitPx(str, px, maxW) { ctx.font = font(100); const w = ctx.measureText(str).width; return Math.min(px, maxW * 100 / Math.max(1, w)); }
+// 全クリア（最終面）の板: クリアの板の強化版。金の枠が脈打ち、光の筋が速く回り、左右に星。「全部そろえた!」＋「100 面ぜんぶクリア」＋手数＋「つづける」
+function drawAllClear(L) {
+  const t = now() - G.clearShownAt, k = clamp(t / 550, 0, 1), e = easeOutBack(k);
+  const pw = clamp(L.W * 0.84, 260, Math.max(420, Math.min(L.W * 0.5, L.H * 0.62))), ph = Math.min(pw * 0.86, L.H - 24);   // PC では大きく。v5c で星のぶん高く
+  const px = (L.W - pw) / 2, py = clamp(L.board.y + (L.board.h - ph) / 2, 8, L.H - ph - 12);
+  ctx.save(); ctx.translate(px + pw / 2, py + ph / 2); ctx.scale(e, e); ctx.translate(-(px + pw / 2), -(py + ph / 2));
+  // 後光（板の外にもはみ出す金の光）
+  ctx.save(); ctx.globalAlpha = 0.35 + 0.15 * Math.sin(t / 300); ctx.shadowColor = PAL.gold; ctx.shadowBlur = 40; ctx.fillStyle = PAL.gold; rr(ctx, px, py, pw, ph, 26); ctx.fill(); ctx.restore();
+  ctx.shadowColor = 'rgba(0,0,0,.35)'; ctx.shadowBlur = 20; ctx.shadowOffsetY = 10;
+  ctx.fillStyle = PAL.board; rr(ctx, px, py, pw, ph, 26); ctx.fill(); ctx.shadowColor = 'transparent';
+  ctx.save(); rr(ctx, px, py, pw, ph, 26); ctx.clip(); ctx.translate(px + pw / 2, py + ph * 0.3); ctx.fillStyle = PAL.gold;
+  const rot = t / 1800; for (let i = 0; i < 16; i++) { ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, pw, rot + i * Math.PI / 8, rot + i * Math.PI / 8 + Math.PI / 16); ctx.closePath(); ctx.globalAlpha = 0.22; ctx.fill(); }
+  ctx.restore();
+  ctx.strokeStyle = PAL.gold; ctx.lineWidth = 6 + 2 * Math.sin(t / 250); rr(ctx, px, py, pw, ph, 26); ctx.stroke();
+  ctx.strokeStyle = '#fff'; ctx.lineWidth = 2.5; rr(ctx, px + 5, py + 5, pw - 10, ph - 10, 22); ctx.stroke();
+  ctx.strokeStyle = PAL.navy; ctx.lineWidth = 2; rr(ctx, px - 4, py - 4, pw + 8, ph + 8, 29); ctx.stroke();
+  // 左右の星（くるくる）
+  for (const [sx, sr, dir] of [[px + pw * 0.09, pw * 0.05, 1], [px + pw * 0.91, pw * 0.05, -1]]) {
+    ctx.save(); ctx.fillStyle = PAL.gold; ctx.strokeStyle = PAL.navy; ctx.lineWidth = 2; star(ctx, sx, py + ph * 0.19, sr * (1 + 0.12 * Math.sin(t / 200)), dir * t / 600); ctx.fill(); ctx.stroke(); ctx.restore();
+  }
+  const title = T('allClear'), pop = 1 + 0.18 * (1 - clamp((t - 200) / 260, 0, 1));
+  const tpx = fitPx(title, pw * 0.16, pw * 0.72);
+  ctx.save(); ctx.translate(px + pw / 2, py + ph * 0.19); ctx.scale(pop, pop); ctx.rotate(-0.04); fxText(title, 0, 0, tpx, ST.title); ctx.restore();
+  const sub = T('allSub').replace('{n}', FINAL_LEVEL);
+  fxText(sub, px + pw / 2, py + ph * 0.36, fitPx(sub, pw * 0.07, pw * 0.86), ST.hud);
+  drawClearStars(px + pw / 2, py + ph * 0.52, Math.min(pw * 0.06, ph * 0.075), G.clearStars, t);
+  const best = Save.data.best[String(G.level)], mv = `${T('moves')} ${G.moves}   ${T('best')} ${best || G.moves}`;
+  fxText(mv, px + pw / 2, py + ph * 0.66, fitPx(mv, pw * 0.058, pw * 0.86), ST.hud);
+  const bk = clamp((t - 800) / 300, 0, 1), bh = Math.min(pw * 0.135, ph * 0.16);
+  if (bk > 0) pillButton(px + pw / 2, py + ph * 0.84, Math.max(pw * 0.56, pillWidth(T('keep'), bh, 'play')), bh, T('keep'), PAL.green, PAL.greenTop, PAL.greenDeep, easeOutBack(bk) * (1 + 0.03 * Math.sin(now() / 350)), 'play');
+  ctx.restore();
+}
+function drawClear(L) {
+  if (G.allClearShow) { drawAllClear(L); return; }
+  const k = clamp((now() - G.clearShownAt) / 450, 0, 1), e = easeOutBack(k);
+  const pw = clamp(L.W * 0.8, 250, 380), ph = Math.min(pw * 0.8, L.H - 24), px = (L.W - pw) / 2, py = clamp(L.board.y + (L.board.h - ph) / 2, 8, L.H - ph - 12);   // v5c で星のぶん高く
+  ctx.save(); ctx.translate(px + pw / 2, py + ph / 2); ctx.scale(e, e); ctx.translate(-(px + pw / 2), -(py + ph / 2));
+  ctx.shadowColor = 'rgba(0,0,0,.35)'; ctx.shadowBlur = 20; ctx.shadowOffsetY = 10;
+  ctx.fillStyle = PAL.board; rr(ctx, px, py, pw, ph, 24); ctx.fill(); ctx.shadowColor = 'transparent';
+  ctx.strokeStyle = '#fff'; ctx.lineWidth = 4; ctx.stroke(); ctx.strokeStyle = PAL.navy; ctx.lineWidth = 2; rr(ctx, px - 3, py - 3, pw + 6, ph + 6, 27); ctx.stroke();
+  // 放射の光（板の中）
+  ctx.save(); rr(ctx, px, py, pw, ph, 24); ctx.clip(); ctx.globalAlpha = 0.5; ctx.fillStyle = PAL.gold; ctx.translate(px + pw / 2, py + ph * 0.36);
+  const rot = now() / 4000; for (let i = 0; i < 12; i++) { ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, pw, rot + i * Math.PI / 6, rot + i * Math.PI / 6 + Math.PI / 12); ctx.closePath(); ctx.globalAlpha = 0.16; ctx.fill(); }
+  ctx.restore();
+  const pop = 1 + 0.15 * (1 - clamp((now() - G.clearShownAt - 150) / 200, 0, 1));
+  ctx.save(); ctx.translate(px + pw / 2, py + ph * 0.2); ctx.scale(pop, pop); ctx.rotate(-0.04); fxText(T('clear'), 0, 0, Math.min(pw * 0.19, ph * 0.2), ST.title); ctx.restore();
+  drawClearStars(px + pw / 2, py + ph * 0.43, Math.min(pw * 0.075, ph * 0.095), G.clearStars, now() - G.clearShownAt);
+  const best = Save.data.best[String(G.level)];
+  fxText(`${T('moves')} ${G.moves}   ${T('best')} ${best || G.moves}`, px + pw / 2, py + ph * 0.63, Math.min(pw * 0.07, ph * 0.085), ST.hud);
+  const bk = clamp((now() - G.clearShownAt - 300) / 300, 0, 1), bh = Math.min(pw * 0.15, ph * 0.19);
+  if (bk > 0) pillButton(px + pw / 2, py + ph * 0.83, Math.max(pw * 0.56, pillWidth(T('next'), bh, 'play')), bh, T('next'), PAL.green, PAL.greenTop, PAL.greenDeep, easeOutBack(bk) * (1 + 0.03 * Math.sin(now() / 350)), 'play');
+  ctx.restore();
+}
+function render() {
+  const L = G.layout || (G.layout = computeLayout());
+  if (G.scene === 'title') { drawTitle(L); drawParticles(L); return; }
+  drawBackground(L);
+  // 面の入れ替え: 盤面が下からスライド＋バウンス
+  const ik = clamp((now() - G.levelIn) / 350, 0, 1), dy = (1 - easeOutBack(ik)) * L.H * 0.22;
+  ctx.save(); ctx.translate(0, dy);
+  drawBoardPlate(L); drawBoard(L);
+  ctx.restore();
+  drawHud(L);
+  if (G.scene === 'clear') drawClearDim(L);
+  drawCharacter(L); drawParticles(L);
+  if (G.scene === 'clear') drawClear(L);
+}
+// ループは 1 本だけ（一時停止と再開が同じフレーム内で続いても二重に回らない）
+let rafId = 0;
+function schedule() { if (!rafId && !G.paused && G.ready) rafId = requestAnimationFrame(loop); }
+function loop() {
+  rafId = 0;
+  if (G.paused) return;
+  const t = now();
+  if (G.scene === 'play' && G.clearAt && t >= G.clearAt) finishLevel();
+  render(); G.frames++;
+  if (PERF.pendingT) { PERF.samples.push(t - PERF.pendingT); PERF.pendingT = 0; }
+  if (!G.readySent) { G.readySent = true; Platform.gameReady(); }  // タイトルを 1 枚描いて操作を受け付けてから
+  schedule();
+}
+// onPause: ループ・時計・音・入力を止める（ドラッグ中なら指の追従だけ切る。持った品はそのまま）。onResume: 止めた所から続ける
+function pauseGame() {
+  if (G.paused) return;
+  G.paused = true; CLOCK.at = performance.now(); CLOCK.stopped = true; G.drag = null;
+  if (rafId) { cancelAnimationFrame(rafId); rafId = 0; }
+  Sound.sync();
+  Save.flush();   // 統合要件「onPause で進行を保存する（SHOULD）」。進行は変わるたびに保存しているので、ここは念のための 1 回
+}
+function resumeGame() {
+  if (!G.paused) return;
+  G.paused = false; CLOCK.off += performance.now() - CLOCK.at; CLOCK.stopped = false;
+  Sound.sync(); schedule();
+}
+function resize() {
+  view.dpr = Math.min(3, window.devicePixelRatio || 1);
+  view.w = window.innerWidth; view.h = window.innerHeight;
+  canvas.width = Math.round(view.w * view.dpr); canvas.height = Math.round(view.h * view.dpr);
+  canvas.style.width = view.w + 'px'; canvas.style.height = view.h + 'px';
+  ctx.setTransform(view.dpr, 0, 0, view.dpr, 0, 0);
+  G.layout = null;
+  if (G.paused && G.ready) render();  // 一時停止中の回転・リサイズでも崩れた絵を残さない（時計は止まったまま）
+}
+window.addEventListener('resize', resize);
+
+// ---------- テスト用フック（Playwright 自動プレイ） ----------
+window.Game = {
+  scene: () => G.scene, level: () => G.level, moves: () => G.moves, par: () => G.par,
+  state: () => G.cols.map(c => c.slice()), cap: () => G.cap,
+  solution: () => G.solution.map(m => m.slice()),
+  columnCenter: i => { const c = (G.layout || (G.layout = computeLayout())).cells[i]; return { x: c.x + c.w / 2, y: c.y + c.h / 2, w: c.w, h: c.h, hitW: c.hitX1 - c.hitX0, hitH: c.hitY1 - c.hitY0 }; },
+  layout: () => G.layout || (G.layout = computeLayout()),
+  held: () => G.held, stuck: () => !!G.stuck, worry: () => G.worry, face: () => currentFace(),
+  // v3b: 困り度の内訳・固定（テスト用）・汗の幾何
+  worryInfo: () => { const cols = G.cols; const n = productiveMoves(cols, G.cap); return Object.assign({ level: G.worry, target: G.worryTarget, moves: G.moves, par: G.par, stuck: G.stuck }, worryParts(cols, n)); },
+  forceWorry: n => { G.worryHold = n; updateMood(); }, setMoves: n => { G.moves = n; updateMood(true); },
+  sweatCount: () => G.sweat.length,
+  sweatBurst: (n, sizes, ids, flow, hold) => { G.sweat = []; const end = spawnSweat(n, sizes, ids, flow); G.sweatNext = now() + (hold || 0); return end; },  // スクリーンショット用（流れをゆっくりに）
+  faceRect: key => poseMeta(key || POSE.cur).face.slice(), sweatPoints: () => Object.keys(SWEAT_PTS), sweatSizes: () => Object.keys(SWEAT_SIZE),
+  sweatGeom: (key, id, k, size) => sweatGeom(poseMeta(key || POSE.cur), id, k, size),
+  sweatRects: () => { const L = G.layout || (G.layout = computeLayout()), f = characterFrame(L), p = poseMeta(POSE.cur), t = now(); return G.sweat.filter(q => t >= q.t0).map(q => { const e = t - q.t0; const k = e < SWEAT_APPEAR ? 0 : e < SWEAT_APPEAR + q.flow ? Math.pow((e - SWEAT_APPEAR) / q.flow, 2) : 1; const g = sweatGeom(p, q.id, k, q.size); return { id: q.id, size: q.size, x: f.gx + (g.x - p.ax) * f.s, y: f.gy + (g.y - p.ay) * f.s, w: g.w * f.s, h: g.h * f.s }; }); },
+  faceRectScreen: () => { const L = G.layout || (G.layout = computeLayout()), f = characterFrame(L), p = poseMeta(POSE.cur), F = p.face; return { x: f.gx + (F[0] - p.ax) * f.s, y: f.gy + (F[1] - p.ay) * f.s, w: (F[2] - F[0]) * f.s, h: (F[3] - F[1]) * f.s }; },
+  pose: () => POSE.cur, poseLog: () => POSE.log.slice(), poseRect: key => poseRect(G.layout || (G.layout = computeLayout()), key), poseKeys: () => Object.keys(PD.poses), envelope: () => ENV,
+  setCols: cols => { G.cols = cols.map(c => c.slice()); G.held = null; G.layout = null; updateMood(); }, idleFor: ms => { POSE.lastInput = now() - ms; POSE.longIdle.next = 0; POSE.longIdle.until = 0; }, fidgetNow: () => { POSE.fidget.next = now() - 1; POSE.fidget.until = 0; },
+  start: () => { if (G.scene === 'title') startLevel(Save.get('level', 1)); }, next: () => nextLevel(), goto: L => startLevel(L),
+  generate: L => generateLevel(L), productiveMoves: () => productiveMoves(G.cols, G.cap),
+  save: () => JSON.parse(JSON.stringify(Save.data)), lang: () => LANG, skin: () => G.skin.slice(),
+  // v4: Playables 統合の確認用
+  platform: () => ({ env: Platform.env, calls: Platform.calls.slice() }), parseSave: raw => Save.parse(raw),
+  paused: () => G.paused, ready: () => G.ready, frames: () => G.frames, clock: () => now(),
+  sound: () => ({ enabled: Sound.enabled, userMuted: Sound.userMuted, tones: Sound.tones, ctx: Sound.ctx ? Sound.ctx.state : null,
+    loaded: Sound.loaded, decoded: SFX.decoded, failed: SFX.failed, bank: SFX.bank, combo: Sound.combo, placeCombo: Sound.placeCombo, last: SFX.last }),
+  comboRule: () => Object.assign({}, SFX.COMBO), comboSparks: () => G.comboSparkN,   // v5e
+  playSound: (name, ci) => Sound.play(name, ci), toggleSfx: () => toggleSfx(),
+  // v6: BGM の状態・復号の完了待ち・切替
+  bgm: () => Object.assign(BGM.state(), { bgmOn: Sound.bgmOn, loaded: Sound.bgmLoaded, ctx: Sound.ctx ? Sound.ctx.state : null }),
+  bgmReady: () => Promise.resolve(Sound.bgmLoading), toggleBgm: () => toggleBgm(), unlockAudio: () => Sound.unlock(),
+  // v5b: 全クリア・エンドレス・音ボタンの無効化の確認用
+  allClear: () => ({ show: !!G.allClearShow, saved: !!Save.data.allClear, final: FINAL_LEVEL }), levelLabel: L => levelLabel(L), sfxToggle: () => SFX_TOGGLE,
+  sfxBanks: () => (typeof SFX_DATA !== 'undefined' && SFX_DATA.sets) ? Object.keys(SFX_DATA.sets) : [],
+  // v5c: 星の評価・目安の表示・HUD の段の確認用
+  btnActive: k => btnActive(k),   // v5d
+  starsFor: (m, p) => starsFor(m, p), clearStars: () => G.clearStars, starTotals: () => Save.starTotals(), hud: () => (G.layout || (G.layout = computeLayout())).hud,
+  fillStars: raw => Save.fillStars(Save.parse(raw)),
+  // v5: 音の確認用（パン・列ごとの音程・案の切り替え・復号の完了待ち）
+  panFor: ci => Sound.panFor(ci), colCents: ci => Sound.colCents(ci), sfxBank: b => SFX.setBank(b), soundReady: () => Promise.resolve(Sound.loading),
+  textBoxes: () => { TEXT_LOG = []; try { render(); } finally { const r = TEXT_LOG; TEXT_LOG = null; return r; } },
+  strings: () => JSON.parse(JSON.stringify(STR)),
+  effects: () => ({ anims: G.anims.length, effects: G.effects.length, particles: G.particles.length }),
+  fontLoaded: () => document.fonts.check('900 20px UIRound'),
+  missingAssets: () => Object.keys(IMG).filter(n => !ready(IMG[n])),
+  fps: ms => new Promise(res => { let n = 0; const t0 = performance.now(); (function f() { n++; if (performance.now() - t0 < ms) requestAnimationFrame(f); else res(Math.round(n * 1000 / (performance.now() - t0))); })(); }),
+};
+
+// ---------- 起動 ----------
+// 順序: 一時停止・音声の購読 → 背景だけの 1 枚を描いて firstFrameReady → 言語・セーブ（loadData）・画像・書体 → タイトルを描いて gameReady
+(async function boot() {
+  Platform.onPause(pauseGame);
+  Platform.onResume(resumeGame);
+  Sound.enabled = Platform.isAudioEnabled();
+  Platform.onAudioEnabledChange(v => { Sound.enabled = v; Sound.sync(); });
+  Sound.setup();   // 復号だけ先に（自動再生の制限で音は最初のタップまで出ない）
+  Sound.music('title');   // v6: 復号が済んだらタイトルの曲（設定を読むまで BGM の出口は 0）
+  resize();
+  drawBackground({ W: view.w, H: view.h });
+  Platform.firstFrameReady();
+  LANG = langOf(await Platform.getLanguage());
+  document.documentElement.lang = LANG;
+  await Save.load();
+  Sound.userMuted = SFX_TOGGLE && !Save.data.settings.sfx;   // 音ボタンが無い間はセーブの OFF を使わない（戻す手段が無いため）
+  Sound.setBgm(!SFX_TOGGLE || Save.data.settings.bgm, true);   // v6: BGM の設定（フェードなしで反映）
+  await Promise.all([loadImages(), document.fonts.load('900 20px UIRound').catch(() => {})]);
+  G.titleT0 = now();
+  G.ready = true;
+  schedule();
+  Sound.sync();   // v6: 自動再生が許される環境なら、ここでタイトルの曲が鳴り始める（許されなければ最初のタップまで止まったまま）
+})();
+</script>
+</body>
+</html>
