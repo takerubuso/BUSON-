@@ -17,8 +17,11 @@
 <body>
 <canvas id="c"></canvas>
 <script src="assets/pose_data.js"></script>
+<script src="assets/cust_data.js"></script>
 <script src="assets/sfx.js"></script>
 <script src="assets/sfx_data.js"></script>
+<script src="assets/bgm.js"></script>
+<script src="assets/bgm_data.js" defer></script>
 <script>
 'use strict';
 /* =====================================================================
@@ -98,7 +101,7 @@ const STR = {
         up_oven: 'オーブン', up_whisk: '泡立て器', up_coffee: 'コーヒーマシン', up_seats: '席を増やす', up_board: '台を広げる', up_tray: 'トレイを大きく',
         up_wall: '壁紙', up_floor: '床', up_plant: '観葉植物', up_sign: '看板', up_lamp: 'ランプ', up_showcase: 'ショーケース',
         ef_charges: '回数 {n}', ef_speed: '戻り {n}秒', ef_p2: '2段目 {n}%', ef_seats: '席 {n}', ef_board: 'マス {n}', ef_tray: 'トレイ {n}・{h}時間', ef_tip: 'チップ +{n}%',
-        shopTitle: 'お店の改装', bookTitle: 'メニュー図鑑', signName: 'しきぶ珈琲店', signShort: 'CAFÉ' },
+        shopTitle: 'お店の改装', bookTitle: 'メニュー図鑑', signName: 'しきぶ珈琲店', signShort: 'CAFÉ', sfx: '効果音', bgm: 'BGM' },
   en: { title1: "Shikibu's", title2: 'Merge Café', sub: 'しきぶの合体カフェ', start: 'Tap to start', cont: 'Continue: DAY {n}',
         day: 'DAY {n}', shop: 'Shop', book: 'Menu', close: 'Close', nextDay: 'Next day', buy: 'Buy', max: 'MAX', lockHeart: 'Unlock at ♥{n}',
         receiptTitle: "Shikibu's Merge Café", rDay: 'Day {n} receipt', rOrders: 'Orders', rSales: 'Sales', rHearts: 'Hearts', rFast: 'Quick!', rNew: 'New treats', rTotal: 'Total',
@@ -108,7 +111,7 @@ const STR = {
         up_oven: 'Oven', up_whisk: 'Whisk', up_coffee: 'Coffee machine', up_seats: 'More seats', up_board: 'Bigger counter', up_tray: 'Bigger tray',
         up_wall: 'Wallpaper', up_floor: 'Floor', up_plant: 'Plants', up_sign: 'Sign', up_lamp: 'Lamps', up_showcase: 'Showcase',
         ef_charges: 'Uses {n}', ef_speed: 'Refill {n}s', ef_p2: 'Tier 2: {n}%', ef_seats: 'Seats {n}', ef_board: 'Cells {n}', ef_tray: 'Tray {n}, {h}h', ef_tip: 'Tips +{n}%',
-        shopTitle: 'Shop upgrades', bookTitle: 'Menu book', signName: 'Café Shikibu', signShort: 'CAFÉ' },
+        shopTitle: 'Shop upgrades', bookTitle: 'Menu book', signName: 'Café Shikibu', signShort: 'CAFÉ', sfx: 'SFX', bgm: 'Music' },
 };
 // お菓子の名前（3 系統 × 8 段。仕様書第4節）
 const NAMES = {
@@ -216,7 +219,7 @@ const G = {
   day: 1, coins: 0, hearts: 0, cols: 6, rows: 6, board: [], tray: [],
   tools: [0, 1, 2].map(() => ({ lv: 1, charges: 12, since: 0 })),
   up: { seats: 0, board: 0, tray: 0, wall: 0, floor: 0, plant: 0, sign: 0, lamp: 0, showcase: 0 },
-  found: [], seats: [], nextArrive: [], served: 0, total: 6, closed: false, closeAt: 0,
+  found: [], seats: [], nextArrive: [], lastLook: [], served: 0, total: 6, closed: false, closeAt: 0,
   combo: 0, comboPeak: 0, lastMergeAt: -1e9,
   dayStats: null, stats: null, idle: null, welcome: null,
   lastInput: 0, worry: 0, fullTaps: 0, assist: null, toolShake: [0, 0, 0], toolEmpty: [0, 0, 0],
@@ -272,7 +275,7 @@ const Save = {
     if (Array.isArray(o.customers)) for (const c of o.customers.slice(0, SEATS[up.seats])) {
       if (!c || typeof c !== 'object' || !Array.isArray(c.order)) { customers.push(null); continue; }
       const order = c.order.filter(x => Array.isArray(x) && isItem(x[0]) && tierOf(x[0]) < MAX_TIER).slice(0, 2).map(x => ({ id: x[0], done: x[1] === 1 }));
-      customers.push(order.length && order.some(x => !x.done) ? { look: int(c.look, 0, 5, 0), order } : null);
+      customers.push(order.length && order.some(x => !x.done) ? { look: int(c.look, 0, NCUST - 1, 0), order } : null);
     }
     const s = (o.stats && typeof o.stats === 'object' && !Array.isArray(o.stats)) ? o.stats : {};
     const stats = freshStats();
@@ -286,6 +289,8 @@ const Save = {
       v: SAVE_VER, day, coins: int(o.coins, 0, 1e12, 0), hearts: int(o.hearts, 0, 1e9, 0), board, tray, tools, upgrades: up, found,
       served, customers, closed: o.closed === true && served >= total, lastSeen: Number.isFinite(o.lastSeen) && o.lastSeen > 0 ? o.lastSeen : 0,
       stats, dayStats, fresh: !raw || !Object.keys(o).length || !Number.isInteger(o.day),
+      // 効果音・BGM の ON/OFF（修正 3。無ければ ON）
+      settings: { sfx: !(o.settings && o.settings.sfx === false), bgm: !(o.settings && o.settings.bgm === false) },
     };
   },
   // G → セーブの形
@@ -295,7 +300,7 @@ const Save = {
       tools: G.tools.map(t => ({ lv: t.lv, ch: t.charges })), upgrades: Object.assign({}, G.up), found: G.found.slice(),
       ordersLeft: G.total - G.served, served: G.served,
       customers: G.seats.map(s => (s && s.state !== 'happy') ? { look: s.look, order: s.order.map(x => [x.id, x.done ? 1 : 0]) } : null),
-      closed: G.closed, lastSeen: Date.now(), stats: G.stats, dayStats: G.dayStats,
+      closed: G.closed, lastSeen: Date.now(), stats: G.stats, dayStats: G.dayStats, settings: { sfx: !Sound.userMuted, bgm: Sound.bgmOn },
     };
   },
   async load() { this.data = Save.parse(await Platform.loadData()); this.loaded = true; return this.data; },
@@ -319,10 +324,13 @@ function applySave(d) {
   G.tools = d.tools.map(x => ({ lv: x.lv, charges: x.ch, since: t }));
   G.stats = d.stats; G.dayStats = d.dayStats;
   G.total = ordersForDay(G.day); G.served = d.served; G.closed = d.closed;
-  G.seats = []; G.nextArrive = [];
+  G.seats = []; G.nextArrive = []; G.lastLook = [];
   for (let s = 0; s < seatCount(); s++) {
     const c = d.customers[s];
-    G.seats.push(c ? { look: c.look, order: c.order.map(x => ({ id: x.id, done: x.done })), orderAt: t, arriveAt: t - 1000, state: 'wait', leaveAt: 0 } : null);
+    // 同じ人が 2 席にいるセーブ（前の版のセーブなど）は、2 人目をまだいない人に替える
+    let look = c ? c.look : 0;
+    if (c && G.seats.some(x => x && x.look === look)) { for (let i = 0; i < NCUST; i++) if (!G.seats.some(x => x && x.look === i)) { look = i; break; } }
+    G.seats.push(c ? { look, order: c.order.map(x => ({ id: x.id, done: x.done })), orderAt: t, arriveAt: t - 1000, state: 'wait', leaveAt: 0 } : null);
     G.nextArrive.push(t + 500 + s * 500);
   }
   G.coinShown = G.coins;
@@ -547,14 +555,14 @@ function updateLogic(t) {
   if (G.scene !== 'play') return;
   for (let si = 0; si < G.seats.length; si++) {
     const s = G.seats[si];
-    if (s && s.state === 'happy' && t >= s.leaveAt) { G.seats[si] = null; G.nextArrive[si] = t + ARRIVE_MS; }
+    if (s && s.state === 'happy' && t >= s.leaveAt) { G.lastLook[si] = s.look; G.seats[si] = null; G.nextArrive[si] = t + ARRIVE_MS; }
   }
   if (!G.closed) {
     const pending = G.total - G.served - activeCount();
     let room = pending;
     for (let si = 0; si < G.seats.length && room > 0; si++) {
       if (G.seats[si] || t < (G.nextArrive[si] || 0)) continue;
-      G.seats[si] = { look: Math.floor(rand() * 6), order: makeOrder(), arriveAt: t, orderAt: t, state: 'wait', leaveAt: 0 };
+      G.seats[si] = { look: pickLook(si), order: makeOrder(), arriveAt: t, orderAt: t, state: 'wait', leaveAt: 0 };
       room--;
     }
     if (G.served >= G.total && G.closeAt && t >= G.closeAt) closeDay();
@@ -567,6 +575,7 @@ function closeDay() {
   G.dayStats.stars = starsForDay(G.dayStats);
   Platform.sendScore(G.day);
   Sound.play('clear');
+  Sound.bgmJingle('close');   // 営業中の曲を止めて閉店のジングル。あとは静か（つぎの日へで営業中の曲に戻る）
   POSE.react = null; G.worry = 0; G.fullTaps = 0;
   Save.flush();
 }
@@ -577,6 +586,7 @@ function startDay(next) {
   const t = now();
   if (next) { G.seats = new Array(seatCount()).fill(null); G.nextArrive = G.seats.map((_, s) => t + 500 + s * firstGap(G.day)); }
   G.scene = 'play'; G.dayT0 = fxNow(); G.lastInput = t; G.combo = 0;
+  Sound.music('main');
   G.layout = null;
   Save.flush();
 }
@@ -607,22 +617,42 @@ function buy(key) {
   return true;
 }
 
-// ---------- 音（第1弾の効果音 A＝木・紙を仮に流用。合体の「ぽん」・きらめき・ファンファーレ・伝説のジングルは合成音） ----------
-// enabled = YouTube 側の音声（isAudioEnabled）。一時停止中・YouTube ミュート中は AudioContext ごと止める（第1弾と同じ）。
-// ゲーム内のミュートボタンは置かない（BGM が無いので、効果音の ON/OFF は全体のミュートに見えるため。第1弾 v5b と同じ判断）
+// ---------- 音（第1弾の効果音 A＝木・紙を仮に流用。合体の「ぽん」・きらめき・ファンファーレは合成音。BGM は本人が Suno で作った 4 曲） ----------
+// enabled = YouTube 側の音声（isAudioEnabled）。一時停止中・YouTube ミュート中は AudioContext ごと止める（効果音も BGM も。第1弾と同じ）。
+// userMuted = 効果音の設定・bgmOn = BGM の設定（それぞれのボタン。セーブの settings.sfx・settings.bgm）。全体のミュートボタンは置かない（第1弾 v6 と同じ）。
+// BGM（assets/bgm.js ＋ assets/bgm_data.js）: タイトル = title・営業中とお店と図鑑 = main・閉店のレシート = close のジングル（main は止めて、あとは静か）・
+// 伝説のお菓子 = legend のジングル（main を -10dB 下げて重ね、終わったら戻す）。タイトル → 営業中は 400ms のクロスフェード
+// （最初のタップまで AudioContext が止まっていてタイトルの曲が聞こえていなければ、すぐ替える）
 const Sound = {
-  ctx: null, enabled: true, tones: 0, loaded: false, loading: null, last: null, synthOut: null,
+  ctx: null, enabled: true, userMuted: false, bgmOn: true, tones: 0, loaded: false, loading: null, last: null, synthOut: null, bgmLoaded: false, bgmLoading: null,
   setup() {
     if (this.ctx) return;
     try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { this.ctx = null; return; }
     SFX.init(this.ctx); SFX.setBank('A');
     this.synthOut = this.ctx.createGain(); this.synthOut.gain.value = 0.9;
     this.synthOut.connect(SFX.dry); this.synthOut.connect(SFX.wetIn);
+    BGM.init(this.ctx);   // 設定（bgmOn）を読むまでは出口 0
     this.loading = SFX.load(typeof SFX_DATA !== 'undefined' ? SFX_DATA : null).then(() => { this.loaded = true; }).catch(() => {});
+    // BGM の MP3（約 2.6MB）は defer で読むので、読み終わり（DOMContentLoaded）と効果音の復号を待ってから復号する（最初の 1 枚と効果音を先に）
+    const parsed = new Promise(res => { if (document.readyState !== 'loading') res(); else document.addEventListener('DOMContentLoaded', res, { once: true }); });
+    this.bgmLoading = Promise.all([this.loading, parsed]).then(() => BGM.load(typeof BGM_DATA !== 'undefined' ? BGM_DATA : null)).then(() => { this.bgmLoaded = true; }).catch(() => {});
   },
   unlock() { this.setup(); this.sync(); },
   sync() { const c = this.ctx; if (!c) return; if (G.paused || !this.enabled) { if (c.state === 'running') c.suspend().catch(() => {}); } else if (c.state === 'suspended') c.resume().catch(() => {}); },
-  on() { return this.enabled && !G.paused && this.ctx; },
+  on() { return this.enabled && !this.userMuted && !G.paused && this.ctx; },
+  // 曲を替える（同じ曲なら何もしない）。復号前なら「鳴らしたい曲」だけ覚えて、復号が済んだら鳴る
+  music(name) {
+    if (!this.ctx) return null;
+    const heard = this.ctx.state === 'running' && this.ctx.currentTime > 0.05;
+    return BGM.play(name, BGM.cur ? { fade: heard ? BGM.XFADE : 0 } : undefined);
+  },
+  setBgm(on, instant) { this.bgmOn = !!on; BGM.setOn(this.bgmOn, instant); return this.bgmOn; },
+  // ジングル。YouTube ミュート中・一時停止中は鳴らさない（解除したときに遅れて鳴らないように）。BGM の OFF では出口で絞られる
+  bgmJingle(name) {
+    if (!this.ctx || !this.enabled || G.paused || !BGM.has(name)) return null;
+    if (name === 'close') { BGM.stop({ fade: 0.3 }); return BGM.jingle('close', { duck: false }); }
+    return BGM.jingle(name);
+  },
   play(role, o) { if (!this.on()) return null; const v = SFX.play(role, o || {}); if (v) { this.tones++; this.last = role; } return v; },
   // 合成音の 1 音: type・周波数・長さ・音量・始まりの遅れ・始めの音程の持ち上げ
   tone(type, f, dur, gain, delay, bend) {
@@ -778,10 +808,10 @@ function drawSweat(p, f, t) {
   }
 }
 
-// ---------- 画像（しきぶ 12 ポーズと汗。第1弾からの複製をそのまま使う） ----------
+// ---------- 画像（しきぶ 12 ポーズと汗・お客さん 7 人 × 3 表情） ----------
 const IMG = {};
 function loadImages() {
-  const names = Object.keys(PD.poses).map(k => 'pose_' + k).concat(['sweat']);
+  const names = Object.keys(PD.poses).map(k => 'pose_' + k).concat(['sweat'], CD.chars.flatMap(c => CD.moods.map(m => 'cust_' + c.key + '_' + m)));
   return Promise.all(names.map(n => new Promise(res => { const im = new Image(); im.onload = () => res(); im.onerror = () => res(); im.src = 'assets/' + n + '.png'; IMG[n] = im; })));
 }
 function ready(im) { return im && im.complete && im.naturalWidth > 0; }
@@ -1161,7 +1191,7 @@ function computeLayout() {
   const L = { W, H, portrait, m, cols: C, rows: R };
   if (portrait) {
     const bp = clamp(W * 0.022, 7, 12), hudH = clamp(W * 0.14, 50, 64), toolH = clamp(Math.min(W, H) * 0.19, 66, 96);
-    const sceneMin = clamp(H * 0.25, 150, 300);
+    const sceneMin = clamp(H * 0.36, 150, 300);   // 修正 4b: お客さんの顔（席 5 は 2 段）と吹き出しが入る高さ（0.25 → 0.36。375×812 では台 6×7 のマスだけ 56 → 52px に）
     const cell = Math.min((W - 2 * m - 2 * bp) / C, (H - hudH - sceneMin - toolH - 2 * bp - 16) / R, 80);
     const bw = C * cell + 2 * bp, bh = R * cell + 2 * bp;
     const left = H - hudH - bh - toolH - 16, sceneH = Math.min(left, H * 0.42), extra = left - sceneH;
@@ -1221,15 +1251,43 @@ function computeLayout() {
   const hh = L.hud.h, bs = clamp(hh * 0.72, 36, 62), yc = L.hud.y + hh / 2 + 1;
   L.btnShop = { x: L.hud.x + L.hud.w - m - bs / 2, y: yc, r: bs / 2 };
   L.btnBook = { x: L.btnShop.x - bs - 8, y: yc, r: bs / 2 };
+  // 効果音・BGM の ON/OFF（小さな丸。お店ボタンの下・場面の右上＝しきぶの頭より上。「あと n」の札を避けて少し下げる。下に文字）
+  const tr = clamp(bs * 0.4, 14, 22), tlf = clamp(tr * 0.72, 10, 14), tyy = L.hud.y + L.hud.h + tr + 14, thw = Math.max(tr, tlf * 1.6);
+  L.btnBgm = { x: L.btnShop.x + L.btnShop.r - thw, y: tyy, r: tr, lf: tlf, ly: tyy + tr + 4 + tlf * 0.6, key: 'bgm' };
+  L.btnSfx = { x: L.btnBgm.x - thw * 2 - 10, y: tyy, r: tr, lf: tlf, ly: tyy + tr + 4 + tlf * 0.6, key: 'sfx' };
   L.pills = { x0: L.hud.x + m, x1: L.btnBook.x - bs / 2 - 8, y: yc, h: clamp(hh * 0.64, 30, 56) };
-  // 客の席（席の数ぶん均等に）
-  const ca = L.custArea, ns = seatCount(), sw = (ca.x1 - ca.x0) / ns;
-  const topY = L.scene.y + 6, hr = Math.min(sw * 0.3, (ca.counterY - topY) * 0.17, 52);
+  // 客の席（修正 4b）: 大きさは顔の高さで決める。F = 大人の顔の高さ = しきぶの顔（ポーズ 01）の 70%（狭くて入らなければ小さくする）。
+  // 顔（3 表情の顔の矩形の和）どうしが重ならないように並べる。1 列に入らないとき（縦長の席 5 など）は 1 つおきに一段高く立たせて、顔を上下にずらす。
+  // 腕と体は席の幅からはみ出してよい（顔はあとで一番上に描き直すので、隣の髪や腕に隠れない）。吹き出しの下端は全員同じ（一番高い人の頭と上げた手より上）
+  const ca = L.custArea, ns = seatCount(), topY = L.scene.y + 6, cy = ca.counterY, FG = 3;
+  const fp = poseMeta('01').face, Ft = (fp[3] - fp[1]) * L.chr.s * 0.7;
+  const fxa = L.scene.x + 4 + Ft * 0.2, fxb = L.chr.gx + ENV.x0 * L.chr.s - 4, Wa = fxb - fxa;   // 顔を置ける左右: 場面の左端（髪のぶん少し空ける）から、しきぶの枠の手前まで
+  // 1 列と「1 つおきに一段高く」の両方で、顔と吹き出しが場面に入る一番大きい F を出し、大きい方を使う（同じなら 1 列）
+  const planFor = stag => {
+    let F = Math.min(Ft, ns > 1 ? (stag ? (2 * Wa - (ns - 1) * FG) / ((ns + 1) * CL.fw) : (Wa - (ns - 1) * FG) / (ns * CL.fw)) : Wa / CL.fw), P = null;
+    for (let g = 0; g < 80; g++) {
+      // 両端の顔は場面の中に収める（e = 端の席の中心から顔を置ける範囲の端まで）。席の間は均等
+      const e = Math.max(Wa / ns / 2, CL.fw * F / 2 + 1), sp = ns > 1 ? (Wa - 2 * e) / (ns - 1) : 0, x0 = ns > 1 ? fxa + e : fxa + Wa / 2;
+      const rise = stag ? (CL.fy1 - CL.fy0 + 0.17) * F + FG : 0;   // 一段高い人を上げる高さ（にっこりで跳ねる 0.15F を含む）
+      const bub = cy - rise - (CL.top + 0.17) * F - 12;              // 吹き出しの下端（しっぽ 8px＋4px）
+      // 吹き出しの絵の大きさ: 席の幅に収まる大きさで、2 品を縦に積むか横に並べるか（席が広ければ横）の高い方
+      const spB = sp || Wa, ic0 = Math.min(spB * 0.72, 84, spB - 12, (spB - 2) / 1.24), pad0 = Math.max(5, ic0 * 0.12), room = bub - topY;
+      const icV = Math.min(ic0, (room - pad0 * 2.5) / 2), icH = Math.min(ic0, (spB - pad0 * 3) / 2 - 0.5, room - pad0 * 2);
+      const ic = Math.max(icV, icH);
+      P = { F, stag, sp, x0, rise, bub, ic };
+      if ((stag ? 2 * sp : sp) >= CL.fw * F + FG - 0.01 && ic >= Math.min(ic0, Math.max(26, F * 0.45))) break;   // 顔が重ならず、吹き出しの絵が小さくなりすぎない
+      F *= 0.97;
+    }
+    return P;
+  };
+  const A = planFor(false), B = ns >= 4 ? planFor(true) : null;
+  const PL = B && B.F > A.F * 1.02 ? B : A, F = PL.F, stag = PL.stag;
+  L.custF = F; L.custStag = stag; L.custFaceArea = { x0: fxa, x1: fxb };
   L.seats = [];
   for (let s = 0; s < ns; s++) {
-    const x = ca.x0 + sw * (s + 0.5), headY = ca.counterY - hr * 1.9;
-    const icon = Math.min(sw * 0.72, 84, (headY - hr - 12 - topY) * 0.9);
-    L.seats.push({ x, headY, hr, sw, icon });
+    const x = PL.x0 + PL.sp * s, up = stag && s % 2 === 1 ? PL.rise : 0, cut = cy - up;
+    const hr = F * 0.5, headY = cut + (CL.fy0 + CL.fy1) / 2 * F;   // hr・headY = 顔の目安（出したときのコインと文字の位置・動きの大きさ）
+    L.seats.push({ x, sw: PL.sp || Wa, F, up, cut, top: cut - CL.top * F, bub: PL.bub, headY, hr, icon: PL.ic });
   }
   // 内装の置き場所（客・看板と重ならない所をここで決める）
   const caW = ca.x1 - ca.x0, sH = L.counter.y - L.scene.y, Wn = L.window, u = clamp(Math.min(sH / 190, caW / 260), 0.5, 1.5);
@@ -1239,7 +1297,7 @@ function computeLayout() {
   D.plant3 = { x: Wn.x + Wn.w / 2 + 16 * u, y: L.counter.y + 2 };
   const sw2 = L.portrait ? Math.min(92 * u, W * 0.24) : Math.min(L.strip.w * 0.95, 120 * u);
   D.showcase = L.portrait ? { x: L.chr.gx - sw2 * 0.55, w: sw2 } : { x: L.strip.x0 + L.strip.w - sw2 * 0.98, w: sw2 };
-  D.lamps = [Wn.x - Wn.w * 0.9, Wn.x + Wn.w * 0.9, L.portrait ? W * 0.93 : L.strip.x0 + L.strip.w * 0.8];
+  D.lamps = [Wn.x - Wn.w * 0.9, Wn.x + Wn.w * 0.9, L.portrait ? (Wn.x + Wn.w * 0.9 + L.btnSfx.x - Math.max(L.btnSfx.r, L.btnSfx.lf * 1.6)) / 2 : L.strip.x0 + L.strip.w * 0.8];
   L.itemS = L.board.cell;
   return L;
 }
@@ -1251,10 +1309,13 @@ function trayPos() { return lay().slots[0]; }
 function trashPos() { return lay().slots[4]; }
 function bubbleRect(si) {
   const L = lay(), S = L.seats[si], s = G.seats[si]; if (!S || !s) return null;
-  const n = s.order.length, ic = S.icon, pad = Math.max(5, ic * 0.12);
+  return bubbleGeom(S, s.order.length);
+}
+function bubbleGeom(S, n) {
+  const ic = S.icon, pad = Math.max(5, ic * 0.12);
   const two = n > 1, sideBy = two && S.sw > ic * 2 + pad * 3;
   const w = (sideBy ? ic * 2 + pad : ic) + pad * 2, h = (two && !sideBy ? ic * 2 + pad * 0.5 : ic) + pad * 2;
-  const bottom = S.headY - S.hr - 10;
+  const bottom = S.bub;
   return { x: S.x - w / 2, y: bottom - h, w, h, pad, ic, sideBy, n };
 }
 function seatAt(x, y) {
@@ -1263,7 +1324,7 @@ function seatAt(x, y) {
     const s = G.seats[si]; if (!s || s.state !== 'wait') continue;
     const S = L.seats[si], b = bubbleRect(si);
     if (b && x >= b.x - 6 && x <= b.x + b.w + 6 && y >= b.y - 6 && y <= b.y + b.h + 10) return si;
-    if (Math.abs(x - S.x) <= S.sw * 0.5 && y >= S.headY - S.hr - 4 && y <= L.custArea.counterY + 8) return si;
+    if (Math.abs(x - S.x) <= S.sw * 0.5 && y >= S.top - 4 && y <= L.custArea.counterY + 8) return si;
   }
   return -1;
 }
@@ -1464,6 +1525,10 @@ function drawCounter(L) {
   if (!L.portrait) { for (let x = C.x + 30; x < C.x + C.w; x += 60) { ctx.fillStyle = PAL.woodShadow; ctx.fillRect(x, C.y + top + 14, 2, C.h - top - 20); } ctx.fillStyle = PAL.woodShadow; ctx.fillRect(C.x, C.y + C.h - 10, C.w, 10); }
   ctx.fillStyle = PAL.woodTop; ctx.fillRect(C.x, C.y, C.w, top);
   ctx.fillStyle = PAL.ink; ctx.fillRect(C.x, C.y - 1, C.w, 1.5);
+}
+// ショーケース（カウンターの上。お客さんより奥に描く）
+function drawShowcase(L) {
+  const C = L.counter;
   // ショーケース（内装: 1 ガラスのドーム → 2 小さなケースに 2 品 → 3 金の縁のケースに 3 品）
   const sc = G.up.showcase; if (!sc) return;
   const D = L.deco.showcase, u = L.deco.u, w = D.w * (sc === 1 ? 0.5 : sc === 2 ? 0.75 : 1), h = (sc === 1 ? 44 : 38) * u;
@@ -1483,53 +1548,125 @@ function drawCounter(L) {
   ctx.strokeStyle = PAL.ink; ctx.lineWidth = 1.4; rr(ctx, x, y, w, h, 6 * u); ctx.stroke();
 }
 
-// ---------- お客さん（丸い頭のシルエット＋服の色違い 6 種。表情は目 2 つと口 1 本。アートディレクション第3節） ----------
-const LOOKS = [
-  { skin: '#F3D5B8', hair: '#3A2A22', cloth: '#7FA7C9', style: 0 },
-  { skin: '#E8C29F', hair: '#7A5236', cloth: '#E48A66', style: 1 },
-  { skin: '#F6DEC6', hair: '#B98A5E', cloth: '#B7A3D6', style: 2 },
-  { skin: '#D9A982', hair: '#3A2A22', cloth: '#6DAA86', style: 3 },
-  { skin: '#F3D5B8', hair: '#5A4638', cloth: '#E9B872', style: 4 },
-  { skin: '#EBCBAA', hair: '#7A5236', cloth: '#F0A0B8', style: 5 },
-];
-function drawCustomer(x, headY, hr, look, mood, alpha) {
-  const Lk = LOOKS[look % LOOKS.length], s = hr / 20;
-  ctx.save(); ctx.translate(x, headY); ctx.scale(s, s); if (alpha < 1) ctx.globalAlpha = alpha;
-  const K = makePainter(ctx);
-  K.path(p => { p.moveTo(-27, 80); p.lineTo(-27, 36); p.bezierCurveTo(-27, 22, -14, 17, 0, 17); p.bezierCurveTo(14, 17, 27, 22, 27, 36); p.lineTo(27, 80); p.closePath(); }, [-27, 17, 27, 80], Lk.cloth, { hiK: 0.8 });
-  K.path(p => { p.moveTo(-8, 18); p.quadraticCurveTo(0, 28, 8, 18); p.closePath(); }, [-8, 17, 8, 26], Lk.skin, { hi: false, shade: false, lw: 1.6 });
-  // 髪（後ろ）
-  if (Lk.style === 1 || Lk.style === 5) K.ell(0, 4, 23, 22, Lk.hair, { hi: false });
-  if (Lk.style === 4) K.ell(0, -20, 9, 8, Lk.hair, { hiK: 0.6 });
-  K.ell(0, 0, 20, 20, Lk.skin, { hiK: 0.7 });
-  // 髪（前）: 0 おかっぱ・1 長い髪・2 ベレー帽・3 短髪・4 おだんご・5 ふんわり
-  const hair = Lk.hair;
-  if (Lk.style === 2) { K.path(p => { p.ellipse(2, -12, 24, 10, -0.15, 0, TAU); }, [-22, -22, 26, -2], '#C0504D'.replace('#C0504D', PAL.terraDeep), { hiK: 0.6 }); K.dot(4, -22, 3, PAL.ink); }
-  else K.path(p => { p.moveTo(-21, 4); p.bezierCurveTo(-24, -24, 24, -24, 21, 4); p.quadraticCurveTo(12, -8, 2, -9); p.quadraticCurveTo(-10, -4, -21, 4); }, [-22, -18, 22, 4], hair, { hiK: 0.6, shade: false });
-  if (Lk.style === 0) { K.rr(-22, -6, 7, 22, 3.5, hair, { hi: false, shade: false }); K.rr(15, -6, 7, 22, 3.5, hair, { hi: false, shade: false }); }
-  // 顔
-  ctx.fillStyle = 'rgba(255,122,162,.35)'; ctx.beginPath(); ctx.ellipse(-11, 8, 4, 2.6, 0, 0, TAU); ctx.ellipse(11, 8, 4, 2.6, 0, 0, TAU); ctx.fill();
-  ctx.strokeStyle = PAL.ink; ctx.fillStyle = PAL.ink; ctx.lineWidth = 2.2; ctx.lineCap = 'round';
-  if (mood === 'happy') { for (const k of [-1, 1]) { ctx.beginPath(); ctx.arc(k * 7, 3, 3, Math.PI * 1.1, Math.PI * 1.9); ctx.stroke(); } ctx.beginPath(); ctx.arc(0, 8, 5, 0.15 * Math.PI, 0.85 * Math.PI); ctx.stroke(); }
-  else if (mood === 'wow') { for (const k of [-1, 1]) { ctx.beginPath(); ctx.arc(k * 7, 2, 2.4, 0, TAU); ctx.fill(); } ctx.beginPath(); ctx.ellipse(0, 11, 2.4, 3, 0, 0, TAU); ctx.stroke(); }
-  else { for (const k of [-1, 1]) { ctx.beginPath(); ctx.arc(k * 7, 2, 2.2, 0, TAU); ctx.fill(); } ctx.beginPath(); ctx.moveTo(-3.5, 11); ctx.lineTo(3.5, 11); ctx.stroke(); }
+// ---------- お客さん（しきぶの仲間 7 人 × 3 表情。原画 art/customers から tools/build_customers.py で作った画像。修正 4・4b） ----------
+// 表情: 待つ = wait・にっこり = happy・びっくり = wow。基準点（顔の矩形の真ん中）で置くので、表情を変えても顔の位置は動かない（体は絵のとおりに傾く）
+// 大きさは顔の高さで決める（修正 4b）: 大人の顔の高さ F に、身長の差を少しだけ残す割合（大人 ≈ 1・あたり 0.94・のんた 0.90）を掛ける。
+// カウンターの上端は「あご＋顔の高さの半分」（胸のあたり）。あたり（100cm）は踏み台（カウンターに隠れて見えない）、のんた（60cm）はベビーチェアに乗って顔を出す
+const CD = (typeof CUST_DATA !== 'undefined') ? CUST_DATA : { moods: ['wait', 'happy', 'wow'], chars: [] };
+const NCUST = Math.max(1, CD.chars.length);
+const CHEST = 0.5;
+// ベビーチェア（のんたの基準点からの相対・画像の px）: 背もたれは頭の横まで、前の板はカウンターの上端のすぐ上
+const CHAIR = { backW: 200, backTop: 205, trayW: 214, trayH: 20 };
+// 人ごとの寸法（F を 1 とした割合）: u = 画像 1px の大きさ・cut = カウンターの上端（基準点＝顔の真ん中から下へ・画像 px）・gw = 待つの床（基準点から・画像 px）・
+// fx0..fx1, fy0..fy1 = 顔の矩形（3 表情の和。顔の中心 × カウンターの上端から）・top = カウンターから一番上（上げた手・台）までの高さ・off = 顔の中心から基準点へ
+const CL = (() => {
+  const H = Math.max(1, ...CD.chars.map(c => c.height));
+  const per = CD.chars.map(c => {
+    const w = c.img.wait, fh = w.face[3] - w.face[1], f = 0.85 + 0.15 * c.height / H, u = f / fh, cut = w.face[3] + CHEST * fh - w.ay, gw = w.ground - w.ay;
+    let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9, top = 0;
+    for (const m of CD.moods) { const p = c.img[m]; x0 = Math.min(x0, p.face[0] - p.ax); x1 = Math.max(x1, p.face[2] - p.ax); y0 = Math.min(y0, p.face[1] - p.ay - cut); y1 = Math.max(y1, p.face[3] - p.ay - cut); top = Math.max(top, p.ay + cut); }
+    if (c.prop === 'chair') top = Math.max(top, CHAIR.backTop - gw + cut);
+    const off = -(x0 + x1) / 2;
+    return { f, u, cut, gw, off: off * u, fx0: (x0 + off) * u, fx1: (x1 + off) * u, fy0: y0 * u, fy1: y1 * u, top: top * u, fw: (x1 - x0) * u };
+  });
+  return { per, fw: Math.max(0.1, ...per.map(q => q.fw)), fy0: Math.min(0, ...per.map(q => q.fy0)), fy1: Math.max(-1, ...per.map(q => q.fy1)), top: Math.max(1, ...per.map(q => q.top)) };
+})();
+function custMeta(look, mood) { const i = look % NCUST, c = CD.chars[i]; return c ? { c, p: c.img[mood] || c.img.wait, q: CL.per[i] } : null; }
+// 1 人を描く: x = 顔の中心の横位置・cy = その人のカウンターの上端（胸）の y・F = 大人の顔の高さ。part = 'face' なら顔のまわりだけ（隣の髪や腕の上に描き直す）
+function drawCustomer(x, cy, F, look, mood, alpha, part) {
+  const M = custMeta(look, mood); if (!M) return;
+  const { c, p, q } = M, im = IMG['cust_' + c.key + '_' + mood], k = F * q.u;
+  const ax = x + q.off * F, ay = cy - q.cut * k, gy = ay + q.gw * k;   // 基準点（顔の真ん中）と、台を置く床（待つの足元）の画面の位置
+  ctx.save(); if (alpha < 1) ctx.globalAlpha = alpha;
+  if (part === 'face') {
+    const f = p.face, cx = ax + ((f[0] + f[2]) / 2 - p.ax) * k, fy = ay + ((f[1] + f[3]) / 2 - p.ay) * k;
+    ctx.beginPath(); ctx.ellipse(cx, fy, (f[2] - f[0]) * k * 0.54, (f[3] - f[1]) * k * 0.54, 0, 0, TAU); ctx.clip();
+    if (ready(im)) ctx.drawImage(im, ax - p.ax * k, ay - p.ay * k, p.w * k, p.h * k);
+    ctx.restore(); return;
+  }
+  if (c.prop === 'chair') drawBabyChair(ax, gy, cy, k, false);
+  if (ready(im)) ctx.drawImage(im, ax - p.ax * k, ay - p.ay * k, p.w * k, p.h * k);
+  if (c.prop === 'chair') drawBabyChair(ax, gy, cy, k, true);
   ctx.restore();
 }
-function drawCustomers(L) {
-  const t = now();
+// 席 si に look の人が mood で立ったときの、カウンターより上に見える部分の枠（画面座標。台を含む）と基準点・顔の矩形
+function custGeom(si, look, mood) {
+  const L = lay(), S = L.seats[si], M = custMeta(look, mood); if (!S || !M) return null;
+  const { c, p, q } = M, F = S.F, k = F * q.u, ax = S.x + q.off * F, ay = S.cut - q.cut * k, f = p.face;
+  const face = { x: ax + (f[0] - p.ax) * k, y: ay + (f[1] - p.ay) * k, w: (f[2] - f[0]) * k, h: (f[3] - f[1]) * k };
+  let top = ay - p.ay * k; if (c.prop === 'chair') top = Math.min(top, ay + (q.gw - CHAIR.backTop) * k);
+  return { face, anchor: { x: ax, y: ay }, img: { x: ax - p.ax * k, y: ay - p.ay * k, w: p.w * k, h: p.h * k }, top, cut: S.cut, key: c.key, name: c.name };
+}
+// ベビーチェア（木。背もたれ = 丸い背の枠と桟・前 = 食事の板）。front = 前の板だけ（子どもの前に描く）
+function drawBabyChair(fx, fy, cy, k, front) {
+  const lw = Math.max(1, Math.min(2, k * 14));
+  ctx.save(); ctx.lineJoin = 'round'; ctx.strokeStyle = PAL.ink; ctx.lineWidth = lw;
+  if (!front) {
+    const w = CHAIR.backW * k, top = fy - CHAIR.backTop * k, x0 = fx - w / 2, r = w * 0.5;
+    ctx.fillStyle = PAL.wood; rr(ctx, x0, top, w, cy - top + r, r); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = PAL.woodTop; rr(ctx, x0 + w * 0.12, top + w * 0.1, w * 0.76, cy - top + r, r * 0.76); ctx.fill();
+    ctx.strokeStyle = PAL.woodShadow; ctx.lineWidth = Math.max(1, lw * 0.8);
+    for (const kx of [-0.2, 0, 0.2]) { ctx.beginPath(); ctx.moveTo(fx + kx * w, top + w * 0.28); ctx.lineTo(fx + kx * w, cy); ctx.stroke(); }
+    ctx.fillStyle = 'rgba(255,255,255,.45)'; ctx.beginPath(); ctx.ellipse(x0 + w * 0.26, top + w * 0.26, w * 0.07, w * 0.14, 0.5, 0, TAU); ctx.fill();
+  } else {
+    const w = CHAIR.trayW * k, h = CHAIR.trayH * k, x0 = fx - w / 2, y0 = cy - h;
+    ctx.fillStyle = PAL.woodTop; rr(ctx, x0, y0, w, h + 2, Math.min(h, 8)); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = PAL.wood; ctx.fillRect(x0 + lw, y0 + h * 0.55, w - lw * 2, h * 0.45 + 1);
+    ctx.fillStyle = 'rgba(255,255,255,.55)'; rr(ctx, x0 + w * 0.08, y0 + h * 0.18, w * 0.3, Math.max(1, h * 0.16), h * 0.08); ctx.fill();
+  }
+  ctx.restore();
+}
+// 次に来る人: 今いる人（帰るところの人も）と、その席から最後に帰った人を除いて、残りからランダムに 1 人（rand は 1 回だけ）
+function pickLook(si) {
+  const used = new Set(G.seats.filter(Boolean).map(s => s.look % NCUST));
+  let pool = []; for (let i = 0; i < NCUST; i++) if (!used.has(i) && i !== G.lastLook[si]) pool.push(i);
+  if (!pool.length) for (let i = 0; i < NCUST; i++) if (!used.has(i)) pool.push(i);
+  const r = rand();
+  return pool.length ? pool[Math.floor(r * pool.length)] : Math.floor(r * NCUST);
+}
+function custMood(s, t) {
+  if (s.forceMood) return s.forceMood;
+  if (s.state === 'happy') return 'happy';
+  if (s.partAt && t - s.partAt < 700) return 'happy';
+  if (G.drag && G.drag.moved && G.drag.id && s.order.some(o => !o.done && o.id === G.drag.id)) return 'wow';
+  return 'wait';
+}
+// 体 → 顔の順に描く（体は一段高い人を先に＝奥に）。顔はどの人の髪・腕よりも上に来る。FACE_LAST はテスト用（顔を全部の最後に描いて、描いた結果が変わらない＝何にも隠れていないことを確かめる）
+let FACE_LAST = false;
+function custPoses(L) {
+  const t = now(), out = [];
   for (let si = 0; si < G.seats.length && si < L.seats.length; si++) {
     const s = G.seats[si]; if (!s) continue;
-    const S = L.seats[si];
+    const S = L.seats[si], M = custMeta(s.look, 'wait');
+    const vis = S.up + (M ? M.q.top : 2) * S.F + 4;   // この人がカウンターの上に見えている高さ（来るときは下から出てくる）
     const inK = clamp((t - s.arriveAt) / 320, 0, 1);
-    let dy = (1 - easeOutBack(inK)) * S.hr * 2.6, alpha = inK, mood = 'wait';
-    if (s.state === 'happy') { const k = (t - s.happyAt) / 1100; mood = 'happy'; dy = -Math.abs(Math.sin(k * Math.PI * 2)) * S.hr * 0.3; if (k > 0.7) { alpha = 1 - (k - 0.7) / 0.3; dy += (k - 0.7) / 0.3 * S.hr * 1.5; } }
-    else if (s.partAt && t - s.partAt < 700) mood = 'happy';
-    else if (G.drag && G.drag.moved && G.drag.id && s.order.some(o => !o.done && o.id === G.drag.id)) mood = 'wow';
+    let dy = (1 - easeOutBack(inK)) * vis, alpha = inK;
+    const mood = custMood(s, t);
+    if (s.state === 'happy') { const k = (t - s.happyAt) / 1100; dy = -Math.abs(Math.sin(k * Math.PI * 2)) * S.hr * 0.3; if (k > 0.7) { alpha = 1 - (k - 0.7) / 0.3; dy += (k - 0.7) / 0.3 * vis * 0.6; } }
     const bob = Math.sin(fxNow() / 700 + si * 1.3) * S.hr * 0.04;
-    ctx.save(); ctx.beginPath(); ctx.rect(S.x - S.sw, L.scene.y - 200, S.sw * 2, L.counter.y - L.scene.y + 200); ctx.clip();
-    drawCustomer(S.x, S.headY + dy + bob, S.hr, s.look, mood, alpha);
-    ctx.restore();
+    out.push({ si, S, s, mood, alpha, y: S.cut + dy + bob });
   }
+  return out.sort((a, b) => b.S.up - a.S.up || a.si - b.si);
+}
+function drawCustomers(L, part) {
+  ctx.save(); ctx.beginPath(); ctx.rect(L.scene.x, L.scene.y - 200, L.W - L.scene.x, L.counter.y - L.scene.y + 200); ctx.clip();
+  for (const c of custPoses(L)) {
+    drawCustomer(c.S.x, c.y, c.S.F, c.s.look, c.mood, c.alpha, part);
+    if (part !== 'face' && c.S.up > 0) drawHighTable(L, c.S, c.alpha);
+  }
+  ctx.restore();
+}
+// 一段高い人の前のハイテーブル（木。天板が胸の高さ。下は手前の人とカウンターに隠れる）
+function drawHighTable(L, S, alpha) {
+  const w = S.F * 2.3, x0 = S.x - w / 2, y0 = S.cut, h = L.custArea.counterY - y0 + 6, th = Math.max(4, S.F * 0.16);
+  ctx.save(); if (alpha < 1) ctx.globalAlpha = alpha;
+  ctx.fillStyle = PAL.wood; rr(ctx, x0 + w * 0.04, y0, w * 0.92, h, 3); ctx.fill();
+  ctx.fillStyle = PAL.woodShadow; ctx.fillRect(x0 + w * 0.04, y0 + th, w * 0.92, 2);
+  for (const k of [0.3, 0.7]) ctx.fillRect(x0 + w * k, y0 + th + 6, 1.5, h);
+  ctx.strokeStyle = PAL.ink; ctx.lineWidth = 1.2; rr(ctx, x0 + w * 0.04, y0, w * 0.92, h, 3); ctx.stroke();
+  ctx.fillStyle = PAL.woodTop; rr(ctx, x0, y0 - 1, w, th, th / 2); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = 'rgba(255,255,255,.45)'; rr(ctx, x0 + w * 0.08, y0 + th * 0.2, w * 0.3, th * 0.25, th * 0.12); ctx.fill();
+  ctx.restore();
 }
 // 注文の吹き出し（白 94% のカード・角 14px・影は真下。台に同じお菓子があれば ✓ を付ける）
 function drawBubbles(L) {
@@ -1666,8 +1803,31 @@ function drawHud(L) {
   const canBuy = SHOP_ORDER.some(k => shopInfo(k).can);
   dy = roundButton(L.btnShop, PAL.terra, PAL.terraTop, PAL.terraDeep, sp, canBuy);
   shopIcon(L.btnShop.x, L.btnShop.y + dy, L.btnShop.r * 0.58);
+  drawSoundToggles(L);
   if (canBuy) { ctx.fillStyle = PAL.butter; ctx.beginPath(); ctx.arc(L.btnShop.x + L.btnShop.r * 0.72, L.btnShop.y - L.btnShop.r * 0.72, L.btnShop.r * 0.26, 0, TAU); ctx.fill(); ctx.strokeStyle = PAL.ink; ctx.lineWidth = 1.5; ctx.stroke(); }
 }
+// 効果音・BGM の切替（ON = テラコッタに白い記号・OFF = 灰色がかったクリームに記号＋斜線）。記号は第1弾 v6 と同じ
+// （効果音 = 長さの違う縦線の並び・BGM = 8 分音符 2 つ。スピーカーの形は YouTube のミュートと紛れるので使わない）
+const TOGGLE_ICON = {
+  sfx: ['M2 10v3', 'M6 6v11', 'M10 3v18', 'M14 8v7', 'M18 5v13', 'M22 10v3'],
+  bgm: ['M9 18V5l12-2v13', 'M9 18a3 3 0 1 1-6 0a3 3 0 1 1 6 0', 'M21 16a3 3 0 1 1-6 0a3 3 0 1 1 6 0'],
+};
+function drawSoundToggles(L) {
+  const tn = now();
+  for (const b of [L.btnSfx, L.btnBgm]) {
+    const on = b.key === 'sfx' ? !Sound.userMuted : Sound.bgmOn, pr = G.press && G.press.key === b.key && tn - G.press.t0 < 140;
+    const dy = on ? roundButton(b, PAL.terra, PAL.terraTop, PAL.terraDeep, pr) : roundButton(b, '#E9DCCB', PAL.board, PAL.woodShadow, pr);
+    ctx.save(); const sc = b.r * 1.2 / 24; ctx.translate(b.x - 12 * sc, b.y + dy - 12 * sc); ctx.scale(sc, sc);
+    ctx.strokeStyle = on ? '#FFFFFF' : PAL.woodShadow; ctx.lineWidth = 2.8; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    for (const d of TOGGLE_ICON[b.key]) ctx.stroke(new Path2D(d));
+    if (!on) { ctx.strokeStyle = PAL.board; ctx.lineWidth = 6.5; ctx.stroke(new Path2D('M3 3l18 18')); ctx.strokeStyle = PAL.ink; ctx.lineWidth = 2.8; ctx.stroke(new Path2D('M3 3l18 18')); }
+    ctx.restore();
+    text(T(b.key), b.x, b.ly, b.lf, { fill: PAL.ink, stroke: PAL.board, strokeW: 0.3 });
+  }
+}
+function toggleSfx() { Sound.userMuted = !Sound.userMuted; Save.flush(); }
+function toggleBgm() { Sound.setBgm(!Sound.bgmOn); Save.flush(); }
+function hitToggle(L, x, y) { for (const b of [L.btnSfx, L.btnBgm]) if (Math.hypot(x - b.x, y - b.y) <= Math.max(22, b.r + 4) || (Math.abs(x - b.x) <= b.r + 6 && y >= b.y && y <= b.ly + b.lf * 0.7)) return b.key; return null; }
 function menuIcon(x, y, r) {
   ctx.save(); ctx.strokeStyle = PAL.chalk; ctx.lineWidth = Math.max(2, r * 0.18); ctx.lineCap = 'round';
   rr(ctx, x - r * 0.75, y - r * 0.85, r * 1.5, r * 1.7, r * 0.2); ctx.stroke();
@@ -1825,7 +1985,7 @@ function fxMerge(cell, nid, great, combo, isNew) {
   Sound.pon(tier, combo);
   if (tier >= 4 && tier <= 5) Sound.sparkle(4);
   if (tier >= 6 && tier <= 7) { Sound.sparkle(6); Sound.fanfare(); }
-  if (tier === MAX_TIER) Sound.jingle();
+  if (tier === MAX_TIER) { if (!Sound.bgmJingle('legend')) Sound.jingle(); }   // BGM の伝説のジングル（復号前だけ合成のジングル）
   if (great) { Sound.great(); popup(T('great'), p.x, p.y - cs * 0.7, cs * 0.42, PAL.berry, 1000); G.rings.push({ x: p.x, y: p.y, t0: t, dur: 600, r0: cs * 0.2, r1: cs * 1.4, col: PAL.butter, w: 8 }); }
   if (combo >= 2) popup(T('combo', { n: combo }), p.x, p.y - cs * (great ? 1.1 : 0.62), cs * 0.34, PAL.butter, 800);
   if (tier === MAX_TIER) setReact('legend'); else if (tier >= 6) setReact('big'); else if (tier >= 4) setReact('joy');
@@ -2076,7 +2236,15 @@ function shopArt(key, x, y, s) {
   const t = fxNow();
   if (key === 'oven' || key === 'whisk' || key === 'coffee') { drawToolArt(key, x, y, s, t, false); return; }
   if (key === 'tray') { drawToolArt('tray', x, y, s, t, false); drawItem(12, x - s * 0.12, y - s * 0.1, s * 0.4); drawItem(21, x + s * 0.14, y - s * 0.12, s * 0.4); return; }
-  if (key === 'seats') { drawCustomer(x - s * 0.18, y - s * 0.12, s * 0.16, 1, 'happy', 1); drawCustomer(x + s * 0.18, y - s * 0.12, s * 0.16, 2, 'happy', 1); return; }
+  if (key === 'seats') {
+    // 席を増やす: お母さんとのんた（ベビーチェア）がカウンターに並ぶ。カウンターの上端で切る
+    const F = s * 0.21, cy = y + s * 0.3;
+    ctx.save(); ctx.beginPath(); ctx.rect(x - s * 0.5, y - s * 0.6, s, cy - (y - s * 0.6)); ctx.clip();
+    drawCustomer(x - s * 0.17, cy, F, 3, 'happy', 1); drawCustomer(x + s * 0.27, cy, F, 6, 'happy', 1);
+    ctx.restore();
+    ctx.fillStyle = PAL.woodTop; rr(ctx, x - s * 0.44, cy, s * 0.88, s * 0.1, s * 0.03); ctx.fill(); ctx.strokeStyle = PAL.ink; ctx.lineWidth = 1.4; ctx.stroke();
+    return;
+  }
   ctx.save(); ctx.translate(x, y);
   const u = s / 100;
   if (key === 'board') { ctx.fillStyle = PAL.board; rr(ctx, -40 * u, -40 * u, 80 * u, 80 * u, 12 * u); ctx.fill(); ctx.strokeStyle = PAL.ink; ctx.lineWidth = 1.6; ctx.stroke(); for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) { ctx.fillStyle = PAL.cell; rr(ctx, (-34 + i * 17.5) * u, (-34 + j * 17.5) * u, 15 * u, 15 * u, 4 * u); ctx.fill(); } }
@@ -2349,7 +2517,9 @@ function render() {
   ctx.save();
   if (t < G.shake.until) ctx.translate((rand() - 0.5) * 2 * G.shake.amp, (rand() - 0.5) * 2 * G.shake.amp);
   drawBackground(L, true);
-  drawCustomers(L);
+  drawShowcase(L);   // 飾りはお客さんより奥
+  drawCustomers(L, 'body');
+  if (!FACE_LAST) drawCustomers(L, 'face');
   const f = chrFrame(L);
   if (L.chr.mode === 'waist') { drawCharacter(L, f); drawCounter(L); }
   else { drawCounter(L); drawCharacter(L, f); }
@@ -2363,6 +2533,7 @@ function render() {
   drawWelcome(L);
   drawNewCard(L);
   ctx.restore();
+  if (FACE_LAST) drawCustomers(L, 'face');
   drawLegend(L);
   if (G.scene === 'close') drawReceipt(L);
   else if (G.modal === 'shop') drawShop(L);
@@ -2412,6 +2583,8 @@ function onDown(x, y) {
     return;
   }
   if (G.modal) { modalDown(L, x, y); return; }
+  const tg = hitToggle(L, x, y);
+  if (tg) { press(tg); if (tg === 'sfx') { toggleSfx(); Sound.play('tap'); } else { toggleBgm(); Sound.play('tap'); } return; }
   if (hitCircle(L.btnShop, x, y, 4)) { press('shop'); G.modal = 'shop'; Sound.play('tap'); G.drag = null; return; }
   if (hitCircle(L.btnBook, x, y, 4)) { press('book'); G.modal = 'book'; Sound.play('tap'); G.drag = null; return; }
   for (let i = 0; i < L.slots.length; i++) {
@@ -2525,7 +2698,7 @@ window.Game = {
   shopInfo: k => shopInfo(k), shopKeys: () => SHOP_ORDER.slice(), canProgress: () => canProgress(), tipPct: () => tipPct(),
   // 操作（画面の操作と同じ関数）
   start: () => { if (G.scene === 'title') beginPlay(); }, tapTool: c => tapTool(c), drop: (a, b) => dropOnCell(a, b), serve: (cell, si) => serve(cell, si), sell: cell => sell(cell),
-  autoServe: cell => autoServe(cell), releaseTray: () => releaseTray(), buy: k => buy(k), nextDay: () => nextDay(), openModal: m => { G.modal = m; }, closeModal: () => { G.modal = null; }, bookTab: c => { G.bookTab = c; },
+  autoServe: cell => autoServe(cell), releaseTray: () => releaseTray(), buy: k => buy(k), nextDay: () => nextDay(), closeDay: () => closeDay(), openModal: m => { G.modal = m; }, closeModal: () => { G.modal = null; }, bookTab: c => { G.bookTab = c; },
   // 時間の早送り（時計をずらして、時間の仕事を 1 回進める。遊んだ時間にも足す）
   advance: ms => { CLOCK.skew += ms; FX.t += ms; if (G.scene === 'play' || G.scene === 'close') G.stats.playMs += ms; updateLogic(now()); return now(); },
   seed: n => { rand = mulberry32(n >>> 0); },
@@ -2536,9 +2709,25 @@ window.Game = {
   // セーブ
   snapshot: () => { const d = Save.build(); delete d.lastSeen; delete d.stats; return JSON.parse(JSON.stringify(d)); }, flush: () => Save.flush(), parseSave: raw => Save.parse(raw), saveLen: () => Save.lastLen, saveWrites: () => Save.writes,
   // 画面の部品の位置（重なりの確認）
-  layout: () => { const L = lay(); return { W: L.W, H: L.H, portrait: L.portrait, hud: L.hud, board: L.board, scene: L.scene, counter: L.counter, slots: L.slots, btnShop: L.btnShop, btnBook: L.btnBook, pills: L.pills, seats: L.seats, chr: L.chr }; },
+  layout: () => { const L = lay(); return { W: L.W, H: L.H, portrait: L.portrait, hud: L.hud, board: L.board, scene: L.scene, counter: L.counter, slots: L.slots, btnShop: L.btnShop, btnBook: L.btnBook, btnSfx: L.btnSfx, btnBgm: L.btnBgm, pills: L.pills, seats: L.seats, chr: L.chr }; },
   cellCenter: i => cellCenter(i), toolPos: c => toolPos(c), trayPos: () => trayPos(), trashPos: () => trashPos(),
-  bubble: si => bubbleRect(si), envelope: () => envelopeRect(lay()), poseRect: k => poseRect(lay(), k), poseKeys: () => Object.keys(PD.poses),
+  bubble: si => bubbleRect(si), bubbleFor: (si, n) => { const S = lay().seats[si]; return S ? bubbleGeom(S, n) : null; },
+  // お客さん（修正 4）: 人の数・名前、席 si に look の人が mood で立ったときの枠（custGeom）、席に人を置いて表情を固定する（確認用）
+  custCount: () => NCUST, custNames: () => CD.chars.map(c => c.name), custMoods: () => CD.moods.slice(), custGeom: (si, look, mood) => custGeom(si, look, mood),
+  custLook: () => JSON.parse(JSON.stringify(CL)), custArea: () => { const L = lay(); return { F: L.custF, stag: L.custStag, face: L.custFaceArea }; },
+  // 顔が何かに隠れていないか: 同じ時刻で 2 回描く（ふつう・顔を全部の最後に描く）。顔の楕円の内側で色が変わった画素の数を席ごとに返す
+  faceCover: () => {
+    const L = lay(), d = view.dpr, list = custPoses(L).map(c => { const g = custGeom(c.si, c.s.look, c.mood); return { si: c.si, f: g.face, dy: c.y - c.S.cut }; });
+    const grab = () => list.map(o => { const x = Math.floor((o.f.x + o.f.w * 0.12) * d), y = Math.floor((o.f.y + o.f.h * 0.12 + o.dy) * d), w = Math.max(1, Math.floor(o.f.w * 0.76 * d)), h = Math.max(1, Math.floor(o.f.h * 0.76 * d)); return { x, y, w, h, px: ctx.getImageData(x, y, w, h).data }; });
+    FACE_LAST = false; render(); const a = grab();
+    FACE_LAST = true; try { render(); } finally { FACE_LAST = false; }
+    const b = grab();
+    return list.map((o, i) => { const A = a[i], B = b[i]; let n = 0, tot = 0;
+      for (let yy = 0; yy < A.h; yy++) for (let xx = 0; xx < A.w; xx++) { const ex = (xx + 0.5) / A.w - 0.5, ey = (yy + 0.5) / A.h - 0.5; if (ex * ex + ey * ey > 0.25) continue; tot++; const j = (yy * A.w + xx) * 4; if (Math.abs(A.px[j] - B.px[j]) + Math.abs(A.px[j + 1] - B.px[j + 1]) + Math.abs(A.px[j + 2] - B.px[j + 2]) > 24) n++; }
+      return { si: o.si, changed: n, total: tot }; });
+  },
+  setSeats: arr => { const t = now(); arr.forEach((a, si) => { if (si >= G.seats.length) return; G.seats[si] = a == null ? null : { look: a.look, order: (a.order || [11]).map(id => ({ id, done: false })), arriveAt: t - 5000, orderAt: t, state: 'wait', leaveAt: 0, forceMood: a.mood || null }; }); },
+  envelope: () => envelopeRect(lay()), poseRect: k => poseRect(lay(), k), poseKeys: () => Object.keys(PD.poses),
   pose: () => POSE.cur, poseLog: () => POSE.log.slice(),
   // ポーズの差し替えの確認用: 各ポーズの接地点（画面座標）・ポーズを固定・汗を全部の出現点に出す・汗と顔の矩形（画面座標）
   footPoints: () => { const L = lay(); return Object.keys(PD.poses).map(k => { const r = poseRect(L, k), p = poseMeta(k), s = L.chr.s; return { k, x: r.x + p.ax * s, y: r.y + p.ay * s }; }); },
@@ -2552,14 +2741,29 @@ window.Game = {
   forceMerge: id => { const L = lay(), cx = L.board.x + L.board.w / 2, cy = L.board.y + L.board.h / 2; const e = emptyCells().sort((a, b) => { const p = cellCenter(a), q = cellCenter(b); return Math.hypot(p.x - cx, p.y - cy) - Math.hypot(q.x - cx, q.y - cy); }); if (e.length < 2) return false; G.board[e[0]] = id; G.board[e[1]] = id; return merge(e[1], e[0]); },
   legendFx: () => !!G.legendFx, effects: () => ({ anims: G.anims.length, particles: G.particles.length, rings: G.rings.length, popups: G.popups.length }),
   platform: () => ({ env: Platform.env, calls: Platform.calls.slice() }), paused: () => G.paused, ready: () => G.ready, frames: () => G.frames, clock: () => now(), lang: () => LANG,
-  sound: () => ({ enabled: Sound.enabled, tones: Sound.tones, ctx: Sound.ctx ? Sound.ctx.state : null, loaded: Sound.loaded, decoded: SFX.decoded, last: Sound.last }),
+  bgm: () => Object.assign(BGM.state(), { bgmOn: Sound.bgmOn, loaded: Sound.bgmLoaded, ctx: Sound.ctx ? Sound.ctx.state : null }),
+  bgmReady: () => Promise.resolve(Sound.bgmLoading), toggleBgm: () => toggleBgm(), toggleSfx: () => toggleSfx(), unlockAudio: () => Sound.unlock(), settings: () => ({ sfx: !Sound.userMuted, bgm: Sound.bgmOn }),
+  sound: () => ({ userMuted: Sound.userMuted, enabled: Sound.enabled, tones: Sound.tones, ctx: Sound.ctx ? Sound.ctx.state : null, loaded: Sound.loaded, decoded: SFX.decoded, last: Sound.last }),
   fontLoaded: () => document.fonts.check('900 20px CafeRound') && document.fonts.check('400 20px CafeMincho') && document.fonts.check('400 20px CafePop'),
   missingAssets: () => Object.keys(IMG).filter(n => !ready(IMG[n])),
   textBoxes: () => { TEXT_LOG = []; try { render(); } finally { const r = TEXT_LOG; TEXT_LOG = null; return r; } },
   strings: () => JSON.parse(JSON.stringify(STR)), names: () => JSON.parse(JSON.stringify(NAMES)), itemName: id => itemName(id), allIds: () => ALL_IDS.slice(),
   fps: ms => new Promise(res => { let n = 0; const t0 = performance.now(); (function f() { n++; if (performance.now() - t0 < ms) requestAnimationFrame(f); else res(Math.round(n * 1000 / (performance.now() - t0) * 10) / 10); })(); }),
   // 描画だけの層（色の検査用）: 'stage' = 壁・窓・腰壁・床・カウンター・台・空きマスだけ
-  renderStage: () => { const L = lay(); drawBackground(L, true); drawCounter(L); },
+  renderStage: () => { const L = lay(); drawBackground(L, true); drawShowcase(L); drawCounter(L); },
+  // お客さんの一覧（7 人 × 3 表情。確認用）: 1 マスごとにカウンターの板と、その上に見える部分を描く。返り値 = マスの枠
+  renderCustSheet: (x0, y0, cw, ch) => {
+    ctx.fillStyle = PAL.wallTop; ctx.fillRect(0, 0, view.w, view.h);
+    const F = Math.min(cw * 0.3, (ch - 30) / (CL.top * 1.05)), out = [];
+    CD.moods.forEach((m, r) => CD.chars.forEach((c, i) => {
+      const x = x0 + cw * (i + 0.5), cy = y0 + ch * (r + 1) - 22, k = F;
+      ctx.save(); ctx.beginPath(); ctx.rect(x - cw / 2, y0 + ch * r, cw, cy - (y0 + ch * r)); ctx.clip(); drawCustomer(x, cy, F, i, m, 1); ctx.restore();
+      ctx.fillStyle = PAL.woodTop; ctx.fillRect(x - cw / 2 + 2, cy, cw - 4, 12); ctx.fillStyle = PAL.wood; ctx.fillRect(x - cw / 2 + 2, cy + 8, cw - 4, 4);
+      ctx.strokeStyle = PAL.ink; ctx.lineWidth = 1.2; ctx.strokeRect(x - cw / 2 + 2, cy, cw - 4, 12);
+      out.push({ i, m, x, cy, k });
+    }));
+    return out;
+  },
   itemSheet: (cell) => { const c = document.createElement('canvas'); const n = cell || 120; c.width = n * 8; c.height = n * 3; return c; },
 };
 
@@ -2571,6 +2775,7 @@ window.Game = {
   Sound.enabled = Platform.isAudioEnabled();
   Platform.onAudioEnabledChange(v => { Sound.enabled = v; Sound.sync(); });
   Sound.setup();
+  Sound.music('title');   // 復号が済んだらタイトルの曲（設定を読むまで BGM の出口は 0）
   resize();
   const g = ctx.createLinearGradient(0, 0, 0, view.h); g.addColorStop(0, PAL.wallTop); g.addColorStop(1, PAL.wallBot); ctx.fillStyle = g; ctx.fillRect(0, 0, view.w, view.h);
   Platform.firstFrameReady();
@@ -2578,6 +2783,8 @@ window.Game = {
   document.documentElement.lang = LANG;
   const sp = new URLSearchParams(location.search).get('seed'); if (sp) rand = mulberry32(+sp >>> 0);
   applySave(await Save.load());
+  Sound.userMuted = !Save.data.settings.sfx;
+  Sound.setBgm(Save.data.settings.bgm, true);
   await Promise.all([loadImages(), document.fonts.load('900 20px CafeRound').catch(() => {}), document.fonts.load('400 20px CafeMincho').catch(() => {}), document.fonts.load('400 20px CafePop').catch(() => {})]);
   G.titleT0 = fxNow(); G.ready = true; FX.last = performance.now();
   schedule();
