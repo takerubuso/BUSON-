@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>しきぶちゃんのゲーム | ブラウザで無料で遊べるミニゲーム | BUSON STUDIO</title>
+
+    <link rel="icon" href="../images/favicon.png" type="image/png">
+    <meta name="description" content="しきぶちゃんのミニゲーム一覧。スマホでもPCでも、登録なし・無料でそのまま遊べます。仕分けパズル「しきぶの在庫仕分け」、合体＋カフェ経営「しきぶの合体カフェ」ほか。">
+
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800&display=swap" rel="stylesheet">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="しきぶちゃんのゲーム | BUSON STUDIO">
+    <meta property="og:description" content="スマホでもPCでも、登録なし・無料でそのまま遊べる しきぶちゃんのミニゲーム一覧。">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://buson2025.com/games/">
+    <meta property="og:image" content="https://buson2025.com/games/thumbs/shikibu-cafe.jpg">
+    <meta property="og:site_name" content="BUSON STUDIO">
+    <meta property="og:locale" content="ja_JP">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@BUSON2025">
+    <meta name="twitter:title" content="しきぶちゃんのゲーム">
+    <meta name="twitter:description" content="スマホでもPCでも、登録なし・無料でそのまま遊べるミニゲーム一覧。">
+    <meta name="twitter:image" content="https://buson2025.com/games/thumbs/shikibu-cafe.jpg">
+    <link rel="canonical" href="https://buson2025.com/games/">
+
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZHBG7K5K04"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-ZHBG7K5K04');
+    </script>
+
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://buson2025.com/"},{"@type":"ListItem","position":2,"name":"しきぶちゃんのゲーム","item":"https://buson2025.com/games/"}]}</script>
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"ItemList","name":"しきぶちゃんのゲーム","itemListElement":[
+      {"@type":"ListItem","position":1,"url":"https://buson2025.com/games/shikibu-cafe/","name":"しきぶの合体カフェ"},
+      {"@type":"ListItem","position":2,"url":"https://buson2025.com/games/shikibu-sort/","name":"しきぶの在庫仕分け"}]}</script>
+
+    <style>
+        :root {
+            --pink: #e83e78;
+            --pink-soft: #fde3ec;
+            --ink: #3a2a22;
+            --sub: #7a6560;
+            --cream: #fff8ee;
+            --card: #ffffff;
+            --line: #f1dcd2;
+        }
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: 'M PLUS Rounded 1c', sans-serif; color: var(--ink); background: var(--cream); }
+        a { -webkit-tap-highlight-color: rgba(232,62,120,.15); }
+
+        .gm-header { position: sticky; top: 0; z-index: 10; background: rgba(255,255,255,.94); backdrop-filter: blur(6px); box-shadow: 0 2px 4px rgba(0,0,0,.05); padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; }
+        .gm-header a { color: var(--pink); text-decoration: none; font-weight: 700; font-size: 15px; display: inline-flex; align-items: center; gap: 4px; }
+        .gm-header img { height: 34px; width: auto; display: block; }
+
+        .gm-hero { text-align: center; padding: 44px 16px 36px;
+            background:
+                radial-gradient(circle at 12% 30%, rgba(255,209,102,.45) 0 60px, transparent 61px),
+                radial-gradient(circle at 88% 70%, rgba(111,207,194,.35) 0 80px, transparent 81px),
+                linear-gradient(160deg, #ffe9f1 0%, #fff8ee 55%, #fdf0e3 100%); }
+        .gm-hero .kicker { display: inline-block; font-size: 13px; font-weight: 800; letter-spacing: .12em; color: var(--pink); background: #fff; border: 2px solid var(--pink); border-radius: 999px; padding: 4px 14px; margin-bottom: 14px; }
+        .gm-hero h1 { font-size: clamp(28px, 7vw, 42px); font-weight: 800; margin: 0 0 10px; line-height: 1.3; }
+        .gm-hero p { font-size: 15px; color: var(--sub); margin: 0 auto; max-width: 560px; line-height: 1.9; }
+        .gm-points { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 18px; padding: 0; list-style: none; }
+        .gm-points li { font-size: 13px; font-weight: 700; background: #fff; border-radius: 999px; padding: 6px 14px; box-shadow: 0 2px 6px rgba(92,52,30,.08); display: inline-flex; align-items: center; gap: 6px; }
+        .gm-points svg { width: 16px; height: 16px; color: var(--pink); }
+
+        .gm-list { max-width: 980px; margin: 0 auto; padding: 36px 16px 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 22px; }
+        .gm-card { background: var(--card); border-radius: 22px; overflow: hidden; box-shadow: 0 6px 18px rgba(92,52,30,.10); display: flex; flex-direction: column; text-decoration: none; color: inherit; transition: transform .18s, box-shadow .18s; }
+        .gm-card:hover { transform: translateY(-4px); box-shadow: 0 10px 24px rgba(92,52,30,.16); }
+        .gm-thumb { position: relative; aspect-ratio: 3 / 4; background: #f6e7d4; overflow: hidden; }
+        .gm-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .gm-badge { position: absolute; top: 12px; left: 12px; background: var(--pink); color: #fff; font-size: 12px; font-weight: 800; letter-spacing: .08em; border-radius: 999px; padding: 4px 12px; box-shadow: 0 2px 6px rgba(232,62,120,.4); }
+        .gm-body { padding: 16px 18px 18px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+        .gm-body h2 { font-size: 20px; font-weight: 800; margin: 0; line-height: 1.35; }
+        .gm-body .en { font-size: 12px; color: var(--sub); font-weight: 700; margin-top: -4px; }
+        .gm-body p { font-size: 14px; color: var(--sub); margin: 0; line-height: 1.75; }
+        .gm-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 2px 0 4px; padding: 0; list-style: none; }
+        .gm-tags li { font-size: 12px; font-weight: 700; color: var(--pink); background: var(--pink-soft); border-radius: 999px; padding: 3px 10px; }
+        .gm-play { margin-top: auto; display: flex; align-items: center; justify-content: center; gap: 8px; background: var(--pink); color: #fff; font-weight: 800; font-size: 16px; border-radius: 999px; padding: 12px 0; box-shadow: 0 4px 0 #b82a5c; transition: transform .1s, box-shadow .1s; }
+        .gm-card:active .gm-play { transform: translateY(3px); box-shadow: 0 1px 0 #b82a5c; }
+        .gm-play svg { width: 18px; height: 18px; }
+
+        .gm-soon { border: 3px dashed var(--line); background: transparent; box-shadow: none; align-items: center; justify-content: center; text-align: center; min-height: 260px; padding: 24px; }
+        .gm-soon:hover { transform: none; box-shadow: none; }
+        .gm-soon svg { width: 40px; height: 40px; color: #d9b8a8; margin-bottom: 8px; }
+        .gm-soon strong { font-size: 17px; }
+        .gm-soon span { font-size: 13px; color: var(--sub); margin-top: 6px; line-height: 1.7; }
+
+        @media (max-width: 560px) {
+            .gm-list { grid-template-columns: 1fr; gap: 16px; padding-top: 24px; }
+            .gm-card { flex-direction: row; }
+            .gm-thumb { width: 40%; flex-shrink: 0; aspect-ratio: auto; min-height: 200px; }
+            .gm-badge { top: 8px; left: 8px; font-size: 11px; padding: 3px 9px; }
+            .gm-body { padding: 14px 14px 14px; gap: 6px; }
+            .gm-body h2 { font-size: 17px; }
+            .gm-body p { font-size: 13px; line-height: 1.65; }
+            .gm-play { font-size: 15px; padding: 10px 0; }
+            .gm-soon { flex-direction: column; min-height: 140px; }
+        }
+
+        .gm-note { max-width: 980px; margin: 0 auto; padding: 8px 16px 48px; font-size: 12.5px; color: var(--sub); line-height: 1.9; }
+        .gm-note ul { margin: 0; padding-left: 1.2em; }
+        .gm-footer { text-align: center; padding: 24px 16px 40px; font-size: 13px; }
+        .gm-footer a { color: var(--pink); font-weight: 700; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <header class="gm-header">
+        <a href="../"><img src="../images/logo.png" alt="BUSON STUDIO" onerror="this.replaceWith(document.createTextNode('BUSON STUDIO'))"></a>
+        <a href="../">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+            トップへ
+        </a>
+    </header>
+
+    <section class="gm-hero">
+        <div class="kicker">GAMES</div>
+        <h1>しきぶちゃんのゲーム</h1>
+        <p>しきぶちゃんが出てくる、ちょっとした時間に遊べるミニゲームです。<br>スマホでもパソコンでも、そのまま遊べます。</p>
+        <ul class="gm-points">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>無料</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>登録なし</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>スマホ・PC対応</li>
+        </ul>
+    </section>
+
+    <main class="gm-list">
+        <a class="gm-card" href="shikibu-cafe/">
+            <div class="gm-thumb">
+                <img src="thumbs/shikibu-cafe.jpg" alt="しきぶの合体カフェのタイトル画面" loading="lazy" width="480" height="640">
+                <span class="gm-badge">NEW</span>
+            </div>
+            <div class="gm-body">
+                <h2>しきぶの合体カフェ</h2>
+                <div class="en">Shikibu's Merge Café</div>
+                <p>同じお菓子を重ねると、1段上のお菓子に合体。お客さんに出してコインをため、お店を大きくしよう。</p>
+                <ul class="gm-tags"><li>合体</li><li>カフェ経営</li><li>試遊版</li></ul>
+                <span class="gm-play">
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>
+                    あそぶ
+                </span>
+            </div>
+        </a>
+
+        <a class="gm-card" href="shikibu-sort/">
+            <div class="gm-thumb">
+                <img src="thumbs/shikibu-sort.jpg" alt="しきぶの在庫仕分けのプレイ画面" loading="lazy" width="480" height="640">
+            </div>
+            <div class="gm-body">
+                <h2>しきぶの在庫仕分け</h2>
+                <div class="en">Shikibu's Stock Sort</div>
+                <p>バックヤードの棚に混ざった在庫を、同じ品だけの棚にそろえるパズル。全100ステージ＋エンドレス。</p>
+                <ul class="gm-tags"><li>パズル</li><li>仕分け</li></ul>
+                <span class="gm-play">
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>
+                    あそぶ
+                </span>
+            </div>
+        </a>
+
+        <div class="gm-card gm-soon" aria-label="次のゲームは制作中">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="6" width="20" height="12" rx="6"/><path d="M6 12h4M8 10v4"/><circle cx="16" cy="11" r="1"/><circle cx="18" cy="13" r="1"/></svg>
+            <strong>つぎのゲームを制作中</strong>
+            <span>できあがったら、ここに並びます。</span>
+        </div>
+    </main>
+
+    <div class="gm-note">
+        <ul>
+            <li>このページのゲームは試遊版です。ページを閉じたり読み込み直したりすると、遊んだ記録は最初からになります。</li>
+            <li>音が出ます。音を出したくないときは、端末の音量を下げてください。</li>
+        </ul>
+    </div>
+
+    <footer class="gm-footer">
+        <a href="../">BUSON STUDIO トップへ戻る</a>
+    </footer>
+</body>
+</html>
