@@ -17,6 +17,8 @@
 <canvas id="c"></canvas>
 <script src="assets/pose_data.js"></script>
 <script src="assets/fam_data.js"></script>
+<script src="assets/bgm.js"></script>
+<script src="assets/bgm_data.js" defer></script>
 <script>
 'use strict';
 /* =====================================================================
@@ -176,17 +178,25 @@ const Save = {
 };
 function applySave(d) { G.cleared = d.cleared; G.totalCoins = d.total_coins; G.bestDist = d.best_distance; G.stats = d.stats; G.allClear = d.allClear; }
 
-// ---------- 音（ファミコン風の合成音。四角い波・三角の波・雑音を Web Audio で作る。音源ファイルなし。仕様書第11節） ----------
-// enabled = YouTube 側の音声（isAudioEnabled）。一時停止中・YouTube ミュート中は AudioContext ごと止める（第3弾と同じ）。
-// userMuted = 効果音の設定（ボタン。セーブの settings.sfx）。bgmOn は v2 の BGM 用に設定だけ持つ（BGM が無い間はボタンを隠す）。
-const HAS_BGM = false;
+// ---------- 音（効果音はファミコン風の合成音。四角い波・三角の波・雑音を Web Audio で作る。仕様書第11節） ----------
+// enabled = YouTube 側の音声（isAudioEnabled）。一時停止中・YouTube ミュート中は AudioContext ごと止める（効果音も BGM も。第3弾と同じ）。
+// userMuted = 効果音の設定・bgmOn = BGM の設定（それぞれのボタン。セーブの settings.sfx・settings.bgm）。
+// BGM（修正 1。assets/bgm.js ＋ assets/bgm_data.js。第3弾の修正 7 と同じ仕組み）: タイトルと町の地図 = title・走っている間（全部の町と どこまでダッシュ）= main・
+// ゴールと全クリア = clear のジングル（走る曲を止めてから鳴らす。ジングルが鳴っている間に次の曲へ移るときは、鳴り終わってから入る）。
+// 穴に落ちた・当たったときは止めない（ゲームオーバーが無いので流れ続ける）。
+const HAS_BGM = true;
 const Sound = {
   ctx: null, enabled: true, userMuted: false, bgmOn: true, tones: 0, last: null, out: null, noise: null, coinStreak: 0, coinAt: -1e9,
+  bgmLoaded: false, bgmLoading: null,
   setup() {
     if (this.ctx) return;
     try { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { this.ctx = null; return; }
     const c = this.ctx;
     this.out = c.createGain(); this.out.gain.value = 0.5; this.out.connect(c.destination);
+    BGM.init(c);   // 設定（bgmOn）を読むまでは出口 0
+    // BGM の MP3（約 1.4MB）は defer で読むので、読み終わり（DOMContentLoaded）を待ってから復号する
+    const parsed = new Promise(res => { if (document.readyState !== 'loading') res(); else document.addEventListener('DOMContentLoaded', res, { once: true }); });
+    this.bgmLoading = parsed.then(() => BGM.load(typeof BGM_DATA !== 'undefined' ? BGM_DATA : null)).then(() => { this.bgmLoaded = true; }).catch(() => {});
     const len = Math.floor(c.sampleRate * 0.5), buf = c.createBuffer(1, len, c.sampleRate), d = buf.getChannelData(0);
     let x = 0x1234; for (let i = 0; i < len; i++) { x ^= x << 7; x ^= x >> 9; x &= 0xFFFF; d[i] = (x & 1) ? 0.8 : -0.8; }   // ファミコンの雑音のような 1 ビットの雑音
     this.noise = buf;
@@ -194,7 +204,21 @@ const Sound = {
   unlock() { this.setup(); this.sync(); },
   sync() { const c = this.ctx; if (!c) return; if (G.paused || !this.enabled) { if (c.state === 'running') c.suspend().catch(() => {}); } else if (c.state === 'suspended') c.resume().catch(() => {}); },
   on() { return this.enabled && !this.userMuted && !G.paused && this.ctx; },
-  setBgm(on) { this.bgmOn = !!on; return this.bgmOn; },
+  setBgm(on, instant) { this.bgmOn = !!on; BGM.setOn(this.bgmOn, instant); return this.bgmOn; },
+  // 曲を替える（同じ曲なら何もしない）。復号前なら「鳴らしたい曲」だけ覚えて、復号が済んだら鳴る。ジングルが鳴っている間なら鳴り終わってから入る
+  music(name) {
+    if (!this.ctx) return null;
+    const heard = this.ctx.state === 'running' && this.ctx.currentTime > 0.05, t = this.ctx.currentTime;
+    const o = BGM.cur ? { fade: heard ? BGM.XFADE : 0 } : {};
+    if (BGM.jingleEnd > t && !BGM.cur) { o.when = BGM.jingleEnd; o.fade = BGM.XFADE; }
+    return BGM.play(name, o);
+  },
+  // ジングル（ゴール・全クリア）: 走る曲を止めてから鳴らす。YouTube ミュート中・一時停止中は鳴らさない（解除したときに遅れて鳴らないように）。BGM の OFF では出口で絞られる
+  jingle() {
+    if (!this.ctx || !this.enabled || G.paused || !BGM.has('clear')) return null;
+    BGM.stop({ fade: 0.25 });
+    return BGM.jingle('clear', { duck: false });
+  },
   // 1 音: type = square / triangle / noise。f0 → f1 へ滑らせる
   tone(type, f0, f1, dur, gain, delay) {
     const c = this.ctx, t0 = c.currentTime + (delay || 0), g = c.createGain();
@@ -1120,13 +1144,15 @@ function computeLayout() {
   // HUD（上）: 左に ステージの札、その横か下に 10円玉とメモ 3 枚。右上に 一時停止・効果音（第3弾と同じ場所・形）
   const r = Math.round(19 * uiK), lf = clamp(r * 0.62, 10, 15);
   const btn = (x, key) => ({ x, y: m + r, r, lf, ly: m + 2 * r + 4 + lf * 0.6, key });
-  L.btnSfx = btn(W - m - r - 4, 'sfx');
-  L.btnPause = btn(L.btnSfx.x - 2 * r - Math.max(18, lf * 2.4), 'pause');
-  L.btnBgm = HAS_BGM ? btn(L.btnPause.x - 2 * r - 18, 'bgm') : null;
+  // 右から BGM・効果音（第3弾と同じ「効果音・BGM」の並び）・一時停止。地図とタイトルには一時停止が無いので隙間はできない
+  const stepX = 2 * r + Math.max(18, lf * 2.4);
+  L.btnBgm = HAS_BGM ? btn(W - m - r - 4, 'bgm') : null;
+  L.btnSfx = btn(HAS_BGM ? L.btnBgm.x - stepX : W - m - r - 4, 'sfx');
+  L.btnPause = btn(L.btnSfx.x - stepX, 'pause');
   const ph = Math.round(34 * uiK), plateW = Math.round(clamp(W * 0.42, 150, 300 * uiK));
   L.plate = { x: m, y: m, w: plateW, h: ph };
   const rowW = Math.round(ph * 5.4);
-  const leftEdge = (L.btnBgm || L.btnPause).x - r - 10;
+  const leftEdge = L.btnPause.x - r - 10;
   if (m + plateW + 10 + rowW <= leftEdge) L.row = { x: m + plateW + 10, y: m, h: ph };
   else L.row = { x: m, y: m + ph + 6, h: Math.round(ph * 0.86) };
   L.row.w = Math.round(L.row.h * 5.2);
@@ -1652,7 +1678,7 @@ function startGoal() {
   if (allNow) G.allClear = true;
   G.goal = { t0: fxNow(), n, stars, memos, coins: W.coins, hits: W.hits, falls: W.falls, first, allNow, fam: famFor(n), starSeen: 0, doorSnd: false };
   Save.flush();
-  Sound.play('goal');
+  if (!(Sound.bgmOn && Sound.jingle())) Sound.play('goal');   // BGM が OFF か読めていないときは合成のジングル
 }
 function goalLayout(L) {
   const W = L.W, H = L.H, u = L.uiK;
@@ -1717,7 +1743,7 @@ function afterGoal(to) {
   const g = G.goal; if (!g) return;
   G.goal = null;
   if (to === 'map') { G.mapSel = Math.min(LAST, g.n + 1); goMap(); return; }
-  if (g.allNow) { G.scene = 'allclear'; G.all = { t0: fxNow() }; Sound.play('goal'); return; }
+  if (g.allNow) { G.scene = 'allclear'; G.all = { t0: fxNow() }; if (!(Sound.bgmOn && Sound.jingle())) Sound.play('goal'); return; }
   if (g.n < LAST) startStage(g.n + 1); else goMap();
 }
 // ---------- 全クリア（4-5 のあと。「おつかい完了！」・しきぶ 29・家族みんな） ----------
@@ -1857,11 +1883,11 @@ function mapHit(L, x, y) {
   if (M.endless && inRect(M.endless, x, y)) return ENDLESS;
   return 0;
 }
-function goMap() { G.scene = 'map'; G.W = null; G.menu = null; G.goal = null; G.over = null; G.pointers.clear(); }
+function goMap() { G.scene = 'map'; G.W = null; G.menu = null; G.goal = null; G.over = null; G.pointers.clear(); Sound.music('title'); }
 function startStage(n) {
   G.stage = n; G.W = newWorld(getStage(n), true); G.scene = 'play'; G.menu = null; G.goal = null; G.over = null; G.acc = 0;
   G.fx = []; G.pops = []; G.flies = []; G.cpT = null; G.stats.plays++; G.pointers.clear();
-  Sound.play('start');
+  Sound.play('start'); Sound.music('main');
 }
 
 // ---------- 1 フレームの仕事と描画 ----------
@@ -2059,6 +2085,8 @@ window.Game = {
   platform: () => ({ env: Platform.env, calls: Platform.calls.slice() }),
   sound: () => ({ userMuted: Sound.userMuted, enabled: Sound.enabled, tones: Sound.tones, ctx: Sound.ctx ? Sound.ctx.state : null, last: Sound.last }),
   toggleSfx: () => toggleSfx(), settings: () => ({ sfx: !Sound.userMuted, bgm: Sound.bgmOn }), unlockAudio: () => Sound.unlock(),
+  bgm: () => Object.assign(BGM.state(), { bgmOn: Sound.bgmOn, loaded: Sound.bgmLoaded, ctx: Sound.ctx ? Sound.ctx.state : null }),
+  bgmReady: () => Promise.resolve(Sound.bgmLoading), toggleBgm: () => toggleBgm(),
   fontLoaded: () => document.fonts.check('400 20px DashPop'), missingAssets: () => Object.keys(IMG).filter(n => !ready(IMG[n])),
   textBoxes: () => { TEXT_LOG = []; try { render(); } finally { const r = TEXT_LOG; TEXT_LOG = null; return r; } },
   strings: () => JSON.parse(JSON.stringify(STR)), names: () => JSON.parse(JSON.stringify(NAMES)),
@@ -2095,6 +2123,8 @@ window.Game = {
   Platform.onResume(resumeGame);
   Sound.enabled = Platform.isAudioEnabled();
   Platform.onAudioEnabledChange(v => { Sound.enabled = v; Sound.sync(); });
+  Sound.setup();
+  Sound.music('title');   // 復号が済んだらタイトルの曲（設定を読むまで BGM の出口は 0。最初のタップまで AudioContext は止まっている）
   resize();
   ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.fillStyle = TOWN_PAL[0].sky[0]; ctx.fillRect(0, 0, canvas.width, canvas.height);
   Platform.firstFrameReady();
@@ -2102,10 +2132,11 @@ window.Game = {
   document.documentElement.lang = LANG;
   applySave(await Save.load());
   Sound.userMuted = !Save.data.settings.sfx;
-  Sound.setBgm(Save.data.settings.bgm);
+  Sound.setBgm(Save.data.settings.bgm, true);
   await Promise.all([loadImages(), document.fonts.load('400 20px DashPop').catch(() => {})]);
   G.ready = true; FX.last = performance.now();
   schedule();
+  Sound.sync();
 })();
 </script>
 </body>
