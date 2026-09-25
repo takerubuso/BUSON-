@@ -95,18 +95,20 @@ window.addEventListener('error', () => Platform.logError());
 // tools/build_font.py がこの STR と NAMES から書体に入れる字を拾う。字を足したら流し直す。
 // ステージは「STAGE 5」と書く（アートディレクション第5節。Zen Maru Gothic Black の小さい漢字を避ける）
 const STR = {
-  ja: { title1: 'しきぶの', title2: 'おかたづけ', sub: "Shikibu's Tidy Match", start: 'タップでスタート', cont: 'つづきから STAGE {n}',
+  ja: { title1: 'しきぶちゃんの', title2: 'おかたづけ', sub: "Shikibu's Tidy Match", start: 'タップでスタート', cont: 'つづきから STAGE {n}',
         stage: 'STAGE {n}', rooms: '部屋', close: '閉じる', next: 'つぎへ', cardTitle: 'STAGE {n} クリア', cleanUp: 'きれい度 +{n}%', cleanMax: 'ピカピカ！',
         full: 'トレイがいっぱい！', retry: 'もういっかい', contTool: '道具で続ける', t_undo: 'もどす', t_aside: 'よける', t_shuffle: 'まぜる',
         combo: '{n}コンボ', revealTitle: '{room}がピカピカ！', before: 'ビフォー', after: 'アフター', tapNext: 'タップでつぎへ',
         roomsTitle: 'お部屋アルバム', encore: 'おかわり', encoreStage: 'おかわり {n}', allClear: '全部屋ピカピカ！', allClearSub: '{n}ステージぜんぶクリア',
-        allClearNote: 'このあとは おかわりステージ', done: '完成', pct: '{n}%', sfx: '効果音', bgm: 'BGM', thanks: 'おつかれさま', wow: 'ピカッ！' },
-  en: { title1: "Shikibu's", title2: 'Tidy Match', sub: 'しきぶのおかたづけ', start: 'Tap to start', cont: 'Continue: STAGE {n}',
+        allClearNote: 'このあとは おかわりステージ', done: '完成', pct: '{n}%', sfx: '効果音', bgm: 'BGM', thanks: 'おつかれさま', wow: 'ピカッ！',
+        speedTip: 'はやく片付けると ボーナス！', fast: 'はやい！', bonus: 'ボーナス：{tool} +1' },
+  en: { title1: "Shikibu's", title2: 'Tidy Match', sub: 'しきぶちゃんのおかたづけ', start: 'Tap to start', cont: 'Continue: STAGE {n}',
         stage: 'STAGE {n}', rooms: 'Rooms', close: 'Close', next: 'Next', cardTitle: 'STAGE {n} cleared', cleanUp: 'Tidiness +{n}%', cleanMax: 'Spotless!',
         full: 'The tray is full!', retry: 'Try again', contTool: 'Continue with a tool', t_undo: 'Undo', t_aside: 'Set aside', t_shuffle: 'Shuffle',
         combo: '{n} combo', revealTitle: '{room} is spotless!', before: 'Before', after: 'After', tapNext: 'Tap to continue',
         roomsTitle: 'Room album', encore: 'Encore', encoreStage: 'Encore {n}', allClear: 'Every room is spotless!', allClearSub: 'All {n} stages cleared',
-        allClearNote: 'Encore stages continue from here', done: 'Done', pct: '{n}%', sfx: 'SFX', bgm: 'Music', thanks: 'Great job', wow: 'Sparkle!' },
+        allClearNote: 'Encore stages continue from here', done: 'Done', pct: '{n}%', sfx: 'SFX', bgm: 'Music', thanks: 'Great job', wow: 'Sparkle!',
+        speedTip: 'Tidy up fast for a bonus!', fast: 'Speedy!', bonus: 'Bonus: {tool} +1' },
 };
 // 部屋（5 つ）と物（30 種。部屋ごとに 6 種。仕様書第6節）
 const NAMES = {
@@ -330,11 +332,12 @@ function scoreMoves(tiles, above, gone, cnt, trayLen, kind) {
   });
 }
 function solvePile(tiles, above, kind, rng) {
-  const gone = tiles.map(t => !!t.gone), cnt = {}; let trayLen = 0, moves = 0, maxTray = 0;
+  const gone = tiles.map(t => !!t.gone), cnt = {}; let trayLen = 0, moves = 0, maxTray = 0, t = 0;
   let left = gone.filter(g => !g).length;
   while (left > 0) {
     const sc = scoreMoves(tiles, above, gone, cnt, trayLen, kind || 'skill');
-    if (!sc.length) return { ok: false, moves, maxTray, stuck: true };
+    if (!sc.length) return { ok: false, moves, maxTray, stuck: true, t };
+    t += PACE_TAP + PACE_VIS * sc.length;   // 人の操作の目安（tests/bot_v1.py と同じ数え方）: 1 手 = 考える 0.9 秒 ＋ 上に見えている物 1 つにつき 0.05 秒
     let top = -Infinity; for (const m of sc) top = Math.max(top, m.s);
     const best = sc.filter(m => m.s === top);
     const pick = rng ? best[Math.floor(rng() * best.length)] : best[0];
@@ -342,10 +345,29 @@ function solvePile(tiles, above, kind, rng) {
     cnt[k] = (cnt[k] || 0) + 1; trayLen++;
     if (cnt[k] === 3) { cnt[k] = 0; trayLen -= 3; }
     maxTray = Math.max(maxTray, trayLen);
-    if (trayLen >= TRAY_N) return { ok: false, moves, maxTray };
+    if (trayLen >= TRAY_N) return { ok: false, moves, maxTray, t };
   }
-  return { ok: true, moves, maxTray };
+  return { ok: true, moves, maxTray, t };
 }
+// ---------- はやい片付け（修正 9） ----------
+// ステージ 3 から、ステージごとに「はやい目安」の秒数を持つ。ふつうの解き手に PACE_RUNS 回遊ばせ、クリアできた回の時間の中央値（0.1 秒単位）。
+// ふつうの人の半分くらいが目安の時間に届く。★3 = 目安以内・★2 = 目安の 1.5 倍以内・★1 = それより遅い。★3 で道具を 1 つもらえる（1 つの道具は BONUS_MAX まで）
+// BONUS_MAX = 1 つの道具のもち数の上限（ためすぎて後のステージが簡単になりすぎないように。3 × 3 種 = 最大 9 回ぶん）
+const SPEED_FROM = 3, PACE_TAP = 0.9, PACE_VIS = 0.05, PACE_RUNS = 24, PACE_SLOW = 1.5, BONUS_MAX = 3, TIP_MS = 3200;
+function paceFor(tiles, above, seed) {
+  const rng = mulberry32(seed), ok = [], all = [];
+  for (let r = 0; r < PACE_RUNS; r++) { const q = solvePile(tiles, above, 'normal', rng); all.push(q.t); if (q.ok) ok.push(q.t); }
+  const v = (ok.length >= 4 ? ok : all).sort((a, b) => a - b), m = v.length / 2;
+  const med = v.length % 2 ? v[Math.floor(m)] : (v[m - 1] + v[m]) / 2;
+  return Math.round(med * 10) / 10;
+}
+function speedStars(n, ms, pace) {
+  if (n < SPEED_FROM || !pace) return 0;
+  const sec = ms / 1000;
+  return sec <= pace ? 3 : sec <= pace * PACE_SLOW ? 2 : 1;
+}
+// ボーナスでもらう道具: 今のもち数が一番少ないもの（同じなら もどす → よける → まぜる）。全部 BONUS_MAX なら無し
+function bonusPick(b) { let k = TOOLS[0]; for (const q of TOOLS) if (b[q] < b[k]) k = q; return b[k] >= BONUS_MAX ? null : k; }
 // ステージ n のふつうの人の成功率の目安（仕様書第10節）。生成した山をふつうの解き手に 20 回（1〜10 は 80 回）遊ばせて、この帯に入る並びを選ぶ
 // 1〜10 は「80 回とも解ける」並びを選ぶ（見込み 95〜97.5% の並びを選ぶと、実際は 91〜94% に下がることがあった）
 function successBand(n) { return n <= FIRST_END ? [1, 1] : n <= 30 ? [0.75, 0.9] : n <= 60 ? [0.6, 0.8] : [0.55, 0.75]; }
@@ -377,6 +399,7 @@ function makeStage(n) {
     diff = e < band[0] ? diff * 0.8 : Math.min(1, diff * 1.2 + 0.05);
   }
   const S = { n, P, tiles: pos.map((p, i) => ({ x: p.x, y: p.y, z: p.z, k: best ? best[i] : 0 })), above, tries, solvable, est, ok: !!best };
+  S.pace = n >= SPEED_FROM ? paceFor(S.tiles, above, (n * 9973 + 17) >>> 0) : null;
   if (STAGE_CACHE.size > 12) STAGE_CACHE.clear();
   STAGE_CACHE.set(n, S);
   return S;
@@ -388,6 +411,9 @@ const G = {
   stage: 1, stars: '', clean: [0, 0, 0, 0, 0], allClear: false,
   tiles: [], above: [], grid: { w: 2, h: 2, z: 0 }, tray: [], aside: [], seq: 0, uid: 0,
   used: { undo: false, aside: false, shuffle: false }, fail: null, combo: 0, lastMatchAt: -1e9, stageT0: 0, taps: 0,
+  // はやい片付け（修正 9）: playMs = このステージを遊んでいる時間（一時停止・失敗の札・一覧・案内・クリアの演出の間は止まる。もういっかいで 0 から）。
+  // pace = 目安の秒数（ステージ 1・2 は null）。bonus = ボーナスでもらった道具のもち数（セーブに残る）。tips.speed = 案内を出した。tip = いま出している案内
+  playMs: 0, pace: null, bonus: { undo: 0, aside: 0, shuffle: 0 }, tips: { speed: false }, tip: null,
   clearing: null, card: null, reveal: null, allFx: null, justCleaned: -1,
   // 見た目だけの状態（遊びの判定には使わない）
   anims: [], particles: [], rings: [], popups: [], ghosts: [], flash: null, edge: null, shakeTray: 0, toolShake: {}, tileFx: {}, mom: null,
@@ -400,8 +426,6 @@ G.stats = freshStats();
 const covered = i => isCovered(i, G.above, G.tiles.map(t => t.gone));
 function coveredFast(i) { const A = G.above[i]; for (let q = 0; q < A.length; q++) if (!G.tiles[A[q]].gone) return true; return false; }
 const pileLeft = () => G.tiles.reduce((a, t) => a + (t.gone ? 0 : 1), 0);
-const toolsUsed = () => TOOLS.filter(k => G.used[k]).length;
-const starsFor = u => u === 0 ? 3 : u === 1 ? 2 : 1;
 const starOf = n => { const c = G.stars.charCodeAt(n - 1); return c >= 49 && c <= 51 ? c - 48 : 0; };
 const roomCleanPct = r => cleanPct(G.clean[r]);
 
@@ -415,6 +439,9 @@ function loadStage(n) {
   G.used = { undo: false, aside: false, shuffle: false }; G.fail = null; G.combo = 0; G.lastMatchAt = -1e9;
   G.clearing = null; G.card = null; G.reveal = null; G.tileFx = {}; G.mom = null;
   G.stageT0 = now(); G.taps = 0; G.lastInput = now(); G.wiggleNext = now() + 5000 + Math.random() * 3000;
+  G.playMs = 0; G.pace = S.pace; G.tip = null;
+  // ステージ 3 以降で最初に遊ぶステージのはじめに 1 回だけ「はやく片付けると ボーナス！」（新しく始めた人はステージ 3）
+  if (S.pace && !G.tips.speed) { G.tip = { t0: fxNow() }; G.tips.speed = true; Save.touch(); }
   G.layout = null; G.meterShown = roomCleanPct(roomOfStage(n));
   G.stats.plays++;
   POSE.react = null; G.worry = 0;
@@ -435,6 +462,7 @@ function insertTray(e) {
 function takeTile(i) {
   if (!canAct()) return 'blocked';
   const t = G.tiles[i]; if (!t || t.gone) return 'gone';
+  G.tip = null;
   if (coveredFast(i)) { G.tileFx[i] = { shake: fxNow() }; Sound.play('tap', { gain: 0.35, cents: -600 }); return 'covered'; }
   finishGhosts();
   const r = tileRect(i);
@@ -489,7 +517,7 @@ function failStage() {
 function retryStage() { Sound.play('start'); Sound.music('main'); loadStage(G.stage); Save.flush(); }
 // 道具（各ステージのはじめに 1 回ずつ）。失敗しているときは、もどす・よけるで続けられる
 function canUseTool(name) {
-  if (G.scene !== 'play' || G.clearing || G.modal || G.used[name]) return false;
+  if (G.scene !== 'play' || G.clearing || G.modal || (G.used[name] && !(G.bonus[name] > 0))) return false;   // 1 回使ったあとはボーナスのもち数で使える
   if (name === 'undo') return G.tray.length > 0;
   if (name === 'aside') return G.tray.length > 0 && G.aside.length === 0;
   if (name === 'shuffle') return !G.fail && pileLeft() >= 2;
@@ -498,6 +526,7 @@ function canUseTool(name) {
 function useTool(name) {
   if (!canUseTool(name)) { G.toolShake[name] = fxNow(); Sound.play('tap', { gain: 0.4, cents: -500 }); return false; }
   finishGhosts();
+  if (G.used[name]) G.bonus[name]--;   // 2 回目からはボーナスを 1 つ使う
   G.used[name] = true; G.stats.tools++;
   if (name === 'undo') {
     let q = 0; for (let j = 1; j < G.tray.length; j++) if (G.tray[j].seq > G.tray[q].seq) q = j;
@@ -523,8 +552,9 @@ function useTool(name) {
 }
 // 山が空になった → 少し待ってクリア（部屋が一瞬ピカッ → 散らかりが 1 つ片付く → お片付け完了カード）
 function startClear() {
-  const n = G.stage, r = roomOfStage(n), enc = isEncore(n), u = toolsUsed(), st = starsFor(u);
-  G.clearing = { t0: fxNow(), stars: st, room: r, from: G.clean[r], enc };
+  const n = G.stage, r = roomOfStage(n), enc = isEncore(n), st = speedStars(n, G.playMs, G.pace);
+  G.clearing = { t0: fxNow(), stars: st, room: r, from: G.clean[r], enc, sec: Math.round(G.playMs / 100) / 10, pace: G.pace, bonus: null };
+  if (st === 3) { const k = bonusPick(G.bonus); if (k) { G.bonus[k]++; G.clearing.bonus = k; } }
   // 記録（すぐ保存する）
   if (n <= STARS_KEEP) { while (G.stars.length < n) G.stars += '0'; if (st > starOf(n)) G.stars = G.stars.slice(0, n - 1) + st + G.stars.slice(n); }
   if (!enc) G.clean[r] = Math.min(STAGES_PER_ROOM, G.clean[r] + 1);
@@ -552,7 +582,7 @@ function afterReveal() {
 function nextStage() { G.scene = 'play'; loadStage(G.stage); Sound.play('start'); Sound.music('main'); Save.flush(); }
 
 // ---------- セーブ（saveData/loadData に JSON 文字列 1 つ。第2弾の Save を移植して中身をおかたづけ用に） ----------
-// 形式 v1: { v, stage, stars, rooms{ clean[5] }, settings{ sfx, bgm }, stats{}, allClear }
+// 形式 v1: { v, stage, stars, rooms{ clean[5] }, settings{ sfx, bgm }, stats{}, allClear, bonus{ undo, aside, shuffle }, tips{ speed } }（bonus・tips は修正 9 で足した。無ければ 0・まだ）
 // stars は「ステージ n の星の数」を n 文字目に並べた文字列（例 "3321"。0 = まだ）。おかわりが何千面になっても 5KB に収まるように、残すのは最初の 1000 ステージまで
 // 壊れた・型違いのセーブは項目ごとに既定値へ落とす（落ちない）。loadData が済むまで saveData は呼ばない。
 const SAVE_VER = 1, STARS_KEEP = 1000;
@@ -574,14 +604,19 @@ const Save = {
     const s = (o.stats && typeof o.stats === 'object' && !Array.isArray(o.stats)) ? o.stats : {};
     const stats = freshStats();
     for (const k in stats) if (Number.isFinite(s[k]) && s[k] >= 0) stats[k] = s[k];
+    // ボーナスの道具のもち数と案内を出したか（修正 9。古いセーブには無いので 0・まだ）
+    const bo = (o.bonus && typeof o.bonus === 'object' && !Array.isArray(o.bonus)) ? o.bonus : {}, bonus = {};
+    for (const k of TOOLS) bonus[k] = Number.isInteger(bo[k]) && bo[k] > 0 ? Math.min(bo[k], BONUS_MAX) : 0;   // 上限を超えていたら上限に
+    const tips = { speed: !!(o.tips && o.tips.speed === true) };
     return {
-      v: SAVE_VER, stage, stars, clean, stats, allClear: o.allClear === true || stage > LAST_ROOM_STAGE,
+      v: SAVE_VER, stage, stars, clean, stats, bonus, tips, allClear: o.allClear === true || stage > LAST_ROOM_STAGE,
       fresh: !raw || !Object.keys(o).length || !Number.isInteger(o.stage),
       settings: { sfx: !(o.settings && o.settings.sfx === false), bgm: !(o.settings && o.settings.bgm === false) },
     };
   },
   build() {
-    return { v: SAVE_VER, stage: G.stage, stars: G.stars, rooms: { clean: G.clean.slice() }, settings: { sfx: !Sound.userMuted, bgm: Sound.bgmOn }, stats: G.stats, allClear: G.allClear };
+    return { v: SAVE_VER, stage: G.stage, stars: G.stars, rooms: { clean: G.clean.slice() }, settings: { sfx: !Sound.userMuted, bgm: Sound.bgmOn }, stats: G.stats, allClear: G.allClear,
+      bonus: Object.assign({}, G.bonus), tips: Object.assign({}, G.tips) };
   },
   async load() { this.data = Save.parse(await Platform.loadData()); this.loaded = true; return this.data; },
   touch() { if (!this.loaded || this.timer) return; this.timer = setTimeout(() => { this.timer = 0; this.flush(); }, 500); },
@@ -595,6 +630,7 @@ const Save = {
 };
 function applySave(d) {
   G.stage = d.stage; G.stars = d.stars; G.clean = d.clean.slice(); G.stats = d.stats; G.allClear = d.allClear;
+  G.bonus = Object.assign({ undo: 0, aside: 0, shuffle: 0 }, d.bonus); G.tips = Object.assign({ speed: false }, d.tips);
   G.meterShown = roomCleanPct(roomOfStage(G.stage));
 }
 
@@ -705,7 +741,7 @@ function setReact(kind) {
   if (POSE.cur === pose) { POSE.react.shownAt = t; POSE.pop = t; }
 }
 function desiredPose(t) {
-  if (G.scene === 'clear') return { pose: '29', how: 'pop' };
+  if (G.scene === 'clear') return { pose: G.card && G.card.stars === 3 ? '10' : '29', how: 'pop' };   // ★3（はやい）は喜ぶ 10
   if (G.scene === 'reveal' || G.scene === 'allclear') return { pose: '10', how: 'pop' };
   if (G.scene !== 'play') return { pose: '01', how: 'pop' };
   if (G.fail) return { pose: '25', how: 'pop' };
@@ -1250,7 +1286,8 @@ function computeLayout() {
     sound(W - m, top + br, br, 4, 10);
     L.pill = { x: m, y: top, h: ph, x1: L.btnRooms.x - br - 8 };
     L.meter = { x: m, y: top + ph + 8, w: L.btnRooms.x - br - 12 - m, h: clamp(ph * 0.46, 16, 22) };
-    const hudB = Math.max(L.meter.y + L.meter.h, L.btnRooms.ly + L.btnRooms.lf * 0.7) + 6;
+    L.speed = { x: m, y: L.meter.y + L.meter.h + 6, w: L.meter.w, h: 10 };   // はやい片付けのメーター（きれい度のメーターの下）
+    const hudB = Math.max(L.speed.y + L.speed.h, L.btnRooms.ly + L.btnRooms.lf * 0.7) + 6;
     L.hud = { x: 0, y: 0, w: W, h: hudB };
     const tp = clamp(W * 0.02, 6, 10), s = Math.min((W - 2 * m - 2 * tp) / TRAY_N, 64), shelf = s * 0.22;
     const tw = s * TRAY_N + 2 * tp, th = s + 2 * tp + shelf, ty = H - m - th;
@@ -1285,7 +1322,8 @@ function computeLayout() {
     sound(x1, 6 + br, br, 4, 10);
     L.pill = { x: x0, y: 6, h: ph, x1: L.btnRooms.x - br - 8 };
     L.meter = { x: x0, y: Math.max(6 + ph + 8, L.btnRooms.ly + L.btnRooms.lf * 0.7 + 4), w: x1 - x0, h: clamp(ph * 0.5, 14, 20) };
-    const hudB = L.meter.y + L.meter.h + 8;
+    L.speed = { x: x0, y: L.meter.y + L.meter.h + 6, w: x1 - x0, h: 10 };
+    const hudB = L.speed.y + L.speed.h + 8;
     L.hud = { x: x0, y: 0, w: x1 - x0, h: hudB };
     const r = clamp(H * 0.062, 19, 26), lf = clamp(r * 0.5, 10, 13), step = (H - hudB - m) / 3;
     L.tools = TOOLS.map((k, i) => { const y = hudB + step * (i + 0.5) - lf * 0.6; return { key: k, x: x0 + Math.max(r, fitW(k, lf) / 2) + 2, y, r, lf, ly: y + r + 5 + lf * 0.5 }; });
@@ -1298,7 +1336,8 @@ function computeLayout() {
     sound(W - m, top + br, br, 6, 14);
     L.pill = { x: m, y: top, h: ph, x1: W * 0.45 };
     L.meter = { x: W * 0.47, y: top + ph * 0.22, w: L.btnRooms.x - br - 24 - W * 0.47, h: ph * 0.56 };
-    const hudB = Math.max(top + ph, L.btnRooms.ly + L.btnRooms.lf * 0.7) + 10;
+    L.speed = { x: L.meter.x, y: L.meter.y + L.meter.h + 7, w: L.meter.w, h: 12 };
+    const hudB = Math.max(top + ph, L.btnRooms.ly + L.btnRooms.lf * 0.7, L.speed.y + L.speed.h) + 10;
     L.hud = { x: 0, y: 0, w: W, h: hudB };
     const sc = Math.min(H * 0.6 / ENV.h, W * 0.2 / ENV.w), gx = W - m - ENV.x1 * sc;
     L.chr = { mode: 'full', s: sc, gx, gy: H - m, clipY: H };
@@ -1676,6 +1715,7 @@ function drawHud(L) {
   for (let i = 1; i < 10; i++) { ctx.fillStyle = rgba(PAL.ink, 0.18); ctx.fillRect(M.x + M.w * i / 10 - 0.5, M.y + M.h * 0.3, 1, M.h * 0.4); }
   const pl = isEncore(n) ? T('encore') : T('pct', { n: Math.round(pct) });
   text(pl, M.x + M.w - M.h * 0.55, M.y + M.h / 2 + 1, M.h * 0.66, { fill: PAL.ink, stroke: PAL.board, strokeW: 0.3, box: { x0: M.x, x1: M.x + M.w, y0: M.y - 2, y1: M.y + M.h + 2 } }, 'right');
+  if (G.pace && curStage() >= SPEED_FROM) drawSpeed(L);
   // 上がるときのキラッ
   const pk = (fxNow() - G.meterPop) / 700;
   if (pk >= 0 && pk < 1) { ctx.save(); ctx.globalAlpha = Math.sin(pk * Math.PI); twinkle(ctx, M.x + fw - M.h * 0.3, M.y + M.h * 0.3, M.h * (0.6 + pk * 0.6), PAL.butter); ctx.strokeStyle = PAL.ink; ctx.lineWidth = 1; ctx.stroke(); twinkle(ctx, M.x + fw - M.h * 1.3, M.y - M.h * 0.1, M.h * 0.45, '#FFFFFF'); ctx.restore(); }
@@ -1685,6 +1725,38 @@ function drawHud(L) {
   houseIcon(b.x, b.y + dy, b.r * 0.62);
   text(T('rooms'), b.x, b.ly, b.lf, { fill: PAL.ink, stroke: PAL.board, strokeW: 0.3 });
   drawSoundToggles(L);
+}
+// はやい片付けのメーター（修正 9）: 小さな時計の形＋細い棒。満タンから目安の時間で減り、緑 → 黄 → なくなる。数字の秒読みはしない
+const SPEED_GREEN = PAL.okTop, SPEED_YELLOW = PAL.butter;
+const speedFrac = () => G.pace ? clamp(1 - G.playMs / (G.pace * 1000), 0, 1) : 0;
+function speedColor(f) { return mixHex(SPEED_YELLOW, SPEED_GREEN, clamp((f - 0.15) / 0.5, 0, 1)); }
+function drawSpeed(L) {
+  const S = L.speed, f = speedFrac(), col = speedColor(f), ic = S.h * 1.7, cx = S.x + ic / 2, cy = S.y + S.h / 2, r = ic * 0.42;
+  ctx.save();
+  ctx.fillStyle = PAL.ink; ctx.fillRect(cx - r * 0.22, cy - r - r * 0.42, r * 0.44, r * 0.34);   // 時計のつまみ
+  ctx.fillStyle = f > 0 ? col : '#E9DCCB'; ctx.beginPath(); ctx.arc(cx, cy, r, 0, TAU); ctx.fill();
+  ctx.strokeStyle = PAL.ink; ctx.lineWidth = 1.6; ctx.stroke();
+  const a = -Math.PI / 2 + (1 - f) * TAU; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + Math.cos(a) * r * 0.62, cy + Math.sin(a) * r * 0.62); ctx.stroke();
+  const x0 = S.x + ic + 6, w = S.w - ic - 6;
+  withShadow(() => { ctx.fillStyle = PAL.board; rr(ctx, x0, S.y, w, S.h, S.h / 2); ctx.fill(); }, 0.4);
+  if (f > 0) { ctx.save(); rr(ctx, x0, S.y, w, S.h, S.h / 2); ctx.clip(); ctx.fillStyle = col; rr(ctx, x0, S.y, Math.max(S.h, w * f), S.h, S.h / 2); ctx.fill(); ctx.fillStyle = 'rgba(255,255,255,.45)'; ctx.fillRect(x0 + 3, S.y + S.h * 0.18, Math.max(0, w * f - 6), S.h * 0.22); ctx.restore(); }
+  ctx.strokeStyle = PAL.ink; ctx.lineWidth = 1.5; rr(ctx, x0, S.y, w, S.h, S.h / 2); ctx.stroke();
+  ctx.restore();
+}
+// 「はやく片付けると ボーナス！」の案内（ステージ 3 以降で最初に遊ぶステージのはじめに 1 回。メーターの下に吹き出し。3.2 秒・物を取ると消える）
+function drawTip(L) {
+  if (!G.tip || !L.speed) return;
+  const e = fxNow() - G.tip.t0, a = e < 200 ? e / 200 : e > TIP_MS - 300 ? (TIP_MS - e) / 300 : 1; if (a <= 0) return;
+  const S = L.speed, msg = T('speedTip'), px = clamp(Math.min(L.W, L.H) * 0.045, 15, 22), ic = S.h * 1.7;
+  ctx.font = font(px); const w = Math.min(ctx.measureText(msg).width + px * 1.6, L.W - 16), h = px * 2;
+  const tipX = S.x + ic / 2, x = clamp(tipX - 22, 8, L.W - 8 - w), y = S.y + S.h + 12;
+  ctx.save(); ctx.globalAlpha = clamp(a, 0, 1);
+  withShadow(() => { ctx.fillStyle = PAL.note; rr(ctx, x, y, w, h, h / 2); ctx.fill(); });
+  ctx.fillStyle = PAL.note; ctx.beginPath(); ctx.moveTo(tipX - 7, y + 1); ctx.lineTo(tipX, y - 8); ctx.lineTo(tipX + 7, y + 1); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = PAL.ink; ctx.lineWidth = 1.6; ctx.beginPath(); ctx.moveTo(tipX - 7, y); ctx.lineTo(tipX, y - 8); ctx.lineTo(tipX + 7, y); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(tipX - 7, y); ctx.lineTo(x + h / 2, y); ctx.arc(x + h / 2, y + h / 2, h / 2, -Math.PI / 2, Math.PI / 2, true); ctx.lineTo(x + w - h / 2, y + h); ctx.arc(x + w - h / 2, y + h / 2, h / 2, Math.PI / 2, -Math.PI / 2, true); ctx.lineTo(tipX + 7, y); ctx.stroke();
+  text(msg, x + w / 2, y + h / 2 + 1, fitPx(msg, px, w - px), { fill: PAL.ink, box: { x0: x, x1: x + w, y0: y, y1: y + h } });
+  ctx.restore();
 }
 function houseIcon(x, y, r) {
   ctx.save(); ctx.strokeStyle = '#FFFFFF'; ctx.lineWidth = Math.max(2, r * 0.22); ctx.lineJoin = 'round'; ctx.lineCap = 'round';
@@ -1723,7 +1795,7 @@ const TOOL_ICON = {
 function drawTools(L, forFail) {
   const tn = now();
   for (const b of L.tools) {
-    const used = G.used[b.key], sh = G.toolShake[b.key] != null ? clamp(1 - (fxNow() - G.toolShake[b.key]) / 320, 0, 1) : 0;
+    const used = G.used[b.key] && !(G.bonus[b.key] > 0), sh = G.toolShake[b.key] != null ? clamp(1 - (fxNow() - G.toolShake[b.key]) / 320, 0, 1) : 0;
     const pr = G.press && G.press.key === 'tool:' + b.key && tn - G.press.t0 < 140;
     ctx.save(); if (used) ctx.globalAlpha = 0.4;
     ctx.translate(Math.sin(sh * 30) * 4 * sh, 0);
@@ -1734,6 +1806,9 @@ function drawTools(L, forFail) {
     ctx.restore();
     const lb = T('t_' + b.key);
     text(lb, b.x, b.ly, fitPx(lb, b.lf, Math.max(b.r * 2.6, 60)), { fill: PAL.ink, stroke: PAL.board, strokeW: 0.32 });
+    // ボーナスでもらった道具のもち数（修正 9。右上のバターの丸に「+n」）
+    const nb = G.bonus[b.key] || 0;
+    if (nb > 0) { const br2 = Math.max(10, b.r * 0.4), bx = b.x + b.r * 0.78, by = b.y + dy - b.r * 0.74; ctx.fillStyle = PAL.butter; ctx.beginPath(); ctx.arc(bx, by, br2, 0, TAU); ctx.fill(); ctx.strokeStyle = PAL.ink; ctx.lineWidth = 1.6; ctx.stroke(); const bs = '+' + nb; text(bs, bx, by + 1, fitPx(bs, br2 * 1.05, br2 * 1.7), { fill: PAL.ink }); }
     ctx.restore();
   }
 }
@@ -2069,8 +2144,9 @@ function drawCard(L) {
   const title = T('cardTitle', { n: isEncore(C.stage) ? C.stage - LAST_ROOM_STAGE : C.stage });
   const ttl = isEncore(C.stage) ? T('encoreStage', { n: C.stage - LAST_ROOM_STAGE }) : title;
   text(ttl, K.x + K.w / 2, K.y + K.h * 0.2, Math.max(18, fitPx(ttl, K.h * 0.12, K.w * 0.84, true)), { fill: PAL.ink, mincho: true, box: { x0: K.x, x1: K.x + K.w, y0: K.y, y1: K.y + K.h } });
-  // 星（1 つずつポン・ポン・ポン）
-  for (let i = 0; i < 3; i++) {
+  // 星（1 つずつポン・ポン・ポン。修正 9 から、はやさの★。ステージ 1・2 は出さない）
+  const hasStars = C.stars > 0;
+  for (let i = 0; hasStars && i < 3; i++) {
     const st = 420 + i * 260, q = clamp((t - st) / 220, 0, 1), on = i < C.stars;
     if (q > 0 && C.stampFx <= i) { C.stampFx = i + 1; if (on) { Sound.play('place', { cents: 200 + i * 300 }); Sound.sparkle(2 + i, 1760); burst(K.x + K.w * (0.3 + i * 0.2), K.y + K.h * 0.46 + rise, 8, [PAL.butter, PAL.berry, '#FFFFFF'], 180, 4, 500, 'star'); } }
     const sc = q <= 0 ? 0 : q < 1 ? lerp(2, 1, easeOut(q)) : 1, sx = K.x + K.w * (0.3 + i * 0.2), sy = K.y + K.h * (i === 1 ? 0.44 : 0.48), sr = K.h * (i === 1 ? 0.15 : 0.125);
@@ -2080,15 +2156,31 @@ function drawCard(L) {
     if (on) { ctx.strokeStyle = PAL.ink; ctx.lineWidth = 2; ctx.stroke(); ctx.fillStyle = 'rgba(255,255,255,.55)'; ctx.beginPath(); ctx.ellipse(-sr * 0.22, -sr * 0.25, sr * 0.2, sr * 0.1, -0.6, 0, TAU); ctx.fill(); }
     ctx.restore();
   }
-  // きれい度（ハンコのような丸い枠に）
+  // ★3 は「はやい！」（右上の角に斜めの文字・粒を多めに）
+  if (C.stars === 3 && t > 1000) {
+    if (!C.fastFx) { C.fastFx = true; const bc = [PAL.butter, PAL.berry, PAL.okTop, '#FFFFFF']; for (const [bx, by] of [[K.x - 6, K.y + K.h * 0.35], [K.x + K.w + 6, K.y + K.h * 0.35], [K.x + K.w / 2, K.y - 8]]) burst(bx, by, 14, bc, 320, 5, 900, 'star'); Sound.sparkle(6, 2093); }   // カードの外側から（粒はカードの下に描かれるので、縁から外へ）
+    const q = clamp((t - 1000) / 260, 0, 1), fs = T('fast'), fpx = fitPx(fs, K.h * 0.1, K.w * 0.3, 'pop');
+    ctx.save(); ctx.globalAlpha = q; ctx.translate(K.x + K.w * 0.86, K.y + K.h * 0.02); ctx.rotate(0.16);   // カードの右上の角（見出しより上） ctx.scale(lerp(1.8, 1, easeOutBack(q)), lerp(1.8, 1, easeOutBack(q)));
+    text(fs, 0, 1, fpx, { fill: PAL.berry, stroke: '#FFFFFF', strokeW: 0.3, pop: true });
+    ctx.restore();
+  }
+  // きれい度（ハンコのような丸い枠に。★が無いときは真ん中寄り）
   if (t > 1250) {
     const q = clamp((t - 1250) / 240, 0, 1);
     const msg = isEncore(C.stage) ? T('thanks') : (cl && cl.to >= STAGES_PER_ROOM ? T('cleanMax') : T('cleanUp', { n: cleanPct(cl.to) - cleanPct(cl.from) }));
     const px = fitPx(msg, K.h * 0.1, K.w * 0.78);
-    ctx.save(); ctx.globalAlpha = q; ctx.translate(K.x + K.w / 2, K.y + K.h * 0.74); ctx.scale(lerp(1.6, 1, easeOut(q)), lerp(1.6, 1, easeOut(q))); ctx.rotate(-0.04);
+    ctx.save(); ctx.globalAlpha = q; ctx.translate(K.x + K.w / 2, K.y + K.h * (hasStars ? 0.74 : 0.55)); ctx.scale(lerp(1.6, 1, easeOut(q)), lerp(1.6, 1, easeOut(q))); ctx.rotate(-0.04);
     ctx.font = font(px); const mw = ctx.measureText(msg).width + px * 1.4;
     ctx.strokeStyle = PAL.terra; ctx.lineWidth = 2.5; rr(ctx, -mw / 2, -px * 0.95, mw, px * 1.9, px * 0.95); ctx.stroke();
     text(msg, 0, 1, px, { fill: STAMP_INK });
+    ctx.restore();
+  }
+  // ボーナス（★3 で道具 +1）。カードの下の余白に、バターの帯で
+  if (cl && cl.bonus && t > 1400) {
+    const q = clamp((t - 1400) / 240, 0, 1), bs = T('bonus', { tool: T('t_' + cl.bonus) }), bpx = fitPx(bs, K.h * 0.075, K.w * 0.8), by = K.y + K.h * 0.925;
+    ctx.save(); ctx.globalAlpha = q; ctx.font = font(bpx); const bw = ctx.measureText(bs).width + bpx * 1.2;
+    ctx.fillStyle = rgba(PAL.butter, 0.75); rr(ctx, K.x + K.w / 2 - bw / 2, by - bpx * 0.72, bw, bpx * 1.44, bpx * 0.72); ctx.fill();
+    text(bs, K.x + K.w / 2, by + 1, bpx, { fill: PAL.ink, box: { x0: K.x, x1: K.x + K.w, y0: K.y, y1: K.y + K.h } });
     ctx.restore();
   }
   ctx.restore();
@@ -2210,6 +2302,12 @@ function albumLayout(L) {
   for (let r = 0; r < ROOMS; r++) { const row = Math.floor(r / cols), n = Math.min(cols, ROOMS - row * cols), col = r % cols; cells.push({ x: W / 2 + (col - (n - 1) / 2) * (W - 40) / cols, y: top + pw * 0.55 + row * pw * 1.08 }); }
   return { pw, cells, close: { x: W - 34 * K, y: 34 * K, r: 22 * K }, title: { y: port ? 44 : 34 * K, px: 30 * K } };
 }
+// 部屋 r のはやさの★（持っている数・取れる数。ステージ 3 以降の 15 ステージ × 3）
+function roomStars(r) {
+  let have = 0, max = 0;
+  for (let n = r * STAGES_PER_ROOM + 1; n <= (r + 1) * STAGES_PER_ROOM; n++) if (n >= SPEED_FROM) { max += 3; have += starOf(n); }
+  return { have, max };
+}
 function drawAlbum(L) {
   const A = albumLayout(L), W = L.W, H = L.H;
   ctx.fillStyle = PAL.board; ctx.fillRect(0, 0, W, H);
@@ -2223,6 +2321,18 @@ function drawAlbum(L) {
     ctx.fillStyle = done ? PAL.ok : PAL.board; ctx.beginPath(); ctx.arc(0, 0, br, 0, TAU); ctx.fill(); ctx.strokeStyle = PAL.ink; ctx.lineWidth = 2; ctx.stroke();
     const s = done ? T('done') : T('pct', { n: cleanPct(lv) }); text(s, 0, 1, fitPx(s, br * 0.7, br * 1.7), done ? { fill: '#FFFFFF', stroke: PAL.ink, strokeW: 0.2 } : { fill: PAL.ink });
     ctx.restore();
+    // はやさの★の合計（修正 9。その部屋のステージ 3 以降。1 つでもクリアした部屋だけ）
+    const RS = roomStars(r);
+    if (lv > 0 && RS.max > 0) {
+      const ss = RS.have + '/' + RS.max, spx = Math.max(12, A.pw * 0.075); ctx.font = font(spx);
+      const sw = ctx.measureText(ss).width + spx * 2.3, sh2 = spx * 1.6, sx = c.x - A.pw * 0.44, sy = c.y - h / 2 + A.pw * 0.05;
+      ctx.save(); ctx.translate(sx + sw / 2, sy + sh2 / 2); ctx.rotate(-0.05);
+      withShadow(() => { ctx.fillStyle = PAL.board; rr(ctx, -sw / 2, -sh2 / 2, sw, sh2, sh2 / 2); ctx.fill(); }, 0.5);
+      ctx.strokeStyle = PAL.ink; ctx.lineWidth = 1.6; rr(ctx, -sw / 2, -sh2 / 2, sw, sh2, sh2 / 2); ctx.stroke();
+      ctx.fillStyle = PAL.butter; starPath(ctx, -sw / 2 + spx * 0.95, 0, spx * 0.58, 0); ctx.fill(); ctx.strokeStyle = PAL.ink; ctx.lineWidth = 1.3; ctx.stroke();
+      text(ss, -sw / 2 + spx * 1.75, 1, spx, { fill: PAL.ink }, 'left');
+      ctx.restore();
+    }
   }
   const b = A.close; roundButton(b, PAL.board, '#FFFFFF', PAL.woodShadow, G.press && G.press.key === 'close' && now() - G.press.t0 < 140);
   const q = b.r * 0.32; ctx.save(); ctx.strokeStyle = PAL.ink; ctx.lineWidth = 3; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(b.x - q, b.y - q); ctx.lineTo(b.x + q, b.y + q); ctx.moveTo(b.x + q, b.y - q); ctx.lineTo(b.x - q, b.y + q); ctx.stroke(); ctx.restore();
@@ -2256,7 +2366,7 @@ function drawTitle(L) {
   ctx.strokeStyle = PAL.ink; ctx.lineWidth = 2; rr(ctx, sx, sy, sw, sh, 22); ctx.stroke();
   ctx.fillStyle = PAL.board; rr(ctx, sx + 8, sy + 8, sw - 16, sh - 16, 16); ctx.fill(); ctx.strokeStyle = PAL.woodShadow; ctx.lineWidth = 1.5; ctx.stroke();
   for (const [kx, ky, rot] of [[0.06, 0.08, -0.6], [0.94, 0.08, 0.6]]) { ctx.save(); ctx.translate(sx + sw * kx, sy + sh * ky); ctx.rotate(rot); ctx.fillStyle = rgba(ROOM_PAL[r].a1, 0.8); ctx.fillRect(-sw * 0.07, -sh * 0.045, sw * 0.14, sh * 0.09); ctx.restore(); }
-  const p1 = Math.max(18, sh * 0.16), p2 = fitPx(T('title2'), sh * 0.34, sw * 0.72, 'pop');
+  const p1 = Math.max(18, fitPx(T('title1'), sh * 0.16, sw * 0.72, 'pop')), p2 = fitPx(T('title2'), sh * 0.34, sw * 0.72, 'pop');
   popTitle(T('title1'), SG.x, sy + sh * 0.25, p1, t, 0);
   const t2w = popTitle(T('title2'), SG.x, sy + sh * 0.54, p2, t, 3);
   ctx.strokeStyle = PAL.butterEdge; ctx.lineWidth = 1.5; ctx.beginPath(); ctx.moveTo(SG.x - sw * 0.3, sy + sh * 0.76); ctx.lineTo(SG.x + sw * 0.3, sy + sh * 0.76); ctx.stroke();
@@ -2329,7 +2439,10 @@ function roomLvShown() {
   if (C && !C.tidied) return C.from;
   return G.clean[r];
 }
+// はやい片付けの時計が進むとき: 遊ぶ画面で、失敗の札・部屋の一覧・案内・クリアの演出が出ていないとき（一時停止中はループごと止まる）
+function clockRuns() { return G.scene === 'play' && !G.paused && !G.fail && !G.clearing && !G.modal && !G.tip; }
 function updateLogic(t, dt) {
+  if (G.tip && fxNow() - G.tip.t0 > TIP_MS) G.tip = null;
   if (G.scene !== 'play' && G.scene !== 'clear') return;
   stepTray(dt);
   const C = G.clearing, ft = fxNow();
@@ -2370,6 +2483,7 @@ function render() {
   drawTools(L);
   drawHud(L);
   drawFx(L);
+  drawTip(L);
   drawEdge(L);
   drawFlash(L);
   drawFail(L);
@@ -2390,6 +2504,7 @@ function loop() {
   const fdt = dt * (t < FX.slowUntil ? 0.3 : 1);
   FX.t += fdt;
   if (G.scene !== 'title') G.stats.playMs += dt;
+  if (clockRuns()) G.playMs += dt;
   updateLogic(t, fdt);
   const r0 = performance.now();
   render(); G.frames++;
@@ -2515,7 +2630,7 @@ window.Game = {
   // その物が一番上に見えている点（覆われている物でも、見えている角があればそこ）。無ければ null
   visiblePoint: i => { const r = tileRect(i); for (let a = 1; a < 12; a++) for (let b2 = 1; b2 < 12; b2++) { const x = r.x + r.w * a / 12, y = r.y + r.h * b2 / 12; if (tileAt(x, y) === i) return { x, y }; } return null; },
   tileRect: i => tileRect(i), tileAt: (x, y) => tileAt(x, y), traySlot: q => traySlotPos(q), asidePos: q => asidePos(q),
-  layout: () => { const L = lay(); return { W: L.W, H: L.H, mode: L.mode, hud: L.hud, pill: L.pill, meter: L.meter, btnRooms: L.btnRooms, btnSfx: L.btnSfx, btnBgm: L.btnBgm, tray: L.tray, tools: L.tools, aside: L.aside, pileArea: L.pileArea, pile: L.pile, cellMin: L.cellMin, chr: L.chr }; },
+  layout: () => { const L = lay(); return { W: L.W, H: L.H, mode: L.mode, hud: L.hud, pill: L.pill, meter: L.meter, btnRooms: L.btnRooms, btnSfx: L.btnSfx, btnBgm: L.btnBgm, speed: L.speed, tray: L.tray, tools: L.tools, aside: L.aside, pileArea: L.pileArea, pile: L.pile, cellMin: L.cellMin, chr: L.chr }; },
   failLayout: () => failLayout(lay()), cardLayout: () => cardLayout(lay()),
   envelope: () => envelopeRect(lay()), poseRect: k => poseRect(lay(), k), poseKeys: () => Object.keys(PD.poses), pose: () => POSE.cur, poseLog: () => POSE.log.slice(),
   footPoints: () => { const L = lay(); return Object.keys(PD.poses).map(k => { const r = poseRect(L, k), p = poseMeta(k), s = L.chr.s; return { k, x: r.x + p.ax * s, y: r.y + p.ay * s }; }); },
@@ -2524,7 +2639,7 @@ window.Game = {
   sweatRects: () => { const L = lay(), f = chrFrame(L), p = poseMeta(POSE.cur), t = now(); return G.sweat.filter(q => t >= q.t0).map(q => { const e = t - q.t0; const k = e < SWEAT_APPEAR ? 0 : Math.min(1, Math.pow((e - SWEAT_APPEAR) / q.flow, 2)); const g = sweatGeom(p, q.id, k, q.size); return { id: q.id, x: f.gx + (g.x - p.ax) * f.s, y: f.gy + (g.y - p.ay) * f.s, w: g.w * f.s, h: g.h * f.s }; }); },
   faceRectScreen: () => { const L = lay(), f = chrFrame(L), p = poseMeta(POSE.cur), F = p.face; return { x: f.gx + (F[0] - p.ax) * f.s, y: f.gy + (F[1] - p.ay) * f.s, w: (F[2] - F[0]) * f.s, h: (F[3] - F[1]) * f.s }; }, worry: () => G.worry, sweatCount: () => G.sweat.length,
   idleFor: ms => { POSE.lastInput = now() - ms; POSE.longIdle.next = 0; POSE.longIdle.until = 0; G.lastInput = now() - ms; }, hint: () => hintTile(),
-  advance: ms => { CLOCK.skew += ms; FX.t += ms; updateLogic(now(), ms); return now(); },
+  advance: ms => { CLOCK.skew += ms; FX.t += ms; if (clockRuns()) G.playMs += ms; updateLogic(now(), ms); return now(); },
   seed: n => { rand = mulberry32(n >>> 0); },
   clearFx: () => { finishGhosts(); G.particles = []; G.rings = []; G.popups = []; G.edge = null; G.flash = null; G.anims = G.anims.filter(a => a.kind !== 'shuffle'); for (const e of visTray()) { e.fly = null; e.vx = null; } },
   // セーブ
@@ -2533,6 +2648,12 @@ window.Game = {
   sound: () => ({ userMuted: Sound.userMuted, enabled: Sound.enabled, tones: Sound.tones, ctx: Sound.ctx ? Sound.ctx.state : null, loaded: Sound.loaded, decoded: SFX.decoded, last: Sound.last }),
   bgm: () => Object.assign(BGM.state(), { bgmOn: Sound.bgmOn, loaded: Sound.bgmLoaded, ctx: Sound.ctx ? Sound.ctx.state : null }),
   bgmReady: () => Promise.resolve(Sound.bgmLoading), toggleBgm: () => toggleBgm(),
+  // はやい片付け（修正 9）
+  playMs: () => G.playMs, addPlayMs: ms => { G.playMs += ms; return G.playMs; }, pace: n => makeStage(n).pace, curPace: () => G.pace,
+  bonus: () => Object.assign({}, G.bonus), setBonus: b => { G.bonus = Object.assign({ undo: 0, aside: 0, shuffle: 0 }, b); }, bonusPick: b => bonusPick(b),
+  speedStars: (n, ms, pace) => speedStars(n, ms, pace), lastClear: () => G.clearing ? { stars: G.clearing.stars, bonus: G.clearing.bonus, sec: G.clearing.sec, pace: G.clearing.pace } : null,
+  tip: () => !!G.tip, tips: () => Object.assign({}, G.tips), setTips: t => { G.tips = Object.assign({ speed: false }, t); }, clockRuns: () => clockRuns(),
+  roomStars: r => roomStars(r), speedFrac: () => speedFrac(),
   toggleSfx: () => toggleSfx(), settings: () => ({ sfx: !Sound.userMuted, bgm: Sound.bgmOn }), unlockAudio: () => Sound.unlock(),
   fontLoaded: () => document.fonts.check('900 20px TidyRound') && document.fonts.check('400 20px TidyMincho') && document.fonts.check('400 20px TidyPop'),
   missingAssets: () => Object.keys(IMG).filter(n => !ready(IMG[n])),

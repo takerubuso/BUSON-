@@ -26,7 +26,7 @@
 <script>
 'use strict';
 /* =====================================================================
-   しきぶの合体カフェ（仮）— v1
+   しきぶちゃんの合体カフェ（仮）— v1
    仕様は docs/仕様書_v1.md、見た目の値は docs/アートディレクション_v1.md。
    素の HTML/JS/Canvas。外部通信なし（SDK だけは YouTube が配る）。ブラウザ保存・ページ可視性・ブラウザの言語設定は使わない（tools/build_dist.py が検査）。
    SDK のスタブ・Platform・Save の形・しきぶのポーズの状態機械・汗・ボタンの描き方は第1弾（ref/sort-game/index.html）から移植。
@@ -93,9 +93,9 @@ window.addEventListener('error', () => Platform.logError());
 // ---------- 文字（日英。言語は Platform.getLanguage() だけで決める。ja で始まれば日本語、それ以外は英語） ----------
 // tools/build_font.py がこの STR と NAMES から書体に入れる字を拾う。字を足したら流し直す。
 const STR = {
-  ja: { title1: 'しきぶの', title2: '合体カフェ', sub: "Shikibu's Merge Café", start: 'タップでスタート', cont: 'つづきから DAY {n}',
+  ja: { title1: 'しきぶちゃんの', title2: '合体カフェ', sub: "Shikibu's Merge Café", start: 'タップでスタート', cont: 'つづきから DAY {n}',
         day: 'DAY {n}', shop: 'お店', book: '図鑑', close: '閉じる', nextDay: 'つぎの日へ', buy: '買う', max: '最大', lockHeart: '♥{n}で解放',
-        receiptTitle: 'しきぶの合体カフェ', rDay: '{n}日目の営業', rOrders: 'ご注文', rSales: '売上', rHearts: 'ハート', rFast: 'はやい！', rNew: '新しいお菓子', rTotal: '合計',
+        receiptTitle: 'しきぶちゃんの合体カフェ', rDay: '{n}日目の営業', rOrders: 'ご注文', rSales: '売上', rHearts: 'ハート', rFast: 'はやい！', rNew: '新しいお菓子', rTotal: '合計',
         thanks: 'またのご来店を', legend: '伝説のお菓子！', fast: 'はやい！', combo: '{n}コンボ', great: '大成功！', newItem: 'NEW!', welcome: 'おかえり！', welcomeSub: '{n}個焼けてるよ',
         hintMore: 'あと1', found: '{n}/{m}', complete: '図鑑コンプリート！', unknown: '？？？',
         chain0: 'パン', chain1: 'スイーツ', chain2: 'ドリンク', menu: 'MENU', lv: 'Lv{n}', full: 'いっぱい',
@@ -103,7 +103,7 @@ const STR = {
         up_wall: '壁紙', up_floor: '床', up_plant: '観葉植物', up_sign: '看板', up_lamp: 'ランプ', up_showcase: 'ショーケース',
         ef_charges: '回数 {n}', ef_speed: '戻り {n}秒', ef_p2: '2段目 {n}%', ef_seats: '席 {n}', ef_board: 'マス {n}', ef_tray: 'トレイ {n}・{h}時間', ef_tip: 'チップ +{n}%',
         shopTitle: 'お店の改装', bookTitle: 'メニュー図鑑', signName: 'しきぶ珈琲店', signShort: 'CAFÉ', sfx: '効果音', bgm: 'BGM' },
-  en: { title1: "Shikibu's", title2: 'Merge Café', sub: 'しきぶの合体カフェ', start: 'Tap to start', cont: 'Continue: DAY {n}',
+  en: { title1: "Shikibu's", title2: 'Merge Café', sub: 'しきぶちゃんの合体カフェ', start: 'Tap to start', cont: 'Continue: DAY {n}',
         day: 'DAY {n}', shop: 'Shop', book: 'Menu', close: 'Close', nextDay: 'Next day', buy: 'Buy', max: 'MAX', lockHeart: 'Unlock at ♥{n}',
         receiptTitle: "Shikibu's Merge Café", rDay: 'Day {n} receipt', rOrders: 'Orders', rSales: 'Sales', rHearts: 'Hearts', rFast: 'Quick!', rNew: 'New treats', rTotal: 'Total',
         thanks: 'Thank you, come again', legend: 'Legendary treat!', fast: 'Quick!', combo: '{n} combo', great: 'Great!', newItem: 'NEW!', welcome: 'Welcome back!', welcomeSub: '{n} treats baked',
@@ -1186,11 +1186,41 @@ const canvas = document.getElementById('c');
 const ctx = canvas.getContext('2d');
 const view = { w: 0, h: 0, dpr: 1 };
 const WAIST_VIS = () => -ENV.y0 - PD.cut;   // 腰から一番高い手の先まで（ポーズ画像の px）
+// 正方形に近い画面（修正 5）: 縦横比（幅 ÷ 高さ）がこの間なら、縦長・横長とは別の並べ方にする
+const SQUARE_AR = [0.8, 1.25];
 function computeLayout() {
   const W = view.w, H = view.h, portrait = H > W, m = 10;
-  const C = G.cols, R = G.rows;
-  const L = { W, H, portrait, m, cols: C, rows: R };
-  if (portrait) {
+  const C = G.cols, R = G.rows, square = W / H >= SQUARE_AR[0] && W / H <= SQUARE_AR[1];
+  // band = 場面（壁・窓・お客さん・カウンター）が画面の幅いっぱいの帯になる並べ方（縦長と正方形）。portrait はタイトル・お店・図鑑の並べ方に使う（縦長だけ）
+  const L = { W, H, portrait, square, band: square || portrait, m, cols: C, rows: R };
+  if (square) {
+    // 正方形に近い画面（修正 5）: 上から HUD（幅いっぱい）→ お客さんの帯（幅いっぱい。カウンターの奥）→ 下の段に 道具の列・台・しきぶ（全身・右下）。
+    // マスの大きさ c は「お客さんの顔の高さ ≒ 0.9c（縦長の席 3 と同じ釣り合い）」になるように、縦（HUD＋帯＋台）と横（道具＋台＋しきぶ）の両方から決める
+    const mn = Math.min(W, H), bp = clamp(mn * 0.022, 7, 12), hudH = clamp(mn * 0.075, 48, 80), ch = clamp(H * 0.026, 16, 28), kF = 0.95;
+    const fp = poseMeta('01').face, fh = fp[3] - fp[1];                      // しきぶの顔の高さ（ポーズ画像の px）
+    const bandK = CL.top + 1.2, bandC = BUB_GAP + 8;                          // 帯の高さ ≒ 頭の上まで（CL.top × F）＋ 1 段の吹き出し（1.2F）＋ しっぽ
+    const shK = ENV.w * kF / (0.7 * fh);                                      // しきぶの枠の幅（マス c あたり）: 客の顔 = しきぶの顔の 70% = kF × c になる大きさ
+    const tK = 1.05;                                                         // 道具の列の幅（マス c あたり）
+    const cH = (H - hudH - bandC - ch - 8 - 2 * bp - m) / (R + bandK * kF), cW = (W - 2 * m - 24 - 2 * bp) / (C + tK + shK);
+    const cell = Math.min(cH, cW, clamp(mn * 0.1, 60, 112));
+    const bw = C * cell + 2 * bp, bh = R * cell + 2 * bp, tsz = Math.min(cell * tK, bh / 5.4, 100);
+    // 縦に余った分は帯を高くする（壁と窓が広くなる）。台は下の段の真ん中
+    const need = hudH + bandC + bandK * kF * cell + ch + 8 + bh + m, extra = Math.max(0, H - need);
+    const sceneH = bandC + bandK * kF * cell + ch + extra * 0.7;
+    L.hud = { x: 0, y: 0, w: W, h: hudH };
+    L.scene = { x: 0, y: hudH, w: W, h: sceneH };
+    L.counter = { x: 0, y: hudH + sceneH - ch, w: W, h: ch };
+    L.wainY = L.counter.y + ch;
+    // 横は仮に左詰め（道具の列・台・しきぶ）。お客さんの大きさが決まったあとで、余りを 3 つの隙間に分ける（下）
+    const bx = m + tsz + 12, by = L.wainY + 8 + (H - m - L.wainY - 8 - bh) / 2;
+    L.board = { x: bx, y: by, w: bw, h: bh, bp, cell };
+    L.floor = { x: 0, y: H - clamp(H * 0.06, 14, 60), w: W, h: H };
+    L.toolBar = { dir: 'col', x: bx - 12 - tsz / 2, y0: by, y1: by + bh, size: tsz };
+    // しきぶ: 右下・全身。枠（全ポーズの外接枠）がカウンターより下（お客さんの帯に入らない）で、台の右に入る大きさ。目安は客の顔 = kF × c になる大きさ
+    const gy = H - 6, s = Math.max(0.05, Math.min((gy - L.wainY - 4) / ENV.h, (W - m - (bx + bw + 12)) / ENV.w, kF * cell / (0.7 * fh)));
+    L.chr = { mode: 'full', s, gx: W - m - ENV.x1 * s, gy, clipY: H };
+    L.custArea = { x0: m, x1: W - m, counterY: L.counter.y };   // 右端は切替ボタンの位置が決まってから（下）
+  } else if (portrait) {
     const bp = clamp(W * 0.022, 7, 12), hudH = clamp(W * 0.14, 50, 64), toolH = clamp(Math.min(W, H) * 0.19, 66, 96);
     const sceneMin = clamp(H * 0.38, 150, 320);   // 修正 4b・4c: お客さんの顔（席 4・5 は 2 段）と吹き出しが入る高さ（0.25 → 0.38。375×812 では台 6×7 のマスだけ 56 → 49.5px に）
     const cell = Math.min((W - 2 * m - 2 * bp) / C, (H - hudH - sceneMin - toolH - 2 * bp - 16) / R, 80);
@@ -1257,13 +1287,20 @@ function computeLayout() {
   L.btnBgm = { x: L.btnShop.x + L.btnShop.r - thw, y: tyy, r: tr, lf: tlf, ly: tyy + tr + 4 + tlf * 0.6, key: 'bgm' };
   L.btnSfx = { x: L.btnBgm.x - thw * 2 - 10, y: tyy, r: tr, lf: tlf, ly: tyy + tr + 4 + tlf * 0.6, key: 'sfx' };
   L.pills = { x0: L.hud.x + m, x1: L.btnBook.x - bs / 2 - 8, y: yc, h: clamp(hh * 0.64, 30, 56) };
+  if (square) {
+    // お客さんの帯の右端は切替ボタンの手前（ボタンの下のカウンターにはショーケースを置く）。窓は帯の真ん中
+    L.custArea.x1 = L.btnSfx.x - thw - 8;
+    const caW = L.custArea.x1 - L.custArea.x0, sH = L.counter.y - L.scene.y;
+    L.window = { x: L.custArea.x0 + caW * 0.5, w: Math.min(sH * 0.62, caW * 0.3), top: L.scene.y + sH * 0.16, bot: L.counter.y };
+  }
   // 客の席（修正 4b・4c）: 大きさは顔の高さで決める。F = 大人の顔の高さ = しきぶの顔（ポーズ 01）の 70%（場面に入らなければ小さくする）。
   // 顔（3 表情の顔の矩形の和）どうしが重ならないように並べ、注文の吹き出しは各お客さんの頭のすぐ上（入らなければ顔の横）に出して、しっぽで顔を指す。
   // 1 列で目標の大きさに届かないとき（縦長の席 4・5 など）は、1 つおきに奥の段へ上げる。奥の段は「手前の人の吹き出しより上」まで上げるので、
   // 手前の人の腕・頭・吹き出しが奥の人の顔の前に来ない。1 列と 2 段で入る一番大きい F を出し、大きい方を使う（ほぼ同じなら 1 列）
   const ca = L.custArea, ns = seatCount(), topY = L.scene.y + 3, cy = ca.counterY, FG = 3;
   const fp = poseMeta('01').face, Ft = (fp[3] - fp[1]) * L.chr.s * 0.7;
-  const fxa = L.scene.x + 4 + Ft * 0.2, fxb = L.chr.gx + ENV.x0 * L.chr.s - 4, Wa = fxb - fxa;   // 顔を置ける左右: 場面の左端（髪のぶん少し空ける）から、しきぶの枠の手前まで
+  // 顔を置ける左右: 場面の左端（髪のぶん少し空ける）から、しきぶの枠の手前まで（正方形の画面は、しきぶがカウンターより下にいるので切替ボタンの手前まで）
+  const fxa = L.scene.x + 4 + Ft * 0.2, fxb = square ? ca.x1 : L.chr.gx + ENV.x0 * L.chr.s - 4, Wa = fxb - fxa;
   const bx0 = L.scene.x + 2, bx1 = fxb;                                                        // 吹き出しを置ける左右
   const plan = (F, stag, icWant) => {
     // 両端の顔は場面の中に収める（e = 端の席の中心から顔を置ける範囲の端まで）。席の間は均等
@@ -1288,7 +1325,7 @@ function computeLayout() {
         combos.sort((u, v) => u.filter(m => m !== 'above').length - v.filter(m => m !== 'above').length);
         for (const cm of combos) {
           back.forEach((S, k) => { S.mode = cm[k]; S.bw = cm[k] === 'above' ? S.abw : 0; });
-          if (seatPlanOk(seats, { bx0, bx1, topY, cy })) return { F, stag, sp, rise, ic, seats };
+          if (seatPlanOk(seats, { bx0, bx1, topY, cy, faceTop: L.scene.y })) return { F, stag, sp, rise, ic, seats };
         }
       }
       return null;
@@ -1311,6 +1348,14 @@ function computeLayout() {
   const A = best(false), B = ns >= 4 ? best(true, A ? A.F * 1.02 : 0) : null;
   const PL = B && (!A || B.F > A.F * 1.02) ? B : A, F = PL.F;
   L.custF = F; L.custStag = PL.stag; L.custFaceArea = { x0: fxa, x1: fxb };
+  if (square) {
+    // しきぶの大きさ: 下の段の高さと台の右の幅に入る中で、大人の顔がしきぶの顔の 67%（子どもは 61% ほど）を下回らない一番大きい大きさ（横に余りがあれば少し大きく、帯の高さで顔が小さく決まったときは小さく）
+    const b = L.board, s = Math.max(0.05, Math.min((L.chr.gy - L.wainY - 4) / ENV.h, (W - m - (b.x + b.w + 12)) / ENV.w, F / (0.67 * (fp[3] - fp[1]))));
+    // 横の余り（道具の列・台・しきぶを詰めて並べた残り）を、左端・台としきぶの間・右端の 3 つに等しく分ける
+    const gap = Math.max(0, W - 2 * m - (b.x + b.w + 12 - m) - ENV.w * s) / 3;
+    b.x += gap; L.toolBar.x += gap; L.slots.forEach(q => { q.x += gap; });
+    L.chr = Object.assign({}, L.chr, { s, gx: b.x + b.w + 12 + gap - ENV.x0 * s });
+  }
   L.seats = PL.seats.map(S => {
     const hr = F * 0.5, headY = S.cut + (CL.fy0 + CL.fy1) / 2 * F;   // hr・headY = 顔の目安（出したときのコインと文字の位置・動きの大きさ）
     return Object.assign(S, { sw: PL.sp || Wa, top: S.cut - CL.top * F, headY, hr });
@@ -1318,12 +1363,13 @@ function computeLayout() {
   // 内装の置き場所（客・看板と重ならない所をここで決める）
   const caW = ca.x1 - ca.x0, sH = L.counter.y - L.scene.y, Wn = L.window, u = clamp(Math.min(sH / 190, caW / 260), 0.5, 1.5);
   const D = L.deco = { u };
-  D.plant1 = L.portrait ? { x: ca.x0 + 16 * u, y: L.counter.y + 2 } : { x: L.strip.x0 + L.strip.w * 0.3, y: L.counter.y + 2 };
-  D.plant2 = L.portrait ? { x: ca.x0 + caW * 0.07, y: L.scene.y + 34 * u } : { x: L.strip.x0 + L.strip.w * 0.25, y: L.scene.y + 40 * u };
+  D.plant1 = L.band ? { x: ca.x0 + 16 * u, y: L.counter.y + 2 } : { x: L.strip.x0 + L.strip.w * 0.3, y: L.counter.y + 2 };
+  D.plant2 = L.band ? { x: ca.x0 + caW * 0.07, y: L.scene.y + 34 * u } : { x: L.strip.x0 + L.strip.w * 0.25, y: L.scene.y + 40 * u };
   D.plant3 = { x: Wn.x + Wn.w / 2 + 16 * u, y: L.counter.y + 2 };
-  const sw2 = L.portrait ? Math.min(92 * u, W * 0.24) : Math.min(L.strip.w * 0.95, 120 * u);
-  D.showcase = L.portrait ? { x: L.chr.gx - sw2 * 0.55, w: sw2 } : { x: L.strip.x0 + L.strip.w - sw2 * 0.98, w: sw2 };
-  D.lamps = [Wn.x - Wn.w * 0.9, Wn.x + Wn.w * 0.9, L.portrait ? (Wn.x + Wn.w * 0.9 + L.btnSfx.x - Math.max(L.btnSfx.r, L.btnSfx.lf * 1.6)) / 2 : L.strip.x0 + L.strip.w * 0.8];
+  // ショーケース: 縦長はしきぶの前・正方形は切替ボタンの下（お客さんの帯の右）・横長は左の細い場所
+  const sw2 = square ? Math.min(92 * u, W - m - ca.x1) : L.portrait ? Math.min(92 * u, W * 0.24) : Math.min(L.strip.w * 0.95, 120 * u);
+  D.showcase = square ? { x: (ca.x1 + W - m) / 2 - sw2 / 2, w: sw2 } : L.portrait ? { x: L.chr.gx - sw2 * 0.55, w: sw2 } : { x: L.strip.x0 + L.strip.w - sw2 * 0.98, w: sw2 };
+  D.lamps = [Wn.x - Wn.w * 0.9, Wn.x + Wn.w * 0.9, L.band ? (Wn.x + Wn.w * 0.9 + L.btnSfx.x - Math.max(L.btnSfx.r, L.btnSfx.lf * 1.6)) / 2 : L.strip.x0 + L.strip.w * 0.8];
   L.itemS = L.board.cell;
   return L;
 }
@@ -1375,6 +1421,7 @@ function seatPlanOk(seats, A) {
   const faces = seats.map(custFaceBox), bubs = seats.map(S => { const bs = bubbleBoxes(S); let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9; for (const b of bs) { x0 = Math.min(x0, b.x); y0 = Math.min(y0, b.y); x1 = Math.max(x1, b.x + b.w); y1 = Math.max(y1, b.y + b.h); } return { x: x0, y: y0, w: x1 - x0, h: y1 - y0 }; });
   for (let i = 0; i < seats.length; i++) {
     const b = bubs[i];
+    if (A.faceTop != null && faces[i].y < A.faceTop) return false;   // 奥の段の顔（跳ねる高さ込み）が場面の上（HUD）に出ない（修正 5。5:7 の画面で見つけた）
     if (b.x < A.bx0 || b.x + b.w > A.bx1 || b.y < A.topY || b.y + b.h > A.cy) return false;
     for (let j = 0; j < seats.length; j++) {
       if (j !== i && rectHit(b, faces[j])) return false;
@@ -1476,7 +1523,7 @@ function drawBackground(L, withBoard) {
   paintBgLive(L);
 }
 function paintBgStatic(c, L) {
-  const W = L.W, H = L.H, wy = L.portrait ? L.wainY : L.wainY;
+  const W = L.W, H = L.H, wy = L.wainY;
   // 壁（上 → 下のグラデーション）
   const g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, PAL.wallTop); g.addColorStop(1, PAL.wallBot);
   c.fillStyle = g; c.fillRect(0, 0, W, H);
@@ -1521,9 +1568,9 @@ function paintBgStatic(c, L) {
     if (sl >= 3) for (const k of [-1, 1]) { c.fillStyle = PAL.butter; starPath(c, wx + k * (sw / 2 + sh * 0.5), sy + sh / 2, sh * 0.34, 0); c.fill(); c.strokeStyle = PAL.ink; c.lineWidth = 1.2; c.stroke(); }
   }
   // 腰壁（セージ・縦の板目）と上の木の縁
-  c.fillStyle = PAL.sage; c.fillRect(0, wy, L.portrait ? W : L.scene.x, H - wy);
-  c.fillStyle = PAL.sageGrain; for (let x = 6; x < (L.portrait ? W : L.scene.x); x += 14) c.fillRect(x, wy, 1, H - wy);
-  c.fillStyle = PAL.woodTop; c.fillRect(0, wy - 5, L.portrait ? W : L.scene.x, 6); c.fillStyle = PAL.wood; c.fillRect(0, wy + 1, L.portrait ? W : L.scene.x, 2);
+  c.fillStyle = PAL.sage; c.fillRect(0, wy, L.band ? W : L.scene.x, H - wy);
+  c.fillStyle = PAL.sageGrain; for (let x = 6; x < (L.band ? W : L.scene.x); x += 14) c.fillRect(x, wy, 1, H - wy);
+  c.fillStyle = PAL.woodTop; c.fillRect(0, wy - 5, L.band ? W : L.scene.x, 6); c.fillStyle = PAL.wood; c.fillRect(0, wy + 1, L.band ? W : L.scene.x, 2);
   // 床（内装: 0 板 → 1 板と幅木 → 2 ヘリンボーン → 3 大理石の市松）
   const F = L.floor, fl = G.up.floor, fy = F.y, fw2 = F.w;
   c.save(); c.beginPath(); c.rect(F.x, fy, fw2, H - fy); c.clip();
@@ -1587,7 +1634,7 @@ function drawCounter(L) {
   const C = L.counter, top = Math.max(5, Math.min(10, C.h * 0.28));
   withShadow(() => { ctx.fillStyle = PAL.wood; ctx.fillRect(C.x, C.y, C.w, C.h); }, 0.5);
   ctx.fillStyle = PAL.woodShadow; ctx.fillRect(C.x, C.y + top, C.w, 3);
-  if (!L.portrait) { for (let x = C.x + 30; x < C.x + C.w; x += 60) { ctx.fillStyle = PAL.woodShadow; ctx.fillRect(x, C.y + top + 14, 2, C.h - top - 20); } ctx.fillStyle = PAL.woodShadow; ctx.fillRect(C.x, C.y + C.h - 10, C.w, 10); }
+  if (!L.band) { for (let x = C.x + 30; x < C.x + C.w; x += 60) { ctx.fillStyle = PAL.woodShadow; ctx.fillRect(x, C.y + top + 14, 2, C.h - top - 20); } ctx.fillStyle = PAL.woodShadow; ctx.fillRect(C.x, C.y + C.h - 10, C.w, 10); }
   ctx.fillStyle = PAL.woodTop; ctx.fillRect(C.x, C.y, C.w, top);
   ctx.fillStyle = PAL.ink; ctx.fillRect(C.x, C.y - 1, C.w, 1.5);
 }
@@ -1846,26 +1893,54 @@ function drawTools(L) {
 }
 
 // ---------- HUD（丸い棒のクリームの札 3 つ＋図鑑・お店のボタン） ----------
-function drawHud(L) {
-  const P = L.pills, h = P.h, y = P.y - h / 2, fs = h * 0.5;
-  const coinsStr = String(Math.round(G.coinShown)), dayStr = T('day', { n: G.day }), leftStr = String(Math.max(0, G.total - G.served));
-  ctx.font = font(fs);
-  const wC = ctx.measureText('8'.repeat(Math.max(4, coinsStr.length))).width + h * 1.45, wD = ctx.measureText(dayStr).width + h * 0.9, wO = ctx.measureText('88').width + h * 1.4;
-  const room = P.x1 - P.x0, need = wC + wD + wO + 12, k = Math.min(1, room / need);
+// 札の並べ方（修正 5）: 札の幅は中身の一番長いもの（硬貨＋5 桁の数字・DAY 99・人の記号＋99）から決める。
+// 入らなければまず文字を小さくし（札の高さの 30% まで）、それでも入らなければ余白と記号も一緒に縮める。数字は記号と重ならず、間を空ける（どの画面の大きさでも同じ）
+const HUD_PAD = { coin: [0.2, 0.6, 0.18, 0.34], day: [0.4, 0, 0, 0.4], left: [0.28, 0.4, 0.16, 0.34] };   // 札の高さ h に対する 左の余白・記号の幅・記号と数字の間・右の余白
+function hudPills(L) {
+  if (L.hudQ) return L.hudQ;   // 並べ方ごとに 1 回だけ測る（描くのは書体を読み終えてから）
+  const P = L.pills, h = P.h, room = P.x1 - P.x0, gap = 6, fs0 = h * 0.5, dayStr = T('day', { n: 99 });
+  // 中身の幅（文字の大きさ px あたり。数字は一番幅の広い字 × 桁数）
+  const widths = (px, pxD) => { ctx.save(); ctx.font = font(px); const dig = Math.max(...'0123456789'.split('').map(d => ctx.measureText(d).width)); ctx.font = font(pxD); const wd = ctx.measureText(dayStr).width; ctx.restore(); return { coin: dig * 5, day: wd, left: dig * 2 }; };
+  const u0 = widths(100, 100), sumU = (u0.coin + u0.day * 0.92 + u0.left) / 100;
+  const keys = ['coin', 'day', 'left'], fixed = keys.reduce((a, k) => a + HUD_PAD[k].reduce((x, y) => x + y, 0) * h, 0) + gap * 2;
+  let fs = Math.min(fs0, (room - fixed) / sumU), k = 1;
+  if (fs < h * 0.3) { fs = h * 0.3; k = clamp((room - gap * 2 - fs * sumU) / (fixed - gap * 2), 0.3, 1); }
+  // 描くときの文字の大きさは整数 px（font() が丸める）。丸めた大きさで測り直した幅で場所を決める
+  const px = { coin: Math.floor(fs), day: Math.floor(fs * 0.92), left: Math.floor(fs) }, u = widths(px.coin, px.day);
   let x = P.x0;
-  const pop = clamp(1 - (fxNow() - G.coinPop) / 260, 0, 1);
-  // コイン
-  plate(x, y, wC * k, h); coinIcon(x + h * 0.5, P.y, h * 0.3);
-  if (pop > 0) text(coinsStr, x + h * 0.95 + (wC * k - h * 1.2) / 2, P.y + 1, fs * k * (1 + 0.25 * pop), { fill: PAL.butter, stroke: PAL.ink, strokeW: 0.26 });
-  else text(coinsStr, x + h * 0.95 + (wC * k - h * 1.2) / 2, P.y + 1, fs * k, { fill: PAL.ink });
-  L.coinPill = { x: x + h * 0.5, y: P.y };
-  x += wC * k + 6;
-  plate(x, y, wD * k, h); text(dayStr, x + wD * k / 2, P.y + 1, fs * k * 0.92, { fill: PAL.ink });
-  x += wD * k + 6;
-  plate(x, y, wO * k, h);
+  const out = {};
+  for (const key of keys) {
+    const [pl, iw, ig, pr] = HUD_PAD[key].map(v => v * h * k), tw = u[key], w = pl + iw + ig + tw + pr;
+    out[key] = { x, y: P.y - h / 2, w, h, icon: iw > 0 ? { x: x + pl, w: iw } : null, slot: { x0: x + pl + iw + ig, x1: x + pl + iw + ig + tw }, fs: px[key] };
+    x += w + gap;
+  }
+  out.k = k;
+  return (L.hudQ = out);
+}
+// 札の中の文字の大きさ: 決めた大きさで場所に入らない（6 桁のコイン・DAY 100 など）ときだけ、場所の幅まで小さくする
+function pillPx(q, str) { return Math.floor(fitPx(str, q.fs, q.slot.x1 - q.slot.x0)); }
+function drawHud(L) {
+  const P = L.pills, h = P.h;
+  const coinsStr = String(Math.round(G.coinShown)), dayStr = T('day', { n: G.day }), leftStr = String(Math.max(0, G.total - G.served));
+  const Q = hudPills(L), pop = clamp(1 - (fxNow() - G.coinPop) / 260, 0, 1);
+  const box = q => ({ x0: q.slot.x0, x1: q.slot.x1, y0: q.y, y1: q.y + q.h }), mid = q => (q.slot.x0 + q.slot.x1) / 2;
+  // コイン（数字は 5 桁ぶんの場所の真ん中。増えたときに少し大きくなるのは、場所からはみ出さない分だけ）
+  const qc = Q.coin, ci = qc.icon;
+  plate(qc.x, qc.y, qc.w, h); coinIcon(ci.x + ci.w / 2, P.y, ci.w / 2);
+  const cpx = pillPx(qc, coinsStr);
+  if (pop > 0) {
+    ctx.save(); ctx.font = font(cpx); const tw = ctx.measureText(coinsStr).width; ctx.restore();
+    const px = Math.floor(cpx * Math.min(1 + 0.25 * pop, (qc.slot.x1 - qc.slot.x0) / Math.max(1, tw)));
+    text(coinsStr, mid(qc), P.y + 1, Math.max(cpx, px), { fill: PAL.butter, stroke: PAL.ink, strokeW: 0.26, box: box(qc) });
+  } else text(coinsStr, mid(qc), P.y + 1, cpx, { fill: PAL.ink, box: box(qc) });
+  L.coinPill = { x: ci.x + ci.w / 2, y: P.y };
+  const qd = Q.day;
+  plate(qd.x, qd.y, qd.w, h); text(dayStr, mid(qd), P.y + 1, pillPx(qd, dayStr), { fill: PAL.ink, box: box(qd) });
   // 残り注文: 小さな客の頭の記号＋数
-  ctx.save(); ctx.fillStyle = PAL.ink; ctx.beginPath(); ctx.arc(x + h * 0.48, P.y - h * 0.08, h * 0.13, 0, TAU); ctx.fill(); ctx.beginPath(); ctx.ellipse(x + h * 0.48, P.y + h * 0.2, h * 0.2, h * 0.11, 0, Math.PI, 0); ctx.fill(); ctx.restore();
-  text(leftStr, x + h * 0.78 + (wO * k - h * 0.9) / 2, P.y + 1, fs * k, { fill: PAL.ink });
+  const qo = Q.left, oi = qo.icon, ox = oi.x + oi.w / 2, os = oi.w / 0.4;
+  plate(qo.x, qo.y, qo.w, h);
+  ctx.save(); ctx.fillStyle = PAL.ink; ctx.beginPath(); ctx.arc(ox, P.y - os * 0.08, os * 0.13, 0, TAU); ctx.fill(); ctx.beginPath(); ctx.ellipse(ox, P.y + os * 0.2, os * 0.2, os * 0.11, 0, Math.PI, 0); ctx.fill(); ctx.restore();
+  text(leftStr, mid(qo), P.y + 1, pillPx(qo, leftStr), { fill: PAL.ink, box: box(qo) });
   // 図鑑（黒板の色）とお店（テラコッタ）
   const tn = now();
   const bp = G.press && G.press.key === 'book' && tn - G.press.t0 < 140, sp = G.press && G.press.key === 'shop' && tn - G.press.t0 < 140;
@@ -2199,7 +2274,7 @@ function drawLegend(L) {
 // ---------- 閉店のまとめ（レシート風: 上下がギザギザ・明朝体の店名・1 行ずつ打ち出される・最後に星のハンコ） ----------
 function receiptLayout(L) {
   const ds = G.dayStats, rows = 5 + (ds.newFound.length ? 1 : 0);
-  const pw = clamp(Math.min(L.W * 0.84, L.H * 0.62), 250, 380), bh = clamp(pw * 0.15, 44, 60), k = rows + 7.6 + (ds.newFound.length ? 0.9 : 0);
+  const pw = clamp(Math.min(L.W * 0.84, L.H * 0.62), 270, 380), bh = clamp(pw * 0.15, 44, 60), k = rows + 7.6 + (ds.newFound.length ? 0.9 : 0);
   // 画面の高さに入らないとき（横長で新しいお菓子の行があるとき）は行の高さを詰める
   const lh = Math.max(18, Math.min(clamp(pw * 0.085, 22, 32), (L.H - 16 - bh - 24) / k));
   const ph = lh * k;
@@ -2231,7 +2306,9 @@ function drawReceipt(L) {
   const shown = n => t > 350 + n * 260;
   const dash = yy => { ctx.save(); ctx.strokeStyle = rgba(PAL.ink, 0.5); ctx.setLineDash([4, 4]); ctx.lineWidth = 1.2; ctx.beginPath(); ctx.moveTo(x0, yy); ctx.lineTo(x1, yy); ctx.stroke(); ctx.restore(); };
   const px = Math.max(18, lh * 0.78);
-  if (shown(line++)) text(T('receiptTitle'), cx, y, fitPx(T('receiptTitle'), px, R.w * 0.84, true), { fill: PAL.ink, mincho: true });
+  // 題名は下の点線の幅（紙の 80%）まで。修正 6 で「しきぶちゃんの合体カフェ」（12 字）になったので、一番狭い紙を 250 → 270px にして 18px を保つ
+  const tpx = fitPx(T('receiptTitle'), px, x1 - x0, true);   // 縮めるときは整数に切り下げる（書体の大きさは丸めて使うので、切り上がって幅を超えないように）
+  if (shown(line++)) text(T('receiptTitle'), cx, y, tpx < px ? Math.floor(tpx) : px, { fill: PAL.ink, mincho: true, box: { x0, x1, y0: R.y, y1: R.y + R.h } });
   y += lh * 1.05;
   if (shown(line++)) text(T('rDay', { n: G.day }), cx, y, Math.max(18, lh * 0.62), { fill: PAL.ink, mincho: true });
   y += lh * 0.8; dash(y); y += lh * 0.7;
@@ -2476,7 +2553,7 @@ function titleLayout(L) {
 const TBG = { cv: document.createElement('canvas'), key: '' };
 function titleStage(L, TL) {
   const W = L.W, H = L.H, wainY = H * (L.portrait ? 0.66 : 0.64), ww = Math.min(W * (L.portrait ? 0.62 : 0.3), H * 0.52);
-  const S = { W, H, portrait: true, wainY, scene: { x: 0, y: 0, w: W, h: wainY }, counter: { x: 0, y: wainY, w: W, h: 0 },
+  const S = { W, H, portrait: true, band: true, wainY, scene: { x: 0, y: 0, w: W, h: wainY }, counter: { x: 0, y: wainY, w: W, h: 0 },
     window: { x: TL.chr.cx, w: ww, top: H * (L.portrait ? 0.4 : 0.1), bot: wainY }, floor: { x: 0, y: H - clamp(H * 0.06, 14, 60), w: W, h: H }, custArea: { x0: 0, x1: W, counterY: wainY } };
   const u = clamp(Math.min(W, H) / 380, 0.6, 1.6);
   S.deco = { u, plant1: { x: TL.chr.cx - ww * 0.9, y: wainY }, plant2: { x: TL.chr.cx + ww * 0.95, y: H * 0.08 }, plant3: { x: TL.chr.cx + ww * 0.85, y: wainY }, showcase: { x: 0, w: 0 }, lamps: [TL.chr.cx - ww * 1.2, TL.chr.cx + ww * 1.2, W * 0.08] };
@@ -2782,7 +2859,12 @@ window.Game = {
   // セーブ
   snapshot: () => { const d = Save.build(); delete d.lastSeen; delete d.stats; return JSON.parse(JSON.stringify(d)); }, flush: () => Save.flush(), parseSave: raw => Save.parse(raw), saveLen: () => Save.lastLen, saveWrites: () => Save.writes,
   // 画面の部品の位置（重なりの確認）
-  layout: () => { const L = lay(); return { W: L.W, H: L.H, portrait: L.portrait, hud: L.hud, board: L.board, scene: L.scene, counter: L.counter, slots: L.slots, btnShop: L.btnShop, btnBook: L.btnBook, btnSfx: L.btnSfx, btnBgm: L.btnBgm, pills: L.pills, seats: L.seats, chr: L.chr }; },
+  layout: () => { const L = lay(); return { W: L.W, H: L.H, portrait: L.portrait, square: L.square, hud: L.hud, board: L.board, scene: L.scene, counter: L.counter, slots: L.slots, btnShop: L.btnShop, btnBook: L.btnBook, btnSfx: L.btnSfx, btnBgm: L.btnBgm, pills: L.pills, seats: L.seats, chr: L.chr }; },
+  // HUD の札（修正 5）: 札の枠・記号の枠・数字の場所と、いま描いている文字の幅（はみ出し・重なりの確認）
+  hudBoxes: over => { const L = lay(), Q = hudPills(L), strs = Object.assign({ coin: String(Math.round(G.coinShown)), day: T('day', { n: G.day }), left: String(Math.max(0, G.total - G.served)) }, over || {}), out = { k: Q.k, pills: {} };
+    for (const key of ['coin', 'day', 'left']) { const q = Q[key], px = pillPx(q, strs[key]); ctx.save(); ctx.font = font(px); const tw = ctx.measureText(strs[key]).width; ctx.restore(); const cx = (q.slot.x0 + q.slot.x1) / 2;
+      out.pills[key] = { x: q.x, y: q.y, w: q.w, h: q.h, icon: q.icon ? { x: q.icon.x, y: L.pills.y - q.icon.w / 2, w: q.icon.w, h: q.icon.w } : null, slot: q.slot, fs: q.fs, px, str: strs[key], text: { x: cx - tw / 2, w: tw, y: L.pills.y + 1 - px / 2, h: px } }; }
+    out.book = { x: L.btnBook.x - L.btnBook.r, y: L.btnBook.y - L.btnBook.r, w: L.btnBook.r * 2, h: L.btnBook.r * 2 }; return out; },
   cellCenter: i => cellCenter(i), toolPos: c => toolPos(c), trayPos: () => trayPos(), trashPos: () => trashPos(),
   bubble: si => bubbleRect(si), bubbleFor: (si, n, look) => { const S = lay().seats[si]; return S ? bubbleGeom(S, n, look || 0) : null; },
   // お客さん（修正 4）: 人の数・名前、席 si に look の人が mood で立ったときの枠（custGeom）、席に人を置いて表情を固定する（確認用）
