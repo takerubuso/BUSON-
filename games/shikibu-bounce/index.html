@@ -1664,9 +1664,11 @@ function onMove(x, id, type) {
   if (G.drag && G.drag.id === id) { dx = x - G.drag.x; G.drag.x = x; G.drag.moved += Math.abs(dx); }
   else if (type === 'mouse' && !G.drag && prevMouse != null) dx = x - prevMouse;   // PC はマウスを左右に動かすだけでも
   if (!dx) return;
-  const W = G.W, x0 = W.pad.x;
+  const W = G.W, x0 = W.pad.x, L = lay();
   if (!PERF.pendMove) PERF.pendMove = { f: G.frames, x0, t: performance.now() };
-  movePaddle(W, dx / lay().s);   // 指の動いた分だけ動く（指の真下に来るのではない）
+  // マウスはカーソルの真下におぼんを置く（動いた分だけだと、おぼんが壁で止まっている間にカーソルとずれていく。本人指摘 2026-09-26）
+  if (type === 'mouse') movePaddle(W, (x - L.fx) / L.s - W.pad.x);
+  else movePaddle(W, dx / L.s);   // 指は動いた分だけ動く（指の真下に来るのではない＝指でおぼんが隠れない）
 }
 function onUp(id) {
   const d = G.drag; if (!d || d.id !== id) return;
